@@ -1,0 +1,29 @@
+{
+  "name": "labsome-frontend",
+  "version": "0.1.0",
+  "homepage": "http://www.labsome.io",
+  "authors": [
+    "Zohar Zilberman <popen2@gmail.com>"
+  ],
+  "license": "AGPL-3.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7",
+    "angular-bootstrap": "~0.13.4",
+    "angular-sanitize": "~1.4.7",
+    "angular-ui-router": "~0.2.15",
+    "fontawesome": "~4.4.0",
+    "jquery": "~2.1.4",
+    "js-md5": "md5#~0.3.0",
+    "moment": "~2.10.6",
+    "simple-line-icons": "~2.2.1",
+    "ui-select": "angular-ui-select#~0.12.1",
+    "bootstrap-sass": "~3.3.5"
+  }
+}

@@ -1,0 +1,38 @@
+extends partials/base
+
+append vars
+  - ng_app = 'labsome.login'
+
+append head
+  base(href='/login/')
+  title
+    | Login - Labsome
+
+append body
+  .container
+    .col-md-offset-3.col-md-6.col-sm-offset-2.col-sm-8
+      +login_box
+
+mixin login_box
+  .panel.panel-default.panel-login
+    .panel-body.text-center(ng-controller='LoginController')
+      img(src='/static/img/logo.png' style='width:120px; height: 30px; margin:2rem 0;')
+      .alert.alert-warning(ng-if='error')
+        | {{ error }}
+      form(role='form' name='loginForm' ng-submit='login()')
+        .form-group
+          input.input-lg.form-control(ng-model='input.username' type='text' placeholder='Username' required='required')
+        .form-group
+          input.input-lg.form-control(ng-model='input.password' type='password' placeholder='Password' required='required')
+        .form-group
+          button.btn.btn-block.btn-lg.btn-primary(type='submit' ng-disabled='working || loginForm.$invalid' ng-click='login()')
+            span(ng-if='!working')
+              | Sign In
+            span(ng-if='working')
+              i.fa.fa-fw.fa-circle-o-notch.fa-spin
+
+append scripts
+  script(type='text/javascript').
+    $(function() {
+      $('input').first().focus();
+    });

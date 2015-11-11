@@ -1,0 +1,12 @@
+extends partials/base
+
+append vars
+  - ng_app = 'labsome.site'
+
+append head
+  base(href='/site/')
+  title(ng-controller='TitleController' ng-bind="title || 'Labsome'")
+
+append body
+  header(ng-include="'/static/site/views/partials/top-navbar.html'")
+  div(ui-view='')
