@@ -1,0 +1,6 @@
+site_name: Labsome
+repo_url: https://github.com/labsome/labsome
+theme: cerulean
+
+pages:
+- Home: 'index.md'

@@ -20,6 +20,12 @@ setup(
         'Flask == 0.10.1',
     ],
 
+    extras_require = {
+        'docs': [
+            'mkdocs',
+        ],
+    },
+
     entry_points = {
         'console_scripts': [
             'labsome-server=labsome.backend.server:main',
