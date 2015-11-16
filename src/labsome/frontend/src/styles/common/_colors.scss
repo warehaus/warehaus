@@ -1,8 +1,3 @@
-// $body-bg is used in a lot of components, so to make just the
-// background light gray we directly change body.
-
-$labsome-bg-color: #f7f7f7;
-
 body.labsome-light {
     background-color: $labsome-bg-color;
 }

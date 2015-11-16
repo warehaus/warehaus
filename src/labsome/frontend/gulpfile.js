@@ -17,7 +17,7 @@ gulp.task('scripts', function() {
               dirs.scripts + '/**/*.js'])
         .pipe(concat('labsome.js'))
         .pipe(uglify())
-        .pipe(gulp.dest('../static/site'))
+        .pipe(gulp.dest('../static'))
     ;
 });
 
@@ -25,7 +25,7 @@ gulp.task('styles', function() {
     gulp.src([dirs.styles + '/labsome.scss'])
         .pipe(sass())
         .pipe(minifyCSS())
-        .pipe(gulp.dest('../static/site'))
+        .pipe(gulp.dest('../static'))
     ;
 });
 
@@ -33,7 +33,7 @@ gulp.task('templates', function() {
     gulp.src([dirs.templates + '/**/*.jade',
               '!' + dirs.templates + '/partials/**/*'])
         .pipe(jade())
-        .pipe(gulp.dest('../static/site'))
+        .pipe(gulp.dest('../static/templates'))
     ;
 });
 

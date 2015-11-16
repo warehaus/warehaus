@@ -1,17 +1,10 @@
-$navbar-labsome-color:                  #333;
-$navbar-labsome-bg:                     white;
-$navbar-labsome-border:                 darken($navbar-labsome-bg, 10%);
-$navbar-labsome-padding-v:              15px;
-$navbar-labsome-padding-h:              20px;
-$navbar-labsome-margin-bottom:          20px;
-
 .navbar-labsome {
     width: 100%;
     height: $navbar-height;
-    color: $navbar-labsome-color;
-    background-color: $navbar-labsome-bg;
-    border-bottom: 1px solid $navbar-labsome-border;
-    margin: 0 0 $navbar-labsome-margin-bottom 0;
+    color: $labsome-navbar-color;
+    background-color: $labsome-navbar-bg;
+    border-bottom: 1px solid $labsome-navbar-border;
+    margin: 0 0 $labsome-navbar-margin-bottom 0;
 
     tr {
         td {
@@ -19,16 +12,16 @@ $navbar-labsome-margin-bottom:          20px;
         }
 
         td#brand {
-            padding: $navbar-labsome-padding-v 0 $navbar-labsome-padding-v $navbar-labsome-padding-h;
+            padding: $labsome-navbar-padding-v 0 $labsome-navbar-padding-v $labsome-navbar-padding-h;
         }
 
         td#search {
             width: 100%;
-            padding: $navbar-labsome-padding-v 0 $navbar-labsome-padding-v $navbar-labsome-padding-h;
+            padding: $labsome-navbar-padding-v 0 $labsome-navbar-padding-v $labsome-navbar-padding-h;
         }
 
         td#profile {
-            padding: $navbar-labsome-padding-v $navbar-labsome-padding-h;
+            padding: $labsome-navbar-padding-v $labsome-navbar-padding-h;
             vertical-align: middle;
 
             img {

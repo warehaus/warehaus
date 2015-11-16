@@ -1,16 +1,9 @@
-$sidebar-bg:           rgba(50,50,50,0.9);
-$sidebar-color:        white;
-$sidebar-wd:           350px;
-$z-index-main-section: 100;
-$sidebar-bg-blur:      10px;
-$sidebar-padding:      0;
-
 body {
     overflow-x: hidden;
 }
 
 .sidebar-closed {
-    right: -$sidebar-wd;
+    right: -$labsome-sidebar-wd;
 }
 
 .sidebar-open {
@@ -21,15 +14,15 @@ body {
     position: absolute;
     top: 0;
     bottom: 0;
-    width: $sidebar-wd;
+    width: $labsome-sidebar-wd;
     margin-top: 0;
-    background-color: $sidebar-bg;
-    color: $sidebar-color;
-    z-index: $z-index-main-section + 5;
+    background-color: $labsome-sidebar-bg;
+    color: $labsome-sidebar-color;
+    z-index: $labsome-sidebar-z-index;
     overflow: auto;
     @include transition(all .3s ease);
     box-shadow: 0px 0px 1px 1px rgba(0,0,0,0.15);
-    padding: $sidebar-padding;
+    padding: $labsome-sidebar-padding;
     backdrop-filter: blur(10px);
 
     .close-button {
@@ -49,21 +42,21 @@ body {
         .heading {
             padding: 0 1.25rem;
             margin: 1.5rem 0 0 0;
-            color: darken($sidebar-color, 25%);
+            color: darken($labsome-sidebar-color, 25%);
             text-transform: uppercase;
         }
 
         .menu-item {
-            color: $sidebar-color;
+            color: $labsome-sidebar-color;
             padding: 0 1.25rem;
             margin: .5rem 0 0 0;
 
             a {
-                color: $sidebar-color;
+                color: $labsome-sidebar-color;
 
                 &:hover,
                 &:focus {
-                    color: darken($sidebar-color, 20%);
+                    color: darken($labsome-sidebar-color, 20%);
                     text-decoration: none;
                 }
             }

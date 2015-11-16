@@ -1,0 +1,10 @@
+.first-setup {
+  border-radius: $labsome-standalone-box-radius;
+  padding: $labsome-standalone-box-padding;
+
+  img.logo {
+    margin: $labsome-standalone-box-img-margin;
+    width: 192px;
+    height: 48px;
+  }
+}

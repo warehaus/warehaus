@@ -1,0 +1,34 @@
+//-------------------------------
+// Overridden Bootstrap variables
+//-------------------------------
+
+$font-size-base:          16px;
+$font-family-sans-serif:  "LatoLatinWebLight", Helvetica, Arial, sans-serif;
+$font-family-serif:       Georgia, "Times New Roman", Times, serif;
+$font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
+$headings-font-family:    "LatoLatinWebSemiBold";
+$navbar-height:           80px;
+
+//------------------
+// Labsome variables
+//------------------
+
+$labsome-standalone-box-padding:    2rem .5rem;
+$labsome-standalone-box-radius:     .75rem;
+$labsome-standalone-box-img-margin: 1rem;
+
+$labsome-bg-color:              #f7f7f7;
+
+$labsome-navbar-color:          #333;
+$labsome-navbar-bg:             white;
+$labsome-navbar-border:         darken($labsome-navbar-bg, 10%);
+$labsome-navbar-padding-v:      15px;
+$labsome-navbar-padding-h:      20px;
+$labsome-navbar-margin-bottom:  20px;
+
+$labsome-sidebar-bg:       rgba(50,50,50,0.9);
+$labsome-sidebar-color:    white;
+$labsome-sidebar-wd:       350px;
+$labsome-sidebar-z-index:  150;
+$labsome-sidebar-bg-blur:  10px;
+$labsome-sidebar-padding:  0;

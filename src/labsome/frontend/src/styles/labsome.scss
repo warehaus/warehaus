@@ -1,9 +1,9 @@
-@import "common/typography";
+@import "variables";
 
 @import "../../../static/bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
 
+@import "common/typography";
 @import "common/dashboard";
-@import "common/navbars";
 @import "common/top-navbar";
 @import "common/sidebar";
 @import "common/tabs";
@@ -11,4 +11,7 @@
 @import "common/colors";
 @import "common/pointer";
 
-@import "login/login";
+@import "security/login";
+
+@import "first-setup/first-setup";
+@import "first-setup/no-db";
