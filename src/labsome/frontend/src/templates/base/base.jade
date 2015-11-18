@@ -1,8 +1,9 @@
 block vars
+  - html_attributes = {};
   - body_class = 'labsome-light';
 
 doctype html
-html(lang="en" ng-app=ng_app)
+html(lang="en")&attributes(html_attributes)
   head
     block head
       meta(charset='utf-8')

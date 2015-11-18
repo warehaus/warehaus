@@ -1,14 +1,10 @@
-from bunch import Bunch
 from flask import current_app
 from flask.ext.security import Security
 from .models import user_datastore
 from .models import User
 from ..db import db
-
-roles = Bunch(
-    Admin = 'admin',
-    User = 'user',
-)
+from .ldap_login import LdapLoginForm
+from .roles import roles
 
 def _ensure_roles():
     for role_name in roles.itervalues():
@@ -16,5 +12,6 @@ def _ensure_roles():
     db.session.commit()
 
 def init_app():
-    security = Security(current_app, user_datastore)
+    security = Security(current_app, user_datastore,
+                        login_form=LdapLoginForm)
     _ensure_roles()

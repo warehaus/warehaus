@@ -6,7 +6,7 @@ angular.module('labsome.views.dashboard').config(['$stateProvider', 'viewPath', 
     $stateProvider.state('dashboard', {
         url: '/dashboard',
         title: 'Dashboard',
-        templateUrl: viewPath('dashboard.html')
+        templateUrl: viewPath('main-site/views/dashboard.html')
     })
 }]);
 

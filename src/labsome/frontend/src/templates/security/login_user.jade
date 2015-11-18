@@ -1,37 +1,50 @@
 extends ../base/base
 
-append vars
-  - ng_app = 'labsome.login'
-
 append head
-  base(href='/login/')
   title
     | Login - Labsome
 
 append body
+  | {% from "security/_macros.html" import render_field_with_errors, render_field %}
   .container
     .row
       .col-md-offset-3.col-md-6.col-sm-offset-2.col-sm-8
         +login_box
         include ../base/footer
 
+mixin flash_messages
+  | {%- with messages = get_flashed_messages(with_categories=true) -%}
+  | {% if messages or login_user_form.username.errors or login_user_form.password.errors %}
+  ul.list-group
+    | {% for category, message in messages %}
+    li.list-group-item.list-group-item-warning
+      | {{ message }}
+    | {% endfor %}
+    | {% for error in login_user_form.username.errors %}
+    li.list-group-item.list-group-item-warning
+      | {{ error }}
+    | {% endfor %}
+    | {% for error in login_user_form.password.errors %}
+    li.list-group-item.list-group-item-warning
+      | {{ error }}
+    | {% endfor %}
+  | {% endif %}
+  |{%- endwith %}
+
 mixin login_box
   .panel.panel-default.panel-login
-    .panel-body.text-center(ng-controller='LoginController')
+    .panel-body.text-center
       img(src='/static/img/logo.png' style='width:120px; height: 30px; margin:2rem 0;')
-      .alert.alert-warning(ng-if='error')
-        | {{ error }}
-      form(role='form' name='loginForm' ng-submit='login()')
+      +flash_messages
+      form(role='form' name='loginForm' method='post')
+        | {{ login_user_form.hidden_tag() }}
         .form-group
-          input.input-lg.form-control(ng-model='input.username' type='text' placeholder='Username' required='required')
+          input.input-lg.form-control(type='text' name='username' placeholder='Username' required='')
         .form-group
-          input.input-lg.form-control(ng-model='input.password' type='password' placeholder='Password' required='required')
+          input.input-lg.form-control(type='password' name='password' placeholder='Password' required='')
         .form-group
-          button.btn.btn-block.btn-lg.btn-primary(type='submit' ng-disabled='working || loginForm.$invalid' ng-click='login()')
-            span(ng-if='!working')
-              | Sign In
-            span(ng-if='working')
-              i.fa.fa-fw.fa-circle-o-notch.fa-spin
+          button.btn.btn-block.btn-lg.btn-primary(type='submit')
+            | Sign In
 
 append scripts
   script(type='text/javascript').

@@ -7,7 +7,7 @@ angular.module('labsome.common.view_helpers', [
 ]);
 
 angular.module('labsome.common.view_helpers').constant('viewPath', function(uri) {
-    return '/static/site/views/' + uri;
+    return '/static/templates/' + uri;
 });
 
 angular.module('labsome.common.view_helpers').directive('focusMe', ['$timeout', function($timeout) {
