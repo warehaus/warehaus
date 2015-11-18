@@ -14,4 +14,4 @@ RUN cd /opt/labsome/src && python setup.py install
 
 EXPOSE 5000
 
-CMD ["/usr/local/bin/labsome-server"]
+CMD ["/usr/bin/supervisord", "-c", "/opt/labsome/etc/supervisor-labsome.conf"]

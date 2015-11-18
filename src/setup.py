@@ -16,8 +16,17 @@ setup(
     include_package_data = True,
 
     install_requires = [
-        'setuptools',
         'Flask == 0.10.1',
+        'Flask-Login == 0.2.11',
+        'Flask-Mail == 0.9.1',
+        'Flask-Principal == 0.4.0',
+        'Flask-Security == 1.7.4',
+        'Flask-SQLAlchemy == 2.1',
+        'Flask-WTF == 0.12',
+        'SQLAlchemy == 1.0.9',
+        'bunch == 1.0.1',
+        'psycopg2',
+        'setuptools',
     ],
 
     extras_require = {

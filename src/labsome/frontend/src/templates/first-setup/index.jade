@@ -9,33 +9,33 @@ append head
     | Welcome - Labsome
 
 mixin content_welcome
-  .text-center
-    img.logo(src='/static/img/logo.png')
-  h3
-    | Welcome
   p
-    | Hey there! We just need a few settings to set Labsome up.
+    | Hey there! We just need a few settings before starting up.
 
 mixin auth_method
   h3 Users Directory
   p
     | Labsome uses LDAP to log users in, please fill-in your LDAP directory information:
   .form-group(ng-class="{'has-error': setupForm.ldapServer.$dirty && setupForm.ldapServer.$invalid}")
-    label
-      | LDAP Server Address
-    input.form-control(type='text' name='ldapServer' placeholder='LDAP Server Address' required='' ng-disabled='finished' ng-model='settings.ldap_server')
+    label.control-label
+      | LDAP Server URI
+    input.form-control(type='text' name='ldapServer' placeholder='LDAP Server URI' required='' ng-disabled='working' ng-model='settings.ldap_server_uri')
     p.help-block
       | Format:&nbsp;
       samp
         | ldap[s]://[username:password@]hostname[:port]
-  .form-group(ng-class="{'has-error': setupForm.ldapRootDN.$dirty && setupForm.ldapRootDN.$invalid}")
-    label
-      | Root DN
-    input.form-control(type='text' name='ldapRootDN' placeholder='Organization Root DN' required='' ng-disabled='finished' ng-model='settings.ldap_root_dn')
+  .form-group(ng-class="{'has-error': setupForm.ldapBaseDN.$dirty && setupForm.ldapBaseDN.$invalid}")
+    label.control-label
+      | LDAP Base DN
+    input.form-control(type='text' name='ldapBaseDN' placeholder='Organization Base DN' required='' ng-disabled='working' ng-model='settings.ldap_base_dn')
     p.help-block
       | Format:&nbsp;
       samp
         | dc=example,dc=com
+  .form-group(ng-class="{'has-error': setupForm.ldapUsernameProperty.$dirty && setupForm.ldapUsernameProperty.$invalid}")
+    label.control-label
+      | LDAP Username Property
+    input.form-control(type='text' name='ldapUsernameProperty' placeholder='Username property' ng-disabled='working' ng-model='settings.ldap_username_property')
 
 mixin admin_user
   h3 Admin User
@@ -47,18 +47,28 @@ mixin admin_user
   .row
     .col-sm-6
       .form-group(ng-class="{'has-error': setupForm.adminUsername.$dirty && setupForm.adminUsername.$invalid}")
-        input.form-control(type='text', name='adminUsername', placeholder='Administrator username or email', required='', ng-disabled='finished', ng-model='settings.admin_username')
+        input.form-control(type='text', name='adminUsername', placeholder='Administrator username or email', required='', ng-disabled='working', ng-model='settings.admin_username')
     .col-sm-6
       .form-group(ng-class="{'has-error': setupForm.adminPassword.$dirty && setupForm.adminPassword.$invalid}")
-        input.form-control(type='password' name='adminPassword' placeholder='Administrator password (for testing)' required='' ng-disabled='finished' ng-model='settings.admin_password')
+        input.form-control(type='password' name='adminPassword' placeholder='Administrator password (for testing)' required='' ng-disabled='working' ng-model='settings.admin_password')
 
 mixin save_button
   h3.text-center
-    button.btn.btn-lg.btn-primary(ng-disabled='finished || setupForm.$invalid', ng-click='save_settings(settings)')
-      span.fa.fa-fw.fa-square-o(ng-if='!finished && setupForm.$invalid')
-      span.fa.fa-fw.fa-check-square-o(ng-if='!finished && setupForm.$valid')
-      span.fa.fa-fw.fa-circle-o-notch.fa-spin(ng-if='finished')
-      | &nbsp;Save Settings
+    button.btn.btn-lg.btn-primary(ng-if='!complete' ng-disabled='working || setupForm.$invalid' ng-click='save_settings()')
+      span.fa.fa-fw.fa-circle-o-notch.fa-spin(ng-if='working')
+      span(ng-if='!working')
+        | Test & Save Settings
+  .text-center(ng-if='error')
+    .alert.alert-danger
+      p(style='font-size:2rem;')
+        | Something went wrong
+      p
+        | {{ error }}
+  .text-center(ng-if='complete')
+    .alert.alert-success
+      p
+        | This looks good, please wait...
+      uib-progressbar.progress-striped.active(type='success' value='100' style='margin:1rem 0 0 0; height:.5rem;')
 
 mixin content
   form(role='form', name='setupForm', novalidate='', ng-controller='FirstSetupController')
@@ -71,6 +81,8 @@ append body
   .container.first-setup
     .row
       .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
+        .text-center
+          img.logo(src='/static/img/logo.png')
         .panel.panel-default
           .panel-body(ng-controller='FirstSetupController')
             +content
