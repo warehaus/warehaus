@@ -1,4 +1,5 @@
 import ldap
+from bunch import Bunch
 from flask import request
 from flask import current_app
 from flask.ext.security.forms import Form
@@ -12,30 +13,74 @@ from .roles import roles
 
 _datastore = LocalProxy(lambda: current_app.extensions['security'].datastore)
 
-class LdapLoginError(Exception):
+class LdapError(Exception):
     pass
 
-# Thanks https://gist.github.com/ibeex/1288159
-def attempt_ldap_login(ldap_server_uri, ldap_base_dn, ldap_username_property, username, password):
-    who = '{}={},{}'.format(ldap_username_property, username, ldap_base_dn)
-    try:
-        ldap_client = ldap.initialize(ldap_server_uri)
-        ldap_client.set_option(ldap.OPT_REFERRALS,0)
-        ldap_client.simple_bind_s(who, password)
-    except ldap.INVALID_CREDENTIALS:
-        ldap_client.unbind()
-        raise LdapLoginError('Username or password incorrect')
-    except ldap.SERVER_DOWN:
-        raise LdapLoginError('Could not connect to LDAP server')
-    ldap_client.unbind()
+class LdapServer(object):
+    AVAILABLE_SETTINGS = (
+        'server_uri',
+        'base_dn',
+        'users_dn',
+        'attribute_username',
+        'attribute_first_name',
+        'attribute_last_name',
+        'attribute_email',
+    )
 
-def attempt_ldap_login_in_app(username, password):
-    return attempt_ldap_login(
-        ldap_server_uri        = current_app.config['LDAP_SERVER_URI'],
-        ldap_base_dn           = current_app.config['LDAP_BASE_DN'],
-        ldap_username_property = current_app.config['LDAP_USERNAME_PROPERTY'],
-        username = username,
-        password = password)
+    def __init__(self, **kwargs):
+        super(LdapServer, self).__init__()
+        extraneous_settings = set(kwargs) - set(self.AVAILABLE_SETTINGS)
+        if extraneous_settings:
+            raise TypeError('Unknown LDAP kwargs: {}'.format(', '.join(extraneous_settings)))
+        self.settings = Bunch(current_app.config.get('LDAP_SETTINGS', {}) or {})
+        for key, value in kwargs.iteritems():
+            self.settings[key] = value
+        for key in self.AVAILABLE_SETTINGS:
+            if key not in self.settings or not self.settings[key]:
+                raise TypeError('Missing LDAP configuration: {}'.format(key))
+        self._conn = None
+
+    def _user_filter(self, username):
+        return '{}={}'.format(self.settings.attribute_username, username)
+
+    def _user_dn(self, username):
+        return ','.join((self._user_filter(username), self.settings.users_dn, self.settings.base_dn))
+
+    def attempt_login(self, username, password):
+        who = self._user_dn(username)
+        try:
+            ldap_client = ldap.initialize(self.settings.server_uri)
+            ldap_client.set_option(ldap.OPT_REFERRALS,0)
+            ldap_client.simple_bind_s(who, password)
+        except ldap.INVALID_CREDENTIALS:
+            ldap_client.unbind()
+            raise LdapError('Username or password incorrect')
+        except ldap.SERVER_DOWN:
+            raise LdapError('Could not connect to LDAP server')
+        except ldap.INVALID_DN_SYNTAX:
+            raise LdapError('The format for "Base DN" is not valid')
+        result = self._get_attributes(ldap_client, username,
+                                      {key: value for key, value in self.settings.iteritems()
+                                       if key.startswith('attribute_')})
+        ldap_client.unbind()
+        return result
+
+    def _get_attributes(self, ldap_client, username, attrs):
+        user_filter = self._user_filter(username)
+        results = ldap_client.search_s(self.settings.base_dn, ldap.SCOPE_SUBTREE, user_filter)
+        if len(results) == 0:
+            raise LdapError(('Got no results while searching for attributes of "{username}" (the ' +
+                             'filter used was "{user_filter}"). Please make sure the given attributes match ' +
+                             "your directory's configuration").format(username=username, user_filter=user_filter))
+        if len(results) > 1:
+            raise LdapError(('Got more than 1 result while searching for "{username}". Please make sure ' +
+                             "the given attributes match your directory's configuration").format(username=username))
+        [(_, user_attributes)] = results
+        result = {}
+        for attr_name, ldap_attr in attrs.iteritems():
+            if ldap_attr in user_attributes:
+                result[attr_name] = user_attributes[ldap_attr][0]
+        return result
 
 class LdapLoginForm(Form, NextFormMixin):
     username = StringField('Username')
@@ -62,7 +107,8 @@ class LdapLoginForm(Form, NextFormMixin):
             return False
 
         try:
-            attempt_ldap_login_in_app(self.username.data, self.password.data)
+            ldap_server = LdapServer()
+            ldap_server.attempt_login(self.username.data, self.password.data)
         except LdapLoginError as error:
             self.password.errors.append(str(error))
             return False
@@ -73,6 +119,6 @@ class LdapLoginForm(Form, NextFormMixin):
             _datastore.add_role_to_user(self.user, roles.User)
 
         if not self.user.is_active():
-            self.email.errors.append('Your account has been deactivated. If you believe this is a mistake, please contact your administrator.')
+            self.username.errors.append('Your account has been deactivated. If you believe this is a mistake, please contact your administrator.')
             return False
         return True

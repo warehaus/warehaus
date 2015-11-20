@@ -1,4 +1,4 @@
-FROM labsome/base-image:v2
+FROM labsome/base-image:v3
 
 RUN mkdir -p /opt/labsome
 

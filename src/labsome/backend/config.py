@@ -1,5 +1,6 @@
 import os
 from contextlib import contextmanager
+from sqlalchemy.dialects.postgresql import JSONB
 from .db import db
 
 #------------------------------------------------------------------------------#
@@ -40,9 +41,7 @@ class Settings(db.Model):
     is_initialized = db.Column(db.Boolean, default=False)
     SECRET_KEY = db.Column(db.String(256), default=lambda: os.urandom(48).encode('hex'))
     SECURITY_PASSWORD_SALT = db.Column(db.String(256), default=lambda: os.urandom(64).encode('hex'))
-    LDAP_SERVER_URI = db.Column(db.String(1024), default=None)
-    LDAP_BASE_DN = db.Column(db.String(1024), default='')
-    LDAP_USERNAME_PROPERTY = db.Column(db.String(128), default='')
+    LDAP_SETTINGS = db.Column(JSONB)
 
 SETTINGS_ID = 1 # Allow only one Settings row
 
@@ -83,8 +82,6 @@ def full_config():
         SECURITY_PASSWORD_HASH = 'bcrypt'
         SECURITY_PASSWORD_SALT = settings.SECURITY_PASSWORD_SALT.decode('hex')
 
-        LDAP_SERVER_URI = settings.LDAP_SERVER_URI
-        LDAP_BASE_DN = settings.LDAP_BASE_DN
-        LDAP_USERNAME_PROPERTY = settings.LDAP_USERNAME_PROPERTY
+        LDAP_SETTINGS = settings.LDAP_SETTINGS
 
     return FullConfig

@@ -2,7 +2,7 @@
 
 angular.module('labsome.common.auth', []);
 
-angular.module('labsome.common.auth').factory('curUser', ['$rootScope', function($rootScope) {
+angular.module('labsome.common.auth').factory('curUser', ['$rootScope', '$http', function($rootScope, $http) {
     // All fields in `self` are `undefined` when not logged-in
     var self = {
         // Raw data as we get from the identity provider
@@ -11,59 +11,25 @@ angular.module('labsome.common.auth').factory('curUser', ['$rootScope', function
         profile: undefined,
     };
 
-    var get_display_name = function(raw_data) {
-        switch(raw_data.provider) {
-        case 'facebook':
-            return raw_data.facebook.displayName;
-        case 'twitter':
-            return raw_data.twitter.displayName;
-        case 'google':
-            return raw_data.google.displayName;
-        }
-    };
-
-    var get_user_email = function(raw_data) {
-        switch(raw_data.provider) {
-        case 'facebook':
-            return raw_data.facebook.email;
-        }
-    };
-
     var profile_from_raw_data = function(raw_data) {
-        if (!raw_data) {
-            return undefined;
-        }
         var profile = {};
-        profile.uid = raw_data.uid;
-        profile.display_name = get_display_name(raw_data);
-        profile.email = get_user_email(raw_data);
-        profile.created_at = new Date();
+        profile.display_name = raw_data.username;
+        profile.email = raw_data.email || '';
         profile.avatar_base_url = 'https://gravatar.com/avatar/' + md5(profile.email) + '?d=mm';
         profile.avatar_32 = profile.avatar_base_url + '&s=70';
         profile.avatar_96 = profile.avatar_base_url + '&s=192';
         return profile;
     };
 
-    var update_user_record = function() {
-        fbRoot.ref.child('users').child(self.raw.uid).set({
-            provider: self.raw.provider,
-            name: self.profile.display_name,
-            email: self.profile.email
+    var refresh = function() {
+        $http.get('/api/auth/v1/self').then(function(response) {
+            self.raw = response.data;
+            self.profile = profile_from_raw_data(self.raw);
+            $rootScope.$broadcast('labsome.identity_change', angular.copy(self.profile));
         });
     };
 
-    var identity_changed = function(authData) {
-        self.raw = authData;
-        self.profile = profile_from_raw_data(self.raw);
-        if (self.raw) {
-            update_user_record();
-        }
-        $rootScope.$broadcast('labsome.identity_change', angular.copy(self.profile));
-    };
-
-    self.logout = function() {
-        fbRoot.auth.$unauth();
-    };
+    refresh();
 
     return self;
 }]);

@@ -1,0 +1,44 @@
+.modal-header
+  button.close(type='button' data-dismiss='modal' aria-label='Close')
+    span(aria-hidden='true')
+      | &times;
+  h3.modal-title
+    | Does This Look OK?
+
+mixin field(title, value)
+  .form-group
+    label.control-label= title
+    p.form-control-static
+      span(ng-if=value)
+        != '{{' + value + '}}'
+      span(ng-if='!' + value)
+        i.fa.fa-fw.fa-warning
+        i &nbsp;Not found
+
+mixin user_info
+  form(role='form')
+    .row
+      .col-sm-6
+        +field('First Name', 'test_result.attribute_first_name')
+      .col-sm-6
+        +field('Last Name', 'test_result.attribute_last_name')
+    .row
+      .col-sm-6
+        +field('Username', 'test_result.attribute_username')
+      .col-sm-6
+        +field('Email', 'test_result.attribute_email')
+
+.modal-body
+  .well.well-sm
+    +user_info
+  p
+    | Once you confirm these settings,
+    strong
+      | &nbsp;{{ test_result.attribute_username }}&nbsp;
+    | will become an admin in Labsome. You can add privileges to other users after you log-in.
+
+.modal-footer
+  button.btn.btn-default(ng-click='cancel()' data-dismiss='modal')
+    | No, Go Back
+  button.btn.btn-success(ng-click='ok()')
+    | Yes, Save These Settings

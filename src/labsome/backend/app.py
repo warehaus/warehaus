@@ -2,11 +2,11 @@ import os
 import pkg_resources
 from flask import Flask
 from flask import redirect
-from flask.ext.security import login_required
 from . import config
 from .db import db
 from . import auth
 from .api.first_setup import first_setup_api
+from .api.auth import auth_api
 
 def _first_setup_routes(app):
     @app.route('/')
@@ -29,9 +29,11 @@ def _full_app_routes(app):
 
     @app.route('/site/')
     @app.route('/site/<path:path>')
-    @login_required
+    @auth.user_required
     def site(path=None):
         return app.send_static_file('templates/main-site/index.html')
+
+    app.register_blueprint(auth_api, url_prefix='/api/auth')
 
 def _print_config(app):
     print 'Configuration:'
@@ -54,7 +56,7 @@ def create_app(print_config=False):
             db.init_app(app)
             db.create_all()
             app.config.from_object(config.full_config())
-            auth.init_app()
+            auth.init_app(app)
 
             if print_config:
                 _print_config(app)

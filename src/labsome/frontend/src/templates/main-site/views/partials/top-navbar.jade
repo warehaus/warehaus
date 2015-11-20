@@ -4,7 +4,7 @@ mixin logo
 
 mixin profile
   span(ng-controller='SidebarController' ng-if='curUser.profile')
-    .sidebar(ng-include="'/static/site/views/partials/sidebar.html'" ng-class="{'sidebar-open': is_open, 'sidebar-closed': !is_open}")
+    .sidebar(ng-include="'/static/templates/main-site/views/partials/sidebar.html'" ng-class="{'sidebar-open': is_open, 'sidebar-closed': !is_open}")
     .link(ng-click='toggle_sidebar()')
       img.img-circle(ng-src="{{ curUser.profile.avatar_32 }}")
       | {{ curUser.profile.givenName || '...' }}
