@@ -9,7 +9,9 @@ auth_api = Blueprint('auth', __name__)
 @user_required
 def whoami():
     return jsonify(dict(
-        username = current_user.username,
-        email    = current_user.email,
-        roles    = tuple(role.name for role in current_user.roles),
+        username   = current_user.username,
+        first_name = current_user.first_name,
+        last_name  = current_user.last_name,
+        email      = current_user.email,
+        roles      = tuple(role.name for role in current_user.roles),
     ))

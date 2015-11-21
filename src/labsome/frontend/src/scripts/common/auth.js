@@ -13,7 +13,7 @@ angular.module('labsome.common.auth').factory('curUser', ['$rootScope', '$http',
 
     var profile_from_raw_data = function(raw_data) {
         var profile = {};
-        profile.display_name = raw_data.username;
+        profile.display_name = raw_data.first_name + ' ' + raw_data.last_name;
         profile.email = raw_data.email || '';
         profile.avatar_base_url = 'https://gravatar.com/avatar/' + md5(profile.email) + '?d=mm';
         profile.avatar_32 = profile.avatar_base_url + '&s=70';

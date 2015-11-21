@@ -7,7 +7,7 @@ mixin profile_picture
   p.text-center
     img.img-circle(ng-src="{{ curUser.profile.avatar_96 }}" style='width:96px; height: 96px; border:2px solid white;')
   p.text-center
-    | {{ curUser.profile.fullName || '...' }}
+    | {{ curUser.profile.display_name || '...' }}
 
 mixin menu_account
   .heading

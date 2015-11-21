@@ -108,7 +108,7 @@ class LdapLoginForm(Form, NextFormMixin):
 
         try:
             ldap_server = LdapServer()
-            ldap_server.attempt_login(self.username.data, self.password.data)
+            user_details = ldap_server.attempt_login(self.username.data, self.password.data)
         except LdapError as error:
             self.password.errors.append(str(error))
             return False
@@ -117,6 +117,10 @@ class LdapLoginForm(Form, NextFormMixin):
         if self.user is None:
             self.user = _datastore.create_user(username=self.username.data)
             _datastore.add_role_to_user(self.user, roles.User)
+
+        self.user.first_name = user_details.get('attribute_first_name', None)
+        self.user.last_name  = user_details.get('attribute_last_name', None)
+        self.user.email      = user_details.get('attribute_email', None)
 
         if not self.user.is_active():
             self.username.errors.append('Your account has been deactivated. If you believe this is a mistake, please contact your administrator.')
