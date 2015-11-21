@@ -37,11 +37,11 @@ mixin login_box
       img(src='/static/img/logo.png' style='width:120px; height: 30px; margin:2rem 0;')
       +flash_messages
       form(role='form' name='loginForm' method='post')
-        | {{ login_user_form.hidden_tag() }}
         .form-group
           input.input-lg.form-control(type='text' name='username' placeholder='Username' required='')
         .form-group
           input.input-lg.form-control(type='password' name='password' placeholder='Password' required='')
+        | {{ login_user_form.hidden_tag() }}
         .form-group
           button.btn.btn-block.btn-lg.btn-primary(type='submit')
             | Sign In

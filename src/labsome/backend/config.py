@@ -78,6 +78,7 @@ def full_config():
         SECURITY_CONFIRMABLE = False
         SECURITY_TRACKABLE = False
         SECURITY_URL_PREFIX = '/auth'
+        SECURITY_FLASH_MESSAGES = False
         SECURITY_USER_IDENTITY_ATTRIBUTES = 'username'
         SECURITY_PASSWORD_HASH = 'bcrypt'
         SECURITY_PASSWORD_SALT = settings.SECURITY_PASSWORD_SALT.decode('hex')

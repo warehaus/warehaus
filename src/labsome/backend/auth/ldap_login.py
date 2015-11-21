@@ -109,7 +109,7 @@ class LdapLoginForm(Form, NextFormMixin):
         try:
             ldap_server = LdapServer()
             ldap_server.attempt_login(self.username.data, self.password.data)
-        except LdapLoginError as error:
+        except LdapError as error:
             self.password.errors.append(str(error))
             return False
 
