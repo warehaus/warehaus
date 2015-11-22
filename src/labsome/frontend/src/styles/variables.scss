@@ -7,7 +7,7 @@ $font-family-sans-serif:  "LatoLatinWebLight", Helvetica, Arial, sans-serif;
 $font-family-serif:       Georgia, "Times New Roman", Times, serif;
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
 $headings-font-family:    "LatoLatinWebSemiBold";
-$navbar-height:           80px;
+$navbar-height:           75px;
 
 //------------------
 // Labsome variables
@@ -19,16 +19,25 @@ $labsome-standalone-box-img-margin: 1rem;
 
 $labsome-bg-color:              #f0f0f0;
 
-$labsome-navbar-color:          #333;
-$labsome-navbar-bg:             white;
-$labsome-navbar-border:         darken($labsome-navbar-bg, 10%);
-$labsome-navbar-padding-v:      15px;
-$labsome-navbar-padding-h:      20px;
-$labsome-navbar-margin-bottom:  20px;
+// Navbar
 
-$labsome-sidebar-bg:       rgba(50,50,50,0.9);
-$labsome-sidebar-color:    white;
-$labsome-sidebar-wd:       350px;
-$labsome-sidebar-z-index:  150;
-$labsome-sidebar-bg-blur:  10px;
-$labsome-sidebar-padding:  0;
+$navbar-labsome-color:                     #777;
+$navbar-labsome-bg:                        white;
+$navbar-labsome-border:                    darken($navbar-labsome-bg, 10%);
+$navbar-labsome-profile-picture-size:      35px;
+
+$navbar-labsome-link-color:                $navbar-labsome-color;
+$navbar-labsome-link-hover-color:          $navbar-labsome-color;
+$navbar-labsome-link-hover-bg:             transparent;
+$navbar-labsome-link-active-color:         darken($navbar-labsome-color, 5%);
+$navbar-labsome-link-active-bg:            #f9f9f9;
+$navbar-labsome-link-disabled-color:       #ccc;
+$navbar-labsome-link-disabled-bg:          transparent;
+
+$navbar-labsome-brand-color:               $navbar-labsome-link-color;
+$navbar-labsome-brand-hover-color:         darken($navbar-labsome-brand-color, 10%);
+$navbar-labsome-brand-hover-bg:            transparent;
+
+$navbar-labsome-toggle-hover-bg:           #ddd;
+$navbar-labsome-toggle-icon-bar-bg:        #888;
+$navbar-labsome-toggle-border-color:       #ddd;

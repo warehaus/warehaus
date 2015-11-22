@@ -1,23 +1,35 @@
-mixin logo
-  a(ui-sref='dashboard')
-    img(src="/static/img/logo.png" style='width:152px; height:35px;')
+mixin brand
+  a.navbar-brand(ui-sref='dashboard')
+    img(src="/static/img/logo.png")
 
-mixin profile
-  span(ng-controller='SidebarController' ng-if='curUser.profile')
-    .sidebar(ng-include="'/static/templates/main-site/views/partials/sidebar.html'" ng-class="{'sidebar-open': is_open, 'sidebar-closed': !is_open}")
-    .link(ng-click='toggle_sidebar()')
-      img.img-circle(ng-src="{{ curUser.profile.avatar_32 }}")
-      | {{ curUser.profile.display_name || '...' }}
-      i.fa.fa-fw.fa-angle-right
+mixin profile_menu
+  li.dropdown
+    a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+      img.img-circle.profile-picture(ng-src="{{ curUser.profile.avatar_32 }}")
+      | &nbsp;{{ curUser.profile.display_name || '...' }}
+      i.fa.fa-fw.fa-angle-down
+    ul.dropdown-menu
+      li
+        a(ui-sref='account.settings')
+          | Settings
+      li.divider(role='separator')
+      li
+        a(href='/auth/logout')
+          | Sign Out
 
 mixin content
-  table.navbar-labsome(role='navigation')
-    tbody
-      tr
-        td.hidden-xs#brand
-          +logo
-        td#search
-        td#profile
-          +profile
+  nav.navbar.navbar-labsome
+    .container-fluid
+      .navbar-header
+        button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#labsome-navbar-collapse', aria-expanded='false')
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        +brand
+      #labsome-navbar-collapse.collapse.navbar-collapse
+        ul.nav.navbar-nav
+        ul.nav.navbar-nav.navbar-right
+          +profile_menu
 
 +content
