@@ -2,6 +2,7 @@
 
 angular.module('labsome.site', [
     'labsome.common',
+    'labsome.site.auth',
     'labsome.site.views'
 ]);
 

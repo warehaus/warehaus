@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('labsome.common.auth', []);
+angular.module('labsome.site.auth', []);
 
-angular.module('labsome.common.auth').factory('curUser', ['$rootScope', '$http', function($rootScope, $http) {
+angular.module('labsome.site.auth').factory('curUser', ['$rootScope', '$http', function($rootScope, $http) {
     // All fields in `self` are `undefined` when not logged-in
     var self = {
         // Raw data as we get from the identity provider
@@ -34,13 +34,13 @@ angular.module('labsome.common.auth').factory('curUser', ['$rootScope', '$http',
     return self;
 }]);
 
-angular.module('labsome.common.auth').controller('UserProfileController', ['$scope', '$http', 'curUser', function($scope, $http, curUser) {
+angular.module('labsome.site.auth').controller('UserProfileController', ['$scope', '$http', 'curUser', function($scope, $http, curUser) {
     $scope.profile = curUser.profile;
     $scope.$on('labsome.identity_change', function(event, new_identity) {
         $scope.profile = new_identity;
     });
 }]);
 
-angular.module('labsome.common.auth').run(['$rootScope', 'curUser', function($rootScope, curUser) {
+angular.module('labsome.site.auth').run(['$rootScope', 'curUser', function($rootScope, curUser) {
     $rootScope.curUser = curUser;
 }]);

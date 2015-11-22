@@ -2,7 +2,6 @@
 
 angular.module('labsome.common', [
     'ui.router',
-    'labsome.common.auth',
     'labsome.common.view_helpers'
 ]);
 
