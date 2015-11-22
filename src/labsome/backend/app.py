@@ -24,6 +24,7 @@ def _first_setup_routes(app):
 def _full_app_routes(app):
     @app.route('/')
     @app.route('/site')
+    @auth.user_required
     def site_redirect():
         return redirect('/site/')
 
