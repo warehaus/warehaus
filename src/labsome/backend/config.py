@@ -1,6 +1,6 @@
 import os
 from contextlib import contextmanager
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy_utils import JSONType
 from .db import db
 
 #------------------------------------------------------------------------------#
@@ -41,7 +41,7 @@ class Settings(db.Model):
     is_initialized = db.Column(db.Boolean, default=False)
     SECRET_KEY = db.Column(db.String(256), default=lambda: os.urandom(48).encode('hex'))
     SECURITY_PASSWORD_SALT = db.Column(db.String(256), default=lambda: os.urandom(64).encode('hex'))
-    LDAP_SETTINGS = db.Column(JSONB)
+    LDAP_SETTINGS = db.Column(JSONType)
 
 SETTINGS_ID = 1 # Allow only one Settings row
 

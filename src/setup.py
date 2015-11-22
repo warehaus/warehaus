@@ -27,6 +27,7 @@ setup(
         'bunch == 1.0.1',
         'psycopg2',
         'setuptools',
+        'sqlalchemy_utils == 0.31.3',
     ],
 
     extras_require = {
