@@ -1,6 +1,7 @@
 FROM labsome/base-image:v3
 
 RUN mkdir -p /opt/labsome
+RUN mkdir -p /var/log/labsome
 
 COPY . /opt/labsome
 
