@@ -3,16 +3,14 @@
   border-color: $navbar-labsome-border;
 
   .navbar-brand {
-    color: $navbar-labsome-brand-color;
-    &:hover,
-    &:focus {
-      color: $navbar-labsome-brand-hover-color;
-      background-color: $navbar-labsome-brand-hover-bg;
-    }
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+
     img {
-      margin: -5px 5px 0 5px;
-      width: 152px;
-      height: 35px;
+      margin: (($navbar-height - $navbar-labsome-logo-height) / 2) 1.2rem;
+      width: (4 * $navbar-labsome-logo-height);
+      height: $navbar-labsome-logo-height;
       padding: 0;
     }
   }

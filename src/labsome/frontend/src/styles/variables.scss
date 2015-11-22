@@ -25,6 +25,7 @@ $navbar-labsome-color:                     #777;
 $navbar-labsome-bg:                        white;
 $navbar-labsome-border:                    darken($navbar-labsome-bg, 10%);
 $navbar-labsome-profile-picture-size:      35px;
+$navbar-labsome-logo-height:               35px;
 
 $navbar-labsome-link-color:                $navbar-labsome-color;
 $navbar-labsome-link-hover-color:          $navbar-labsome-color;
@@ -33,10 +34,6 @@ $navbar-labsome-link-active-color:         darken($navbar-labsome-color, 5%);
 $navbar-labsome-link-active-bg:            #f9f9f9;
 $navbar-labsome-link-disabled-color:       #ccc;
 $navbar-labsome-link-disabled-bg:          transparent;
-
-$navbar-labsome-brand-color:               $navbar-labsome-link-color;
-$navbar-labsome-brand-hover-color:         darken($navbar-labsome-brand-color, 10%);
-$navbar-labsome-brand-hover-bg:            transparent;
 
 $navbar-labsome-toggle-hover-bg:           #ddd;
 $navbar-labsome-toggle-icon-bar-bg:        #888;
