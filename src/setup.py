@@ -25,6 +25,7 @@ setup(
         'Flask-WTF == 0.12',
         'SQLAlchemy == 1.0.9',
         'bunch == 1.0.1',
+        'flask-restless == 0.17.0',
         'psycopg2',
         'setuptools',
         'sqlalchemy_utils == 0.31.3',

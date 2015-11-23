@@ -11,7 +11,7 @@ from ..auth import roles
 from ..auth.ldap_login import LdapServer
 from ..auth.ldap_login import LdapError
 
-first_setup_api = Blueprint('first_setup', __name__)
+first_setup_api = Blueprint('first_setup_api', __name__)
 
 @first_setup_api.route('/test', methods=['POST'])
 def test():

@@ -2,11 +2,14 @@ import os
 import pkg_resources
 from flask import Flask
 from flask import redirect
+from flask.ext.security import login_required
+from flask.ext.restless import APIManager
 from . import config
-from .db import db
 from . import auth
+from .db import db
 from .api.first_setup import first_setup_api
 from .api.auth import auth_api
+from .api.hardware import register_hardware_api
 
 def _first_setup_routes(app):
     @app.route('/')
@@ -24,17 +27,20 @@ def _first_setup_routes(app):
 def _full_app_routes(app):
     @app.route('/')
     @app.route('/site')
-    @auth.user_required
+    @login_required
     def site_redirect():
         return redirect('/site/')
 
     @app.route('/site/')
     @app.route('/site/<path:path>')
-    @auth.user_required
+    @login_required
     def site(path=None):
         return app.send_static_file('templates/main-site/index.html')
 
     app.register_blueprint(auth_api, url_prefix='/api/auth')
+
+    api_manager = APIManager(app, flask_sqlalchemy_db=db)
+    register_hardware_api(api_manager)
 
 def _print_config(app):
     print 'Configuration:'
