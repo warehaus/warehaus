@@ -3,21 +3,29 @@
 //-------------------------------
 
 $font-size-base:          16px;
-$font-family-sans-serif:  "LatoLatinWebLight", Helvetica, Arial, sans-serif;
+$font-family-sans-serif:  "Open Sans", Helvetica, Arial, sans-serif;
 $font-family-serif:       Georgia, "Times New Roman", Times, serif;
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
-$headings-font-family:    "LatoLatinWebSemiBold";
+$headings-font-family:    "Open Sans";
+$headings-font-weight:    400;
+$btn-font-weight:         100;
+$alert-link-font-weight:  300;
+$badge-font-weight:       200;
 $navbar-height:           75px;
 
 //------------------
 // Labsome variables
 //------------------
 
+$OpenSansPath: "/static/bower_components/open-sans-fontface/fonts";
+
+$labsome-font-weight: 300;
+
 $labsome-standalone-box-padding:    2rem .5rem;
 $labsome-standalone-box-radius:     .75rem;
 $labsome-standalone-box-img-margin: 1rem;
 
-$labsome-bg-color:              #f0f0f0;
+$labsome-bg-color:              #fafafa;
 
 // Navbar
 
