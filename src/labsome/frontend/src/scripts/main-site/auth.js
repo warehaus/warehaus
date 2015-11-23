@@ -1,14 +1,16 @@
 'use strict';
 
-angular.module('labsome.site.auth', []);
+angular.module('labsome.auth', []);
 
-angular.module('labsome.site.auth').factory('curUser', ['$rootScope', '$http', function($rootScope, $http) {
+angular.module('labsome.auth').factory('curUser', function($rootScope, $http) {
     // All fields in `self` are `undefined` when not logged-in
     var self = {
         // Raw data as we get from the identity provider
         raw: undefined,
         // A profile object we compose internally for abstraction
         profile: undefined,
+        // Is the current user an admin?
+        is_admin: undefined
     };
 
     var profile_from_raw_data = function(raw_data) {
@@ -25,22 +27,23 @@ angular.module('labsome.site.auth').factory('curUser', ['$rootScope', '$http', f
         $http.get('/api/auth/v1/self').then(function(response) {
             self.raw = response.data;
             self.profile = profile_from_raw_data(self.raw);
-            $rootScope.$broadcast('labsome.identity_change', angular.copy(self.profile));
+            self.is_admin = self.raw.roles.indexOf('admin') != -1;
+            $rootScope.$broadcast('labsome.auth.identity_change', angular.copy(self.profile));
         });
     };
 
     refresh();
 
     return self;
-}]);
+});
 
-angular.module('labsome.site.auth').controller('UserProfileController', ['$scope', '$http', 'curUser', function($scope, $http, curUser) {
+angular.module('labsome.auth').controller('UserProfileController', function($scope, $http, curUser) {
     $scope.profile = curUser.profile;
-    $scope.$on('labsome.identity_change', function(event, new_identity) {
+    $scope.$on('labsome.auth.identity_change', function(event, new_identity) {
         $scope.profile = new_identity;
     });
-}]);
+});
 
-angular.module('labsome.site.auth').run(['$rootScope', 'curUser', function($rootScope, curUser) {
+angular.module('labsome.auth').run(function($rootScope, curUser) {
     $rootScope.curUser = curUser;
-}]);
+});

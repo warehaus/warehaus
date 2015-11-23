@@ -1,0 +1,22 @@
+.modal-header
+  button.close(type="button" data-dismiss="modal" aria-label="Close")
+    span(aria-hidden="true")
+      | &times;
+  h4.modal-title
+    | Create a New Lab
+    
+.modal-body
+  .alert.alert-danger(ng-if='error')
+    | {{ error }}
+
+  form(role='form')
+    .form-group
+      label.control-label
+        | Lab Name
+      input.form-control(type='text' ng-model='lab.name' placeholder='Name' required='')
+
+.modal-footer
+  button.btn.btn-link(data-dismiss='modal' ng-click='cancel()' ng-disabled='working')
+    | Cancel
+  button.btn.btn-success(ng-click='save()' ng-disabled='working')
+    | Create Lab

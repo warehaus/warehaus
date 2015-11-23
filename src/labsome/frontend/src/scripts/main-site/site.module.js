@@ -2,11 +2,11 @@
 
 angular.module('labsome.site', [
     'labsome.common',
-    'labsome.site.auth',
-    'labsome.site.views'
+    'labsome.auth',
+    'labsome.site.labs'
 ]);
 
-angular.module('labsome.site').config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'viewPath', function($stateProvider, $locationProvider, $urlRouterProvider, viewPath) {
+angular.module('labsome.site').config(function($stateProvider, $locationProvider, $urlRouterProvider) {
     $locationProvider.html5Mode(true);
-    $urlRouterProvider.otherwise('/dashboard');
-}]);
+    $urlRouterProvider.otherwise('/labs');
+});

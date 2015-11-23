@@ -2,23 +2,50 @@ mixin brand
   a.navbar-brand(ui-sref='dashboard')
     img(src="/static/img/logo.png")
 
+mixin lab_selector
+  li.dropdown(ng-if='allLabs.ready && (allLabs.all.length > 0)')
+    a.link.dropdown-toggle(data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false')
+      i.fa.fa-fw.fa-building-o
+      | &nbsp;
+      lab-name(id='curLab.lab_id')
+      i.fa.fa-fw.fa-angle-down
+    ul.dropdown-menu
+      li.heading
+        | Current Lab
+      li.text
+        lab-name(id='curLab.lab_id')
+      li.divider(ng-if='curLab.all_except_current.length > 0')
+      li.heading(ng-if='curLab.all_except_current.length > 0')
+        | Other Labs
+      li(ng-repeat='other_lab_id in curLab.all_except_current')
+        a.link(ng-click='curLab.set(other_lab_id)')
+          lab-name(id='other_lab_id')
+      li.divider(ng-if='curUser.is_admin')
+      li(ng-if='curUser.is_admin')
+        a.link(ui-sref='labs.create')
+          | Create a New Lab
+
 mixin profile_menu
   li.dropdown
-    a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+    a.link.dropdown-toggle(data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
       img.img-circle.profile-picture(ng-src="{{ curUser.profile.avatar_32 }}")
       | &nbsp;{{ curUser.profile.display_name || '...' }}
       i.fa.fa-fw.fa-angle-down
     ul.dropdown-menu
       li
         a(ui-sref='account.settings')
+          i.icon-equalizer
+          | &nbsp;
           | Settings
       li.divider(role='separator')
       li
         a(href='/auth/logout')
+          i.icon-logout
+          | &nbsp;
           | Sign Out
 
 mixin content
-  nav.navbar.navbar-labsome
+  nav.navbar.navbar-static-top.navbar-labsome
     .container-fluid
       .navbar-header
         button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#labsome-navbar-collapse', aria-expanded='false')
@@ -29,6 +56,7 @@ mixin content
         +brand
       #labsome-navbar-collapse.collapse.navbar-collapse
         ul.nav.navbar-nav
+          +lab_selector
         ul.nav.navbar-nav.navbar-right
           +profile_menu
 
