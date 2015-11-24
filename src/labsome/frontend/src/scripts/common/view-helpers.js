@@ -10,7 +10,7 @@ angular.module('labsome.common.view_helpers').constant('viewPath', function(uri)
     return '/static/templates/' + uri;
 });
 
-angular.module('labsome.common.view_helpers').directive('focusMe', ['$timeout', function($timeout) {
+angular.module('labsome.common.view_helpers').directive('focusMe', function($timeout) {
     var link = function(scope, element, attrs) {
         scope.$watch(attrs.focusMe, function(value) {
             if (value) { 
@@ -22,9 +22,9 @@ angular.module('labsome.common.view_helpers').directive('focusMe', ['$timeout', 
     return {
         link: link
     };
-}]);
+});
 
-angular.module('labsome.common.view_helpers').directive('blurMe', ['$timeout', function($timeout) {
+angular.module('labsome.common.view_helpers').directive('blurMe', function($timeout) {
     var link = function(scope, element, attrs) {
         scope.$watch(attrs.blurMe, function(value) {
             if (value) {
@@ -36,4 +36,4 @@ angular.module('labsome.common.view_helpers').directive('blurMe', ['$timeout', f
     return {
         link: link
     };
-}]);
+});

@@ -5,8 +5,8 @@ angular.module('labsome.common', [
     'labsome.common.view_helpers'
 ]);
 
-angular.module('labsome.common').run(['$rootScope', '$state', function($rootScope, $state) {
+angular.module('labsome.common').run(function($rootScope, $state) {
     $rootScope.moment = moment;
     $rootScope.$state = $state;
     $rootScope.number = parseFloat;
-}]);
+});

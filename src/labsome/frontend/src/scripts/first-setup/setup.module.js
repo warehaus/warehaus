@@ -4,11 +4,11 @@ angular.module('labsome.first_setup', [
     'labsome.common'
 ]);
 
-angular.module('labsome.first_setup').config(['$locationProvider', function($locationProvider) {
+angular.module('labsome.first_setup').config(function($locationProvider) {
     $locationProvider.html5Mode(true);
-}]);
+});
 
-angular.module('labsome.first_setup').controller('FirstSetupController', ['$scope', '$http', '$uibModal', '$timeout', 'viewPath', function($scope, $http, $uibModal, $timeout, viewPath) {
+angular.module('labsome.first_setup').controller('FirstSetupController', function($scope, $http, $uibModal, $timeout, viewPath) {
     $scope.ldap_server = {
         scheme: 'ldap://',
         address: undefined,
@@ -75,9 +75,9 @@ angular.module('labsome.first_setup').controller('FirstSetupController', ['$scop
             }, _reset);
         }, _http_error);
     };
-}]);
+});
 
-angular.module('labsome.first_setup').controller('VerifyFirstSetupConfigController', ['$scope', '$uibModalInstance', '$http', 'settings', 'test_result', function($scope, $uibModalInstance, $http, settings, test_result) {
+angular.module('labsome.first_setup').controller('VerifyFirstSetupConfigController', function($scope, $uibModalInstance, $http, settings, test_result) {
     $scope.settings = settings;
     $scope.test_result = test_result;
 
@@ -88,4 +88,4 @@ angular.module('labsome.first_setup').controller('VerifyFirstSetupConfigControll
     $scope.cancel = function() {
         $uibModalInstance.dismiss('cancel');
     };
-}]);
+});

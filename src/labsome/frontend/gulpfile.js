@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
+var ngAnnotate = require('gulp-ng-annotate');
 var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var jade = require('gulp-jade');
@@ -16,6 +17,7 @@ gulp.task('scripts', function() {
     gulp.src([dirs.scripts + '/**/*.module.js',
               dirs.scripts + '/**/*.js'])
         .pipe(concat('labsome.js'))
+        .pipe(ngAnnotate())
         .pipe(uglify())
         .pipe(gulp.dest('../static'))
     ;

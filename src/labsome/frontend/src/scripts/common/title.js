@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('labsome.common').controller('TitleController', ['$scope', '$state', function($scope, $state) {
+angular.module('labsome.common').controller('TitleController', function($scope, $state) {
     $scope.title = undefined;
 
     var _refresh_title = function() {
@@ -12,4 +12,4 @@ angular.module('labsome.common').controller('TitleController', ['$scope', '$stat
     };
 
     $scope.$on('$stateChangeSuccess', _refresh_title);
-}]);
+});
