@@ -6,7 +6,7 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
     $stateProvider.state('labs', {
         url: '/labs',
         title: 'Labs',
-        templateUrl: viewPath('main-site/views/labs.html'),
+        templateUrl: viewPath('main-site/views/labs/index.html'),
         controller: 'LabsViewController'
     });
 
@@ -15,7 +15,7 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
         title: 'Create',
         onEnter: function($uibModal, $state) {
             $uibModal.open({
-                templateUrl: viewPath('main-site/views/create-lab.html'),
+                templateUrl: viewPath('main-site/views/labs/create-lab.html'),
                 controller: 'CreateLabController'
             }).result.finally(function() {
                 $state.go('^');

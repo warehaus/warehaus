@@ -33,10 +33,15 @@ mixin profile_menu
       i.fa.fa-fw.fa-angle-down
     ul.dropdown-menu
       li
-        a(ui-sref='account.settings')
+        a.link(ui-sref='account.settings')
           i.icon-equalizer
           | &nbsp;
-          | Settings
+          | Preferences
+      li(ng-if='curUser.is_admin')
+        a.link(ui-sref='admin')
+          i.icon-settings
+          | &nbsp;
+          | Site Management
       li.divider(role='separator')
       li
         a(href='/auth/logout')
