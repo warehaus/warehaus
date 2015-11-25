@@ -24,7 +24,7 @@
     "moment": "~2.10.6",
     "simple-line-icons": "~2.2.1",
     "ui-select": "angular-ui-select#~0.12.1",
-    "bootstrap-sass": "~3.3.5",
+    "bootstrap-sass": "~3.3.6",
     "open-sans-fontface": "~1.4.2"
   }
 }
