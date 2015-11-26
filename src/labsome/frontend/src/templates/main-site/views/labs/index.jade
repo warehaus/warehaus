@@ -11,11 +11,13 @@ mixin no_labs
     i.icon-ghost.x6
   p.text-center.x2
     | No labs were added yet
-  p.text-center.x12
+  p.text-center.x12(ng-if='curUser.is_admin')
     | To add servers and other types of hardware, start by creating a lab.
-  p.text-center.x2
+  p.text-center.x2(ng-if='curUser.is_admin')
     button.btn.btn-lg.btn-success(ui-sref='labs.create')
       | Create a New Lab
+  p.text-center.x12(ng-if='!curUser.is_admin')
+    | Your administrator is now creating your first lab, please come back soon!
 
 mixin main
   .container(ng-if='!allLabs.ready')
