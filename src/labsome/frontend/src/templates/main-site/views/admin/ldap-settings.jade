@@ -1,0 +1,64 @@
+mixin form
+  .row
+    .col-sm-2
+      .form-group
+        label.control-label
+          | LDAP Server
+        select.form-control(name='ldapServerScheme' ng-model='settings.ldap.server_scheme' ng-change='eval_server_address()')
+          option(value='ldap://')
+            | ldap://
+          option(value='ldaps://')
+            | ldaps://
+    .col-sm-7
+      .form-group(ng-class="{'has-error': theForm.ldapServerAddress.$dirty && theForm.ldapServerAddress.$invalid}")
+        label.control-label.hidden-xs
+          | &nbsp;
+        input.form-control(type='text' name='ldapServerAddress' placeholder='Server Address' required='' ng-disabled='working' ng-model='settings.ldap.server_address' ng-change='eval_server_address()')
+    .col-sm-3
+      .form-group(ng-class="{'has-error': theForm.ldapServerPort.$dirty && theForm.ldapServerPort.$invalid}")
+        label.control-label.hidden-xs
+          | &nbsp;
+        input.form-control(type='number' name='ldapServerPort' placeholder='Port (optional)' ng-disabled='working' ng-model='settings.ldap.server_port' ng-change='eval_server_address()')
+  .row
+    .col-sm-6
+      .form-group(ng-class="{'has-error': theForm.ldapBaseDN.$dirty && theForm.ldapBaseDN.$invalid}")
+        label.control-label
+          | LDAP Base DN
+        input.form-control(type='text' name='ldapBaseDN' placeholder='Organization Base DN' required='' ng-disabled='working' ng-model='settings.ldap.base_dn')
+        p.help-block
+          | Example:&nbsp;
+          samp
+            | dc=example,dc=com
+    .col-sm-6
+      .form-group(ng-class="{'has-error': theForm.ldapUsersDN.$dirty && theForm.ldapUsersDN.$invalid}")
+        label.control-label
+          | LDAP Users DN
+        input.form-control(type='text' name='ldapUsersDN' placeholder='Users DN' required='' ng-disabled='working' ng-model='settings.ldap.users_dn')
+        p.help-block
+          | Example:&nbsp;
+          samp
+            | ou=users
+  .row
+    .col-sm-6
+      .form-group(ng-class="{'has-error': theForm.ldapUsernameAttribute.$dirty && theForm.ldapUsernameAttribute.$invalid}")
+        label.control-label
+          | LDAP Username Attribute
+        input.form-control(type='text' name='ldapUsernameAttribute' placeholder='Username attribute' ng-disabled='working' ng-model='settings.ldap.attribute_username')
+    .col-sm-6
+      .form-group(ng-class="{'has-error': theForm.ldapFirstNameAttribute.$dirty && theForm.ldapFirstNameAttribute.$invalid}")
+        label.control-label
+          | LDAP First Name Attribute
+        input.form-control(type='text' name='ldapFirstNameAttribute' placeholder='First name attribute' ng-disabled='working' ng-model='settings.ldap.attribute_first_name')
+  .row
+    .col-sm-6
+      .form-group(ng-class="{'has-error': theForm.ldapLastNameAttribute.$dirty && theForm.ldapLastNameAttribute.$invalid}")
+        label.control-label
+          | LDAP Last Name Attribute
+        input.form-control(type='text' name='ldapLastNameAttribute' placeholder='Last name attribute' ng-disabled='working' ng-model='settings.ldap.attribute_last_name')
+    .col-sm-6
+      .form-group(ng-class="{'has-error': theForm.ldapEmailAttribute.$dirty && theForm.ldapEmailAttribute.$invalid}")
+        label.control-label
+          | LDAP Email Attribute
+        input.form-control(type='text' name='ldapEmailAttribute' placeholder='Email attribute' ng-disabled='working' ng-model='settings.ldap.attribute_email')
+
++form

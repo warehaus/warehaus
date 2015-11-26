@@ -16,67 +16,7 @@ mixin auth_method
   h2 Users Directory
   p
     | Labsome uses LDAP to log users in, please fill-in your LDAP directory information:
-  .row
-    .col-sm-2
-      .form-group
-        label.control-label
-          | LDAP Server
-        select.form-control(name='ldapServerScheme' ng-model='ldap_server.scheme' ng-change='eval_server_address()')
-          option(value='ldap://')
-            | ldap://
-          option(value='ldaps://')
-            | ldaps://
-    .col-sm-7
-      .form-group(ng-class="{'has-error': setupForm.ldapServerAddress.$dirty && setupForm.ldapServerAddress.$invalid}")
-        label.control-label.hidden-xs
-          | &nbsp;
-        input.form-control(type='text' name='ldapServerAddress' placeholder='Server Address' required='' ng-disabled='working' ng-model='ldap_server.address' ng-change='eval_server_address()')
-    .col-sm-3
-      .form-group(ng-class="{'has-error': setupForm.ldapServerPort.$dirty && setupForm.ldapServerPort.$invalid}")
-        label.control-label.hidden-xs
-          | &nbsp;
-        input.form-control(type='number' name='ldapServerPort' placeholder='Port (optional)' ng-disabled='working' ng-model='ldap_server.port' ng-change='eval_server_address()')
-  .row
-    .col-sm-6
-      .form-group(ng-class="{'has-error': setupForm.ldapBaseDN.$dirty && setupForm.ldapBaseDN.$invalid}")
-        label.control-label
-          | LDAP Base DN
-        input.form-control(type='text' name='ldapBaseDN' placeholder='Organization Base DN' required='' ng-disabled='working' ng-model='settings.ldap.base_dn')
-        p.help-block
-          | Example:&nbsp;
-          samp
-            | dc=example,dc=com
-    .col-sm-6
-      .form-group(ng-class="{'has-error': setupForm.ldapUsersDN.$dirty && setupForm.ldapUsersDN.$invalid}")
-        label.control-label
-          | LDAP Users DN
-        input.form-control(type='text' name='ldapUsersDN' placeholder='Users DN' required='' ng-disabled='working' ng-model='settings.ldap.users_dn')
-        p.help-block
-          | Example:&nbsp;
-          samp
-            | ou=users
-  .row
-    .col-sm-6
-      .form-group(ng-class="{'has-error': setupForm.ldapUsernameAttribute.$dirty && setupForm.ldapUsernameAttribute.$invalid}")
-        label.control-label
-          | LDAP Username Attribute
-        input.form-control(type='text' name='ldapUsernameAttribute' placeholder='Username attribute' ng-disabled='working' ng-model='settings.ldap.attribute_username')
-    .col-sm-6
-      .form-group(ng-class="{'has-error': setupForm.ldapFirstNameAttribute.$dirty && setupForm.ldapFirstNameAttribute.$invalid}")
-        label.control-label
-          | LDAP First Name Attribute
-        input.form-control(type='text' name='ldapFirstNameAttribute' placeholder='First name attribute' ng-disabled='working' ng-model='settings.ldap.attribute_first_name')
-  .row
-    .col-sm-6
-      .form-group(ng-class="{'has-error': setupForm.ldapLastNameAttribute.$dirty && setupForm.ldapLastNameAttribute.$invalid}")
-        label.control-label
-          | LDAP Last Name Attribute
-        input.form-control(type='text' name='ldapLastNameAttribute' placeholder='Last name attribute' ng-disabled='working' ng-model='settings.ldap.attribute_last_name')
-    .col-sm-6
-      .form-group(ng-class="{'has-error': setupForm.ldapEmailAttribute.$dirty && setupForm.ldapEmailAttribute.$invalid}")
-        label.control-label
-          | LDAP Email Attribute
-        input.form-control(type='text' name='ldapEmailAttribute' placeholder='Email attribute' ng-disabled='working' ng-model='settings.ldap.attribute_email')
+  include ../main-site/views/admin/ldap-settings
 
 mixin admin_user
   h2 Admin User
@@ -87,10 +27,10 @@ mixin admin_user
       | You can add privileges to other users once this setup is complete.
   .row
     .col-sm-6
-      .form-group(ng-class="{'has-error': setupForm.adminUsername.$dirty && setupForm.adminUsername.$invalid}")
+      .form-group(ng-class="{'has-error': theForm.adminUsername.$dirty && theForm.adminUsername.$invalid}")
         input.form-control(type='text', name='adminUsername', placeholder='Administrator username or email', required='', ng-disabled='working', ng-model='settings.admin_username')
     .col-sm-6
-      .form-group(ng-class="{'has-error': setupForm.adminPassword.$dirty && setupForm.adminPassword.$invalid}")
+      .form-group(ng-class="{'has-error': theForm.adminPassword.$dirty && theForm.adminPassword.$invalid}")
         input.form-control(type='password' name='adminPassword' placeholder='Administrator password (for testing)' required='' ng-disabled='working' ng-model='settings.admin_password')
 
 mixin save_button
@@ -101,13 +41,13 @@ mixin save_button
       p
         | {{ error }}
   h4.text-center
-    button.btn.btn-lg.btn-primary(ng-disabled='working || setupForm.$invalid' ng-click='test_settings()')
+    button.btn.btn-lg.btn-primary(ng-disabled='working || theForm.$invalid' ng-click='test_settings()')
       span.fa.fa-fw.fa-circle-o-notch.fa-spin(ng-if='working')
       span(ng-if='!working')
         | Test Settings
 
 mixin content
-  form(role='form', name='setupForm', novalidate='', ng-controller='FirstSetupController')
+  form(role='form', name='theForm', novalidate='', ng-controller='FirstSetupController')
     +content_welcome
     +auth_method
     +admin_user

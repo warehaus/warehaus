@@ -9,6 +9,7 @@ from . import auth
 from .db import db
 from .api.first_setup import first_setup_api
 from .api.auth import auth_api
+from .api.settings import settings_api
 from .api.hardware import register_hardware_api
 
 def _first_setup_routes(app):
@@ -38,6 +39,7 @@ def _full_app_routes(app):
         return app.send_static_file('templates/main-site/index.html')
 
     app.register_blueprint(auth_api, url_prefix='/api/auth')
+    app.register_blueprint(settings_api, url_prefix='/api/settings')
 
     api_manager = APIManager(app, flask_sqlalchemy_db=db)
     register_hardware_api(api_manager)

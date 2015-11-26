@@ -17,15 +17,17 @@ class LdapError(Exception):
     pass
 
 class LdapServer(object):
-    AVAILABLE_SETTINGS = (
-        'server_uri',
-        'base_dn',
-        'users_dn',
-        'attribute_username',
-        'attribute_first_name',
-        'attribute_last_name',
-        'attribute_email',
-    )
+    AVAILABLE_SETTINGS = {
+        'server_scheme': True,
+        'server_address': True,
+        'server_port': False,
+        'base_dn': True,
+        'users_dn': True,
+        'attribute_username': True,
+        'attribute_first_name': True,
+        'attribute_last_name': True,
+        'attribute_email': True,
+    }
 
     def __init__(self, **kwargs):
         super(LdapServer, self).__init__()
@@ -35,8 +37,8 @@ class LdapServer(object):
         self.settings = Bunch(current_app.config.get('LDAP_SETTINGS', {}) or {})
         for key, value in kwargs.iteritems():
             self.settings[key] = value
-        for key in self.AVAILABLE_SETTINGS:
-            if key not in self.settings or not self.settings[key]:
+        for key, required in self.AVAILABLE_SETTINGS.iteritems():
+            if key not in self.settings or (required and not self.settings[key]):
                 raise TypeError('Missing LDAP configuration: {}'.format(key))
         self._conn = None
 
@@ -46,10 +48,16 @@ class LdapServer(object):
     def _user_dn(self, username):
         return ','.join((self._user_filter(username), self.settings.users_dn, self.settings.base_dn))
 
+    def _server_uri(self):
+        server_uri = self.settings.server_scheme + self.settings.server_address
+        if self.settings.server_port:
+            server_uri += ':' + self.settings.server_port
+        return server_uri
+
     def attempt_login(self, username, password):
         who = self._user_dn(username)
         try:
-            ldap_client = ldap.initialize(self.settings.server_uri)
+            ldap_client = ldap.initialize(self._server_uri())
             ldap_client.set_option(ldap.OPT_REFERRALS,0)
             ldap_client.simple_bind_s(who, password)
         except ldap.INVALID_CREDENTIALS:

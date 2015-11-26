@@ -9,30 +9,16 @@ angular.module('labsome.first_setup').config(function($locationProvider) {
 });
 
 angular.module('labsome.first_setup').controller('FirstSetupController', function($scope, $http, $uibModal, $timeout, viewPath) {
-    $scope.ldap_server = {
-        scheme: 'ldap://',
-        address: undefined,
-        port: undefined
-    };
-
     $scope.settings = {
         ldap: {
+            server_scheme: 'ldap://',
+            server_address: null,
+            server_port: null,
             users_dn: 'ou=users',
             attribute_username: 'cn',
             attribute_first_name: 'givenName',
             attribute_last_name: 'sn',
             attribute_email: 'mail'
-        }
-    };
-
-    $scope.eval_server_address = function() {
-        if ($scope.ldap_server.address) {
-            $scope.settings.ldap.server_uri = $scope.ldap_server.scheme + $scope.ldap_server.address;
-            if ($scope.ldap_server.port) {
-                $scope.settings.ldap.server_uri += ':' + $scope.ldap_server.port;
-            }
-        } else {
-            $scope.settings.ldap.server_uri = undefined;
         }
     };
 
