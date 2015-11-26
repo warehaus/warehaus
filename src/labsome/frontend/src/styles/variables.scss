@@ -11,7 +11,7 @@ $headings-font-weight:    400;
 $btn-font-weight:         100;
 $alert-link-font-weight:  300;
 $badge-font-weight:       200;
-$navbar-height:           75px;
+$navbar-height:           70px;
 
 //------------------
 // Labsome variables
@@ -52,3 +52,10 @@ $navbar-labsome-toggle-border-color:       #ddd;
 $labsome-dropdown-menu-heading-color:      #aaa;
 $labsome-dropdown-menu-heading-padding:    3px 20px; // Bootstrap value
 $labsome-dropdown-menu-heading-font-size:  .9rem;
+
+// Navigation pills
+
+$nav-link-padding:                         .5rem 1rem;
+$labsome-nav-pills-color:                  gray;
+$labsome-nav-pills-font-weight:            600;
+$labsome-nav-pills-padding:                1rem 1rem .5rem 1rem;
