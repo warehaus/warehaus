@@ -8,5 +8,6 @@ append head
   title(ng-controller='TitleController' ng-bind="title || 'Labsome'")
 
 append body
-  header(ng-include="'/static/templates/main-site/views/top-navbar.html'")
-  div(ui-view='')
+  header
+    include top-navbar
+  div(ui-view='main')

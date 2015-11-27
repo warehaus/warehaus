@@ -6,7 +6,14 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
     var admin = {
         url: '/admin',
         title: 'Admin',
-        templateUrl: viewPath('main-site/views/admin/index.html')
+        views: {
+            navbar: {
+                templateUrl: viewPath('main-site/views/admin/navbar.html')
+            },
+            main: {
+                templateUrl: viewPath('main-site/views/admin/index.html')
+            }
+        }
     };
 
     var admin_labs = {

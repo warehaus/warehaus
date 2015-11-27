@@ -6,8 +6,15 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
     var labs = {
         url: '/labs',
         title: 'Labs',
-        templateUrl: viewPath('main-site/views/labs/index.html'),
-        controller: 'LabsViewController'
+        views: {
+            navbar: {
+                templateUrl: viewPath('main-site/views/labs/lab-selector.html')
+            },
+            main: {
+                templateUrl: viewPath('main-site/views/labs/index.html'),
+                controller: 'LabsViewController'
+            }
+        }
     };
 
     $stateProvider.state('labs', labs);
