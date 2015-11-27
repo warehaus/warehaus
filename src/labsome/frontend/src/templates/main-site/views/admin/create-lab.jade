@@ -1,0 +1,16 @@
+mixin form
+  form(role='form' ng-submit='save()')
+    .form-group
+      label.control-label
+        | Lab Name
+      input.form-control(type='text' ng-model='lab.name' placeholder='Name' required='')
+    h4.text-left
+      button.btn.btn-success(ng-click='save()' ng-disabled='working')
+        | Create Lab
+
+mixin content
+  .panel.panel-default
+    .panel-body
+      +form
+
++content

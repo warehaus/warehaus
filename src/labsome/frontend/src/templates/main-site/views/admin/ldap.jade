@@ -1,6 +1,6 @@
 .panel.panel-default
   .panel-body
-    form(role='form', name='theForm', novalidate='', ng-controller='LDAPSettingsController')
+    form(role='form', name='theForm', novalidate='')
       include ldap-settings
       h4.text-center
         button.btn.btn-primary(ng-disabled='working || theForm.$invalid' ng-click='save_settings()')

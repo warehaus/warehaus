@@ -3,25 +3,29 @@
 angular.module('labsome.site.labs', []);
 
 angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
-    $stateProvider.state('labs', {
+    var labs = {
         url: '/labs',
         title: 'Labs',
         templateUrl: viewPath('main-site/views/labs/index.html'),
         controller: 'LabsViewController'
-    });
+    };
 
-    $stateProvider.state('labs.create', {
+    var labs_create = {
+        parent: labs,
         url: '/create',
         title: 'Create',
-        onEnter: function($uibModal, $state) {
+        onEnter: ['$uibModal', '$state', function($uibModal, $state) {
             $uibModal.open({
                 templateUrl: viewPath('main-site/views/labs/create-lab.html'),
                 controller: 'CreateLabController'
             }).result.finally(function() {
                 $state.go('^');
             });
-        }
-    });
+        }]
+    };
+
+    $stateProvider.state('labs', labs);
+    $stateProvider.state('labs.create', labs_create);
 });
 
 angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScope) {
@@ -46,6 +50,14 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
 
     self.create = function(lab) {
         return $http.post('/api/hardware/v1/labs', lab).then(_refresh);
+    };
+
+    self.rename = function(lab_id, new_name) {
+        return $http.put('/api/hardware/v1/labs/' + lab_id, {name: new_name}).then(_refresh);
+    };
+
+    self.delete = function(lab_id) {
+        return $http.delete('/api/hardware/v1/labs/' + lab_id).then(_refresh);
     };
 
     _refresh();
@@ -101,7 +113,7 @@ angular.module('labsome.site.labs').directive('labName', function(allLabs) {
 
     return {
         restrict: 'AE',
-        template: '{{ allLabs.byId[id].name }}',
+        template: ' {{ allLabs.byId[id].name }}',
         link: link,
         scope: {
             'id': '='
@@ -110,26 +122,6 @@ angular.module('labsome.site.labs').directive('labName', function(allLabs) {
 });
 
 angular.module('labsome.site.labs').controller('LabsViewController', function($scope, allLabs) {
-});
-
-angular.module('labsome.site.labs').controller('CreateLabController', function($scope, $uibModalInstance, allLabs) {
-    $scope.lab = {};
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('close');
-    };
-
-    $scope.save = function() {
-        $scope.working = true;
-        allLabs.create($scope.lab).then($uibModalInstance.close, function(res) {
-            $scope.working = false;
-            if (angular.isDefined(res.data.message)) {
-                $scope.error = res.data.message;
-            } else {
-                $scope.error = res.data;
-            }
-        });
-    };
 });
 
 angular.module('labsome.site.labs').run(function($rootScope, allLabs, curLab) {

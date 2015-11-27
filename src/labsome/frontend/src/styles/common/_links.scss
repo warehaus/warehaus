@@ -1,0 +1,15 @@
+.link {
+    cursor: pointer;
+}
+
+.text-link {
+  cursor: pointer;
+  color: $text-color;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: lighten($text-color, 30%);
+    text-decoration: none;
+  }
+}

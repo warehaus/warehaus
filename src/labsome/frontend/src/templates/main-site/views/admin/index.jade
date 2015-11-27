@@ -1,7 +1,17 @@
 mixin topics
   ul.nav.nav-pills.nav-stacked
+    li.heading
+      | Labs
     li(role='presentation' ui-sref-active='active')
-      a(ui-sref='.ldap')
+      a.link(ui-sref='.labs')
+        | All Labs
+    li(role='presentation' ui-sref-active='active')
+      a.link(ui-sref='.create-lab')
+        | Create a New Lab
+    li.heading
+      | Authentication
+    li(role='presentation' ui-sref-active='active')
+      a.link(ui-sref='.auth-ldap')
         | LDAP Settings
 
 mixin content
