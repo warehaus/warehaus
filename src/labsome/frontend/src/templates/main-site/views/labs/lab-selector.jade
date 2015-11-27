@@ -1,17 +1,17 @@
+mixin current_lab
+  i.fa.fa-fw.fa-building-o
+  lab-name(id='curLab.lab_id')
+
 mixin content
-  li.dropdown(ng-if='allLabs.ready && (allLabs.all.length > 0)')
+  li(ng-if='allLabs.ready && (allLabs.all.length > 0) && (curLab.all_except_current.length == 0)')
+    a
+      +current_lab
+  li.dropdown(ng-if='allLabs.ready && (allLabs.all.length > 0) && (curLab.all_except_current.length > 0)')
     a.link.dropdown-toggle(data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false')
-      i.fa.fa-fw.fa-building-o
-      | &nbsp;
-      lab-name(id='curLab.lab_id')
+      +current_lab
       i.fa.fa-fw.fa-angle-down
     ul.dropdown-menu
       li.heading
-        | Current Lab
-      li.text
-        lab-name(id='curLab.lab_id')
-      li.divider(ng-if='curLab.all_except_current.length > 0')
-      li.heading(ng-if='curLab.all_except_current.length > 0')
         | Other Labs
       li(ng-repeat='other_lab_id in curLab.all_except_current')
         a.link(ng-click='curLab.set(other_lab_id)')
