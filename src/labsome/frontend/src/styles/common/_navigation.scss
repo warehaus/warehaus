@@ -4,5 +4,9 @@ ul.nav-stacked {
     font-weight: $labsome-nav-pills-font-weight;
     text-transform: uppercase;
     padding: $labsome-nav-pills-padding;
+
+    &:first-child {
+      padding-top: 0;
+    }
   };
 }
