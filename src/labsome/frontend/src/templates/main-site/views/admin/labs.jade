@@ -1,27 +1,32 @@
+mixin lab_row
+  table
+    tr
+      td(style={'width': '100%', 'vertical-align': 'middle'})
+        .lh175
+          strong
+            i.fa.fa-building-o
+            | &nbsp;
+            lab-name(id='lab.id')
+        .lh175
+          | 0 Servers, 0 Clusters
+      td(style={'vertical-align': 'middle'})
+        a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+          i.icon-options-vertical(style='padding:0 1rem;')
+        ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
+          li.text-left
+            a(ui-sref='.rename({id: "{{ lab.id }}"})')
+              | Rename
+          li.divider
+          li.text-left
+            a(ui-sref='.delete({id: "{{ lab.id }}"})')
+              | Delete this lab
+
 mixin content
   .panel.panel-default
-    ul.list-group
+    ul.list-group(ng-if='allLabs.ready')
       li.list-group-item(ng-repeat='lab in allLabs.all')
-        table
-          tr
-            td(style={'width': '100%', 'vertical-align': 'middle'})
-              .lh175
-                strong
-                  i.fa.fa-building-o
-                  | &nbsp;
-                  lab-name(id='lab.id')
-              .lh175
-                | 0 Servers, 0 Clusters
-            td(style={'vertical-align': 'middle'})
-              a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
-                i.icon-options-vertical(style='padding:0 1rem;')
-              ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
-                li.text-left
-                  a(ui-sref='.rename({id: "{{ lab.id }}"})')
-                    | Rename
-                li.divider
-                li.text-left
-                  a(ui-sref='.delete({id: "{{ lab.id }}"})')
-                    | Delete this lab
+        +lab_row
+      li.list-group-item(ng-if='allLabs.all.length == 0')
+        include ../labs/no-labs
     
 +content

@@ -74,7 +74,7 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
         controller: 'LDAPSettingsController'
     };
 
-    $urlRouterProvider.when(admin.url, admin.url + admin_create_lab.url);
+    $urlRouterProvider.when(admin.url, admin.url + admin_labs.url);
 
     $stateProvider.state('admin', admin);
     $stateProvider.state('admin.labs', admin_labs);

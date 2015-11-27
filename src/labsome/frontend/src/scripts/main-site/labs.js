@@ -10,22 +10,7 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
         controller: 'LabsViewController'
     };
 
-    var labs_create = {
-        parent: labs,
-        url: '/create',
-        title: 'Create',
-        onEnter: ['$uibModal', '$state', function($uibModal, $state) {
-            $uibModal.open({
-                templateUrl: viewPath('main-site/views/labs/create-lab.html'),
-                controller: 'CreateLabController'
-            }).result.finally(function() {
-                $state.go('^');
-            });
-        }]
-    };
-
     $stateProvider.state('labs', labs);
-    $stateProvider.state('labs.create', labs_create);
 });
 
 angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScope) {

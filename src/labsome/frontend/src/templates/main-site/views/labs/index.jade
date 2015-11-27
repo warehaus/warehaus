@@ -5,19 +5,6 @@ mixin content
 mixin loading
   .text-center(style={'opacity': '0.5'})
     i.fa.fa-3x.fa-spin.fa-circle-o-notch
-  
-mixin no_labs
-  h3.text-center
-    i.icon-ghost.x6
-  p.text-center.x2
-    | No labs were added yet
-  p.text-center.x12(ng-if='curUser.is_admin')
-    | To add servers and other types of hardware, start by creating a lab.
-  p.text-center.x2(ng-if='curUser.is_admin')
-    button.btn.btn-lg.btn-success(ui-sref='labs.create')
-      | Create a New Lab
-  p.text-center.x12(ng-if='!curUser.is_admin')
-    | Your administrator is now creating your first lab, please come back soon!
 
 mixin main
   .container(ng-if='!allLabs.ready')
@@ -28,7 +15,7 @@ mixin main
       .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
         .panel.panel-default
           .panel-body
-            +no_labs
+            include no-labs
 
   .container(ng-if='allLabs.ready && (allLabs.all.length > 0)')
     .panel.panel-default
