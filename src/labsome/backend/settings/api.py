@@ -4,8 +4,8 @@ from flask.json import jsonify
 from flask.ext.security import login_required
 from flask.ext.security import roles_required
 from ..auth import roles
-from ..config import get_settings
-from ..config import edit_settings
+from .models import get_settings
+from .models import edit_settings
 
 settings_api = Blueprint('settings_api', __name__)
 

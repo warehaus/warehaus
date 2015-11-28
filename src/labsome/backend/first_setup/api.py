@@ -5,7 +5,7 @@ from flask import Blueprint
 from flask import request
 from flask import make_response
 from flask.json import jsonify
-from ..config import edit_settings
+from ..settings.models import edit_settings
 from ..auth import user_datastore
 from ..auth import roles
 from ..auth.ldap_login import LdapServer

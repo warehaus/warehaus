@@ -4,13 +4,15 @@ from flask import Flask
 from flask import redirect
 from flask.ext.security import login_required
 from flask.ext.restless import APIManager
-from . import config
+from .settings import database_config
+from .settings import full_config
+from .settings.models import get_settings
 from . import auth
 from .db import db
-from .api.first_setup import first_setup_api
-from .api.auth import auth_api
-from .api.settings import settings_api
-from .api.hardware import register_hardware_api
+from .first_setup.api import first_setup_api
+from .auth.api import auth_api
+from .settings.api import settings_api
+from .hardware.api import register_hardware_api
 
 def _first_setup_routes(app):
     @app.route('/')
@@ -53,7 +55,7 @@ def create_app(print_config=False):
     static_folder = pkg_resources.resource_filename('labsome', 'static')
     template_folder = os.path.join(static_folder, 'templates')
     app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
-    app.config.from_object(config.database_config())
+    app.config.from_object(database_config())
 
     if not app.config['SQLALCHEMY_DATABASE_URI']:
         @app.route('/')
@@ -64,13 +66,13 @@ def create_app(print_config=False):
         with app.app_context():
             db.init_app(app)
             db.create_all()
-            app.config.from_object(config.full_config())
+            app.config.from_object(full_config())
             auth.init_app(app)
 
             if print_config:
                 _print_config(app)
 
-            if not config.get_settings().is_initialized:
+            if not get_settings().is_initialized:
                 _first_setup_routes(app)
             else:
                 _full_app_routes(app)

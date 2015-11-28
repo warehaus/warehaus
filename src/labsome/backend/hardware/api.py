@@ -2,8 +2,8 @@ from flask import Blueprint
 from flask.json import jsonify
 from ..auth import user_required
 from ..auth import admin_required
-from ..hardware.models import Lab
-from ..hardware.models import Object
+from .models import Lab
+from .models import Object
 
 def register_hardware_api(api_manager):
     api_manager.create_api(Lab, methods=['GET', 'POST', 'PUT', 'DELETE'],
