@@ -6,11 +6,11 @@
     lab-name(id='lab_id')
 
 .modal-body
-  form(role='form' ng-submit='ok()' ng-init='result.new_name = allLabs.byId[lab_id].name')
+  form(role='form' ng-submit='ok()' ng-init='result.name = allLabs.byId[lab_id].name')
     .form-group
       label.control-label
         | Lab Name
-      input.form-control(type='text' ng-model='result.new_name' placeholder='Name' required='')
+      input.form-control(type='text' ng-model='result.name' placeholder='Name' required='')
 
 .modal-footer
   button.btn.btn-link(type='button' ng-click='cancel()')

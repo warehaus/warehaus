@@ -12,7 +12,7 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
             },
             main: {
                 templateUrl: viewPath('main-site/views/labs/index.html'),
-                controller: 'LabsViewController'
+                controller: 'CurrentLabViewController'
             }
         }
     };
@@ -44,8 +44,8 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
         return $http.post('/api/hardware/v1/labs', lab).then(_refresh);
     };
 
-    self.rename = function(lab_id, new_name) {
-        return $http.put('/api/hardware/v1/labs/' + lab_id, {name: new_name}).then(_refresh);
+    self.update = function(lab_id, update) {
+        return $http.put('/api/hardware/v1/labs/' + lab_id, update).then(_refresh);
     };
 
     self.delete = function(lab_id) {
@@ -60,6 +60,7 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
 angular.module('labsome.site.labs').factory('curLab', function($rootScope, allLabs) {
     var self = {
         lab_id: undefined,
+        raw: undefined,
         all_except_current: []
     };
 
@@ -75,25 +76,54 @@ angular.module('labsome.site.labs').factory('curLab', function($rootScope, allLa
 
     self.set = function(new_lab_id) {
         self.lab_id = new_lab_id;
+        if (angular.isDefined(self.lab_id)) {
+            self.raw = allLabs.byId[self.lab_id];
+        } else {
+            self.raw = undefined;
+        }
         _set_all_except_current();
         $rootScope.$broadcast('labsome.current_lab_changed');
     };
 
-    var _select_first_lab = function() {
+    var _get_first_lab = function() {
         if (allLabs.all.length > 0) {
-            self.set(allLabs.all[0].id);
-        } else {
-            self.set(undefined);
+            return allLabs.all[0].id;
         }
+        return undefined;
     };
 
     $rootScope.$on('labsome.labs_inventory_changed', function(event) {
+        var new_lab_id = self.lab_id;
         if (angular.isUndefined(self.lab_id) || angular.isUndefined(allLabs.byId[self.lab_id])) {
-            _select_first_lab();
-        } else {
-            _set_all_except_current();
+            new_lab_id = _get_first_lab();
+        }
+        self.set(new_lab_id);
+        _set_all_except_current();
+    });
+
+    return self;
+});
+
+angular.module('labsome.site.labs').factory('hardware', function($rootScope, $http) {
+    var self = {
+        allTypes: [],
+        byTypeId: {}
+    };
+
+    $http.get('/api/hardware/v1/types').then(function(res) {
+        self.allTypes = res.data.objects;
+        self.byTypeId = {};
+        for (var i = 0; i < self.allTypes.length; ++i) {
+            var type = self.allTypes[i];
+            self.byTypeId[type.id] = type;
         }
     });
+
+    self.type = function(type_id) {
+    };
+
+    self.object = function(object_id) {
+    };
 
     return self;
 });
@@ -113,10 +143,11 @@ angular.module('labsome.site.labs').directive('labName', function(allLabs) {
     };
 });
 
-angular.module('labsome.site.labs').controller('LabsViewController', function($scope, allLabs) {
+angular.module('labsome.site.labs').controller('CurrentLabViewController', function($scope, curLab) {
 });
 
-angular.module('labsome.site.labs').run(function($rootScope, allLabs, curLab) {
+angular.module('labsome.site.labs').run(function($rootScope, allLabs, curLab, hardware) {
     $rootScope.allLabs = allLabs;
     $rootScope.curLab = curLab;
+    $rootScope.hardware = hardware;
 });
