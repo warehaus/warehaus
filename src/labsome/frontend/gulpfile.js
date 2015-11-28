@@ -16,8 +16,8 @@ var dirs = {
 gulp.task('scripts', function() {
     gulp.src([dirs.scripts + '/**/*.module.js',
               dirs.scripts + '/**/*.js'])
-        .pipe(concat('labsome.js'))
         .pipe(ngAnnotate())
+        .pipe(concat('labsome.js'))
         .pipe(uglify())
         .pipe(gulp.dest('../static'))
     ;
