@@ -13,6 +13,7 @@ from .first_setup.api import first_setup_api
 from .auth.api import auth_api
 from .settings.api import settings_api
 from .hardware.api import register_hardware_api
+from .hardware.models import _ensure_basic_hardware_types
 
 def _first_setup_routes(app):
     @app.route('/')
@@ -45,6 +46,7 @@ def _full_app_routes(app):
 
     api_manager = APIManager(app, flask_sqlalchemy_db=db)
     register_hardware_api(api_manager)
+    _ensure_basic_hardware_types()
 
 def _print_config(app):
     print 'Configuration:'
