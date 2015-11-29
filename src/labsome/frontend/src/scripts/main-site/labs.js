@@ -144,6 +144,26 @@ angular.module('labsome.site.labs').directive('labName', function(allLabs) {
 });
 
 angular.module('labsome.site.labs').controller('CurrentLabViewController', function($scope, curLab) {
+    $scope.cur_type_id = undefined;
+
+    $scope.select_hardware_type = function(type_id) {
+        $scope.cur_type_id = type_id;
+    };
+
+    var _select_first_hardware_type = function() {
+        if (angular.isDefined(curLab.raw)) {
+            if (angular.isUndefined(curLab.raw.types[$scope.cur_type_id])) {
+                for (var type_id in curLab.raw.types) {
+                    $scope.select_hardware_type(type_id);
+                    break
+                }
+            }
+        }
+    };
+
+    _select_first_hardware_type();
+
+    $scope.$on('labsome.current_lab_changed', _select_first_hardware_type);
 });
 
 angular.module('labsome.site.labs').run(function($rootScope, allLabs, curLab, hardware) {

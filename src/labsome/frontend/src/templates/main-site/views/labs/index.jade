@@ -17,8 +17,8 @@ mixin current_lab_menu
   ul.nav.nav-pills.nav-stacked
     li.heading
       | Hardware
-    li(role='presentation' ng-repeat='(type_id, type_lab_config) in curLab.raw.types')
-      a.link
+    li(role='presentation' ng-repeat='(type_id, type_lab_config) in curLab.raw.types' ng-class="{active: type_id == cur_type_id}")
+      a.link(ng-click='select_hardware_type(type_id)')
         | {{ type_lab_config.name_plural | titlecase }}
 
 mixin current_lab_contents
