@@ -8,13 +8,10 @@ mixin lab_row
             | &nbsp;
             lab-name(id='lab.id')
         .lh175
-          span(ng-if='lab.types | isEmpty')
-            | This lab has no hardware types assigned.&nbsp;
-            a(ui-sref='.assign-types({id: "{{ lab.id }}"})')
-              | Assign now
-            |  &nbsp;or&nbsp;
-            a(ui-sref='help.lab-hardware-types')
-              | learn more
+          span(ng-if='labObjects.byLabId[lab.id] | isEmpty')
+            | This lab is empty
+          span(ng-if='labObjects.byLabId[lab.id] | isNotEmpty')
+            | {{ labObjects.byLabId[lab.id].length }} objects in this lab
       td(style={'vertical-align': 'middle'})
         a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
           i.icon-options-vertical(style='padding:0 1rem;')
@@ -22,9 +19,6 @@ mixin lab_row
           li.text-left
             a(ui-sref='.rename({id: "{{ lab.id }}"})')
               | Rename
-          li.text-left
-            a(ui-sref='.assign-types({id: "{{ lab.id }}"})')
-              | Assign Hardware Types
           li.divider
           li.text-left
             a(ui-sref='.delete({id: "{{ lab.id }}"})')

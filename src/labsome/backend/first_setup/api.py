@@ -6,10 +6,10 @@ from flask import request
 from flask import make_response
 from flask.json import jsonify
 from ..settings.models import edit_settings
-from ..auth import user_datastore
-from ..auth import roles
+from ..auth.models import User
 from ..auth.ldap_login import LdapServer
 from ..auth.ldap_login import LdapError
+from ..auth import roles
 
 first_setup_api = Blueprint('first_setup_api', __name__)
 
@@ -31,15 +31,14 @@ def configure():
     ldap_settings = request.json['ldap']
     admin_username = request.json['admin_username']
 
-    admin_user = user_datastore.get_user(admin_username)
+    admin_user = User.get_by_username(admin_username)
     if admin_user is None:
-        admin_user = user_datastore.create_user(username=admin_username)
-    user_datastore.add_role_to_user(admin_user, roles.Admin)
-    user_datastore.add_role_to_user(admin_user, roles.User)
+        admin_user = User(username=admin_username, roles=[roles.Admin, roles.User])
+    admin_user.save()
 
     with edit_settings() as settings:
-        settings.is_initialized = True
-        settings.LDAP_SETTINGS = ldap_settings
+        settings['is_initialized'] = True
+        settings['ldap_settings'] = ldap_settings
 
     return 'ok'
 

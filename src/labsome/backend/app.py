@@ -2,18 +2,22 @@ import os
 import pkg_resources
 from flask import Flask
 from flask import redirect
-from flask.ext.security import login_required
-from flask.ext.restless import APIManager
+from flask.ext.login import login_required
 from .settings import database_config
 from .settings import full_config
 from .settings.models import get_settings
 from . import auth
-from .db import db
+from . import db
 from .first_setup.api import first_setup_api
 from .auth.api import auth_api
 from .settings.api import settings_api
-from .hardware.api import register_hardware_api
-from .hardware.models import _ensure_basic_hardware_types
+from .hardware.api import hardware_api
+
+def _no_db_routes(app):
+    @app.route('/')
+    @app.route('/<path:path>')
+    def no_database(path=None):
+        return app.send_static_file('templates/first-setup/no-database.html')
 
 def _first_setup_routes(app):
     @app.route('/')
@@ -31,7 +35,6 @@ def _first_setup_routes(app):
 def _full_app_routes(app):
     @app.route('/')
     @app.route('/site')
-    @login_required
     def site_redirect():
         return redirect('/site/')
 
@@ -43,10 +46,7 @@ def _full_app_routes(app):
 
     app.register_blueprint(auth_api, url_prefix='/api/auth')
     app.register_blueprint(settings_api, url_prefix='/api/settings')
-
-    api_manager = APIManager(app, flask_sqlalchemy_db=db)
-    register_hardware_api(api_manager)
-    _ensure_basic_hardware_types()
+    app.register_blueprint(hardware_api, url_prefix='/api/hardware')
 
 def _print_config(app):
     print 'Configuration:'
@@ -59,22 +59,18 @@ def create_app(print_config=False):
     app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
     app.config.from_object(database_config())
 
-    if not app.config['SQLALCHEMY_DATABASE_URI']:
-        @app.route('/')
-        @app.route('/<path:path>')
-        def no_database(path=None):
-            return app.send_static_file('templates/first-setup/no-database.html')
+    if not app.config['RETHINKDB_HOST']:
+        _no_db_routes(app)
     else:
         with app.app_context():
             db.init_app(app)
-            db.create_all()
             app.config.from_object(full_config())
             auth.init_app(app)
 
             if print_config:
                 _print_config(app)
 
-            if not get_settings().is_initialized:
+            if not get_settings()['is_initialized']:
                 _first_setup_routes(app)
             else:
                 _full_app_routes(app)

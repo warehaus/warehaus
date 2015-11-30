@@ -1,23 +1,23 @@
 import os
 from contextlib import contextmanager
-from sqlalchemy_utils import JSONType
 from ..db import db
 
-class Settings(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    is_initialized = db.Column(db.Boolean, default=False)
-    SECRET_KEY = db.Column(db.String(256), default=lambda: os.urandom(48).encode('hex'))
-    SECURITY_PASSWORD_SALT = db.Column(db.String(256), default=lambda: os.urandom(64).encode('hex'))
-    LDAP_SETTINGS = db.Column(JSONType)
+Settings = db.define_table('settings')
 
 SETTINGS_ID = 1 # Allow only one Settings row
 
+def _new_settings():
+    return dict(
+        id = SETTINGS_ID,
+        is_initialized = False,
+        secret_key = os.urandom(48).encode('hex'),
+    )
+
 def get_settings():
-    settings = Settings.query.get(SETTINGS_ID)
+    settings = Settings.get(SETTINGS_ID).run(db.conn)
     if settings is None:
-        settings = Settings()
-        db.session.add(settings)
-        db.session.commit()
+        settings = _new_settings()
+        Settings.insert(settings).run(db.conn)
     return settings
 
 @contextmanager
@@ -28,5 +28,4 @@ def edit_settings():
     except:
         raise
     else:
-        db.session.add(settings)
-        db.session.commit()
+        Settings.update(settings).run(db.conn)

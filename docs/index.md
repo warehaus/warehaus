@@ -16,28 +16,25 @@ Labsome might be what you need.
 
 ## Installation
 
-Labsome is distributed as a Docker container and uses the PostgreSQL database for storage.
+Labsome is distributed as a Docker container and uses the RethinkDB database for storage.
 
 ### Setting Up the Database
 
-If you're setting up a new PostgreSQL instance, the simplest thing you can do is run it in a Docker container. You can then link that container to Labsome:
+If you're setting up a new RethinkDB instance, the simplest thing you can do is run it in a Docker container. You can then link that container to Labsome:
 
-    docker run --env POSTGRES_USER=labsome --env POSTGRES_PASSWORD=labsome --name postgres postgres
+    docker run --name rethinkdb rethinkdb
 
-This command line creates a new PostgreSQL container with a `labsome` user and database.
-These values are used by default in Labsome's container. See below on how to change those default.
+This command line creates a new RethinkDB container. Note that this is great for testing and small deployments -- see the full documentation for this RethinkDB image in [this Docker Hub page](https://hub.docker.com/_/rethinkdb/).
 
-Also, see more options for the PostgreSQL container in [this page](https://hub.docker.com/_/postgres/).
+You can also directly connect to an existing RethinkDB instance, see below for "environment variables".
 
 ### Starting Labsome
 
-    docker run -p 5000:5000 --link postgres labsome/labsome
+    docker run -p 5000:5000 --link rethinkdb labsome/labsome
 
 Extra options you can pass as environment variables:
 
-* `POSTGRES_PORT_5432_TCP_ADDR`: sets the PostgreSQL hostname.
-* `POSTGRES_PORT_5432_TCP_PORT`: the PostgreSQL port.
-* `POSTGRES_USER`: Database username. *default: `labsome`*
-* `POSTGRES_PASSWORD`: Database password. *default: `labsome`*
+* `RETHINKDB_PORT_28015_TCP_ADDR`: sets the RethinkDB hostname.
+* `RETHINKDB_PORT_28015_TCP_PORT`: the RethinkDB port.
+* `RETHINKDB_AUTH`: sets the authentication string. *default: empty*
 * `POSTGRES_DB_NAME`: Database name. *default: `labsome`*
-* `POSTGRES_DATABASE_URI`: An SQLAlchemy-compatible database connection string. Overrides all the variables above.

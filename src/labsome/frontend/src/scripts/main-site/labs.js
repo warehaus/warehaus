@@ -104,26 +104,31 @@ angular.module('labsome.site.labs').factory('curLab', function($rootScope, allLa
     return self;
 });
 
-angular.module('labsome.site.labs').factory('hardware', function($rootScope, $http) {
+angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $http) {
     var self = {
-        allTypes: [],
-        byTypeId: {}
+        objects: [],
+        byLabId: {},
+        byObjectId: {}
     };
 
-    $http.get('/api/hardware/v1/types').then(function(res) {
-        self.allTypes = res.data.objects;
-        self.byTypeId = {};
-        for (var i = 0; i < self.allTypes.length; ++i) {
-            var type = self.allTypes[i];
-            self.byTypeId[type.id] = type;
+    $http.get('/api/hardware/v1/objects').then(function(res) {
+        self.objects = res.data.objects;
+        self.byLabId = {};
+        self.byObjectId = {};
+        for (var i = 0; i < self.objects.length; ++i) {
+            var obj = self.objects[i];
+            if (angular.isDefined(obj.lab_id)) {
+                if (angular.isUndefined(self.byLabId[obj.lab_id])) {
+                    self.byLabId[obj.lab_id] = [];
+                }
+                self.byLabId[obj.lab_id].push(obj);
+            }
+            if (angular.isUndefined(self.byObjectId[obj.id])) {
+                self.byObjectId[obj.id] = [];
+            }
+            self.byObjectId[obj.id].push(obj);
         }
     });
-
-    self.type = function(type_id) {
-    };
-
-    self.object = function(object_id) {
-    };
 
     return self;
 });
@@ -144,30 +149,12 @@ angular.module('labsome.site.labs').directive('labName', function(allLabs) {
 });
 
 angular.module('labsome.site.labs').controller('CurrentLabViewController', function($scope, curLab) {
-    $scope.cur_type_id = undefined;
-
-    $scope.select_hardware_type = function(type_id) {
-        $scope.cur_type_id = type_id;
-    };
-
-    var _select_first_hardware_type = function() {
-        if (angular.isDefined(curLab.raw)) {
-            if (angular.isUndefined(curLab.raw.types[$scope.cur_type_id])) {
-                for (var type_id in curLab.raw.types) {
-                    $scope.select_hardware_type(type_id);
-                    break
-                }
-            }
-        }
-    };
-
-    _select_first_hardware_type();
-
-    $scope.$on('labsome.current_lab_changed', _select_first_hardware_type);
+    $scope.$on('labsome.current_lab_changed', function() {
+    });
 });
 
-angular.module('labsome.site.labs').run(function($rootScope, allLabs, curLab, hardware) {
+angular.module('labsome.site.labs').run(function($rootScope, allLabs, curLab, labObjects) {
     $rootScope.allLabs = allLabs;
     $rootScope.curLab = curLab;
-    $rootScope.hardware = hardware;
+    $rootScope.labObjects = labObjects;
 });

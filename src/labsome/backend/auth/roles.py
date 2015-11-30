@@ -1,29 +1,30 @@
 import httplib
+from functools import wraps
 from bunch import Bunch
-from flask.ext.restless import ProcessingException
-from flask.ext.security import current_user
-from flask_principal import RoleNeed, Permission
+from flask import abort as flask_abort
+from flask.ext.login import current_user
 
 roles = Bunch(
     Admin = 'admin',
     User = 'user',
 )
 
-def _ensure_role(*role_names):
-    if not current_user.is_authenticated():
-        raise ProcessingException(description='Authentication required', code=httplib.UNAUTHORIZED)
-    perm = Permission(*[RoleNeed(role_name) for role_name in role_names])
-    if not perm.can():
-        raise ProcessingException(description='Not allowed', code=httplib.FORBIDDEN)
+def _require_roles(*role_names):
+    if not current_user.is_authenticated:
+        flask_abort(httplib.UNAUTHORIZED)
+    if set(role_names) - set(current_user.roles):
+        flask_abort(httplib.FORBIDDEN)
 
-def admin_required(*args, **kwargs):
-    '''A Flask-Restless preprocessor that ensures an admin is about
-    to use an API call.
-    '''
-    return _ensure_role(roles.Admin)
+def admin_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        _require_roles(roles.Admin)
+        return func(*args, **kwargs)
+    return wrapper
 
-def user_required(*args, **kwargs):
-    '''A Flask-Restless preprocessor that ensures a regular user is
-    about to use an API call.
-    '''
-    return _ensure_role(roles.User)
+def user_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        _require_roles(roles.User)
+        return func(*args, **kwargs)
+    return wrapper

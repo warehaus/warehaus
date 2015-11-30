@@ -1,0 +1,2 @@
+class RethinkDBError(Exception):
+    pass

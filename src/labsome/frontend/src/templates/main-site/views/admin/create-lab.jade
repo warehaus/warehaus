@@ -1,11 +1,11 @@
 mixin form
-  form(role='form' ng-submit='save()')
+  form(name='createLab' role='form' ng-submit='save()')
     .form-group
       label.control-label
         | Lab Name
-      input.form-control(type='text' ng-model='lab.name' placeholder='Name' required='')
+      input.form-control(type='text' ng-model='lab.name' placeholder='Name' required='' focus-me='true')
     h4.text-left
-      button.btn.btn-success(ng-click='save()' ng-disabled='working')
+      button.btn.btn-success(ng-click='save()' ng-disabled='working || createLab.$invalid')
         | Create Lab
 
 mixin content

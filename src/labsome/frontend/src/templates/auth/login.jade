@@ -5,7 +5,6 @@ append head
     | Login - Labsome
 
 append body
-  | {% from "security/_macros.html" import render_field_with_errors, render_field %}
   .container
     .row
       .col-md-offset-3.col-md-6.col-sm-offset-2.col-sm-8
@@ -14,17 +13,17 @@ append body
 
 mixin flash_messages
   | {%- with messages = get_flashed_messages(with_categories=true) -%}
-  | {% if messages or login_user_form.username.errors or login_user_form.password.errors %}
+  | {% if messages or form.username.errors or form.password.errors %}
   ul.list-group
     | {% for category, message in messages %}
     li.list-group-item.list-group-item-warning
       | {{ message }}
     | {% endfor %}
-    | {% for error in login_user_form.username.errors %}
+    | {% for error in form.username.errors %}
     li.list-group-item.list-group-item-warning
       | {{ error }}
     | {% endfor %}
-    | {% for error in login_user_form.password.errors %}
+    | {% for error in form.password.errors %}
     li.list-group-item.list-group-item-warning
       | {{ error }}
     | {% endfor %}
@@ -41,7 +40,7 @@ mixin login_box
           input.input-lg.form-control(type='text' name='username' placeholder='Username' required='')
         .form-group
           input.input-lg.form-control(type='password' name='password' placeholder='Password' required='')
-        | {{ login_user_form.hidden_tag() }}
+        | {{ form.hidden_tag() }}
         .form-group
           button.btn.btn-block.btn-lg.btn-primary(type='submit')
             | Sign In
