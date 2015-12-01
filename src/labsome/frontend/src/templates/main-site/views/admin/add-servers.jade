@@ -1,0 +1,46 @@
+.modal-header
+  button.close(type='button' data-dismiss='modal' aria-label='Close' ng-click='close()')
+    span(aria-hidden='true') &times;
+  h4.modal-title
+    | Add Servers to
+    lab-name(id='lab_id')
+
+.modal-body
+  p
+    | Labsome manages servers by running a small agent on then.
+  p
+    | This agent stays connected to Labsome so it knows the server is online, plus
+    | it sends diagnostic information once in a while to make sure the server is
+    | functioning properly.
+  .alert.alert-info
+    p
+      strong
+        i.fa.fa-info-circle
+        | &nbsp;Each lab has a different agent
+    p
+      | Labsome generates different agent code for each lab. Make sure to download
+      | the agent for each lab separarely.
+  h3
+    | 1. Download the agent code
+  p
+    | Click this button to download the agent code:
+  h4.text-center
+    a.btn.btn-lg.btn-success(ng-href='{{ base_url }}/api/servers/v1/code/agent.py')
+      | Download
+      strong
+        lab-name(id='lab_id')
+      |  Agent
+  p
+    | Alternatively, you can run this line to download the agent directly from your servers:
+  pre
+    | curl {{ base_url }}/api/servers/v1/code/agent.py
+  h3
+    | 2. Run as root
+  p
+    | Run the agent as the root user, and make sure the agent also starts on boot.
+  p
+    | Once you run the agent, your server will immediately show up in Labsome.
+
+.modal-footer
+  button.btn.btn-default(type='button' ng-click='close()')
+    | Got It

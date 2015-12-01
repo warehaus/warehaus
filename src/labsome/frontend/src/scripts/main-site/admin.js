@@ -48,6 +48,13 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
         onEnter: _update('main-site/views/admin/rename-lab.html', 'LabModal')
     };
 
+    var admin_labs_add_servers = {
+        parent: admin_labs,
+        url: '/add-servers/:id',
+        title: 'Add Servers',
+        onEnter: _update('main-site/views/admin/add-servers.html', 'AddServersController')
+    };
+
     var admin_labs_delete = {
         parent: admin_labs,
         url: '/delete/:id',
@@ -90,6 +97,7 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
     $stateProvider.state('admin', admin);
     $stateProvider.state('admin.labs', admin_labs);
     $stateProvider.state('admin.labs.rename', admin_labs_rename);
+    $stateProvider.state('admin.labs.add-servers', admin_labs_add_servers);
     $stateProvider.state('admin.labs.delete', admin_labs_delete);
     $stateProvider.state('admin.create-lab', admin_create_lab);
     $stateProvider.state('admin.auth-ldap', admin_auth_ldap);
@@ -123,6 +131,20 @@ angular.module('labsome.site.admin').controller('CreateLabController', function(
                 $scope.error = res.data;
             }
         });
+    };
+});
+
+angular.module('labsome.site.admin').controller('AddServersController', function($scope, $state, $location, $uibModalInstance, lab_id) {
+    $scope.lab_id = lab_id;
+
+    $scope.base_url = $location.protocol() + '://' + $location.host();
+    if ((($location.protocol() == 'http') && ($location.port() != 80)) ||
+        (($location.protocol() == 'https') && ($location.port() != 443))) {
+        $scope.base_url += ':' + $location.port();
+    }
+
+    $scope.close = function() {
+        $uibModalInstance.dismiss('cancel');
     };
 });
 

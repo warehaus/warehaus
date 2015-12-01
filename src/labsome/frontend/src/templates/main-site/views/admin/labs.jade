@@ -9,7 +9,10 @@ mixin lab_row
             lab-name(id='lab.id')
         .lh175
           span(ng-if='labObjects.byLabId[lab.id] | isEmpty')
-            | This lab is empty
+            | This lab is empty.&nbsp;
+            a.link(ui-sref='.add-servers({id: "{{ lab.id }}"})')
+              i.fa.fa-fw.fa-info-circle
+              | Click here to start adding servers
           span(ng-if='labObjects.byLabId[lab.id] | isNotEmpty')
             | {{ labObjects.byLabId[lab.id].length }} objects in this lab
       td(style={'vertical-align': 'middle'})
@@ -19,6 +22,9 @@ mixin lab_row
           li.text-left
             a(ui-sref='.rename({id: "{{ lab.id }}"})')
               | Rename
+          li.text-left
+            a(ui-sref='.add-servers({id: "{{ lab.id }}"})')
+              | Add Servers
           li.divider
           li.text-left
             a(ui-sref='.delete({id: "{{ lab.id }}"})')
