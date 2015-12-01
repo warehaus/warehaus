@@ -2,6 +2,7 @@
 
 angular.module('labsome.common', [
     'ui.router',
+    'angular.filter',
     'labsome.common.view_helpers'
 ]);
 

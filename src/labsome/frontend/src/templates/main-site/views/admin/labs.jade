@@ -27,7 +27,7 @@ mixin lab_row
 mixin content
   .panel.panel-default
     ul.list-group(ng-if='allLabs.ready')
-      li.list-group-item(ng-repeat='lab in allLabs.all')
+      li.list-group-item(ng-repeat='lab in allLabs.all | orderBy:"name"')
         +lab_row
       li.list-group-item(ng-if='allLabs.all.length == 0')
         include ../labs/no-labs

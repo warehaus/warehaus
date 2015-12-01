@@ -1,0 +1,46 @@
+$labsome-status-dot-radius:                13px;
+$labsome-status-dot-offset-x:              6px;
+$labsome-status-dot-offset-y:              9px;
+$labsome-status-dot-color-primary-bg:      $brand-primary;
+$labsome-status-dot-color-success-bg:      $brand-success;
+$labsome-status-dot-color-info-bg:         $brand-info;
+$labsome-status-dot-color-warning-bg:      $brand-warning;
+$labsome-status-dot-color-danger-bg:       $brand-danger;
+
+.status-dot {
+   position:relative;
+}
+
+.status-dot:after {
+   position: absolute;
+   content: ' ';
+   font-size: .5rem;
+   right: $labsome-status-dot-offset-x;
+   bottom: $labsome-status-dot-offset-y;
+   color: white;
+   width: $labsome-status-dot-radius;
+   height: $labsome-status-dot-radius;
+   text-align: center;
+   line-height: $labsome-status-dot-radius;
+   border-radius: 50%;
+}
+
+.status-dot-primary:after {
+  background-color: $labsome-status-dot-color-primary-bg;
+}
+
+.status-dot-success:after {
+  background-color: $labsome-status-dot-color-success-bg;
+}
+
+.status-dot-info:after {
+  background-color: $labsome-status-dot-color-info-bg;
+}
+
+.status-dot-warning:after {
+  background-color: $labsome-status-dot-color-warning-bg;
+}
+
+.status-dot-danger:after {
+  background-color: $labsome-status-dot-color-danger-bg;
+}

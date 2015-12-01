@@ -17,15 +17,29 @@ mixin current_lab_menu
   ul.nav.nav-pills.nav-stacked
     li.heading
       | Hardware
-    li(role='presentation' ng-repeat='(type_id, type_lab_config) in curLab.raw.types' ng-class="{active: type_id == cur_type_id}")
-      a.link(ng-click='select_hardware_type(type_id)')
-        | {{ type_lab_config.name_plural | titlecase }}
+    li(role='presentation' ng-repeat='(type, objects) in curLab.objectsByType' ng-class='{active: "selected_type == type"}')
+      a.link(ng-click='select_type(type)')
+        | {{ type | titlecase }}s
+        span.badge.pull-right
+          | {{ objects.length }}
 
-mixin current_lab_contents
-  span
+mixin lab_objects
+  .panel.panel-default
+    ul.list-group
+      a.link.list-group-item(ng-repeat='object in curLab.objectsByType[selected_type] | orderBy:"name"')
+        table
+          tr
+            td.x3(style={'vertical-align': 'middle'})
+              .status-dot.status-dot-success
+                i.fa.fa-fw.fa-hdd-o
+            td(style={'width': '100%', 'vertical-align': 'middle'})
+              .x15.lh175
+                | {{ object.name | uppercase }}
+              .x08
+                | {{ object.tagline || object.type | titlecase }} &ndash; Last heartbeat {{ moment(object.last_heartbeat).fromNow() }}
 
 mixin current_lab
-  .row(ng-if='curLab.raw.types | isEmpty')
+  .row(ng-if='curLab.objectsByType | isEmpty')
     .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
       .panel.panel-default
         .panel-body
@@ -35,13 +49,11 @@ mixin current_lab
             | This lab is still empty
           p.text-center.x12
             | Please wait you administrator is adding new hardware
-  .row(ng-if='curLab.raw.types | isNotEmpty')
+  .row(ng-if='curLab.objectsByType | isNotEmpty')
     .col-sm-3
       +current_lab_menu
     .col-sm-9
-      .panel.panel-default
-        .panel-body
-          +current_lab_contents
+      +lab_objects
 
 mixin main
   .container(ng-if='!allLabs.ready')
