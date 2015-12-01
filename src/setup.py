@@ -14,6 +14,9 @@ setup(
 
     packages = find_packages(),
     include_package_data = True,
+    package_data = {
+        '': ['*.txt'],
+    },
 
     install_requires = [
         'Flask == 0.10.1',
@@ -22,6 +25,7 @@ setup(
         'Flask-RethinkDB == 0.2',
         'Flask-WTF == 0.12',
         'bunch == 1.0.1',
+        'pytz',
         'rethinkdb >= 2.2.0',
         'setuptools',
     ],

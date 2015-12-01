@@ -1,0 +1,48 @@
+import os
+import re
+import json
+from urllib2 import Request
+from urllib2 import urlopen
+from urlparse import urljoin
+from commands import getstatusoutput
+from collections import defaultdict
+
+def run(cmdline, expected_status=0):
+    status, output = getstatusoutput(cmdline)
+    if status != expected_status:
+        raise RuntimeError('Error while running {!r}: {}'.format(cmdline, output))
+    return output
+
+def collect_net_info():
+    net_info = defaultdict(dict)
+    for iface in run('ip --oneline link').splitlines():
+        mo = re.match(r'^\d:\s+(?P<iface_name>\w+):.*link/(?P<iface_type>\w+)\s+(?P<iface_addr>[\w:]+).*$', iface)
+        if mo is not None:
+            iface_info = mo.groupdict()
+            if iface_info['iface_type'] == 'loopback':
+                continue
+            net_info[iface_info['iface_name']]['mac'] = iface_info['iface_addr']
+    for iface in run('ip --oneline addr').splitlines():
+        _, iface_name, iface_info = iface.split(' ', 2)
+        if iface_name == 'lo':
+            continue
+        iface_info = iface_info.strip().split()
+        if iface_info[0] == 'inet':
+            net_info[iface_name].setdefault('inet', []).append(iface_info[1])
+        if iface_info[0] == 'inet6':
+            net_info[iface_name].setdefault('inet6', []).append(iface_info[1])
+    return net_info
+
+def collect_info():
+    return dict(
+        name = open('/proc/sys/kernel/hostname').read().strip(),
+        net = collect_net_info(),
+    )
+
+def send(data):
+    send_url = urljoin(LABSOME_URL, '/api/servers/v1/heartbeat')
+    request = Request(send_url, json.dumps(data), {'Content-Type': 'application/json'})
+    response = urlopen(request).read()
+
+info = collect_info()
+send(info)
