@@ -33,7 +33,7 @@ HEARTBEAT_MANDATORY_FIELDS = ('name', 'lab_id')
 HEARTBEAT_FORBIDDEN_FIELDS = ('id', 'type_id', 'status', 'last_heartbeat')
 
 def get_server_type():
-    server_types = tuple(Type.filter({'name': 'server'})) # XXX index
+    server_types = tuple(Type.get_all(['server'], index='name'))
     if len(server_types) == 0:
         server_type = Type(name='server')
         server_type.save()
@@ -52,7 +52,7 @@ def heartbeat_call():
     if Lab.get(lab_id) is None:
         flask_abort(httplib.NOT_FOUND, 'No lab with id={!r}'.format(lab_id))
     server_type = get_server_type()
-    objs = tuple(Object.filter({'name': info['name'], 'type_id': server_type.id, 'lab_id': lab_id}))
+    objs = tuple(Object.get_all([info['name'], server_type.id, lab_id], index='name_type_lab'))
     if len(objs) == 0:
         obj = Object(**info)
         obj.type_id = server_type.id

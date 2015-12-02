@@ -19,6 +19,7 @@ class ModelType(type):
 
 class Model(Bunch):
     __metaclass__ = ModelType
+    _indexes = {}
 
     @classmethod
     def get(cls, *args, **kwargs):
@@ -75,14 +76,30 @@ def _create_db():
     except ReqlRuntimeError as error:
         logger.debug('While running db_create: {}'.format(error))
 
-def _create_tables():
-    for model in Model.__subclasses__():
+def _ensure_indexes(model):
+    for index_name, field_names in model._indexes.iteritems():
+        logger.debug('Creating index {!r} on table {!r}'.format(index_name, model._table_name))
         try:
-            logger.debug('Creating table: {}'.format(model._table_name))
-            r.table_create(model._table_name).run(db.conn)
+            model._table.index_create(index_name, list(r.row[field_name] for field_name in field_names)).run(db.conn)
         except ReqlOpFailedError as error:
-            logger.debug('While running table_create: {}'.format(error))
+            logger.debug('While creating index: {}'.format(error))
+
+def _wait_for_indexes(model):
+    for index_name in model._indexes:
+        logger.debug('Waiting for index {!r} on table {!r}'.format(index_name, model._table))
+        model._table.index_wait(index_name).run(db.conn)
+
+def _create_table(model):
+    try:
+        logger.debug('Creating table: {}'.format(model._table_name))
+        r.table_create(model._table_name).run(db.conn)
+    except ReqlOpFailedError as error:
+        logger.debug('While running table_create: {}'.format(error))
 
 def ensure_models():
     _create_db()
-    _create_tables()
+    for model in Model.__subclasses__():
+        _create_table(model)
+        _ensure_indexes(model)
+    for model in Model.__subclasses__():
+        _wait_for_indexes(model)

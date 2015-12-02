@@ -2,9 +2,13 @@ from flask.ext.login import UserMixin
 from ..db import Model
 
 class User(Model, UserMixin):
+    _indexes = {
+        'username': ['username'],
+    }
+
     @classmethod
     def get_by_username(cls, username):
-        docs = tuple(cls.filter({'username': username}))
+        docs = tuple(cls.get_all([username], index='username'))
         if not docs:
             return None
         if len(docs) != 1:
