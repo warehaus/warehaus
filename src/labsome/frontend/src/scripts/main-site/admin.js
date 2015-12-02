@@ -11,7 +11,8 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
                 templateUrl: viewPath('main-site/views/admin/navbar.html')
             },
             main: {
-                templateUrl: viewPath('main-site/views/admin/index.html')
+                templateUrl: viewPath('main-site/views/admin/index.html'),
+                controller: 'AdminController'
             }
         }
     };
@@ -24,7 +25,11 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
     };
 
     var _update = function(options) {
-        return ['$uibModal', '$state', '$stateParams', 'allLabs', function($uibModal, $state, $stateParams, allLabs) {
+        return ['$uibModal', '$state', '$stateParams', 'curUser', 'allLabs', function($uibModal, $state, $stateParams, curUser, allLabs) {
+            if (!curUser.is_admin) {
+                $state.go('admin');
+                return;
+            }
             $uibModal.open({
                 templateUrl: viewPath(options.templateUrl),
                 controller: options.controller,
@@ -67,7 +72,11 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
         parent: admin_labs,
         url: '/delete/:id',
         title: 'Delete',
-        onEnter: ['$uibModal', '$state', '$stateParams', 'allLabs', function($uibModal, $state, $stateParams, allLabs) {
+        onEnter: ['$uibModal', '$state', '$stateParams', 'curUser', 'allLabs', function($uibModal, $state, $stateParams, curUser, allLabs) {
+            if (!curUser.is_admin) {
+                $state.go('admin');
+                return;
+            }
             $uibModal.open({
                 templateUrl: viewPath('main-site/views/admin/delete-lab.html'),
                 controller: 'LabModal',
@@ -109,6 +118,14 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
     $stateProvider.state('admin.labs.delete', admin_labs_delete);
     $stateProvider.state('admin.create-lab', admin_create_lab);
     $stateProvider.state('admin.auth-ldap', admin_auth_ldap);
+});
+
+angular.module('labsome.site.admin').controller('AdminController', function($scope, $location, curUser) {
+    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+        if (toState.parent && !curUser.is_admin) {
+            $location.url('/admin');
+        }
+    });
 });
 
 angular.module('labsome.site.admin').controller('LabModal', function($scope, $uibModalInstance, lab_id) {

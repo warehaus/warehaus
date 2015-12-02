@@ -14,12 +14,33 @@ mixin topics
       a.link(ui-sref='.auth-ldap')
         | LDAP Settings
 
+mixin forbidden
+  h3.text-center
+    i.icon-directions.x6
+  p.text-center.x2
+    | It seems like you're lost
+  .row
+    .col-sm-6
+      h4
+        button.btn.btn-lg.btn-block.btn-success(ui-sref='labs')
+          | Yes, take me somewhere safe
+    .col-sm-6
+      h4
+        button.btn.btn-lg.btn-block.btn-default(ui-sref='labs')
+          | No, I should be here
+
 mixin content
-  .container
+  .container(ng-if='curUser.is_admin')
     .row
       .col-sm-3
         +topics
       .col-sm-9
         div(ui-view='')
+  .container(ng-if='!curUser.is_admin')
+    .row
+      .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
+        .panel.panel-default
+          .panel-body
+            +forbidden
 
 +content
