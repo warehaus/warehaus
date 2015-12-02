@@ -1,12 +1,20 @@
+import rethinkdb as r
+from logging import getLogger
 from bunch import Bunch
-from .extension import db
+from flask import current_app
+from rethinkdb import ReqlRuntimeError
+from rethinkdb import ReqlOpFailedError
+from .db import db
 from .exceptions import RethinkDBError
+
+logger = getLogger(__name__)
 
 class ModelType(type):
     def __new__(mcs, name, bases, attrs):
         if '_table' in attrs:
             raise TypeError('Derived `Model` classes should not provide a `_table` attribute of their own')
-        attrs['_table'] = db.define_table(name.lower())
+        attrs['_table_name'] = name.lower()
+        attrs['_table'] = r.table(attrs['_table_name'])
         return type.__new__(mcs, name, bases, attrs)
 
 class Model(Bunch):
@@ -58,3 +66,23 @@ class Model(Bunch):
         if result['deleted'] != 1:
             raise RethinkDBError('Expected 1 deletion, instead: {!r}'.format(result))
         del self.id
+
+def _create_db():
+    db_name = db.db or current_app.config['RETHINKDB_DB']
+    try:
+        logger.debug('Creating database: {}'.format(db_name))
+        r.db_create(db_name).run(db.conn)
+    except ReqlRuntimeError as error:
+        logger.debug('While running db_create: {}'.format(error))
+
+def _create_tables():
+    for model in Model.__subclasses__():
+        try:
+            logger.debug('Creating table: {}'.format(model._table_name))
+            r.table_create(model._table_name).run(db.conn)
+        except ReqlOpFailedError as error:
+            logger.debug('While running table_create: {}'.format(error))
+
+def ensure_models():
+    _create_db()
+    _create_tables()
