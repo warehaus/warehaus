@@ -8,12 +8,21 @@ mixin lab_row
             | &nbsp;
             lab-name(id='lab.id')
         .lh175
-          span(ng-if='labObjects.byLabId[lab.id] | isEmpty')
-            | This lab is empty.&nbsp;
+          mild.text-danger(ng-if='lab.active_types | isEmpty')
+            i.fa.fa-warning
+            | &nbsp;
+            | No hardware type is associated with this lab.
+            | &nbsp;
+            a.link(ui-sref='.set-hardware-types({id: "{{ lab.id }}"})')
+              | Click here to fix this
+          mild.text-danger(ng-if='(lab.active_types | isNotEmpty) && (labObjects.byLabId[lab.id] | isEmpty)')
+            i.fa.fa-warning
+            | &nbsp;
+            | This lab is empty.
+            | &nbsp;
             a.link(ui-sref='.add-servers({id: "{{ lab.id }}"})')
-              i.fa.fa-fw.fa-info-circle
               | Click here to start adding servers
-          span(ng-if='labObjects.byLabId[lab.id] | isNotEmpty')
+          span(ng-if='(lab.active_types | isNotEmpty) && (labObjects.byLabId[lab.id] | isNotEmpty)')
             | {{ labObjects.byLabId[lab.id].length }} objects in this lab
       td(style={'vertical-align': 'middle'})
         a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
