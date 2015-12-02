@@ -39,9 +39,9 @@ class Model(Bunch):
         docs = cls._table.filter(*args, **kwargs).run(db.conn)
         return (cls(**doc) for doc in docs)
 
-    def save(self):
+    def save(self, force_insert=False):
         doc = {key: value for key, value in self.iteritems() if not key.startswith('_')}
-        if 'id' in doc:
+        if not force_insert and ('id' in doc):
             result = self._table.update(doc).run(db.conn)
             if (result['replaced'] + result['unchanged']) != 1:
                 raise RethinkDBError('Expected 1 replacement or unchanged, instead: {!r}'.format(result))

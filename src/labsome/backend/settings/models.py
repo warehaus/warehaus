@@ -1,8 +1,10 @@
 import os
+from bunch import Bunch
 from contextlib import contextmanager
-from ..db import db
+from ..db import Model
 
-Settings = db.define_table('settings')
+class Settings(Model):
+    pass
 
 SETTINGS_ID = 1 # Allow only one Settings row
 
@@ -14,11 +16,11 @@ def _new_settings():
     )
 
 def get_settings():
-    settings = Settings.get(SETTINGS_ID).run(db.conn)
+    settings = Settings.get(SETTINGS_ID)
     if settings is None:
-        settings = _new_settings()
-        Settings.insert(settings).run(db.conn)
-    return settings
+        settings = Settings(**_new_settings())
+        settings.save(force_insert=True)
+    return Bunch(settings)
 
 @contextmanager
 def edit_settings():
@@ -28,4 +30,4 @@ def edit_settings():
     except:
         raise
     else:
-        Settings.update(settings).run(db.conn)
+        settings.save()
