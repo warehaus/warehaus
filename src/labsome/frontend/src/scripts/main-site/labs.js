@@ -8,16 +8,26 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
         title: 'Labs',
         views: {
             navbar: {
-                templateUrl: viewPath('main-site/views/labs/lab-selector.html')
+                templateUrl: viewPath('main-site/views/labs/lab-selector.html'),
+                controller: 'LabSelectorController'
             },
             main: {
                 templateUrl: viewPath('main-site/views/labs/index.html'),
-                controller: 'CurrentLabViewController'
+                controller: 'AllLabsController'
             }
         }
     };
 
+    var labs_lab_page = {
+        parent: labs,
+        url: '/:lab_id',
+        title: 'Lab',
+        templateUrl: viewPath('main-site/views/labs/lab-page.html'),
+        controller: 'CurrentLabPageController'
+    };
+
     $stateProvider.state('labs', labs);
+    $stateProvider.state('labs.lab-page', labs_lab_page);
 });
 
 angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScope) {
@@ -87,74 +97,6 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
     return self;
 });
 
-angular.module('labsome.site.labs').factory('curLab', function($rootScope, allLabs, labObjects) {
-    var self = {
-        lab_id: undefined,
-        objectsByType: {},
-        raw: undefined,
-        all_except_current: []
-    };
-
-    var _set_all_except_current = function() {
-        self.all_except_current = [];
-        for (var i = 0; i < allLabs.all.length; ++i) {
-            var other_lab = allLabs.all[i];
-            if (other_lab.id != self.lab_id) {
-                self.all_except_current.push(other_lab.id);
-            }
-        }
-    };
-
-    var _refresh_objects = function() {
-        self.objectsByType = {};
-        if (angular.isUndefined(self.lab_id)) {
-            return;
-        }
-        var objects = labObjects.byLabId[self.lab_id];
-        if (angular.isUndefined(objects)) {
-            return;
-        }
-        for (var i = 0; i < objects.length; ++i) {
-            var obj = objects[i];
-            if (angular.isUndefined(self.objectsByType[obj.type])) {
-                self.objectsByType[obj.type] = [];
-            }
-            self.objectsByType[obj.type].push(obj);
-        }
-    };
-
-    self.set = function(new_lab_id) {
-        self.lab_id = new_lab_id;
-        if (angular.isDefined(self.lab_id)) {
-            self.raw = allLabs.byId[self.lab_id];
-        } else {
-            self.raw = undefined;
-        }
-        _refresh_objects();
-        _set_all_except_current();
-        $rootScope.$broadcast('labsome.current_lab_changed');
-    };
-
-    var _get_first_lab = function() {
-        if (allLabs.all.length > 0) {
-            return allLabs.all[0].id;
-        }
-        return undefined;
-    };
-
-    $rootScope.$on('labsome.labs_inventory_changed', function(event) {
-        var new_lab_id = self.lab_id;
-        if (angular.isUndefined(self.lab_id) || angular.isUndefined(allLabs.byId[self.lab_id])) {
-            new_lab_id = _get_first_lab();
-        }
-        self.set(new_lab_id);
-    });
-
-    $rootScope.$on('labsome.objects_inventory_changed', _refresh_objects);
-
-    return self;
-});
-
 angular.module('labsome.site.labs').directive('labName', function(allLabs) {
     var link = function(scope, elem, attrs) {
         scope.allLabs = allLabs;
@@ -170,14 +112,77 @@ angular.module('labsome.site.labs').directive('labName', function(allLabs) {
     };
 });
 
-angular.module('labsome.site.labs').controller('CurrentLabViewController', function($scope, curLab) {
+angular.module('labsome.site.labs').service('selectedLab', function() {
+    this.lab_id = undefined;
+    this.set = function(new_lab_id) {
+        this.lab_id = new_lab_id;
+    };
+});
+
+angular.module('labsome.site.labs').controller('LabSelectorController', function($scope, selectedLab) {
+    $scope.selectedLab = selectedLab;
+});
+
+angular.module('labsome.site.labs').controller('AllLabsController', function($scope, $state, selectedLab, allLabs) {
+    var _goto_lab = function(lab_id) {
+        $state.go('labs.lab-page', {lab_id: lab_id});
+    };
+
     var _refresh = function() {
-        $scope.selected_type = undefined;
-        if (angular.isDefined(curLab.lab_id)) {
-            for (var type in curLab.objectsByType) {
-                $scope.selected_type = type;
-                break;
+        if (!allLabs.ready) {
+            return;
+        }
+        if (angular.isUndefined(allLabs.byId[selectedLab.lab_id])) {
+            selectedLab.set(undefined);
+        }
+        if (angular.isDefined(selectedLab.lab_id)) {
+            _goto_lab(selectedLab.lab_id);
+        } else if (allLabs.all.length > 0) {
+            _goto_lab(allLabs.all[0].id);
+        }
+    }
+
+    $scope.$on('labsome.labs_inventory_changed', _refresh);
+
+    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+        if (!toState.parent) {
+            _refresh();
+        }
+    });
+});
+
+angular.module('labsome.site.labs').controller('CurrentLabPageController', function($scope, $state, $stateParams, selectedLab, allLabs, labObjects) {
+    $scope.lab_id = $stateParams.lab_id;
+    selectedLab.set($scope.lab_id);
+
+    var _refresh_objects = function() {
+        $scope.objectsByType = {};
+        var objects = labObjects.byLabId[$scope.lab_id];
+        if (angular.isUndefined(objects)) {
+            return;
+        }
+        for (var i = 0; i < objects.length; ++i) {
+            var obj = objects[i];
+            if (angular.isUndefined($scope.objectsByType[obj.type])) {
+                $scope.objectsByType[obj.type] = [];
             }
+            $scope.objectsByType[obj.type].push(obj);
+        }
+    };
+
+    var _refresh = function() {
+        if (!allLabs.ready) {
+            return;
+        }
+        if (angular.isUndefined(allLabs.byId[$scope.lab_id])) {
+            $state.go('^');
+            return;
+        }
+        _refresh_objects();
+        $scope.selected_type = undefined;
+        for (var type in $scope.objectsByType) {
+            $scope.selected_type = type;
+            break;
         }
     };
 
@@ -187,11 +192,11 @@ angular.module('labsome.site.labs').controller('CurrentLabViewController', funct
 
     _refresh();
 
-    $scope.$on('labsome.current_lab_changed', _refresh);
+    $scope.$on('labsome.labs_inventory_changed', _refresh);
+    $scope.$on('labsome.objects_inventory_changed', _refresh_objects);
 });
 
-angular.module('labsome.site.labs').run(function($rootScope, allLabs, curLab, labObjects) {
+angular.module('labsome.site.labs').run(function($rootScope, allLabs, labObjects) {
     $rootScope.allLabs = allLabs;
-    $rootScope.curLab = curLab;
     $rootScope.labObjects = labObjects;
 });

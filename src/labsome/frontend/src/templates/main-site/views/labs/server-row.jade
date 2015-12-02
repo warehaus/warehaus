@@ -1,0 +1,10 @@
+table
+  tr
+    td.x3(style={'vertical-align': 'middle'})
+      .status-dot(class='status-dot-{{ object.status }}')
+        i.fa.fa-fw.fa-hdd-o
+    td(style={'width': '100%', 'vertical-align': 'middle'})
+      .x15.lh175
+        | {{ object.name | uppercase }}
+      .x08
+        | {{ object.tagline || object.type | titlecase }} &ndash; Last heartbeat {{ moment(object.last_heartbeat).fromNow() }}

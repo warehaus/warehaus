@@ -1,0 +1,43 @@
+mixin lab_empty
+  .panel.panel-default
+    .panel-body
+      h3.text-center
+        i.icon-clock.x6
+      p.text-center.x2
+        | This lab is still empty
+      p.text-center.x12(ng-if='!curUser.is_admin')
+        | Please wait you administrator is adding new hardware
+      p.text-center.x12(ng-if='curUser.is_admin')
+        | You need to install Labsome's agent on your servers to see them here
+      p.text-center.x2(ng-if='curUser.is_admin')
+        button.btn.btn-lg.btn-success(ui-sref='admin.labs.add-servers({id: "{{ lab_id }}"})')
+          | Start Adding Servers
+
+mixin current_lab_menu
+  ul.nav.nav-pills.nav-stacked
+    li.heading
+      | Hardware
+    li(role='presentation' ng-repeat='(type, objects) in objectsByType | orderBy:"type"' ng-class='{active: "selected_type == type"}')
+      a.link(ng-click='select_type(type)')
+        | {{ type | titlecase }}s
+        span.badge.pull-right
+          | {{ objects.length }}
+
+mixin lab_objects
+  .panel.panel-default
+    ul.list-group
+      a.link.list-group-item(ng-repeat='object in objectsByType[selected_type] | orderBy:"name"')
+        span(ng-if="selected_type == 'server'")
+          include server-row
+
+mixin content
+  .row(ng-if='objectsByType | isEmpty')
+    .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
+      +lab_empty
+  .row(ng-if='objectsByType | isNotEmpty')
+    .col-sm-3
+      +current_lab_menu
+    .col-sm-9
+      +lab_objects
+
++content

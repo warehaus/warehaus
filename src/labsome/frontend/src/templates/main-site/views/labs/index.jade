@@ -1,7 +1,3 @@
-mixin content
-  .panel.panel-default
-    .panel-body
-
 mixin loading
   .text-center(style={'opacity': '0.5'})
     i.fa.fa-3x.fa-spin.fa-circle-o-notch
@@ -13,62 +9,12 @@ mixin no_labs
         .panel-body
           include no-labs
 
-mixin lab_empty
-  .panel.panel-default
-    .panel-body
-      h3.text-center
-        i.icon-clock.x6
-      p.text-center.x2
-        | This lab is still empty
-      p.text-center.x12(ng-if='!curUser.is_admin')
-        | Please wait you administrator is adding new hardware
-      p.text-center.x12(ng-if='curUser.is_admin')
-        | You need to install Labsome's agent on your servers to see them here
-      p.text-center.x2(ng-if='curUser.is_admin')
-        button.btn.btn-lg.btn-success(ui-sref='admin.labs.add-servers({id: "{{ curLab.lab_id }}"})')
-          | Start Adding Servers
-
-mixin current_lab_menu
-  ul.nav.nav-pills.nav-stacked
-    li.heading
-      | Hardware
-    li(role='presentation' ng-repeat='(type, objects) in curLab.objectsByType | orderBy:"type"' ng-class='{active: "selected_type == type"}')
-      a.link(ng-click='select_type(type)')
-        | {{ type | titlecase }}s
-        span.badge.pull-right
-          | {{ objects.length }}
-
-mixin lab_objects
-  .panel.panel-default
-    ul.list-group
-      a.link.list-group-item(ng-repeat='object in curLab.objectsByType[selected_type] | orderBy:"name"')
-        table
-          tr
-            td.x3(style={'vertical-align': 'middle'})
-              .status-dot(class='status-dot-{{ object.status }}')
-                i.fa.fa-fw.fa-hdd-o
-            td(style={'width': '100%', 'vertical-align': 'middle'})
-              .x15.lh175
-                | {{ object.name | uppercase }}
-              .x08
-                | {{ object.tagline || object.type | titlecase }} &ndash; Last heartbeat {{ moment(object.last_heartbeat).fromNow() }}
-
-mixin current_lab
-  .row(ng-if='curLab.objectsByType | isEmpty')
-    .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
-      +lab_empty
-  .row(ng-if='curLab.objectsByType | isNotEmpty')
-    .col-sm-3
-      +current_lab_menu
-    .col-sm-9
-      +lab_objects
-
 mixin main
-  .container(ng-if='!allLabs.ready')
-    +loading
-  .container(ng-if='allLabs.ready && (allLabs.all.length == 0)')
-    +no_labs
-  .container(ng-if='curLab.lab_id')
-    +current_lab
+  .container
+    ui-view
+      span(ng-if='!allLabs.ready')
+        +loading
+      span(ng-if='allLabs.ready && (allLabs.all.length == 0)')
+        +no_labs
 
 +main
