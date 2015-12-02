@@ -97,6 +97,25 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
     return self;
 });
 
+angular.module('labsome.site.labs').factory('objectTypes', function($rootScope, $http) {
+    var self = {
+        all: [],
+        byTypeId: {}
+    };
+
+    $http.get('/api/hardware/v1/types').then(function(res) {
+        self.all = res.data.objects;
+        self.byTypeId = {};
+        for (var i = 0; i < self.all.length; ++i) {
+            var type = self.all[i];
+            self.byTypeId[type.id] = type;
+        }
+        $rootScope.$broadcast('labsome.object_types_refreshed');
+    });
+
+    return self;
+});
+
 angular.module('labsome.site.labs').directive('labName', function(allLabs) {
     var link = function(scope, elem, attrs) {
         scope.allLabs = allLabs;
@@ -151,22 +170,26 @@ angular.module('labsome.site.labs').controller('AllLabsController', function($sc
     });
 });
 
-angular.module('labsome.site.labs').controller('CurrentLabPageController', function($scope, $state, $stateParams, selectedLab, allLabs, labObjects) {
+angular.module('labsome.site.labs').controller('CurrentLabPageController', function($scope, $state, $stateParams, selectedLab, allLabs, labObjects, objectTypes) {
     $scope.lab_id = $stateParams.lab_id;
     selectedLab.set($scope.lab_id);
 
     var _refresh_objects = function() {
         $scope.objectsByType = {};
+        var active_types = allLabs.byId[$scope.lab_id].active_types;
+        if (angular.isUndefined(active_types)) {
+            return;
+        }
+        for (var i = 0; i < active_types.length; ++i) {
+            $scope.objectsByType[active_types[i]] = [];
+        }
         var objects = labObjects.byLabId[$scope.lab_id];
         if (angular.isUndefined(objects)) {
             return;
         }
         for (var i = 0; i < objects.length; ++i) {
             var obj = objects[i];
-            if (angular.isUndefined($scope.objectsByType[obj.type])) {
-                $scope.objectsByType[obj.type] = [];
-            }
-            $scope.objectsByType[obj.type].push(obj);
+            $scope.objectsByType[obj.type_id].push(obj);
         }
     };
 
@@ -179,15 +202,15 @@ angular.module('labsome.site.labs').controller('CurrentLabPageController', funct
             return;
         }
         _refresh_objects();
-        $scope.selected_type = undefined;
-        for (var type in $scope.objectsByType) {
-            $scope.selected_type = type;
+        $scope.selected_type_id = undefined;
+        for (var type_id in $scope.objectsByType) {
+            $scope.selected_type_id = type_id;
             break;
         }
     };
 
-    $scope.select_type = function(type) {
-        $scope.selected_type = type;
+    $scope.select_type = function(type_id) {
+        $scope.selected_type_id = type_id;
     };
 
     _refresh();
@@ -196,7 +219,8 @@ angular.module('labsome.site.labs').controller('CurrentLabPageController', funct
     $scope.$on('labsome.objects_inventory_changed', _refresh_objects);
 });
 
-angular.module('labsome.site.labs').run(function($rootScope, allLabs, labObjects) {
+angular.module('labsome.site.labs').run(function($rootScope, allLabs, labObjects, objectTypes) {
     $rootScope.allLabs = allLabs;
     $rootScope.labObjects = labObjects;
+    $rootScope.objectTypes = objectTypes;
 });

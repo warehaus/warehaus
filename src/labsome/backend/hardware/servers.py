@@ -6,6 +6,7 @@ from flask import Response
 from flask import abort as flask_abort
 from ..db.times import now
 from .models import Lab
+from .models import Type
 from .models import Object
 
 servers_api = Blueprint('servers_api', __name__)
@@ -29,7 +30,16 @@ class ServerError(Exception):
     pass
 
 HEARTBEAT_MANDATORY_FIELDS = ('name', 'lab_id')
-HEARTBEAT_FORBIDDEN_FIELDS = ('id', 'status', 'last_heartbeat')
+HEARTBEAT_FORBIDDEN_FIELDS = ('id', 'type_id', 'status', 'last_heartbeat')
+
+def get_server_type():
+    server_types = tuple(Type.filter({'name': 'server'})) # XXX index
+    if len(server_types) == 0:
+        server_type = Type(name='server')
+        server_type.save()
+    else:
+        [server_type] = server_types
+    return server_type
 
 @servers_api.route('/v1/heartbeat', methods=['POST'])
 def heartbeat_call():
@@ -41,10 +51,11 @@ def heartbeat_call():
     lab_id = request.json['lab_id']
     if Lab.get(lab_id) is None:
         flask_abort(httplib.NOT_FOUND, 'No lab with id={!r}'.format(lab_id))
-    objs = tuple(Object.filter({'name': info['name'], 'lab_id': lab_id}))
+    server_type = get_server_type()
+    objs = tuple(Object.filter({'name': info['name'], 'type_id': server_type.id, 'lab_id': lab_id}))
     if len(objs) == 0:
         obj = Object(**info)
-        obj.type = 'server'
+        obj.type_id = server_type.id
     elif len(objs) == 1:
         [obj] = objs
         obj.update(**info)

@@ -19,13 +19,20 @@ mixin lab_row
         a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
           i.icon-options-vertical(style='padding:0 1rem;')
         ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
-          li.text-left
-            a(ui-sref='.rename({id: "{{ lab.id }}"})')
-              | Rename
+          li.heading
+            | Lab Objects
           li.text-left
             a(ui-sref='.add-servers({id: "{{ lab.id }}"})')
               | Add Servers
+          li.text-left
+            a(ui-sref='.set-hardware-types({id: "{{ lab.id }}"})')
+              | Set Hardware Types
           li.divider
+          li.heading
+            | More Options
+          li.text-left
+            a(ui-sref='.rename({id: "{{ lab.id }}"})')
+              | Rename This Lab
           li.text-left
             a(ui-sref='.delete({id: "{{ lab.id }}"})')
               | Delete This Lab

@@ -68,6 +68,16 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
         })
     };
 
+    var admin_labs_set_hardware_types = {
+        parent: admin_labs,
+        url: '/set-hardware-types/:id',
+        title: 'Set Hardware Types',
+        onEnter: _update({
+            templateUrl: 'main-site/views/admin/set-hardware-types.html',
+            controller: 'SetHardwareTypesController'
+        })
+    };
+
     var admin_labs_delete = {
         parent: admin_labs,
         url: '/delete/:id',
@@ -113,8 +123,9 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
 
     $stateProvider.state('admin', admin);
     $stateProvider.state('admin.labs', admin_labs);
-    $stateProvider.state('admin.labs.rename', admin_labs_rename);
     $stateProvider.state('admin.labs.add-servers', admin_labs_add_servers);
+    $stateProvider.state('admin.labs.set-hardware-types', admin_labs_set_hardware_types);
+    $stateProvider.state('admin.labs.rename', admin_labs_rename);
     $stateProvider.state('admin.labs.delete', admin_labs_delete);
     $stateProvider.state('admin.create-lab', admin_create_lab);
     $stateProvider.state('admin.auth-ldap', admin_auth_ldap);
@@ -172,6 +183,43 @@ angular.module('labsome.site.admin').controller('AddServersController', function
 
     $scope.close = function() {
         $uibModalInstance.dismiss('cancel');
+    };
+});
+
+angular.module('labsome.site.admin').controller('SetHardwareTypesController', function($scope, $uibModalInstance, $controller, allLabs, objectTypes, lab_id) {
+    $controller('LabModal', {
+        $scope: $scope,
+        $uibModalInstance: $uibModalInstance,
+        lab_id: lab_id
+    });
+
+    $scope.result.active_types = angular.copy(allLabs.byId[lab_id].active_types || []);
+    $scope.result.type_naming = angular.copy(allLabs.byId[lab_id].type_naming || {});
+
+    $scope.selected_types = {};
+
+    for (var i = 0; i < objectTypes.all.length; ++i) {
+        var type = objectTypes.all[i];
+        if ($scope.result.active_types.indexOf(type.id) != -1) {
+            $scope.selected_types[type.id] = true;
+        } else {
+            $scope.selected_types[type.id] = false;
+        }
+    }
+
+    $scope.selection_changed = function() {
+        $scope.result.active_types = [];
+        for (var type_id in $scope.selected_types) {
+            if ($scope.selected_types[type_id]) {
+                $scope.result.active_types.push(type_id);
+                if (!$scope.result.type_naming[type_id]) {
+                    $scope.result.type_naming[type_id] = {
+                        name_singular: objectTypes.byTypeId[type_id].name,
+                        name_plural: objectTypes.byTypeId[type_id].name + 's'
+                    };
+                }
+            }
+        }
     };
 });
 

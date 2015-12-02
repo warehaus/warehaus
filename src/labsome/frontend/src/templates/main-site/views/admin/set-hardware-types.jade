@@ -7,7 +7,7 @@
 
 mixin type_selection
   ul.list-group
-    list.list-group-item(ng-repeat='type in hardware.allTypes')
+    list.list-group-item(ng-repeat='type in objectTypes.all')
       .row
         .col-sm-4
           .checkbox
@@ -16,10 +16,10 @@ mixin type_selection
               input(type='checkbox' ng-model='selected_types[type.id]' ng-change='selection_changed()')
               | &nbsp;
               | {{ type.name | titlecase }}
-        .col-sm-4
-          input.form-control(type='text' ng-model='result.types[type.id].name_singular')
-        .col-sm-4
-          input.form-control(type='text' ng-model='result.types[type.id].name_plural')
+        .col-sm-4(ng-if='selected_types[type.id]')
+          input.form-control(type='text' ng-model='result.type_naming[type.id].name_singular' required='')
+        .col-sm-4(ng-if='selected_types[type.id]')
+          input.form-control(type='text' ng-model='result.type_naming[type.id].name_plural' required='')
 
 .modal-body
   p
@@ -27,12 +27,12 @@ mixin type_selection
       | Please select the hardware types to include in this lab.
     div
       | For each type you can also specify a different term users will see for that type.
-  form(role='form' ng-submit='ok()')
+  form(name='setHardwareTypes' role='form' ng-submit='ok()')
     .panel.panel-default
       +type_selection
 
 .modal-footer
   button.btn.btn-link(type='button' ng-click='cancel()')
     | Cancel
-  button.btn.btn-primary(type='button' ng-click='ok()')
+  button.btn.btn-primary(type='button' ng-click='ok()' ng-disabled='setHardwareTypes.$invalid')
     | Save Changes

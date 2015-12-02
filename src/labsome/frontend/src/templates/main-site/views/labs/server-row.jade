@@ -7,4 +7,4 @@ table
       .x15.lh175
         | {{ object.name | uppercase }}
       .x08
-        | {{ object.tagline || object.type | titlecase }} &ndash; Last heartbeat {{ moment(object.last_heartbeat).fromNow() }}
+        | {{ object.tagline }}

@@ -17,17 +17,17 @@ mixin current_lab_menu
   ul.nav.nav-pills.nav-stacked
     li.heading
       | Hardware
-    li(role='presentation' ng-repeat='(type, objects) in objectsByType | orderBy:"type"' ng-class='{active: "selected_type == type"}')
-      a.link(ng-click='select_type(type)')
-        | {{ type | titlecase }}s
+    li(role='presentation' ng-repeat='(type_id, objects) in objectsByType' ng-class='{active: "selected_type_id == type_id"}')
+      a.link(ng-click='select_type(type_id)')
+        | {{ allLabs.byId[lab_id].type_naming[type_id].name_plural | titlecase }}
         span.badge.pull-right
           | {{ objects.length }}
 
 mixin lab_objects
   .panel.panel-default
     ul.list-group
-      a.link.list-group-item(ng-repeat='object in objectsByType[selected_type] | orderBy:"name"')
-        span(ng-if="selected_type == 'server'")
+      a.link.list-group-item(ng-repeat='object in objectsByType[selected_type_id] | orderBy:"name"')
+        span(ng-if="objectTypes.byTypeId[object.type_id].name == 'server'")
           include server-row
 
 mixin content
