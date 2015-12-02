@@ -23,11 +23,12 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
         templateUrl: viewPath('main-site/views/admin/labs.html')
     };
 
-    var _update = function(templateUrl, controller) {
+    var _update = function(options) {
         return ['$uibModal', '$state', '$stateParams', 'allLabs', function($uibModal, $state, $stateParams, allLabs) {
             $uibModal.open({
-                templateUrl: viewPath(templateUrl),
-                controller: controller,
+                templateUrl: viewPath(options.templateUrl),
+                controller: options.controller,
+                size: options.size,
                 resolve: {
                     lab_id: function() {
                         return $stateParams.id;
@@ -45,14 +46,21 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
         parent: admin_labs,
         url: '/rename/:id',
         title: 'Rename',
-        onEnter: _update('main-site/views/admin/rename-lab.html', 'LabModal')
+        onEnter: _update({
+            templateUrl: 'main-site/views/admin/rename-lab.html',
+            controller: 'LabModal'
+        })
     };
 
     var admin_labs_add_servers = {
         parent: admin_labs,
         url: '/add-servers/:id',
         title: 'Add Servers',
-        onEnter: _update('main-site/views/admin/add-servers.html', 'AddServersController')
+        onEnter: _update({
+            templateUrl: 'main-site/views/admin/add-servers.html',
+            controller: 'AddServersController',
+            size: 'lg'
+        })
     };
 
     var admin_labs_delete = {
@@ -137,11 +145,13 @@ angular.module('labsome.site.admin').controller('CreateLabController', function(
 angular.module('labsome.site.admin').controller('AddServersController', function($scope, $state, $location, $uibModalInstance, lab_id) {
     $scope.lab_id = lab_id;
 
-    $scope.base_url = $location.protocol() + '://' + $location.host();
+    var base_url = $location.protocol() + '://' + $location.host();
     if ((($location.protocol() == 'http') && ($location.port() != 80)) ||
         (($location.protocol() == 'https') && ($location.port() != 443))) {
-        $scope.base_url += ':' + $location.port();
+        base_url += ':' + $location.port();
     }
+
+    $scope.agent_url = base_url + '/api/servers/v1/code/agent.py?lab_id=' + $scope.lab_id;
 
     $scope.close = function() {
         $uibModalInstance.dismiss('cancel');
