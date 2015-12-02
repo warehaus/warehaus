@@ -2,17 +2,21 @@
 
 html, body {
   font-size: $font-size-base;
-  font-weight: $labsome-font-weight;
+  font-weight: $labsome-font-weight-normal;
 }
 
 b, strong {
     font-family: "Open Sans";
-    font-weight: 600;
+    font-weight: $labsome-font-weight-strong;
 }
 
-label {
+mild {
+  font-weight: $labsome-font-weight-mild;
+}
+
+.label {
     font-family: "Open Sans";
-    font-weight: 600;
+    font-weight: $labsome-font-weight-normal;
 }
 
 .x08 { font-size: .8rem;  }

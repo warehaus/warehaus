@@ -1,3 +1,9 @@
+$labsome-font-weight-min:           100;
+$labsome-font-weight-thin:          200;
+$labsome-font-weight-normal:        300;
+$labsome-font-weight-mild:          400;
+$labsome-font-weight-strong:        600;
+
 //-------------------------------
 // Overridden Bootstrap variables
 //-------------------------------
@@ -7,10 +13,10 @@ $font-family-sans-serif:  "Open Sans", Helvetica, Arial, sans-serif;
 $font-family-serif:       Georgia, "Times New Roman", Times, serif;
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
 $headings-font-family:    "Open Sans";
-$headings-font-weight:    400;
-$btn-font-weight:         100;
-$alert-link-font-weight:  300;
-$badge-font-weight:       200;
+$headings-font-weight:    $labsome-font-weight-mild;
+$btn-font-weight:         $labsome-font-weight-min;
+$alert-link-font-weight:  $labsome-font-weight-normal;
+$badge-font-weight:       $labsome-font-weight-thin;
 $navbar-height:           70px;
 
 //------------------
@@ -18,8 +24,6 @@ $navbar-height:           70px;
 //------------------
 
 $OpenSansPath: "/static/bower_components/open-sans-fontface/fonts";
-
-$labsome-font-weight: 300;
 
 $labsome-standalone-box-padding:    2rem .5rem;
 $labsome-standalone-box-radius:     .75rem;
@@ -57,5 +61,5 @@ $labsome-dropdown-menu-heading-font-size:  .8rem;
 
 $nav-link-padding:                         .5rem 1rem;
 $labsome-nav-pills-color:                  gray;
-$labsome-nav-pills-font-weight:            600;
+$labsome-nav-pills-font-weight:            $labsome-font-weight-strong;
 $labsome-nav-pills-padding:                1rem 1rem .5rem 1rem;
