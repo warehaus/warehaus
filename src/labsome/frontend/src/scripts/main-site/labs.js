@@ -189,7 +189,9 @@ angular.module('labsome.site.labs').controller('CurrentLabPageController', funct
         }
         for (var i = 0; i < objects.length; ++i) {
             var obj = objects[i];
-            $scope.objectsByType[obj.type_id].push(obj);
+            if (angular.isDefined($scope.objectsByType[obj.type_id])) {
+                $scope.objectsByType[obj.type_id].push(obj);
+            }
         }
     };
 
