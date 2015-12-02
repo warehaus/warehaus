@@ -39,6 +39,8 @@ def heartbeat_call():
     if any(field not in request.json for field in HEARTBEAT_MANDATORY_FIELDS):
         flask_abort(httplib.BAD_REQUEST, 'Server heartbeats must contain at least the following fields: {}'.format(', '.join(HEARTBEAT_MANDATORY_FIELDS)))
     lab_id = request.json['lab_id']
+    if Lab.get(lab_id) is None:
+        flask_abort(httplib.NOT_FOUND, 'No lab with id={!r}'.format(lab_id))
     objs = tuple(Object.filter({'name': info['name'], 'lab_id': lab_id}))
     if len(objs) == 0:
         obj = Object(**info)
