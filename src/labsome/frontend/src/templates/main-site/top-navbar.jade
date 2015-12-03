@@ -9,7 +9,7 @@ mixin profile_menu
       | &nbsp;
       user-display-name(id='curUser.id')
       i.fa.fa-fw.fa-angle-down
-    ul.dropdown-menu
+    ul.dropdown-menu(style={left: '0', right: 'auto'})
       li(ng-if='curUser.is_admin')
         a.link(ui-sref='admin')
           i.icon-settings
