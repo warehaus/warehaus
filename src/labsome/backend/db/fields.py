@@ -36,8 +36,12 @@ class Requirement(object):
         pass
 
 class Index(Requirement):
+    def __init__(self, multi=False):
+        super(Index, self).__init__()
+        self.multi = multi
+
     def _create_index(self, table):
-        table.index_create(self.field_name).run(db.conn)
+        table.index_create(self.field_name, multi=self.multi).run(db.conn)
 
     def _wait_for_index(self, table):
         table.index_wait(self.field_name).run(db.conn)
