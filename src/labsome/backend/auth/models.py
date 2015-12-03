@@ -1,16 +1,18 @@
 from flask.ext.login import UserMixin
-from ..db import Model
+from .. import db
 
-class User(Model, UserMixin):
-    _indexes = {
-        'username': ['username'],
-    }
+class User(db.Model, UserMixin):
+    username   = db.Field(db.Index())
+    roles      = db.Field()
+    first_name = db.Field()
+    last_name  = db.Field()
+    email      = db.Field()
 
     @classmethod
     def get_by_username(cls, username):
-        docs = tuple(cls.get_all([username], index='username'))
+        docs = tuple(cls.query.get_all(username, index='username'))
         if not docs:
             return None
         if len(docs) != 1:
             raise RuntimeError('Found more than one user with username={!r}'.format(username))
-        return cls(**docs[0])
+        return docs[0]

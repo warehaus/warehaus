@@ -15,31 +15,31 @@ def register_resource(app_or_blueprint, model, url_prefix='',
     def do_create():
         obj = model(**request.json)
         obj.save()
-        return jsonify(obj), httplib.CREATED
+        return jsonify(obj.as_dict()), httplib.CREATED
 
     def do_read_all():
-        return jsonify(dict(objects=tuple(model.all())))
+        return jsonify(dict(objects=tuple(obj.as_dict() for obj in model.query.all())))
 
     def do_read_single(id):
-        obj = model(id)
+        obj = model.query.get(id)
         if obj is None:
             flask_abort(httplib.NOT_FOUND)
-        return jsonify(obj)
+        return jsonify(obj.as_dict())
 
     def do_update_single(id):
-        obj = model.get(id)
+        obj = model.query.get(id)
         if obj is None:
             flask_abort(httplib.NOT_FOUND)
         obj.update(**request.json)
         obj.save()
-        return jsonify(obj), httplib.ACCEPTED
+        return jsonify(obj.as_dict()), httplib.ACCEPTED
 
     def do_delete_single(id):
-        obj = model.get(id)
+        obj = model.query.get(id)
         if obj is None:
             flask_abort(httplib.NOT_FOUND)
         obj.delete()
-        return jsonify(obj), httplib.NO_CONTENT
+        return jsonify(obj.as_dict()), httplib.NO_CONTENT
 
     for d in create_decorators:
         do_create = d(do_create)

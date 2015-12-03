@@ -1,6 +1,7 @@
 from .db import db
-from .model import Model
-from .model import ensure_models
+from .models import Model
+from .models import ensure_models
+from .fields import *
 from .resource import register_resource
 
 def init_app(app):

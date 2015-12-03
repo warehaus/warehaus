@@ -37,8 +37,8 @@ def configure():
     admin_user.save()
 
     with edit_settings() as settings:
-        settings['is_initialized'] = True
-        settings['ldap_settings'] = ldap_settings
+        settings.is_initialized = True
+        settings.ldap_settings = ldap_settings
 
     return 'ok'
 

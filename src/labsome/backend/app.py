@@ -8,7 +8,7 @@ from .settings import full_config
 from .settings.models import get_settings
 from . import auth
 from . import db
-from .db.times import CustomJSONEncoder
+from .db.json_encoder import CustomJSONEncoder
 from .first_setup.api import first_setup_api
 from .auth.api import auth_api
 from .settings.api import settings_api
@@ -74,7 +74,7 @@ def create_app(print_config=False):
             if print_config:
                 _print_config(app)
 
-            if not get_settings()['is_initialized']:
+            if not get_settings().is_initialized:
                 _first_setup_routes(app)
             else:
                 _full_app_routes(app)

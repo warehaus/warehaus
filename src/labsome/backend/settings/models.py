@@ -1,26 +1,21 @@
 import os
 from bunch import Bunch
 from contextlib import contextmanager
-from ..db import Model
+from .. import db
 
-class Settings(Model):
-    pass
+class Settings(db.Model):
+    is_initialized = db.Field(default=False)
+    secret_key     = db.Field(default=lambda: os.urandom(48).encode('hex'))
+    ldap_settings  = db.Field(default=lambda: {})
 
 SETTINGS_ID = 1 # Allow only one Settings row
 
-def _new_settings():
-    return dict(
-        id = SETTINGS_ID,
-        is_initialized = False,
-        secret_key = os.urandom(48).encode('hex'),
-    )
-
 def get_settings():
-    settings = Settings.get(SETTINGS_ID)
+    settings = Settings.query.get(SETTINGS_ID)
     if settings is None:
-        settings = Settings(**_new_settings())
+        settings = Settings(id=SETTINGS_ID)
         settings.save(force_insert=True)
-    return Bunch(settings)
+    return settings
 
 @contextmanager
 def edit_settings():
