@@ -10,3 +10,13 @@ ul.nav-stacked {
     }
   };
 }
+
+a.list-group-item,
+button.list-group-item {
+  &.no-hover-bg {
+    &:hover,
+    &:focus {
+      background-color: $list-group-bg;
+    }
+  }
+}
