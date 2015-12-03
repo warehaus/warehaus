@@ -5,6 +5,8 @@ mixin topics
     li(role='presentation' ui-sref-active='active')
       a.link(ui-sref='.labs')
         | All Labs
+        span.badge.pull-right(ng-if'allLabs.ready')
+          | {{ allLabs.all.length }}
     li(role='presentation' ui-sref-active='active')
       a.link(ui-sref='.create-lab')
         | Create a New Lab
@@ -13,6 +15,8 @@ mixin topics
     li(role='presentation' ui-sref-active='active')
       a.link(ui-sref='.auth-users')
         | Users
+        span.badge.pull-right(ng-if'users.ready')
+          | {{ users.all.length }}
     li(role='presentation' ui-sref-active='active')
       a.link(ui-sref='.auth-ldap')
         | LDAP Settings
