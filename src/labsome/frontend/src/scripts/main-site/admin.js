@@ -111,6 +111,14 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
         controller: 'CreateLabController'
     };
 
+    var admin_auth_users = {
+        parent: admin,
+        url: '/users?id',
+        title: 'Users',
+        templateUrl: viewPath('main-site/views/admin/users.html'),
+        controller: 'UsersAdminController',
+    };
+
     var admin_auth_ldap = {
         parent: admin,
         url: '/ldap',
@@ -128,6 +136,7 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
     $stateProvider.state('admin.labs.rename', admin_labs_rename);
     $stateProvider.state('admin.labs.delete', admin_labs_delete);
     $stateProvider.state('admin.create-lab', admin_create_lab);
+    $stateProvider.state('admin.auth-users', admin_auth_users);
     $stateProvider.state('admin.auth-ldap', admin_auth_ldap);
 });
 
@@ -221,6 +230,10 @@ angular.module('labsome.site.admin').controller('SetHardwareTypesController', fu
             }
         }
     };
+});
+
+angular.module('labsome.site.admin').controller('UsersAdminController', function($scope, $stateParams) {
+    $scope.selected_user_id = $stateParams.id;
 });
 
 angular.module('labsome.site.admin').controller('LDAPSettingsController', function($scope, $http) {

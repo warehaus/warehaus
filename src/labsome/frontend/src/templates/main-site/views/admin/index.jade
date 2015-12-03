@@ -11,6 +11,9 @@ mixin topics
     li.heading
       | Authentication
     li(role='presentation' ui-sref-active='active')
+      a.link(ui-sref='.auth-users')
+        | Users
+    li(role='presentation' ui-sref-active='active')
       a.link(ui-sref='.auth-ldap')
         | LDAP Settings
 
