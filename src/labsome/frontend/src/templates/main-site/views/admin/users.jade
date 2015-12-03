@@ -1,13 +1,10 @@
-mixin user_field(name)
-  .row
-    label.control-label.col-sm-2= name
-    .col-sm-10(class=dataclass)
-      p.form-control-static
-        block
+mixin user_details
+  div(style={padding: '.5rem'})
+    div(style={padding: '.25rem .5rem', 'border-color': '#aaa', 'border-style': 'dashed', 'border-width': '0 0 0 1px'})
+      include ../account/user-info
 
 mixin user_row
-  a.link.list-group-item(ng-repeat='user in users.all | orderBy:"display_name"'
-                         ui-sref='.({id: "{{ user.id }}"})')
+  a.link.list-group-item.no-hover-bg(ng-repeat='user in users.all | orderBy:"display_name"' ui-sref='.({id: "{{ user.id }}"})')
     table.details
       tr.lh2
         td.pad-right
@@ -21,17 +18,7 @@ mixin user_row
         td
         td
         td
-          div(style={padding: '.5rem'})
-            div(style={padding: '.25rem .5rem', 'border-color': '#aaa', 'border-style': 'dashed', 'border-width': '0 0 0 1px'})
-              form.form-horizontal
-                +user_field('First Name')
-                  | {{ user.first_name }}
-                +user_field('Last Name')
-                  | {{ user.last_name }}
-                +user_field('Email')
-                  | {{ user.email }}
-                +user_field('Roles')
-                  | {{ user.roles | join:", " | titlecase }}
+          +user_details
 
 mixin content
   .panel.panel-default

@@ -1,0 +1,25 @@
+mixin user_field(name)
+  .row
+    label.control-label.col-sm-3= name
+    .col-sm-9(class=dataclass)
+      block
+
+mixin content
+  form.form-horizontal
+    +user_field('First Name')
+      p.form-control-static {{ user.first_name }}
+    +user_field('Last Name')
+      p.form-control-static {{ user.last_name }}
+    +user_field('Email')
+      p.form-control-static {{ user.email }}
+    +user_field('Roles')
+      p.form-control-static {{ user.roles | join:", " | titlecase }}
+    +user_field('API Tokens')
+      div.form-control-static
+        div(ng-repeat='api_token in user.api_tokens' style={padding: '0 0 1px 0'})
+          code {{ api_token }}
+        div(style={padding: '1px 0 0 0'})
+          button.btn.btn-xs.btn-default(ng-click='users.new_api_token(user.id)')
+            | Add API Token
+
++content

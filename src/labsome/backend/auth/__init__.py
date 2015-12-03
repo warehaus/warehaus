@@ -35,6 +35,13 @@ def init_app(app):
     def load_user(user_id):
         return User.query.get(user_id)
 
+    @login_manager.request_loader
+    def load_user_from_request(req):
+        api_token = req.args.get('token') or req.headers.get('Authentication-Token')
+        if api_token:
+            return User.get_by_api_token(api_token)
+        return None
+
     @app.route('/auth/login', methods=['GET', 'POST'])
     def login():
         form = LdapLoginForm()

@@ -30,6 +30,10 @@ angular.module('labsome.auth').factory('users', function($rootScope, $http) {
         });
     };
 
+    self.new_api_token = function(user_id) {
+        $http.post('/api/auth/v1/users/' + user_id + '/api-token').then(refresh);
+    };
+
     refresh();
 
     return self;
