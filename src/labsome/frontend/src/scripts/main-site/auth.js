@@ -62,6 +62,38 @@ angular.module('labsome.auth').factory('curUser', function($rootScope, $http, us
     return self;
 });
 
+angular.module('labsome.auth').directive('userAvatar', function(users) {
+    var link = function(scope, elem, attrs) {
+        scope.users = users;
+    };
+
+    return {
+        restrict: 'AE',
+        template: '<img class="img-circle profile-picture" ng-src="{{ users.byUserId[id].avatar_32 }}" style="width: {{ size }}; height: {{ size }};">',
+        link: link,
+        scope: {
+            'id': '=',
+            'size': '@'
+        }
+    };
+});
+
+
+angular.module('labsome.auth').directive('userDisplayName', function(users) {
+    var link = function(scope, elem, attrs) {
+        scope.users = users;
+    };
+
+    return {
+        restrict: 'AE',
+        template: '{{ users.byUserId[id].display_name }} ',
+        link: link,
+        scope: {
+            'id': '='
+        }
+    };
+});
+
 angular.module('labsome.auth').run(function($rootScope, users, curUser) {
     $rootScope.users = users;
     $rootScope.curUser = curUser;
