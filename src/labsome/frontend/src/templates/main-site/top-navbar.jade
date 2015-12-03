@@ -5,8 +5,8 @@ mixin brand
 mixin profile_menu
   li.dropdown
     a.link.dropdown-toggle(data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
-      img.img-circle.profile-picture(ng-src="{{ curUser.profile.avatar_32 }}")
-      | &nbsp;{{ curUser.profile.display_name || '...' }}
+      img.img-circle.profile-picture(ng-src="{{ curUser.avatar_32 }}")
+      | &nbsp;{{ curUser.display_name || '...' }}
       i.fa.fa-fw.fa-angle-down
     ul.dropdown-menu
       li(ng-if='curUser.is_admin')

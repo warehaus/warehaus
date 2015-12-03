@@ -4,27 +4,23 @@ from flask import abort as flask_abort
 from flask.json import jsonify
 
 def register_resource(app_or_blueprint, model, url_prefix='',
-                      create=False,
-                      read=False, read_single=False,
-                      update=False, update_single=False,
-                      delete=False, delete_single=False,
-                      create_decorators=[],
-                      read_decorators=[],
-                      update_decorators=[],
-                      delete_decorators=[]):
+                      create=False, create_decorators=[], create_hook=lambda x: x,
+                      read=False, read_single=False, read_decorators=[], read_hook=lambda x: x,
+                      update=False, update_single=False, update_decorators=[], update_hook=lambda x: x,
+                      delete=False, delete_single=False, delete_decorators=[], delete_hook=lambda x: x):
     def do_create():
         obj = model(**request.json)
         obj.save()
-        return jsonify(obj.as_dict()), httplib.CREATED
+        return jsonify(create_hook(obj.as_dict())), httplib.CREATED
 
     def do_read_all():
-        return jsonify(dict(objects=tuple(obj.as_dict() for obj in model.query.all())))
+        return jsonify(dict(objects=tuple(read_hook(obj.as_dict()) for obj in model.query.all())))
 
     def do_read_single(id):
         obj = model.query.get(id)
         if obj is None:
             flask_abort(httplib.NOT_FOUND)
-        return jsonify(obj.as_dict())
+        return jsonify(read_hook(obj.as_dict()))
 
     def do_update_single(id):
         obj = model.query.get(id)
@@ -32,14 +28,14 @@ def register_resource(app_or_blueprint, model, url_prefix='',
             flask_abort(httplib.NOT_FOUND)
         obj.update(**request.json)
         obj.save()
-        return jsonify(obj.as_dict()), httplib.ACCEPTED
+        return jsonify(update_hook(obj.as_dict())), httplib.ACCEPTED
 
     def do_delete_single(id):
         obj = model.query.get(id)
         if obj is None:
             flask_abort(httplib.NOT_FOUND)
         obj.delete()
-        return jsonify(obj.as_dict()), httplib.NO_CONTENT
+        return jsonify(delete_hook(obj.as_dict())), httplib.NO_CONTENT
 
     for d in create_decorators:
         do_create = d(do_create)
