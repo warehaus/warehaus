@@ -1,7 +1,30 @@
+mixin user_field(name)
+  .form-group
+    label.control-label= name
+    p.form-control-static
+      block
+
+mixin user_fields
+  form
+    +user_field('First Name')
+      | {{ user.first_name }}
+    +user_field('Last Name')
+      | {{ user.last_name }}
+    +user_field('Email')
+      | {{ user.email }}
+    +user_field('Roles')
+      | {{ user.roles | join:", " | titlecase }}
+
 mixin user_details
   div(style={padding: '.5rem'})
     div(style={padding: '.25rem .5rem', 'border-color': '#aaa', 'border-style': 'dashed', 'border-width': '0 0 0 1px'})
-      include ../account/user-info
+      .row
+        .col-md-4
+          +user_fields
+        .col-md-8
+          label.control-label
+            | API Tokens
+          include ../account/api-tokens
 
 mixin user_row
   a.link.list-group-item.no-hover-bg(ng-repeat='user in users.all | orderBy:"display_name"' ui-sref='.({id: "{{ user.id }}"})')

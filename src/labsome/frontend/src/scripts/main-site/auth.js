@@ -82,7 +82,6 @@ angular.module('labsome.auth').directive('userAvatar', function(users) {
     };
 });
 
-
 angular.module('labsome.auth').directive('userDisplayName', function(users) {
     var link = function(scope, elem, attrs) {
         scope.users = users;
@@ -91,6 +90,21 @@ angular.module('labsome.auth').directive('userDisplayName', function(users) {
     return {
         restrict: 'AE',
         template: '{{ users.byUserId[id].display_name }} ',
+        link: link,
+        scope: {
+            'id': '='
+        }
+    };
+});
+
+angular.module('labsome.auth').directive('userEmail', function(users) {
+    var link = function(scope, elem, attrs) {
+        scope.users = users;
+    };
+
+    return {
+        restrict: 'AE',
+        template: '{{ users.byUserId[id].email }} ',
         link: link,
         scope: {
             'id': '='

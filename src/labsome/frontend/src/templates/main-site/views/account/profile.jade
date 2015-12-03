@@ -1,0 +1,26 @@
+mixin user_picture
+  p &nbsp;
+  p.text-center
+    user-avatar(id='user.id' size='172px')
+  p
+    .x15.text-center
+      strong
+        user-display-name(id='user.id')
+    .x12.text-center
+      user-email(id='user.id')
+
+mixin under_construction
+  p &nbsp;
+  h3.text-center
+    i.icon-wrench.x6
+  .x12.text-center
+    | The rest of this page is under construction
+  p &nbsp;
+
+mixin content
+  .panel.panel-default
+    .panel-body
+      +user_picture
+      +under_construction
+
++content

@@ -10,12 +10,17 @@ mixin profile_menu
       user-display-name(id='curUser.id')
       i.fa.fa-fw.fa-angle-down
     ul.dropdown-menu(style={left: '0', right: 'auto'})
+      li
+        a.link(ui-sref='account')
+          i.icon-user
+          | &nbsp;
+          | My Account
+      li.divider
       li(ng-if='curUser.is_admin')
         a.link(ui-sref='admin')
           i.icon-settings
           | &nbsp;
           | Site Management
-      li.divider(ng-if='curUser.is_admin')
       li
         a(href='/auth/logout')
           i.icon-logout

@@ -4,6 +4,7 @@ angular.module('labsome.site', [
     'labsome.common',
     'labsome.auth',
     'labsome.site.labs',
+    'labsome.site.account',
     'labsome.site.admin'
 ]);
 
