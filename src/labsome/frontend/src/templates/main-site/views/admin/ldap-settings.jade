@@ -2,8 +2,6 @@ mixin form
   .row
     .col-sm-2
       .form-group
-        label.control-label
-          | LDAP Server
         select.form-control(name='ldapServerScheme' ng-model='settings.ldap.server_scheme' ng-change='eval_server_address()')
           option(value='ldap://')
             | ldap://
@@ -11,13 +9,9 @@ mixin form
             | ldaps://
     .col-sm-7
       .form-group(ng-class="{'has-error': theForm.ldapServerAddress.$dirty && theForm.ldapServerAddress.$invalid}")
-        label.control-label.hidden-xs
-          | &nbsp;
         input.form-control(type='text' name='ldapServerAddress' placeholder='Server Address' required='' ng-disabled='working' ng-model='settings.ldap.server_address' ng-change='eval_server_address()')
     .col-sm-3
       .form-group(ng-class="{'has-error': theForm.ldapServerPort.$dirty && theForm.ldapServerPort.$invalid}")
-        label.control-label.hidden-xs
-          | &nbsp;
         input.form-control(type='number' name='ldapServerPort' placeholder='Port (optional)' ng-disabled='working' ng-model='settings.ldap.server_port' ng-change='eval_server_address()')
   .row
     .col-sm-6
