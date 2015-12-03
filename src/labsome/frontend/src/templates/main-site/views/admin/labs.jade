@@ -1,7 +1,7 @@
 mixin lab_row
-  table
+  table.details
     tr
-      td(style={'width': '100%', 'vertical-align': 'middle'})
+      td.main
         .lh175
           strong
             i.fa.fa-building-o
@@ -24,7 +24,7 @@ mixin lab_row
               | Click here to start adding servers
           span(ng-if='(lab.active_types | isNotEmpty) && (labObjects.byLabId[lab.id] | isNotEmpty)')
             | {{ labObjects.byLabId[lab.id].length }} objects in this lab
-      td(style={'vertical-align': 'middle'})
+      td
         a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
           i.icon-options-vertical(style='padding:0 1rem;')
         ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
