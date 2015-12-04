@@ -17,7 +17,7 @@ mixin current_lab_menu
   ul.nav.nav-pills.nav-stacked
     li.heading
       | Hardware
-    li(role='presentation' ng-repeat='(type_id, objects) in objectsByType' ng-class='{active: "selected_type_id == type_id"}')
+    li(role='presentation' ng-repeat='(type_id, objects) in objectsByType' ng-class="{'active': selected_type_id == type_id}")
       a.link(ng-click='select_type(type_id)')
         | {{ allLabs.byId[lab_id].type_naming[type_id].name_plural | titlecase }}
         span.badge.pull-right
