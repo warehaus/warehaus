@@ -9,17 +9,21 @@ mixin type_selection
   ul.list-group
     list.list-group-item(ng-repeat='type in objectTypes.all')
       .row
-        .col-sm-4
+        .col-sm-3
           .checkbox
             label
               | &nbsp;
               input(type='checkbox' ng-model='selected_types[type.id]' ng-change='selection_changed()')
               | &nbsp;
               | {{ type.name | titlecase }}
-        .col-sm-4(ng-if='selected_types[type.id]')
-          input.form-control(type='text' ng-model='result.type_naming[type.id].name_singular' required='')
-        .col-sm-4(ng-if='selected_types[type.id]')
-          input.form-control(type='text' ng-model='result.type_naming[type.id].name_plural' required='')
+        .col-sm-9(ng-if='selected_types[type.id]')
+          | Mommy got me one
+          | &nbsp;
+          input.inline(type='text' ng-model='result.type_naming[type.id].name_singular' required='')
+          | &nbsp;
+          | for my birthday but I wanted two
+          | &nbsp;
+          input.inline(type='text' ng-model='result.type_naming[type.id].name_plural' required='')
 
 .modal-body
   p
@@ -27,7 +31,7 @@ mixin type_selection
       | Please select the hardware types to include in this lab.
     div
       | For each type you can also specify a different term users will see for that type.
-  form(name='setHardwareTypes' role='form' ng-submit='ok()')
+  form(name='setHardwareTypes' ng-submit='ok()')
     .panel.panel-default
       +type_selection
 
