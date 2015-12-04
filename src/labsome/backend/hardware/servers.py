@@ -1,5 +1,6 @@
 import httplib
 import pkg_resources
+from logging import getLogger
 from flask import Blueprint
 from flask import request
 from flask import Response
@@ -9,7 +10,14 @@ from .models import Lab
 from .models import Type
 from .models import Object
 
+logger = getLogger(__name__)
+
 servers_api = Blueprint('servers_api', __name__)
+
+@servers_api.before_app_first_request
+def ensure_server_type():
+    server_type = Type.get_by_name('server')
+    logger.debug('Server type is {}'.format(server_type.id))
 
 @servers_api.route('/v1/code/agent.py')
 def get_agent_code():
