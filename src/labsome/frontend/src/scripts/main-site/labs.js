@@ -33,15 +33,33 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
         parent: lab_page,
         url: '/:type_key',
         title: 'Object Type',
-        template: ('<objects-list lab-id="lab_id" type-key="type_key" ' +
-                   'ng-if="allLabs.byId[lab_id] && objectTypes.byTypeKey[type_key]" ' +
-                   'objects="labObjects.byLabId[lab_id].byObjectType[type_key]"/>'),
-        controller: 'CurrentObjectTypeController'
+        templateUrl: viewPath('main-site/views/labs/objects-list.html'),
+        controller: 'CurrentObjectTypeController',
+        resolve: {
+            type_key: ['$stateParams', function($stateParams) {
+                return $stateParams.type_key;
+            }]
+        }
+    };
+
+    var object_action = {
+        name: object_type.name + '.object-action',
+        parent: object_type,
+        url: '/:action_name',
+        title: 'Action',
+        templateUrl: viewPath('main-site/views/labs/object-action.html'),
+        controller: 'ObjectActionController',
+        resolve: {
+            action_name: ['$stateParams', function($stateParams) {
+                return $stateParams.action_name;
+            }]
+        }
     };
 
     $stateProvider.state(labs);
     $stateProvider.state(lab_page);
     $stateProvider.state(object_type);
+    $stateProvider.state(object_action);
 });
 
 angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScope) {
@@ -213,8 +231,8 @@ angular.module('labsome.site.labs').controller('CurrentLabPageController', funct
     });
 });
 
-angular.module('labsome.site.labs').controller('CurrentObjectTypeController', function($scope, $state, $stateParams, allLabs) {
-    $scope.type_key = $stateParams.type_key;
+angular.module('labsome.site.labs').controller('CurrentObjectTypeController', function($scope, $state, allLabs, type_key) {
+    $scope.type_key = type_key;
 
     var refresh = function() {
         if (!allLabs.ready) {
@@ -237,6 +255,12 @@ angular.module('labsome.site.labs').controller('CurrentObjectTypeController', fu
             refresh();
         }
     });
+});
+
+angular.module('labsome.site.labs').controller('ObjectActionController', function($scope, viewPath, type_key, action_name) {
+    $scope.viewPath = viewPath;
+    $scope.type_key = type_key;
+    $scope.action_name = action_name;
 });
 
 angular.module('labsome.site.labs').directive('labName', function(allLabs) {
@@ -264,7 +288,7 @@ angular.module('labsome.site.labs').directive('objectsList', function(curUser, a
 
     return {
         restrict: 'AE',
-        template: '<span ng-include="\'' + viewPath("main-site/hardware/' + typeKey + '.html'") + '"></span>',
+        template: '<span ng-include="\'' + viewPath("main-site/hardware/' + typeKey + '/index.html'") + '"></span>',
         link: link,
         scope: {
             labId: '=',
