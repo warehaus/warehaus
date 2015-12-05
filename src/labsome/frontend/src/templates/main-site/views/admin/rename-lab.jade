@@ -5,12 +5,28 @@
     | Rename
     lab-name(id='lab_id')
 
-.modal-body
+mixin alerts
+  .alert.alert-warning
+    p
+      strong
+        i.fa.fa-fw.fa-warning
+        | Careful
+    p
+      | Renaming a lab changes the URLs of all the pages of the lab. Any links you or
+      | other users had to this lab would break.
+  p
+    | You can always undo this operation by renaming back to the original name.
+
+mixin form
   form(role='form' ng-submit='ok()' ng-init='result.name = allLabs.byId[lab_id].name')
     .form-group
       label.control-label
-        | Lab Name
+        | New Lab Name
       input.form-control(type='text' ng-model='result.name' placeholder='Name' required='')
+
+.modal-body
+  +alerts
+  +form
 
 .modal-footer
   button.btn.btn-link(type='button' ng-click='cancel()')

@@ -22,7 +22,7 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
     var lab_page = {
         name: labs.name + '.lab-page',
         parent: labs,
-        url: '/:lab_id',
+        url: '/:lab_name',
         title: 'Lab',
         templateUrl: viewPath('main-site/views/labs/lab-page.html'),
         controller: 'CurrentLabPageController'
@@ -48,7 +48,8 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
     var self = {
         ready: false,
         all: [],
-        byId: {}
+        byId: {},
+        byName: {}
     };
 
     var _refresh = function() {
@@ -59,6 +60,7 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
             for (var i = 0; i < self.all.length; ++i) {
                 var lab = self.all[i];
                 self.byId[lab.id] = lab;
+                self.byName[lab.name.toLowerCase()] = lab;
             }
             $rootScope.$broadcast('labsome.labs_inventory_changed');
         });
@@ -150,7 +152,7 @@ angular.module('labsome.site.labs').controller('LabSelectorController', function
 
 angular.module('labsome.site.labs').controller('AllLabsController', function($scope, $state, selectedLab, allLabs) {
     var _goto_lab = function(lab_id) {
-        $state.go('labs.lab-page', {lab_id: lab_id});
+        $state.go('labs.lab-page', {lab_name: allLabs.byId[lab_id].name.toLowerCase()});
     };
 
     var refresh = function() {
@@ -177,7 +179,11 @@ angular.module('labsome.site.labs').controller('AllLabsController', function($sc
 });
 
 angular.module('labsome.site.labs').controller('CurrentLabPageController', function($scope, $state, $stateParams, selectedLab, allLabs, labObjects, objectTypes) {
-    $scope.lab_id = $stateParams.lab_id;
+    $scope.lab_name = $stateParams.lab_name;
+    $scope.lab_id = undefined;
+    if (allLabs.byName[$scope.lab_name]) {
+        $scope.lab_id = allLabs.byName[$scope.lab_name.toLowerCase()].id;
+    }
     selectedLab.set($scope.lab_id);
 
     var refresh = function() {
