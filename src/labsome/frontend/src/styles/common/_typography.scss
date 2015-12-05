@@ -6,7 +6,7 @@ html, body {
 }
 
 b, strong {
-    font-family: "Open Sans";
+    font-family: $font-family-sans-serif;
     font-weight: $labsome-font-weight-strong;
 }
 
@@ -15,7 +15,7 @@ mild {
 }
 
 .label {
-    font-family: "Open Sans";
+    font-family: $font-family-sans-serif;
     font-weight: $labsome-font-weight-normal;
 }
 

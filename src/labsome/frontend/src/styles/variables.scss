@@ -10,9 +10,9 @@ $labsome-font-weight-strong:        600;
 
 $font-size-base:          16px;
 $font-family-sans-serif:  "Open Sans", Helvetica, Arial, sans-serif;
-$font-family-serif:       Georgia, "Times New Roman", Times, serif;
+$font-family-serif:       $font-family-sans-serif;
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
-$headings-font-family:    "Open Sans";
+$headings-font-family:    $font-family-sans-serif;
 $headings-font-weight:    $labsome-font-weight-mild;
 $btn-font-weight:         $labsome-font-weight-min;
 $alert-link-font-weight:  $labsome-font-weight-normal;
