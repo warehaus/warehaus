@@ -188,7 +188,7 @@ angular.module('labsome.site.admin').controller('AddServersController', function
         base_url += ':' + $location.port();
     }
 
-    $scope.agent_url = base_url + '/api/servers/v1/code/agent.py?lab_id=' + $scope.lab_id;
+    $scope.agent_url = base_url + '/api/hardware/v1/builtin/server/code/agent.py?lab_id=' + $scope.lab_id;
 
     $scope.close = function() {
         $uibModalInstance.dismiss('cancel');
@@ -209,25 +209,25 @@ angular.module('labsome.site.admin').controller('SetHardwareTypesController', fu
 
     for (var i = 0; i < objectTypes.all.length; ++i) {
         var type = objectTypes.all[i];
-        if ($scope.result.active_types.indexOf(type.id) != -1) {
-            $scope.selected_types[type.id] = true;
+        if ($scope.result.active_types.indexOf(type.type_key) != -1) {
+            $scope.selected_types[type.type_key] = true;
         } else {
-            $scope.selected_types[type.id] = false;
+            $scope.selected_types[type.type_key] = false;
         }
     }
 
-    $scope.selection_changed = function() {
-        $scope.result.active_types = [];
-        for (var type_id in $scope.selected_types) {
-            if ($scope.selected_types[type_id]) {
-                $scope.result.active_types.push(type_id);
-                if (!$scope.result.type_naming[type_id]) {
-                    $scope.result.type_naming[type_id] = {
-                        name_singular: objectTypes.byTypeId[type_id].name,
-                        name_plural: objectTypes.byTypeId[type_id].name + 's'
-                    };
-                }
+    $scope.toggle_type_selection = function(type_key) {
+        $scope.selected_types[type_key] = !$scope.selected_types[type_key];
+        if ($scope.selected_types[type_key]) {
+            $scope.result.active_types.push(type_key);
+            if (!$scope.result.type_naming[type_key]) {
+                $scope.result.type_naming[type_key] = {
+                    name_singular: objectTypes.byTypeKey[type_key].display_name.toLowerCase(),
+                    name_plural: objectTypes.byTypeKey[type_key].display_name.toLowerCase() + 's'
+                };
             }
+        } else {
+            $scope.result.active_types.splice($scope.result.active_types.indexOf(type_key), 1);
         }
     };
 });

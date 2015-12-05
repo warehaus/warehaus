@@ -13,7 +13,6 @@ from .first_setup.api import first_setup_api
 from .auth.api import auth_api
 from .settings.api import settings_api
 from .hardware.api import hardware_api
-from .hardware.servers import servers_api
 
 def _no_db_routes(app):
     @app.route('/')
@@ -48,8 +47,7 @@ def _full_app_routes(app):
 
     app.register_blueprint(auth_api, url_prefix='/api/auth')
     app.register_blueprint(settings_api, url_prefix='/api/settings')
-    app.register_blueprint(hardware_api, url_prefix='/api/hardware')
-    app.register_blueprint(servers_api, url_prefix='/api/servers')
+    app.register_blueprint(hardware_api, url_prefix='/api/hardware/v1')
 
 def _print_config(app):
     print 'Configuration:'

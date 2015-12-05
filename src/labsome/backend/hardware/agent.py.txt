@@ -24,7 +24,7 @@ def log_to_console():
     root.addHandler(ch)
 
 def get_heartbeat_code():
-    heartbeat_code_url = urljoin(env['LABSOME_URL'], '/api/servers/v1/code/heartbeat.py')
+    heartbeat_code_url = urljoin(env['LABSOME_URL'], '/api/hardware/v1/builtin/server/code/heartbeat.py')
     logger.debug('Downloading heartbeat code from {}'.format(heartbeat_code_url))
     heartbeat_code = urlopen(heartbeat_code_url).read()
     heartbeat_md5 = md5(heartbeat_code).hexdigest()

@@ -7,23 +7,25 @@
 
 mixin type_selection
   ul.list-group
-    list.list-group-item(ng-repeat='type in objectTypes.all')
-      .row
-        .col-sm-3
-          .checkbox
-            label
-              | &nbsp;
-              input(type='checkbox' ng-model='selected_types[type.id]' ng-change='selection_changed()')
-              | &nbsp;
-              | {{ type.name | titlecase }}
-        .col-sm-9(ng-if='selected_types[type.id]')
-          | Mommy got me one
+    list.list-group-item(ng-repeat='type in objectTypes.all' ng-class="{'active': selected_types[type.type_key]}")
+      a.link.no-ul(ng-click='toggle_type_selection(type.type_key)')
+        .x12
+          i.fa.fa-fw.fa-toggle-off(ng-if='!selected_types[type.type_key]')
+          i.fa.fa-fw.fa-toggle-on(ng-if='selected_types[type.type_key]')
           | &nbsp;
-          input.inline(type='text' ng-model='result.type_naming[type.id].name_singular' required='')
-          | &nbsp;
-          | for my birthday but I wanted two
-          | &nbsp;
-          input.inline(type='text' ng-model='result.type_naming[type.id].name_plural' required='')
+          | {{ type.display_name }}
+          span.x08(ng-if='type.display_name != type.type_key')
+            | &nbsp;&nbsp;
+            i.fa.fa-fw.fa-tag
+            | {{ type.type_key }}
+      .x09(ng-if='selected_types[type.type_key]')
+        | Mommy got me one
+        | &nbsp;
+        input.inline(type='text' ng-model='result.type_naming[type.type_key].name_singular' required='')
+        | &nbsp;
+        | for my birthday but I wanted two
+        | &nbsp;
+        input.inline(type='text' ng-model='result.type_naming[type.type_key].name_plural' required='')
 
 .modal-body
   p

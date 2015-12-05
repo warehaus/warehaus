@@ -1,5 +1,5 @@
 .link {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .text-link {
@@ -11,5 +11,25 @@
   &:focus {
     color: lighten($text-color, 30%);
     text-decoration: none;
+  }
+}
+
+.no-ul {
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+}
+
+.list-group {
+  .list-group-item.active {
+    .link {
+      color: white;
+
+      &:hover,
+      &:focus {
+        color: darken(white, 5%);
+      }
+    }
   }
 }

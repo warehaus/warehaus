@@ -1,0 +1,41 @@
+mixin no_servers
+  .panel.panel-default
+    .panel-body
+      h3.text-center
+        i.icon-clock.x6(ng-if='!curUser.is_admin')
+        i.icon-ghost.x6(ng-if='curUser.is_admin')
+      p.text-center.x2
+        | No Servers Yet
+      p.text-center.x12(ng-if='!curUser.is_admin')
+        | Please wait you administrator is adding new servers
+      p.text-center.x12(ng-if='curUser.is_admin')
+        | You need to install Labsome's agent on your servers to see them here
+      p.text-center.x2(ng-if='curUser.is_admin')
+        button.btn.btn-lg.btn-success(ui-sref='admin.labs.add-servers({id: "{{ labId }}"})')
+          | Start Adding Servers
+
+mixin server_row
+  table
+    tr
+      td.x3(style={'vertical-align': 'middle'})
+        .status-dot(class='status-dot-{{ object.status }}')
+          i.fa.fa-fw.fa-hdd-o
+      td(style={'width': '100%', 'vertical-align': 'middle'})
+        .x15.lh175
+          | {{ object.name | uppercase }}
+        .x08
+          | {{ object.tagline }}
+
+mixin server_list
+  .panel.panel-default
+    ul.list-group
+      a.link.list-group-item(ng-repeat='object in objects | orderBy:"name"')
+        +server_row
+
+mixin content
+  span(ng-if='objects | isEmpty')
+    +no_servers
+  span(ng-if='objects | isNotEmpty')
+    +server_list
+
++content

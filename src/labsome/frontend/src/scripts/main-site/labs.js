@@ -100,35 +100,20 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
 angular.module('labsome.site.labs').factory('objectTypes', function($rootScope, $http) {
     var self = {
         all: [],
-        byTypeId: {}
+        byTypeKey: {}
     };
 
     $http.get('/api/hardware/v1/types').then(function(res) {
-        self.all = res.data.objects;
-        self.byTypeId = {};
+        self.all = res.data.types;
+        self.byTypeKey = {};
         for (var i = 0; i < self.all.length; ++i) {
             var type = self.all[i];
-            self.byTypeId[type.id] = type;
+            self.byTypeKey[type.type_key] = type;
         }
         $rootScope.$broadcast('labsome.object_types_refreshed');
     });
 
     return self;
-});
-
-angular.module('labsome.site.labs').directive('labName', function(allLabs) {
-    var link = function(scope, elem, attrs) {
-        scope.allLabs = allLabs;
-    };
-
-    return {
-        restrict: 'AE',
-        template: ' {{ allLabs.byId[id].name }}',
-        link: link,
-        scope: {
-            'id': '='
-        }
-    };
 });
 
 angular.module('labsome.site.labs').service('selectedLab', function() {
@@ -189,8 +174,8 @@ angular.module('labsome.site.labs').controller('CurrentLabPageController', funct
         }
         for (var i = 0; i < objects.length; ++i) {
             var obj = objects[i];
-            if (angular.isDefined($scope.objectsByType[obj.type_id])) {
-                $scope.objectsByType[obj.type_id].push(obj);
+            if (angular.isDefined($scope.objectsByType[obj.type_key])) {
+                $scope.objectsByType[obj.type_key].push(obj);
             }
         }
     };
@@ -204,21 +189,56 @@ angular.module('labsome.site.labs').controller('CurrentLabPageController', funct
             return;
         }
         _refresh_objects();
-        $scope.selected_type_id = undefined;
-        for (var type_id in $scope.objectsByType) {
-            $scope.selected_type_id = type_id;
+        $scope.selected_type_key = undefined;
+        for (var type_key in $scope.objectsByType) {
+            $scope.selected_type_key = type_key;
             break;
         }
     };
 
-    $scope.select_type = function(type_id) {
-        $scope.selected_type_id = type_id;
+    $scope.select_type = function(type_key) {
+        $scope.selected_type_key = type_key;
     };
 
     _refresh();
 
     $scope.$on('labsome.labs_inventory_changed', _refresh);
     $scope.$on('labsome.objects_inventory_changed', _refresh_objects);
+});
+
+angular.module('labsome.site.labs').directive('labName', function(allLabs) {
+    var link = function(scope, elem, attrs) {
+        scope.allLabs = allLabs;
+    };
+
+    return {
+        restrict: 'AE',
+        template: ' {{ allLabs.byId[id].name }}',
+        link: link,
+        scope: {
+            'id': '='
+        }
+    };
+});
+
+angular.module('labsome.site.labs').directive('objectsList', function(curUser, allLabs, labObjects, objectTypes, viewPath) {
+    var link = function(scope, elem, attrs) {
+        scope.curUser = curUser;
+        scope.allLabs = allLabs;
+        scope.labObjects = labObjects;
+        scope.objectTypes = objectTypes;
+    };
+
+    return {
+        restrict: 'AE',
+        template: '<span ng-include="\'' + viewPath("main-site/hardware/' + typeKey + '.html'") + '"></span>',
+        link: link,
+        scope: {
+            labId: '=',
+            typeKey: '=',
+            objects: '='
+        }
+    };
 });
 
 angular.module('labsome.site.labs').run(function($rootScope, allLabs, labObjects, objectTypes) {

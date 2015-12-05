@@ -2,33 +2,28 @@ mixin lab_empty
   .panel.panel-default
     .panel-body
       h3.text-center
-        i.icon-clock.x6
+        i.icon-clock.x6(ng-if='!curUser.is_admin')
+        i.icon-ghost.x6(ng-if='curUser.is_admin')
       p.text-center.x2
         | This lab is still empty
       p.text-center.x12(ng-if='!curUser.is_admin')
         | Please wait you administrator is adding new hardware
       p.text-center.x12(ng-if='curUser.is_admin')
-        | You need to install Labsome's agent on your servers to see them here
+        | You need to start by choosing which hardware types are in this lab
       p.text-center.x2(ng-if='curUser.is_admin')
-        button.btn.btn-lg.btn-success(ui-sref='admin.labs.add-servers({id: "{{ lab_id }}"})')
-          | Start Adding Servers
+        button.btn.btn-lg.btn-success(ui-sref='admin.labs.set-hardware-types({id: "{{ lab_id }}"})')
+          | Set Hardware Types
 
 mixin current_lab_menu
   ul.nav.nav-pills.nav-stacked
     li.heading
       | Hardware
-    li(role='presentation' ng-repeat='(type_id, objects) in objectsByType' ng-class="{'active': selected_type_id == type_id}")
-      a.link(ng-click='select_type(type_id)')
-        | {{ allLabs.byId[lab_id].type_naming[type_id].name_plural | titlecase }}
+    li(role='presentation' ng-repeat='(type_key, objects) in objectsByType' ng-class="{'active': selected_type_key == type_key}")
+      a.link(ng-click='select_type(type_key)')
+        | {{ allLabs.byId[lab_id].type_naming[type_key].name_plural | titlecase }}
         span.badge.pull-right
           | {{ objects.length }}
 
-mixin lab_objects
-  .panel.panel-default
-    ul.list-group
-      a.link.list-group-item(ng-repeat='object in objectsByType[selected_type_id] | orderBy:"name"')
-        span(ng-if="objectTypes.byTypeId[object.type_id].name == 'server'")
-          include server-row
 
 mixin content
   .row(ng-if='objectsByType | isEmpty')
@@ -38,6 +33,6 @@ mixin content
     .col-sm-3
       +current_lab_menu
     .col-sm-9
-      +lab_objects
+      objects-list(lab-id='lab_id' type-key='selected_type_key' objects='objectsByType[selected_type_key]')
 
 +content

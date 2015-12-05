@@ -23,20 +23,12 @@
   h3
     | 1. Download the agent code
   p
-    | Click this button to download the agent code:
-  h4.text-center
-    a.btn.btn-lg.btn-success(ng-href='{{ agent_url }}')
-      | Download
-      strong
-        lab-name(id='lab_id')
-      |  Agent
-  p
-    | Alternatively, you can run this line to download the agent directly from your servers:
+    | Run the following on your servers to download the agent code:
   pre
-    | # With curl
     | curl {{ agent_url }} > agent.py
+  p
+    | Or in case you only have <samp>wget</samp>:
   pre
-    | # Or with wget
     | wget -O agent.py {{ agent_url }}
   h3
     | 2. Run as root
