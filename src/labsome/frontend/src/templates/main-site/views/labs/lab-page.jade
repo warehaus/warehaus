@@ -18,21 +18,20 @@ mixin current_lab_menu
   ul.nav.nav-pills.nav-stacked
     li.heading
       | Hardware
-    li(role='presentation' ng-repeat='(type_key, objects) in objectsByType' ng-class="{'active': selected_type_key == type_key}")
-      a.link(ng-click='select_type(type_key)')
+    li(role='presentation' ng-repeat='type_key in allLabs.byId[lab_id].active_types' ui-sref-active='active')
+      a.link(ui-sref='.object-type({type_key: "{{ type_key }}"})')
         | {{ allLabs.byId[lab_id].type_naming[type_key].name_plural | titlecase }}
         span.badge.pull-right
-          | {{ objects.length }}
-
+          | {{ (labObjects.byLabId[lab_id].byObjectType[type_key] || []).length }}
 
 mixin content
-  .row(ng-if='objectsByType | isEmpty')
+  .row(ng-if='allLabs.byId[lab_id].active_types | isEmpty')
     .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
       +lab_empty
-  .row(ng-if='objectsByType | isNotEmpty')
+  .row(ng-if='allLabs.byId[lab_id].active_types | isNotEmpty')
     .col-sm-3
       +current_lab_menu
     .col-sm-9
-      objects-list(lab-id='lab_id' type-key='selected_type_key' objects='objectsByType[selected_type_key]')
+      div(ui-view='')
 
 +content

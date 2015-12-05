@@ -17,12 +17,12 @@ mixin lab_row
               a.link(ui-sref='.set-hardware-types({id: "{{ lab.id }}"})')
                 | Click here to fix this
           span(ng-if='lab.active_types | isNotEmpty')
-            mild.text-danger(ng-if='labObjects.byLabId[lab.id] | isEmpty')
+            mild.text-danger(ng-if='labObjects.byLabId[lab.id].all | isEmpty')
               i.fa.fa-warning
               | &nbsp;
               | This lab is empty
-            span(ng-if='labObjects.byLabId[lab.id] | isNotEmpty')
-              | {{ labObjects.byLabId[lab.id].length }} objects in this lab
+            span(ng-if='labObjects.byLabId[lab.id].all | isNotEmpty')
+              | {{ labObjects.byLabId[lab.id].all.length }} objects in this lab
       td
         a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
           i.icon-options-vertical(style='padding:0 1rem;')
