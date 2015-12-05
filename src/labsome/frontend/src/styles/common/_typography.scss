@@ -3,6 +3,7 @@
 html, body {
   font-size: $font-size-base;
   font-weight: $labsome-font-weight-normal;
+  -webkit-font-smoothing: subpixel-antialiased;
 }
 
 b, strong {

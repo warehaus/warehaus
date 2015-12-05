@@ -7,7 +7,7 @@
 
 mixin type_selection
   ul.list-group
-    list.list-group-item(ng-repeat='type in objectTypes.all' ng-class="{'active': selected_types[type.type_key]}")
+    list.list-group-item(ng-repeat='type in objectTypes.all' ng-class="{'opacity05': !selected_types[type.type_key]}")
       a.link.no-ul(ng-click='toggle_type_selection(type.type_key)')
         .x12
           i.fa.fa-fw.fa-toggle-off(ng-if='!selected_types[type.type_key]')
