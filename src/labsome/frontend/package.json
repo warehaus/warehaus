@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/labsome/labsome#readme",
   "devDependencies": {
-    "bower": "^1.6.6",
+    "bower": "^1.6.9",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-jade": "^1.1.0",
@@ -21,8 +21,5 @@
     "gulp-ng-annotate": "^1.1.0",
     "gulp-sass": "^2.1.0",
     "gulp-uglify": "^1.4.2"
-  },
-  "dependencies": {
-    "bower": "^1.6.8"
   }
 }
