@@ -1,11 +1,10 @@
-FROM labsome/base-image:v4
+FROM labsome/base-image:v6
 
 RUN mkdir -p /opt/labsome
 RUN mkdir -p /var/log/labsome
 
 COPY . /opt/labsome
 
-# Build and install the frontend and the backend
 RUN cd /opt/labsome/src/labsome/frontend && \
     npm install && \
     ./node_modules/.bin/bower install --allow-root && \
