@@ -1,4 +1,4 @@
-# Labsome
+# Labsome [![Build Status](https://travis-ci.org/labsome/labsome.svg?branch=master)](https://travis-ci.org/labsome/labsome)
 
 *This README describes how to build and develop Labsome.*
 
