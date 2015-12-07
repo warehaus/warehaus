@@ -21,7 +21,7 @@ Then run the `labsome/frontend-builder` image so that it builds and monitors the
 Finally, in another terminal, run the `labsome/labsome` container while mapping the sources into `/opt/labsome`. Remember that we still need a running RethinkDB instance as shown in the quick start:
 
     # cd into the clonsed repo
-    docker run -ti -v `pwd`:/opt/labsome -p 80:80 --link rethinkdb
+    docker run -ti -v `pwd`:/opt/labsome -p 80:80 --link rethinkdb labsome/labsome
 
 You can now access `http://localhost` while developing Labsome.
 
