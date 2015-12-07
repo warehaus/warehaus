@@ -3,6 +3,7 @@ import pkg_resources
 from flask import Flask
 from flask import redirect
 from flask.ext.login import login_required
+from .logs import log_to_console
 from .settings import database_config
 from .settings import full_config
 from .settings.models import get_settings
@@ -50,6 +51,7 @@ def _full_app_routes(app):
     app.register_blueprint(hardware_api, url_prefix='/api/hardware/v1')
 
 def create_app():
+    log_to_console()
     static_folder = pkg_resources.resource_filename('labsome', 'static')
     template_folder = os.path.join(static_folder, 'templates')
     app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)

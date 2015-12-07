@@ -1,5 +1,3 @@
-import sys
-import logging
 from argparse import ArgumentParser
 from .app import create_app
 
@@ -13,15 +11,6 @@ ASCII_LOGO = """\
 |                                      |
 +--------------------------------------+\
 """
-
-def log_to_console():
-    root = logging.getLogger(__package__)
-    root.setLevel(logging.DEBUG)
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('[%(asctime)s] %(levelname)5s: %(message)s')
-    ch.setFormatter(formatter)
-    root.addHandler(ch)
 
 def print_config(app):
     print 'Configuration:'
@@ -42,7 +31,6 @@ def main():
                               'not share or post your configuration anywhere.'))
     args = parser.parse_args()
     print ASCII_LOGO
-    log_to_console()
     app = create_app()
     if args.print_config:
         print_config(app)
