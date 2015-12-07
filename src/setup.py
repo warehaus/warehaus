@@ -8,7 +8,7 @@ here = os.path.dirname(__file__)
 setup(
     name = 'labsome',
     version = open(os.path.join(here, '..', 'VERSION')).read().strip(),
-    url = 'http://www.labsome.io/',
+    url = 'http://www.labsome.com/',
     license = 'AGPL-3.0',
     zip_safe = False,
 
@@ -28,6 +28,7 @@ setup(
         'pytz',
         'rethinkdb >= 2.2.0',
         'setuptools',
+        'uwsgi == 2.0.11.2',
     ],
 
     extras_require = {

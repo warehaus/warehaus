@@ -1,4 +1,4 @@
-FROM labsome/base-image:v5
+FROM labsome/base-image:v6
 
 RUN mkdir -p /opt/labsome
 RUN mkdir -p /var/log/labsome
