@@ -1,9 +1,6 @@
 src/*.egg-info
-src/_venv
 src/build
 src/dist
-src/labsome/frontend/node_modules
-src/labsomefrontend/npm-debug.log
-src/labsome/static/
+src/labsome/frontend
 .DS_Store
 .git

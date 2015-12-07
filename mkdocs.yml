@@ -4,3 +4,4 @@ theme: cerulean
 
 pages:
 - Home: 'index.md'
+- Developers: 'developers.md'

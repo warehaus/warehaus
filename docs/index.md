@@ -14,7 +14,7 @@ But what happens when --
 
 Labsome might be what you need.
 
-## Installation
+## Quick Start
 
 Labsome is distributed as a Docker container and uses the RethinkDB database for storage.
 
@@ -30,11 +30,11 @@ You can also directly connect to an existing RethinkDB instance, see below for "
 
 ### Starting Labsome
 
-    docker run -p 5000:5000 --link rethinkdb labsome/labsome
+    docker run -p 80:80 --link rethinkdb labsome/labsome
 
 Extra options you can pass as environment variables:
 
 * `RETHINKDB_PORT_28015_TCP_ADDR`: sets the RethinkDB hostname.
 * `RETHINKDB_PORT_28015_TCP_PORT`: the RethinkDB port.
 * `RETHINKDB_AUTH`: sets the authentication string. *default: empty*
-* `POSTGRES_DB_NAME`: Database name. *default: `labsome`*
+* `RETHINKDB_DB`: Database name. *default: `labsome`*
