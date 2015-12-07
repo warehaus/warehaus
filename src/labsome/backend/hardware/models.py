@@ -8,6 +8,6 @@ class Lab(db.Model):
 class Object(db.Model):
     _allow_additional_items = True
 
-    type_key = db.Field(db.IndexWith('type_name_lab', ['name', 'lab_id']))
-    name     = db.Field()
-    lab_id   = db.Field()
+    type_key = db.Field(db.Index(), db.IndexWith('type_name_lab', ['name', 'lab_id']))
+    name     = db.Field(db.Index())
+    lab_id   = db.Field(db.Index())
