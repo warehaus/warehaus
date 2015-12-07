@@ -113,32 +113,36 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
         byObjectId: {}
     };
 
-    $http.get('/api/hardware/v1/objects').then(function(res) {
-        self.objects = res.data.objects;
-        self.byLabId = {};
-        self.byObjectId = {};
-        for (var i = 0; i < self.objects.length; ++i) {
-            var obj = self.objects[i];
-            if (angular.isDefined(obj.lab_id)) {
-                if (angular.isUndefined(self.byLabId[obj.lab_id])) {
-                    self.byLabId[obj.lab_id] = {
-                        all: [],
-                        byObjectType: {}
-                    };
+    self.refresh = function() {
+        return $http.get('/api/hardware/v1/objects').then(function(res) {
+            self.objects = res.data.objects;
+            self.byLabId = {};
+            self.byObjectId = {};
+            for (var i = 0; i < self.objects.length; ++i) {
+                var obj = self.objects[i];
+                if (angular.isDefined(obj.lab_id)) {
+                    if (angular.isUndefined(self.byLabId[obj.lab_id])) {
+                        self.byLabId[obj.lab_id] = {
+                            all: [],
+                            byObjectType: {}
+                        };
+                    }
+                    self.byLabId[obj.lab_id].all.push(obj);
+                    if (angular.isUndefined(self.byLabId[obj.lab_id].byObjectType[obj.type_key])) {
+                        self.byLabId[obj.lab_id].byObjectType[obj.type_key] = [];
+                    }
+                    self.byLabId[obj.lab_id].byObjectType[obj.type_key].push(obj);
                 }
-                self.byLabId[obj.lab_id].all.push(obj);
-                if (angular.isUndefined(self.byLabId[obj.lab_id].byObjectType[obj.type_key])) {
-                    self.byLabId[obj.lab_id].byObjectType[obj.type_key] = [];
+                if (angular.isUndefined(self.byObjectId[obj.id])) {
+                    self.byObjectId[obj.id] = [];
                 }
-                self.byLabId[obj.lab_id].byObjectType[obj.type_key].push(obj);
+                self.byObjectId[obj.id].push(obj);
             }
-            if (angular.isUndefined(self.byObjectId[obj.id])) {
-                self.byObjectId[obj.id] = [];
-            }
-            self.byObjectId[obj.id].push(obj);
-        }
-        $rootScope.$broadcast('labsome.objects_inventory_changed');
-    });
+            $rootScope.$broadcast('labsome.objects_inventory_changed');
+        });
+    };
+
+    self.refresh();
 
     return self;
 });
