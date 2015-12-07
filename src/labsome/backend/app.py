@@ -49,12 +49,7 @@ def _full_app_routes(app):
     app.register_blueprint(settings_api, url_prefix='/api/settings')
     app.register_blueprint(hardware_api, url_prefix='/api/hardware/v1')
 
-def _print_config(app):
-    print 'Configuration:'
-    for key, value in sorted(app.config.iteritems()):
-        print '  ', key, '=', repr(app.config[key])
-
-def create_app(print_config=False):
+def create_app():
     static_folder = pkg_resources.resource_filename('labsome', 'static')
     template_folder = os.path.join(static_folder, 'templates')
     app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
@@ -68,9 +63,6 @@ def create_app(print_config=False):
             db.init_app(app)
             app.config.from_object(full_config())
             auth.init_app(app)
-
-            if print_config:
-                _print_config(app)
 
             if not get_settings().is_initialized:
                 _first_setup_routes(app)

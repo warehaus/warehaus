@@ -23,6 +23,11 @@ def log_to_console():
     ch.setFormatter(formatter)
     root.addHandler(ch)
 
+def print_config(app):
+    print 'Configuration:'
+    for key, value in sorted(app.config.iteritems()):
+        print '  ', key, '=', repr(app.config[key])
+
 def main():
     parser = ArgumentParser()
     parser.add_argument('-d', '--debug', default=False, action='store_true',
@@ -38,7 +43,9 @@ def main():
     args = parser.parse_args()
     print ASCII_LOGO
     log_to_console()
-    app = create_app(print_config=args.print_config)
+    app = create_app()
+    if args.print_config:
+        print_config(app)
     app.run(host=args.host, port=args.port, debug=args.debug)
 
 if __name__ == '__main__':
