@@ -41,13 +41,13 @@ class Index(Requirement):
         self.multi = multi
 
     def _create_index(self, table):
+        logger.debug('Creating index {!r} on {!r}'.format(self.field_name, table))
         table.index_create(self.field_name, multi=self.multi).run(db.conn)
 
     def _wait_for_index(self, table):
         table.index_wait(self.field_name).run(db.conn)
 
     def post_table_create(self, table):
-        logger.debug('Creating index {!r} on {!r}'.format(self.field_name, table))
         try:
             self._create_index(table)
         except ReqlOpFailedError as error:
@@ -64,6 +64,7 @@ class IndexWith(Index):
         self.other_fields = other_fields
 
     def _create_index(self, table):
+        logger.debug('Creating index {!r} on {!r}'.format(self.name, table))
         index_fields = [r.row[self.field_name]] + list(r.row[other_field] for other_field in self.other_fields)
         table.index_create(self.name, index_fields).run(db.conn)
 
