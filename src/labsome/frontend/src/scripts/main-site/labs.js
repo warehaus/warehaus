@@ -50,13 +50,16 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
     var object_action = {
         name: object_type.name + '.object-action',
         parent: object_type,
-        url: '/:actionName',
+        url: '/:actionName?id',
         title: 'Action',
         templateUrl: viewPath('main-site/views/labs/object-action.html'),
         controller: 'ObjectActionController',
         resolve: {
             actionName: ['$stateParams', function($stateParams) {
                 return $stateParams.actionName;
+            }],
+            objId: ['$stateParams', function($stateParams) {
+                return $stateParams.id;
             }]
         }
     };
@@ -110,6 +113,7 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
     var self = {
         objects: [],
         byLabId: {},
+        byObjectType: {},
         byObjectId: {}
     };
 
@@ -117,6 +121,7 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
         return $http.get('/api/hardware/v1/objects').then(function(res) {
             self.objects = res.data.objects;
             self.byLabId = {};
+            self.byObjectType = {};
             self.byObjectId = {};
             for (var i = 0; i < self.objects.length; ++i) {
                 var obj = self.objects[i];
@@ -133,10 +138,11 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
                     }
                     self.byLabId[obj.lab_id].byObjectType[obj.type_key].push(obj);
                 }
-                if (angular.isUndefined(self.byObjectId[obj.id])) {
-                    self.byObjectId[obj.id] = [];
+                if (angular.isUndefined(self.byObjectType[obj.type_key])) {
+                    self.byObjectType[obj.type_key] = [];
                 }
-                self.byObjectId[obj.id].push(obj);
+                self.byObjectType[obj.type_key].push(obj);
+                self.byObjectId[obj.id] = obj;
             }
             $rootScope.$broadcast('labsome.objects_inventory_changed');
         });
@@ -266,7 +272,7 @@ angular.module('labsome.site.labs').controller('CurrentObjectTypeController', fu
     });
 });
 
-angular.module('labsome.site.labs').controller('ObjectActionController', function($scope, $state, viewPath, allLabs, labName, typeKey, actionName) {
+angular.module('labsome.site.labs').controller('ObjectActionController', function($scope, $state, viewPath, allLabs, labName, typeKey, actionName, objId) {
     $scope.viewPath = viewPath;
     $scope.lab_id = undefined;
     if (allLabs.ready && allLabs.byName[labName.toLowerCase()]) {
@@ -277,6 +283,7 @@ angular.module('labsome.site.labs').controller('ObjectActionController', functio
     }
     $scope.type_key = typeKey;
     $scope.action_name = actionName;
+    $scope.object_id = objId;
 });
 
 angular.module('labsome.site.labs').directive('labName', function(allLabs) {
@@ -287,6 +294,21 @@ angular.module('labsome.site.labs').directive('labName', function(allLabs) {
     return {
         restrict: 'AE',
         template: ' {{ allLabs.byId[id].name }}',
+        link: link,
+        scope: {
+            'id': '='
+        }
+    };
+});
+
+angular.module('labsome.site.labs').directive('objectName', function(labObjects) {
+    var link = function(scope, elem, attrs) {
+        scope.labObjects = labObjects;
+    };
+
+    return {
+        restrict: 'AE',
+        template: ' {{ labObjects.byObjectId[id].name }}',
         link: link,
         scope: {
             'id': '='

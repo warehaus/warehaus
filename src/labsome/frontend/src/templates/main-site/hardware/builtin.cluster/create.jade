@@ -1,0 +1,18 @@
+mixin form
+  form(role='form' name='newCluster' ng-submit='create()')
+    .form-group
+      label.control-label
+        | Cluster Name
+      input.form-control(type='text' placeholder='Cluster Name' ng-model='cluster.name' required='' focus-me='true' ng-disabled='working')
+    .btn-group
+      button.btn.btn-success(ng-click='create()' ng-disabled='newCluster.$invalid || working')
+        | Create Cluster
+
+mixin content
+  .panel.panel-default(ng-controller='CreateClusterController')
+    .panel-body
+      p.x2
+        | Create a Cluster
+      +form
+
++content

@@ -18,10 +18,26 @@ mixin server_row
   table.details
     tr
       td.pad-right(style={'vertical-align': 'middle'})
-        .status-dot(class='status-dot-{{ server.status }}')
-      td(style={'width': '100%', 'vertical-align': 'middle'})
-        .heading
-          | {{ server.name | uppercase }}
+        .status-dot.status-dot-3x(class='status-dot-{{ server.status }}')
+      td.heading(style={'width': '100%', 'vertical-align': 'middle'})
+        | {{ server.name | uppercase }}
+      td
+        a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+          i.icon-options-vertical(style='padding:0 1rem;')
+        ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
+          li.text-left(ng-if='!server.cluster_id')
+            a(ui-sref='.object-action({actionName: "add-to-cluster", id: "{{ server.id }}"})')
+              | Add To Cluster
+          li.text-left(ng-if='server.cluster_id')
+            a(ui-sref='.object-action({actionName: "remove-from-cluster", id: "{{ server.id }}"})')
+              | Remove From Cluster
+    tr(ng-if='server.cluster_id')
+      td
+      td.tagline
+        | Part of
+        | &nbsp;
+        i.fa.fa-server
+        object-name(id='server.cluster_id')
 
 mixin server_list
   .panel.panel-default

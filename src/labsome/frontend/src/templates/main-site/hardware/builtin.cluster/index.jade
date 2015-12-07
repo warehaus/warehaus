@@ -1,0 +1,62 @@
+mixin no_clusters
+  .panel.panel-default
+    .panel-body
+      h3.text-center
+        i.icon-ghost.x6
+      p.text-center.x2
+        | No Clusters Yet
+      p.text-center.x12
+        | Create your first cluster and add some servers to it
+      p.text-center.x2
+        button.btn.btn-lg.btn-success(ui-sref='.object-action({actionName: "create"})')
+          | Create a Cluster
+
+mixin cluster_row
+  table.details
+    tr
+      td.pad-right(style={'vertical-align': 'middle'})
+        .x15
+          i.fa.fa-fw.fa-server
+      td.heading(style={'width': '100%', 'vertical-align': 'middle'})
+        | {{ object.name | uppercase }}
+      td
+        a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+          i.icon-options-vertical(style='padding:0 1rem;')
+        ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
+          li.text-left
+            a(ui-sref='.add-servers({id: "{{ lab.id }}"})')
+              | Take Ownership
+          li.divider
+          li.text-left
+            a(ui-sref='.object-action({actionName: "delete", id: "{{ object.id }}"})')
+              | Delete This Cluster
+    tr(ng-repeat='server_id in object.servers')
+      td
+      td
+        .status-dot.status-dot-2x(class='status-dot-{{ labObjects.byObjectId[server_id].status }}')
+        object-name(id='server_id')
+    tr(ng-if='object.servers | isEmpty')
+      td
+      td.tagline.opacity08
+        | This cluster is empty
+
+mixin cluster_list
+  .panel.panel-default
+    ul.list-group
+      li.list-group-item(ng-repeat='object in objects | orderBy:"name"')
+        +cluster_row
+
+mixin create_button
+  p.text-right(ng-if='curUser.is_admin')
+    button.btn.btn-default(ui-sref='.object-action({actionName: "create"})')
+      | Create a Cluster
+
+mixin content
+  span(ng-if='objects | isEmpty')
+    +no_clusters
+  span(ng-if='objects | isNotEmpty')
+    +cluster_list
+    +create_button
+
+ui-view
+  +content

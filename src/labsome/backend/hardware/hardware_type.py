@@ -32,6 +32,11 @@ class HardwareType(object):
         return cls.type_key()
 
     @classmethod
+    def get_by_id(cls, id):
+        '''Returns an object by id, or None if not found'''
+        return Object.query.get(id)
+
+    @classmethod
     def get_by_name_and_lab(cls, name, lab_id):
         '''Finds a unique `Object` of this type in `lab_id`.'''
         objs = tuple(Object.query.get_all([cls.type_key(), name, lab_id], index='type_name_lab'))

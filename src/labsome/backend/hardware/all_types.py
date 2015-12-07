@@ -1,5 +1,6 @@
 from .hardware_type import HardwareType
 from .servers import Server
+from .clusters import Cluster
 
 class HardwareTypesRegistry(object):
     def __init__(self):
@@ -26,3 +27,4 @@ class HardwareTypesRegistry(object):
 
 all_types = HardwareTypesRegistry()
 all_types.register_type(Server)
+all_types.register_type(Cluster)

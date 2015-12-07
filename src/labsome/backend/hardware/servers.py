@@ -3,6 +3,7 @@ import pkg_resources
 from flask import request
 from flask import Response
 from flask import abort as flask_abort
+from flask.json import jsonify
 from ..db.times import now
 from .models import Lab
 from .hardware_type import HardwareType
@@ -12,6 +13,7 @@ class ServerError(Exception):
 
 HEARTBEAT_MANDATORY_FIELDS = ('name', 'lab_id')
 HEARTBEAT_FORBIDDEN_FIELDS = ('id', 'type_key', 'status', 'last_heartbeat')
+UPDATE_API_ALLOWED_FIELDS = ('cluster_id', )
 
 class Server(HardwareType):
     TYPE_VENDOR = 'builtin'
@@ -59,3 +61,30 @@ class Server(HardwareType):
             server.status = 'success' # XXX calculate this with a background job based on server.last_heartbeat
             server.save()
             return 'ok'
+
+        def _update_server(server):
+            if any(field not in UPDATE_API_ALLOWED_FIELDS for field in request.json):
+                flask_abort(httplib.BAD_REQUEST, 'You can only update the following server fields: {}'.format(
+                    ', '.join(UPDATE_API_ALLOWED_FIELDS)))
+            server.update(**request.json)
+            server.save()
+            return jsonify(server.as_dict()), httplib.ACCEPTED
+
+        @app_or_blueprint.route(url_prefix + '/<server_id>', methods=['PUT'])
+        def update_server_by_id(server_id):
+            server = cls.get_by_id(server_id)
+            if server is None:
+                flask_abort(httplib.NOT_FOUND, 'No server with id {!r}'.format(server_id))
+            if server.type_key != cls.type_key():
+                flask_abort(httplib.NOT_FOUND, 'No server with id {!r}'.format(server_id))
+            return _update_server(server)
+
+        @app_or_blueprint.route(url_prefix + '/<lab_name>/<server_name>', methods=['PUT'])
+        def update_server_by_name(lab_name, server_name):
+            lab = Lab.get_by_name(lab_name)
+            if lab is None:
+                flask_abort(httplib.NOT_FOUND, 'Unknown lab {!r}'.format(lab_name))
+            server = cls.get_by_name_and_lab(server_name, lab_id)
+            if server is None:
+                flask_abort(httplib.NOT_FOUND, 'Unknown server {!r}'.format(server_name))
+            return _update_server(server)

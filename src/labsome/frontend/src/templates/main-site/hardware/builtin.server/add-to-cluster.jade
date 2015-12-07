@@ -1,0 +1,16 @@
+mixin content
+  .panel.panel-default(ng-controller='AddServerToClusterController')
+    ul.list-group
+      li.list-group-item(ng-repeat='cluster in labObjects.byLabId[lab_id].byObjectType["builtin.cluster"]')
+        table.details
+          tr
+            td.pad-right(style={'vertical-align': 'middle'})
+              .x15
+                i.fa.fa-fw.fa-server
+            td.heading(style={'width': '100%', 'vertical-align': 'middle'})
+              | {{ cluster.name | uppercase }}
+            td
+              button.btn.btn-sm.btn-primary(ng-click='add_to_cluster(cluster.id)')
+                | Add Here
+
++content
