@@ -22,22 +22,27 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
     var lab_page = {
         name: labs.name + '.lab-page',
         parent: labs,
-        url: '/:lab_name',
+        url: '/:labName',
         title: 'Lab',
         templateUrl: viewPath('main-site/views/labs/lab-page.html'),
-        controller: 'CurrentLabPageController'
+        controller: 'CurrentLabPageController',
+        resolve: {
+            labName: ['$stateParams', function($stateParams) {
+                return $stateParams.labName;
+            }]
+        }
     };
 
     var object_type = {
         name: lab_page.name + '.object-type',
         parent: lab_page,
-        url: '/:type_key',
+        url: '/:typeKey',
         title: 'Object Type',
         templateUrl: viewPath('main-site/views/labs/objects-list.html'),
         controller: 'CurrentObjectTypeController',
         resolve: {
-            type_key: ['$stateParams', function($stateParams) {
-                return $stateParams.type_key;
+            typeKey: ['$stateParams', function($stateParams) {
+                return $stateParams.typeKey;
             }]
         }
     };
@@ -45,13 +50,13 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
     var object_action = {
         name: object_type.name + '.object-action',
         parent: object_type,
-        url: '/:action_name',
+        url: '/:actionName',
         title: 'Action',
         templateUrl: viewPath('main-site/views/labs/object-action.html'),
         controller: 'ObjectActionController',
         resolve: {
-            action_name: ['$stateParams', function($stateParams) {
-                return $stateParams.action_name;
+            actionName: ['$stateParams', function($stateParams) {
+                return $stateParams.actionName;
             }]
         }
     };
@@ -170,7 +175,7 @@ angular.module('labsome.site.labs').controller('LabSelectorController', function
 
 angular.module('labsome.site.labs').controller('AllLabsController', function($scope, $state, selectedLab, allLabs) {
     var _goto_lab = function(lab_id) {
-        $state.go('labs.lab-page', {lab_name: allLabs.byId[lab_id].name.toLowerCase()});
+        $state.go('labs.lab-page', {labName: allLabs.byId[lab_id].name.toLowerCase()});
     };
 
     var refresh = function() {
@@ -196,8 +201,8 @@ angular.module('labsome.site.labs').controller('AllLabsController', function($sc
     });
 });
 
-angular.module('labsome.site.labs').controller('CurrentLabPageController', function($scope, $state, $stateParams, selectedLab, allLabs, labObjects, objectTypes) {
-    $scope.lab_name = $stateParams.lab_name;
+angular.module('labsome.site.labs').controller('CurrentLabPageController', function($scope, $state, selectedLab, allLabs, labObjects, objectTypes, labName) {
+    $scope.lab_name = labName;
     $scope.lab_id = undefined;
     if (allLabs.byName[$scope.lab_name]) {
         $scope.lab_id = allLabs.byName[$scope.lab_name.toLowerCase()].id;
@@ -224,15 +229,15 @@ angular.module('labsome.site.labs').controller('CurrentLabPageController', funct
             if (refresh()) {
                 var active_types = allLabs.byId[$scope.lab_id].active_types;
                 if (angular.isDefined(active_types) && (active_types.length > 0)) {
-                    $state.go('labs.lab-page.object-type', {type_key: active_types[0]});
+                    $state.go('labs.lab-page.object-type', {typeKey: active_types[0]});
                 }
             }
         }
     });
 });
 
-angular.module('labsome.site.labs').controller('CurrentObjectTypeController', function($scope, $state, allLabs, type_key) {
-    $scope.type_key = type_key;
+angular.module('labsome.site.labs').controller('CurrentObjectTypeController', function($scope, $state, allLabs, typeKey) {
+    $scope.type_key = typeKey;
 
     var refresh = function() {
         if (!allLabs.ready) {
@@ -257,10 +262,17 @@ angular.module('labsome.site.labs').controller('CurrentObjectTypeController', fu
     });
 });
 
-angular.module('labsome.site.labs').controller('ObjectActionController', function($scope, viewPath, type_key, action_name) {
+angular.module('labsome.site.labs').controller('ObjectActionController', function($scope, $state, viewPath, allLabs, labName, typeKey, actionName) {
     $scope.viewPath = viewPath;
-    $scope.type_key = type_key;
-    $scope.action_name = action_name;
+    $scope.lab_id = undefined;
+    if (allLabs.ready && allLabs.byName[labName.toLowerCase()]) {
+        $scope.lab_id = allLabs.byName[labName.toLowerCase()].id;
+    }
+    if (!$scope.lab_id) {
+        $state.go('^');
+    }
+    $scope.type_key = typeKey;
+    $scope.action_name = actionName;
 });
 
 angular.module('labsome.site.labs').directive('labName', function(allLabs) {

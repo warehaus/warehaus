@@ -19,7 +19,7 @@ mixin current_lab_menu
     li.heading
       | Hardware
     li(role='presentation' ng-repeat='type_key in allLabs.byId[lab_id].active_types' ui-sref-active='active')
-      a.link(ui-sref='.object-type({type_key: "{{ type_key }}"})')
+      a.link(ui-sref='.object-type({typeKey: "{{ type_key }}"})')
         | {{ allLabs.byId[lab_id].type_naming[type_key].name_plural | titlecase }}
         span.badge.pull-right
           | {{ (labObjects.byLabId[lab_id].byObjectType[type_key] || []).length }}
