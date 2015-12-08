@@ -5,9 +5,13 @@ angular.module('labsome.site.hardware', [
 ]);
 
 angular.module('labsome.site.hardware').service('clusterServersAssigner', function($rootScope, labObjects) {
+    var BUILTIN_SERVER = 'builtin.server';
     $rootScope.$on('labsome.objects_inventory_changed', function() {
-        for (var i = 0; i < labObjects.byObjectType['builtin.server'].length; ++i) {
-            var server = labObjects.byObjectType['builtin.server'][i];
+        if (angular.isUndefined(labObjects.byObjectType[BUILTIN_SERVER])) {
+            return;
+        }
+        for (var i = 0; i < labObjects.byObjectType[BUILTIN_SERVER].length; ++i) {
+            var server = labObjects.byObjectType[BUILTIN_SERVER][i];
             if (server.cluster_id) {
                 var cluster = labObjects.byObjectId[server.cluster_id];
                 if (cluster) {

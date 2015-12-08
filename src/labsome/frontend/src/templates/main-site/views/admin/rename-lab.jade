@@ -18,11 +18,21 @@ mixin alerts
     | You can always undo this operation by renaming back to the original name.
 
 mixin form
-  form(role='form' ng-submit='ok()' ng-init='result.name = allLabs.byId[lab_id].name')
+  form(role='form' ng-submit='ok()' ng-init='result.display_name = allLabs.byId[lab_id].display_name')
     .form-group
       label.control-label
         | New Lab Name
-      input.form-control(type='text' ng-model='result.name' placeholder='Name' required='')
+      input.form-control(type='text' ng-model='result.display_name' placeholder='Name' required='')
+      slug(from='result.display_name' to='result.slug')
+      input(type='hidden' ng-model='result.slug' required='')
+    p(style={color: '#aaa'})
+      i.fa.fa-fw.fa-info-circle
+      span(ng-if='!result.slug')
+        | Please start typing...
+      span(ng-if='result.slug')
+        | This lab's API name will be:&nbsp;
+        samp
+          | {{ result.slug }}
 
 .modal-body
   +alerts

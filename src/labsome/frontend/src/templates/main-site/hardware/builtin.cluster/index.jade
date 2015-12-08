@@ -18,7 +18,7 @@ mixin cluster_row
         .x15
           i.fa.fa-fw.fa-server
       td.heading(style={'width': '100%', 'vertical-align': 'middle'})
-        | {{ object.name | uppercase }}
+        object-name.uppercase(id='object.id')
       td
         a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
           i.icon-options-vertical(style='padding:0 1rem;')
@@ -43,7 +43,7 @@ mixin cluster_row
 mixin cluster_list
   .panel.panel-default
     ul.list-group
-      li.list-group-item(ng-repeat='object in objects | orderBy:"name"')
+      li.list-group-item(ng-repeat='object in objects | orderBy:"display_name"')
         +cluster_row
 
 mixin create_button

@@ -1,5 +1,6 @@
 import httplib
 import pkg_resources
+from slugify import slugify
 from flask import request
 from flask import Response
 from flask import abort as flask_abort
@@ -11,8 +12,8 @@ from .hardware_type import HardwareType
 class ServerError(Exception):
     pass
 
-HEARTBEAT_MANDATORY_FIELDS = ('name', 'lab_id')
-HEARTBEAT_FORBIDDEN_FIELDS = ('id', 'type_key', 'status', 'last_heartbeat')
+HEARTBEAT_MANDATORY_FIELDS = ('hostname', 'lab_id')
+HEARTBEAT_FORBIDDEN_FIELDS = ('id', 'display_name', 'slug', 'type_key', 'status', 'last_heartbeat')
 UPDATE_API_ALLOWED_FIELDS = ('cluster_id', )
 
 class Server(HardwareType):
@@ -52,9 +53,11 @@ class Server(HardwareType):
             lab_id = info['lab_id']
             if Lab.query.get(lab_id) is None:
                 flask_abort(httplib.NOT_FOUND, 'No lab with id={!r}'.format(lab_id))
-            server = cls.get_by_name_and_lab(info['name'], lab_id)
+            display_name = info.pop('hostname')
+            slug = slugify(display_name)
+            server = cls.get_by_slug_and_lab(slug, lab_id)
             if server is None:
-                server = cls.create(**info)
+                server = cls.create(slug=slug, display_name=display_name, **info)
             else:
                 server.update(**info)
             server.last_heartbeat = now()
@@ -79,12 +82,12 @@ class Server(HardwareType):
                 flask_abort(httplib.NOT_FOUND, 'No server with id {!r}'.format(server_id))
             return _update_server(server)
 
-        @app_or_blueprint.route(url_prefix + '/<lab_name>/<server_name>', methods=['PUT'])
-        def update_server_by_name(lab_name, server_name):
-            lab = Lab.get_by_name(lab_name)
+        @app_or_blueprint.route(url_prefix + '/<lab_slug>/<server_slug>', methods=['PUT'])
+        def update_server_by_slug(lab_slug, server_slug):
+            lab = Lab.get_by_slug(lab_slug)
             if lab is None:
-                flask_abort(httplib.NOT_FOUND, 'Unknown lab {!r}'.format(lab_name))
-            server = cls.get_by_name_and_lab(server_name, lab_id)
+                flask_abort(httplib.NOT_FOUND, 'Unknown lab {!r}'.format(lab_slug))
+            server = cls.get_by_slug_and_lab(server_slug, lab_id)
             if server is None:
-                flask_abort(httplib.NOT_FOUND, 'Unknown server {!r}'.format(server_name))
+                flask_abort(httplib.NOT_FOUND, 'Unknown server {!r}'.format(server_slug))
             return _update_server(server)

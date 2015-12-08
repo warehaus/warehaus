@@ -26,6 +26,7 @@
     "ui-select": "angular-ui-select#~0.12.1",
     "bootstrap-sass": "~3.3.6",
     "open-sans-fontface": "~1.4.2",
-    "angular-filter": "~0.5.8"
+    "angular-filter": "~0.5.8",
+    "angular-slugify": "~1.0.1"
   }
 }

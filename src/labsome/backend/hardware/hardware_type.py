@@ -37,14 +37,14 @@ class HardwareType(object):
         return Object.query.get(id)
 
     @classmethod
-    def get_by_name_and_lab(cls, name, lab_id):
+    def get_by_slug_and_lab(cls, slug, lab_id):
         '''Finds a unique `Object` of this type in `lab_id`.'''
-        objs = tuple(Object.query.get_all([cls.type_key(), name, lab_id], index='type_name_lab'))
+        objs = tuple(Object.query.get_all([cls.type_key(), slug, lab_id], index='type_slug_lab'))
         if len(objs) == 0:
             return None
         if len(objs) == 1:
             return objs[0]
-        raise RuntimeError('Found more than 1 object with name={!r} lab_id={!r}'.format(name, lab_id))
+        raise RuntimeError('Found more than 1 object with slug={!r} lab_id={!r} type_key={!r}'.format(slug, lab_id, cls.type_key()))
 
     @classmethod
     def create(cls, **kwargs):

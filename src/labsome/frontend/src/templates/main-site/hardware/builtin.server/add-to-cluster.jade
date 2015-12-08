@@ -8,7 +8,7 @@ mixin content
               .x15
                 i.fa.fa-fw.fa-server
             td.heading(style={'width': '100%', 'vertical-align': 'middle'})
-              | {{ cluster.name | uppercase }}
+              object-name.uppercase(id='cluster.id')
             td
               button.btn.btn-sm.btn-primary(ng-click='add_to_cluster(cluster.id)')
                 | Add Here

@@ -22,13 +22,13 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
     var lab_page = {
         name: labs.name + '.lab-page',
         parent: labs,
-        url: '/:labName',
+        url: '/:labSlug',
         title: 'Lab',
         templateUrl: viewPath('main-site/views/labs/lab-page.html'),
         controller: 'CurrentLabPageController',
         resolve: {
-            labName: ['$stateParams', function($stateParams) {
-                return $stateParams.labName;
+            labSlug: ['$stateParams', function($stateParams) {
+                return $stateParams.labSlug;
             }]
         }
     };
@@ -75,7 +75,7 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
         ready: false,
         all: [],
         byId: {},
-        byName: {}
+        bySlug: {}
     };
 
     var _refresh = function() {
@@ -86,7 +86,7 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
             for (var i = 0; i < self.all.length; ++i) {
                 var lab = self.all[i];
                 self.byId[lab.id] = lab;
-                self.byName[lab.name.toLowerCase()] = lab;
+                self.bySlug[lab.slug] = lab;
             }
             $rootScope.$broadcast('labsome.labs_inventory_changed');
         });
@@ -185,7 +185,7 @@ angular.module('labsome.site.labs').controller('LabSelectorController', function
 
 angular.module('labsome.site.labs').controller('AllLabsController', function($scope, $state, selectedLab, allLabs) {
     var _goto_lab = function(lab_id) {
-        $state.go('labs.lab-page', {labName: allLabs.byId[lab_id].name.toLowerCase()});
+        $state.go('labs.lab-page', {labSlug: allLabs.byId[lab_id].slug});
     };
 
     var refresh = function() {
@@ -211,11 +211,11 @@ angular.module('labsome.site.labs').controller('AllLabsController', function($sc
     });
 });
 
-angular.module('labsome.site.labs').controller('CurrentLabPageController', function($scope, $state, selectedLab, allLabs, labObjects, objectTypes, labName) {
-    $scope.lab_name = labName;
+angular.module('labsome.site.labs').controller('CurrentLabPageController', function($scope, $state, selectedLab, allLabs, labObjects, objectTypes, labSlug) {
+    $scope.lab_slug = labSlug;
     $scope.lab_id = undefined;
-    if (allLabs.byName[$scope.lab_name]) {
-        $scope.lab_id = allLabs.byName[$scope.lab_name.toLowerCase()].id;
+    if (allLabs.bySlug[$scope.lab_slug]) {
+        $scope.lab_id = allLabs.bySlug[$scope.lab_slug].id;
     }
     selectedLab.set($scope.lab_id);
 
@@ -272,11 +272,11 @@ angular.module('labsome.site.labs').controller('CurrentObjectTypeController', fu
     });
 });
 
-angular.module('labsome.site.labs').controller('ObjectActionController', function($scope, $state, viewPath, allLabs, labName, typeKey, actionName, objId) {
+angular.module('labsome.site.labs').controller('ObjectActionController', function($scope, $state, viewPath, allLabs, labSlug, typeKey, actionName, objId) {
     $scope.viewPath = viewPath;
     $scope.lab_id = undefined;
-    if (allLabs.ready && allLabs.byName[labName.toLowerCase()]) {
-        $scope.lab_id = allLabs.byName[labName.toLowerCase()].id;
+    if (allLabs.ready && allLabs.bySlug[labSlug]) {
+        $scope.lab_id = allLabs.bySlug[labSlug].id;
     }
     if (!$scope.lab_id) {
         $state.go('^');
@@ -293,7 +293,7 @@ angular.module('labsome.site.labs').directive('labName', function(allLabs) {
 
     return {
         restrict: 'AE',
-        template: ' {{ allLabs.byId[id].name }}',
+        template: ' {{ allLabs.byId[id].display_name }}',
         link: link,
         scope: {
             'id': '='
@@ -308,7 +308,7 @@ angular.module('labsome.site.labs').directive('objectName', function(labObjects)
 
     return {
         restrict: 'AE',
-        template: ' {{ labObjects.byObjectId[id].name }}',
+        template: ' {{ labObjects.byObjectId[id].display_name }}',
         link: link,
         scope: {
             'id': '='

@@ -24,6 +24,7 @@ setup(
         'Flask-Principal == 0.4.0',
         'Flask-RethinkDB == 0.2',
         'Flask-WTF == 0.12',
+        'python-slugify == 1.1.4',
         'bunch == 1.0.1',
         'pytz',
         'rethinkdb >= 2.2.0',

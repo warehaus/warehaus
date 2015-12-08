@@ -35,7 +35,7 @@ def collect_net_info():
 
 def collect_info():
     return dict(
-        name = open('/proc/sys/kernel/hostname').read().strip(),
+        hostname = open('/proc/sys/kernel/hostname').read().strip(),
         lab_id = LABSOME_LAB_ID,
         net = collect_net_info(),
     )

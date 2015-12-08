@@ -3,7 +3,17 @@ mixin form
     .form-group
       label.control-label
         | Cluster Name
-      input.form-control(type='text' placeholder='Cluster Name' ng-model='cluster.name' required='' focus-me='true' ng-disabled='working')
+      input.form-control(type='text' placeholder='Cluster Display Name' ng-model='cluster.display_name' required='' focus-me='true' ng-disabled='working')
+      slug(from='cluster.display_name' to='cluster.slug')
+      input(type='hidden' ng-model='cluster.slug' required='')
+    p(style={color: '#aaa'})
+      i.fa.fa-fw.fa-info-circle
+      span(ng-if='!cluster.slug')
+        | Please start typing...
+      span(ng-if='cluster.slug')
+        | This cluster's API name will be:&nbsp;
+        samp
+          | {{ cluster.slug }}
     .btn-group
       button.btn.btn-success(ng-click='create()' ng-disabled='newCluster.$invalid || working')
         | Create Cluster

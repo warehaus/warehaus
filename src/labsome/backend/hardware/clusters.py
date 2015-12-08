@@ -1,4 +1,5 @@
 import httplib
+from slugify import slugify
 from flask import request
 from flask import abort as flask_abort
 from flask.json import jsonify
@@ -18,13 +19,14 @@ class Cluster(HardwareType):
         @app_or_blueprint.route(url_prefix, methods=['POST'])
         def create_cluster():
             lab_id = request.json['lab_id']
-            name = request.json['name']
+            display_name = request.json['display_name']
+            slug = slugify(display_name)
             if Lab.query.get(lab_id) is None:
                 flask_abort(httplib.NOT_FOUND, 'No lab with id={!r}'.format(lab_id))
-            cluster = cls.get_by_name_and_lab(name, lab_id)
+            cluster = cls.get_by_slug_and_lab(slug, lab_id)
             if cluster is not None:
-                flask_abort(httplib.CONFLICT, 'Cluster name already in use')
-            cluster = cls.create(name=name, lab_id=lab_id)
+                flask_abort(httplib.CONFLICT, 'Cluster slug {!r} already in use'.format(slug))
+            cluster = cls.create(slug=slug, display_name=display_name, lab_id=lab_id)
             cluster.save()
             return jsonify(cluster.as_dict()), httplib.CREATED
 

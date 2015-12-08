@@ -2,8 +2,18 @@ mixin form
   form(name='createLab' role='form' ng-submit='save()')
     .form-group
       label.control-label
-        | Lab Name
-      input.form-control(type='text' ng-model='lab.name' placeholder='Name' required='' focus-me='true')
+        | Lab Display Name
+      input.form-control(type='text' ng-model='lab.display_name' placeholder='Name' required='' focus-me='true')
+      slug(from='lab.display_name' to='lab.slug')
+      input(type='hidden' ng-model='lab.slug' required='')
+    p(style={color: '#aaa'})
+      i.fa.fa-fw.fa-info-circle
+      span(ng-if='!lab.slug')
+        | Please start typing...
+      span(ng-if='lab.slug')
+        | This lab's API name will be:&nbsp;
+        samp
+          | {{ lab.slug }}
     h4.text-left
       button.btn.btn-success(ng-click='save()' ng-disabled='working || createLab.$invalid')
         | Create Lab
