@@ -2,7 +2,6 @@ import os
 import pkg_resources
 from flask import Flask
 from flask import redirect
-from flask.ext.login import login_required
 from .logs import log_to_console
 from .settings import database_config
 from .settings import full_config
@@ -42,7 +41,6 @@ def _full_app_routes(app):
 
     @app.route('/site/')
     @app.route('/site/<path:path>')
-    @login_required
     def site(path=None):
         return app.send_static_file('templates/main-site/index.html')
 

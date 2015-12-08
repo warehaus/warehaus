@@ -3,7 +3,9 @@
 angular.module('labsome.common', [
     'ui.router',
     'angular.filter',
-    'labsome.common.view_helpers'
+    'ui.bootstrap',
+    'ui.select',
+    'ngSanitize'
 ]);
 
 angular.module('labsome.common').run(function($rootScope, $state) {

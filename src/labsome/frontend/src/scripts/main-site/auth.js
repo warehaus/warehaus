@@ -112,6 +112,23 @@ angular.module('labsome.auth').directive('userEmail', function(users) {
     };
 });
 
+angular.module('labsome.auth').factory('loginRedirection', function($q, $window) {
+    return {
+        'responseError': function(res) {
+            if (res.status == 401) {
+                var redirect_uri = $window.location.href;
+                redirect_uri = redirect_uri.slice(($window.location.protocol + '//' + $window.location.host).length);
+                $window.location = '/auth/login?next=' + $window.encodeURIComponent(redirect_uri);
+            }
+            return $q.reject(res);
+        }
+    };
+});
+
+angular.module('labsome.auth').config(function($httpProvider) {
+    $httpProvider.interceptors.push('loginRedirection');
+});
+
 angular.module('labsome.auth').run(function($rootScope, users, curUser) {
     $rootScope.users = users;
     $rootScope.curUser = curUser;

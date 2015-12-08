@@ -1,16 +1,10 @@
 'use strict';
 
-angular.module('labsome.common.view_helpers', [
-    'ui.bootstrap',
-    'ui.select',
-    'ngSanitize'
-]);
-
-angular.module('labsome.common.view_helpers').constant('viewPath', function(uri) {
+angular.module('labsome.common').constant('viewPath', function(uri) {
     return '/static/templates/' + uri;
 });
 
-angular.module('labsome.common.view_helpers').directive('focusMe', function($timeout) {
+angular.module('labsome.common').directive('focusMe', function($timeout) {
     var link = function(scope, element, attrs) {
         scope.$watch(attrs.focusMe, function(value) {
             if (value) { 
@@ -24,7 +18,7 @@ angular.module('labsome.common.view_helpers').directive('focusMe', function($tim
     };
 });
 
-angular.module('labsome.common.view_helpers').directive('blurMe', function($timeout) {
+angular.module('labsome.common').directive('blurMe', function($timeout) {
     var link = function(scope, element, attrs) {
         scope.$watch(attrs.blurMe, function(value) {
             if (value) {
