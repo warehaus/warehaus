@@ -25,21 +25,17 @@ angular.module('labsome.site.hardware').service('clusterServersAssigner', functi
     });
 });
 
-angular.module('labsome.site.hardware').controller('AddServerToClusterController', function($scope, $http, $state, labObjects) {
+angular.module('labsome.site.hardware').controller('AddServerToClusterController', function($scope, $http, $state) {
     $scope.add_to_cluster = function(cluster_id) {
         $http.put('/api/hardware/v1/builtin/server/' + $scope.object_id, {cluster_id: cluster_id}).then(function() {
-            labObjects.refresh().then(function() {
-                $state.go('^');
-            });
+            $state.go('^');
         });
     };
 });
 
-angular.module('labsome.site.hardware').controller('RemoveServerFromClusterController', function($scope, $http, $state, labObjects) {
+angular.module('labsome.site.hardware').controller('RemoveServerFromClusterController', function($scope, $http, $state) {
     $http.put('/api/hardware/v1/builtin/server/' + $scope.object_id, {cluster_id: null}).then(function() {
-        labObjects.refresh().then(function() {
-            $state.go('^');
-        });
+        $state.go('^');
     });
 });
 
@@ -55,15 +51,13 @@ angular.module('labsome.site.hardware').controller('DeleteClusterController', fu
         }
         $q.all(unassign_promises).then(function() {
             $http.delete('/api/hardware/v1/builtin/cluster/' + $scope.object_id).then(function() {
-                labObjects.refresh().then(function() {
-                    $state.go('^');
-                });
+                $state.go('^');
             });
         });
     };
 });
 
-angular.module('labsome.site.hardware').controller('CreateClusterController', function($scope, $http, $state, labObjects) {
+angular.module('labsome.site.hardware').controller('CreateClusterController', function($scope, $http, $state) {
     $scope.cluster = {
         lab_id: $scope.lab_id
     };
@@ -71,9 +65,7 @@ angular.module('labsome.site.hardware').controller('CreateClusterController', fu
     $scope.create = function() {
         $scope.working = true;
         $http.post('/api/hardware/v1/builtin/cluster', $scope.cluster).then(function() {
-            labObjects.refresh().then(function() {
-                $state.go('^');
-            });
+            $state.go('^');
         });
     };
 });

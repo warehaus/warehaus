@@ -70,7 +70,7 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
     $stateProvider.state(object_action);
 });
 
-angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScope) {
+angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScope, socketIo) {
     var self = {
         ready: false,
         all: [],
@@ -78,11 +78,12 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
         bySlug: {}
     };
 
-    var _refresh = function() {
+    var refresh = function() {
         return $http.get('/api/hardware/v1/labs').then(function(res) {
             self.ready = true;
             self.all = res.data.objects;
             self.byId = {};
+            self.bySlug = {};
             for (var i = 0; i < self.all.length; ++i) {
                 var lab = self.all[i];
                 self.byId[lab.id] = lab;
@@ -93,23 +94,26 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
     };
 
     self.create = function(lab) {
-        return $http.post('/api/hardware/v1/labs', lab).then(_refresh);
+        return $http.post('/api/hardware/v1/labs', lab);
     };
 
     self.update = function(lab_id, update) {
-        return $http.put('/api/hardware/v1/labs/' + lab_id, update).then(_refresh);
+        return $http.put('/api/hardware/v1/labs/' + lab_id, update);
     };
 
     self.delete = function(lab_id) {
-        return $http.delete('/api/hardware/v1/labs/' + lab_id).then(_refresh);
+        return $http.delete('/api/hardware/v1/labs/' + lab_id);
     };
 
-    _refresh();
+    refresh();
+
+    socketIo.on('object_changed:lab', refresh);
+    socketIo.on('object_deleted:lab', refresh);
 
     return self;
 });
 
-angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $http) {
+angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $http, socketIo) {
     var self = {
         objects: [],
         byLabId: {},
@@ -117,7 +121,7 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
         byObjectId: {}
     };
 
-    self.refresh = function() {
+    var refresh = function() {
         return $http.get('/api/hardware/v1/objects').then(function(res) {
             self.objects = res.data.objects;
             self.byLabId = {};
@@ -148,7 +152,10 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
         });
     };
 
-    self.refresh();
+    refresh();
+
+    socketIo.on('object_changed:object', refresh);
+    socketIo.on('object_deleted:object', refresh);
 
     return self;
 });

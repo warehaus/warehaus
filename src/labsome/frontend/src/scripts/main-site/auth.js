@@ -2,7 +2,7 @@
 
 angular.module('labsome.auth', []);
 
-angular.module('labsome.auth').factory('users', function($rootScope, $http) {
+angular.module('labsome.auth').factory('users', function($rootScope, $http, socketIo) {
     var self = {
         ready: false,
         all: [],
@@ -18,7 +18,7 @@ angular.module('labsome.auth').factory('users', function($rootScope, $http) {
     };
 
     var refresh = function() {
-        $http.get('/api/auth/v1/users').then(function(res) {
+        return $http.get('/api/auth/v1/users').then(function(res) {
             self.all = res.data.objects;
             for (var i = 0; i < self.all.length; ++i) {
                 var user = self.all[i];
@@ -35,6 +35,9 @@ angular.module('labsome.auth').factory('users', function($rootScope, $http) {
     };
 
     refresh();
+
+    socketIo.on('object_changed:user', refresh);
+    socketIo.on('object_deleted:user', refresh);
 
     return self;
 });
