@@ -22,3 +22,4 @@ class Object(db.Model):
     slug         = db.Field(db.Index())
     display_name = db.Field(db.Index())
     lab_id       = db.Field(db.Index())
+    ownerships   = db.Field(default=lambda: [])

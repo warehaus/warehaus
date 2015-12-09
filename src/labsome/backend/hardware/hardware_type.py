@@ -55,3 +55,8 @@ class HardwareType(object):
     def register_api(cls, app_or_blueprint, url_prefix):
         '''Called when creating API routes.'''
         pass
+
+    @classmethod
+    def allow_ownership(cls):
+        '''Sets whether a user can set ownership for objects of this type through the API.'''
+        return False

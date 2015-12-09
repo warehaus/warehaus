@@ -15,6 +15,10 @@ class Cluster(HardwareType):
         return 'Cluster'
 
     @classmethod
+    def allow_ownership(cls):
+        return True
+
+    @classmethod
     def register_api(cls, app_or_blueprint, url_prefix):
         @app_or_blueprint.route(url_prefix, methods=['POST'])
         def create_cluster():
