@@ -1,13 +1,3 @@
-$labsome-status-dot-size:                  .25rem;
-$labsome-status-dot-border-size:           2px;
-$labsome-status-dot-contrast:              10%;
-$labsome-status-dot-color-primary:         $brand-primary;
-$labsome-status-dot-color-success:         $brand-success;
-$labsome-status-dot-color-info:            $brand-info;
-$labsome-status-dot-color-warning:         $brand-warning;
-$labsome-status-dot-color-danger:          $brand-danger;
-$labsome-status-dot-color-unknown:         white;
-
 .status-dot {
   display: inline-block;
   color: white;
@@ -16,51 +6,25 @@ $labsome-status-dot-color-unknown:         white;
   height: $labsome-status-dot-size;
 }
 
-.status-dot-2x {
-  width: (2 * $labsome-status-dot-size);
-  height: (2 * $labsome-status-dot-size);
+@mixin status-dot-size($factor) {
+  width: ($factor * $labsome-status-dot-size);
+  height: ($factor * $labsome-status-dot-size);
+  margin: 0 0 (3px + (-1px * $factor)) 0;
 }
 
-.status-dot-3x {
-  width: (3 * $labsome-status-dot-size);
-  height: (3 * $labsome-status-dot-size);
-}
-
-.status-dot-4x {
-  width: (4 * $labsome-status-dot-size);
-  height: (4 * $labsome-status-dot-size);
-}
-
-.status-dot-5x {
-  width: (5 * $labsome-status-dot-size);
-  height: (5 * $labsome-status-dot-size);
-}
+.status-dot-2x { @include status-dot-size(2); }
+.status-dot-3x { @include status-dot-size(3); }
+.status-dot-4x { @include status-dot-size(4); }
+.status-dot-5x { @include status-dot-size(5); }
 
 @mixin status-dot-style($color) {
-  background-color: lighten($color, $labsome-status-dot-contrast);
+  @include gradient-radial(lighten($color, $labsome-status-dot-contrast * 2), $color);
   border: $labsome-status-dot-border-size solid darken($color, $labsome-status-dot-contrast)
 }
 
-.status-dot-primary {
-  @include status-dot-style($color: $labsome-status-dot-color-primary);
-}
-
-.status-dot-success {
-  @include status-dot-style($color: $labsome-status-dot-color-success);
-}
-
-.status-dot-info {
-  @include status-dot-style($color: $labsome-status-dot-color-info);
-}
-
-.status-dot-warning {
-  @include status-dot-style($color: $labsome-status-dot-color-warning);
-}
-
-.status-dot-danger {
-  @include status-dot-style($color: $labsome-status-dot-color-danger);
-}
-
-.status-dot-unknown {
-  @include status-dot-style($color: $labsome-status-dot-color-unknown);
-}
+.status-dot-primary { @include status-dot-style($color: $labsome-status-dot-color-primary); }
+.status-dot-success { @include status-dot-style($color: $labsome-status-dot-color-success); }
+.status-dot-info    { @include status-dot-style($color: $labsome-status-dot-color-info); }
+.status-dot-warning { @include status-dot-style($color: $labsome-status-dot-color-warning); }
+.status-dot-danger  { @include status-dot-style($color: $labsome-status-dot-color-danger); }
+.status-dot-unknown { @include status-dot-style($color: $labsome-status-dot-color-unknown); }

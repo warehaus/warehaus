@@ -8,13 +8,26 @@ $labsome-font-weight-strong:        600;
 // Overridden Bootstrap variables
 //-------------------------------
 
+$gray-base:              #111;
+$gray-darker:            lighten($gray-base, 13.5%);
+$gray-dark:              lighten($gray-base, 20%);
+$gray:                   lighten($gray-base, 33.5%);
+$gray-light:             lighten($gray-base, 46.7%);
+$gray-lighter:           lighten($gray-base, 93.5%);
+
+$brand-primary:           #53687d;
+$brand-success:           #5cb85c;
+$brand-info:              #5bc0de;
+$brand-warning:           #f0ad4e;
+$brand-danger:            #d9534f;
+
 $font-size-base:          16px;
-$font-family-sans-serif:  "Open Sans", Helvetica, Arial, sans-serif;
+$font-family-sans-serif:  "Lato", Helvetica, Arial, sans-serif;
 $font-family-serif:       $font-family-sans-serif;
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
 $headings-font-family:    $font-family-sans-serif;
 $headings-font-weight:    $labsome-font-weight-mild;
-$btn-font-weight:         $labsome-font-weight-min;
+$btn-font-weight:         $labsome-font-weight-normal;
 $alert-link-font-weight:  $labsome-font-weight-normal;
 $badge-font-weight:       $labsome-font-weight-thin;
 $navbar-height:           70px;
@@ -23,27 +36,27 @@ $navbar-height:           70px;
 // Labsome variables
 //------------------
 
-$OpenSansPath: "/static/bower_components/open-sans-fontface/fonts";
+$lato-font-path:                           '/static/bower_components/lato-font/fonts';
 
-$labsome-standalone-box-padding:    2rem .5rem;
-$labsome-standalone-box-radius:     .75rem;
-$labsome-standalone-box-img-margin: 1rem;
+$labsome-standalone-box-padding:           2rem .5rem;
+$labsome-standalone-box-radius:            .75rem;
+$labsome-standalone-box-img-margin:        1rem;
 
-$labsome-bg-color:              #fafafa;
+$labsome-bg-color:                         #fcfcfc;
 
 // Navbar
 
-$navbar-labsome-color:                     #777;
-$navbar-labsome-bg:                        white;
-$navbar-labsome-border:                    darken($navbar-labsome-bg, 10%);
+$navbar-labsome-color:                     white;
+$navbar-labsome-bg:                        #456;
+$navbar-labsome-border:                    lighten($navbar-labsome-bg, 10%);
 $navbar-labsome-profile-picture-size:      35px;
-$navbar-labsome-logo-height:               35px;
+$navbar-labsome-logo-height:               30px;
 
 $navbar-labsome-link-color:                $navbar-labsome-color;
 $navbar-labsome-link-hover-color:          $navbar-labsome-color;
 $navbar-labsome-link-hover-bg:             transparent;
-$navbar-labsome-link-active-color:         darken($navbar-labsome-color, 5%);
-$navbar-labsome-link-active-bg:            #f9f9f9;
+$navbar-labsome-link-active-color:         darken($navbar-labsome-color, 7.5%);
+$navbar-labsome-link-active-bg:            lighten($navbar-labsome-bg, 7.5%);
 $navbar-labsome-link-disabled-color:       #ccc;
 $navbar-labsome-link-disabled-bg:          transparent;
 
@@ -64,4 +77,14 @@ $labsome-nav-pills-color:                  gray;
 $labsome-nav-pills-font-weight:            $labsome-font-weight-strong;
 $labsome-nav-pills-padding:                1rem 1rem .5rem 1rem;
 
-$labsome-profile-picture-border-color:     #b3b3b3;
+$labsome-profile-picture-border-color:     lighten($gray-base, 70%);
+
+$labsome-status-dot-size:                  4px;
+$labsome-status-dot-border-size:           2px;
+$labsome-status-dot-contrast:              10%;
+$labsome-status-dot-color-primary:         $brand-primary;
+$labsome-status-dot-color-success:         $brand-success;
+$labsome-status-dot-color-info:            $brand-info;
+$labsome-status-dot-color-warning:         $brand-warning;
+$labsome-status-dot-color-danger:          $brand-danger;
+$labsome-status-dot-color-unknown:         white;

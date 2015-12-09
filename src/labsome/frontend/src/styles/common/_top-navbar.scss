@@ -1,5 +1,10 @@
+$navbar-labsome-brand-margin-h: 1.2rem;
+
 .navbar-labsome {
-  background-color: $navbar-labsome-bg;
+  @include gradient-horizontal-three-colors($start-color: lighten($navbar-labsome-bg, 10%),
+                                            $mid-color: lighten($navbar-labsome-bg, 5%),
+                                            $end-color: lighten($navbar-labsome-bg, 15%),
+                                            $color-stop: 25%);
   border-color: $navbar-labsome-border;
 
   .navbar-brand {
@@ -8,10 +13,20 @@
     vertical-align: middle;
 
     img {
-      margin: (($navbar-height - $navbar-labsome-logo-height) / 2) 1.2rem;
+      display: inline-block;
+      margin: (($navbar-height - $navbar-labsome-logo-height) / 2) $navbar-labsome-brand-margin-h;
       width: (4 * $navbar-labsome-logo-height);
       height: $navbar-labsome-logo-height;
       padding: 0;
+    }
+
+    .status-dot-container {
+      padding: 2px 0 0 0;
+      margin: 0 0 0 ($navbar-labsome-brand-margin-h / 1.5);
+
+      .status-dot {
+        margin: 0 0 -1px 0;
+      }
     }
   }
 
@@ -137,5 +152,6 @@
     width: $navbar-labsome-profile-picture-size;
     height: $navbar-labsome-profile-picture-size;
     margin: -(($navbar-labsome-profile-picture-size - $font-size-base) / 2) 0;
+    border-color: $navbar-labsome-border;
   }
 }

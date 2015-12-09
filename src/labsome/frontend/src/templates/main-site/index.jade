@@ -6,8 +6,8 @@ append vars
 append head
   base(href='/site/')
   title(ng-controller='TitleController' ng-bind="title || 'Labsome'")
+  include ../base/favicon-success
 
 append body
-  header
-    include top-navbar
+  header(ng-include='"/static/templates/main-site/top-navbar.html"')
   div(ui-view='main')
