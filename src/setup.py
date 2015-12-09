@@ -26,10 +26,11 @@ setup(
         'Flask-WTF == 0.12',
         'python-slugify == 1.1.4',
         'bunch == 1.0.1',
+        'eventlet == 0.17.4',
+        'gunicorn == 19.4.1',
         'pytz',
         'rethinkdb >= 2.2.0',
         'setuptools',
-        'uwsgi == 2.0.11.2',
     ],
 
     extras_require = {
