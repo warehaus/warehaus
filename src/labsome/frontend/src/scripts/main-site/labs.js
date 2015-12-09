@@ -226,6 +226,10 @@ angular.module('labsome.site.labs').controller('CurrentLabPageController', funct
     }
     selectedLab.set($scope.lab_id);
 
+    $scope.type_name_from_key = function(type_key) {
+        return allLabs.byId[$scope.lab_id].type_naming[type_key].name_plural;
+    };
+
     var refresh = function() {
         if (!allLabs.ready) {
             return false;
