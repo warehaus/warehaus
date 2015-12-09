@@ -13,6 +13,7 @@ from .first_setup.api import first_setup_api
 from .auth.api import auth_api
 from .settings.api import settings_api
 from .hardware.api import hardware_api
+from .sio import socketio
 
 def _no_db_routes(app):
     @app.route('/')
@@ -63,6 +64,7 @@ def create_app():
             db.init_app(app)
             app.config.from_object(full_config())
             auth.init_app(app)
+            socketio.init_app(app)
 
             if not get_settings().is_initialized:
                 _first_setup_routes(app)
