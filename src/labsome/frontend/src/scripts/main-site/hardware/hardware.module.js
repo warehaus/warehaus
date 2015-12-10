@@ -72,3 +72,20 @@ angular.module('labsome.site.hardware').controller('CreateClusterController', fu
 
 angular.module('labsome.site.hardware').run(function(clusterServersAssigner) {
 });
+
+angular.module('labsome.site.hardware').controller('TakeClusterOwnership', function($scope, $http, $state, curUser) {
+    $http.post('/api/hardware/v1/objects/' + $scope.object_id + '/ownership/' + curUser.id).then(function() {
+        $state.go('^');
+    });
+});
+
+angular.module('labsome.site.hardware').controller('ReleaseClusterOwnership', function($scope, $http, $state, $q, labObjects) {
+    var promises = [];
+    for (var i = 0; i < labObjects.byObjectId[$scope.object_id].ownerships.length; ++i) {
+        var ownership = labObjects.byObjectId[$scope.object_id].ownerships[i];
+        promises.push($http.delete('/api/hardware/v1/objects/' + $scope.object_id + '/ownership/' + ownership.owner_id));
+    }
+    $q.all(promises).then(function() {
+        $state.go('^');
+    });
+});

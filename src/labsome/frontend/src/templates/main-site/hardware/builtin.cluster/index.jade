@@ -11,39 +11,51 @@ mixin no_clusters
         button.btn.btn-lg.btn-success(ui-sref='.object-action({actionName: "create"})')
           | Create a Cluster
 
+mixin cluster_actions
+  span(ng-if='curUser.is_admin || (cluster.ownerships | isEmpty) || (cluster.ownerships[0].owner_id == curUser.id)')
+    a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+      i.icon-options-vertical(style='padding:0 1rem;')
+    ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
+      li.text-left(ng-if='cluster.ownerships | isEmpty')
+        a(ui-sref='.object-action({actionName: "take-ownership", id: "{{ cluster.id }}"})')
+          | Take Ownership
+      li.text-left(ng-if='cluster.ownerships | isNotEmpty')
+        a(ui-sref='.object-action({actionName: "release-ownership", id: "{{ cluster.id }}"})')
+          | Release Ownership
+      li.divider
+      li.text-left
+        a(ui-sref='.object-action({actionName: "delete", id: "{{ cluster.id }}"})')
+          | Delete This Cluster
+
 mixin cluster_row
   table.details
     tr
-      td.pad-right(style={'vertical-align': 'middle'})
+      td.pad-right
         .x15
           i.fa.fa-fw.fa-server
-      td.heading(style={'width': '100%', 'vertical-align': 'middle'})
-        object-name.uppercase(id='object.id')
+      td.heading.nowrap
+        object-name.uppercase(id='cluster.id')
+      td(style={width: '100%'})
+        span(ng-repeat='ownership in cluster.ownerships' style={'padding': '0 0 0 .5rem'})
+          user-avatar(id='ownership.owner_id' size='1.5rem')
+          | &nbsp;
+          user-display-name(id='ownership.owner_id')
       td
-        a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
-          i.icon-options-vertical(style='padding:0 1rem;')
-        ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
-          li.text-left
-            a(ui-sref='.add-servers({id: "{{ lab.id }}"})')
-              | Take Ownership
-          li.divider
-          li.text-left
-            a(ui-sref='.object-action({actionName: "delete", id: "{{ object.id }}"})')
-              | Delete This Cluster
-    tr(ng-repeat='server_id in object.servers')
+        +cluster_actions
+    tr(ng-repeat='server_id in cluster.servers')
       td
-      td
+      td(colspan='3')
         .status-dot.status-dot-2x(class='status-dot-{{ labObjects.byObjectId[server_id].status }}')
         object-name(id='server_id')
-    tr(ng-if='object.servers | isEmpty')
+    tr(ng-if='cluster.servers | isEmpty')
       td
-      td.tagline.opacity08
+      td.tagline.opacity08(colspan='3')
         | This cluster is empty
 
 mixin cluster_list
   .panel.panel-default
     ul.list-group
-      li.list-group-item(ng-repeat='object in objects | orderBy:"display_name"')
+      li.list-group-item(ng-repeat='cluster in objects | orderBy:"display_name"')
         +cluster_row
 
 mixin create_button
