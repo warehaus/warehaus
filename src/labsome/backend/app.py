@@ -36,13 +36,13 @@ def _first_setup_routes(app):
 
 def _full_app_routes(app):
     @app.route('/')
-    @app.route('/site')
-    def site_redirect():
-        return redirect('/site/')
+    @app.route('/ui')
+    def ui_redirect():
+        return redirect('/ui/')
 
-    @app.route('/site/')
-    @app.route('/site/<path:path>')
-    def site(path=None):
+    @app.route('/ui/')
+    @app.route('/ui/<path:path>')
+    def ui(path=None):
         return app.send_static_file('templates/main-site/index.html')
 
     app.register_blueprint(auth_api, url_prefix='/api/auth')
