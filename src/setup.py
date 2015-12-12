@@ -39,4 +39,10 @@ setup(
             'mkdocs',
         ],
     },
+
+    entry_points = {
+        'console_scripts': [
+            'labsome-test-server=labsome.backend.test_server:main',
+        ],
+    },
 )
