@@ -6,15 +6,8 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
     var admin = {
         url: '/admin',
         title: 'Admin',
-        views: {
-            navbar: {
-                templateUrl: viewPath('main-site/views/admin/navbar.html')
-            },
-            main: {
-                templateUrl: viewPath('main-site/views/admin/index.html'),
-                controller: 'AdminController'
-            }
-        }
+        templateUrl: viewPath('main-site/views/admin/index.html'),
+        controller: 'AdminController'
     };
 
     var admin_labs = {
@@ -65,16 +58,6 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
             templateUrl: 'main-site/views/admin/add-servers.html',
             controller: 'AddServersController',
             size: 'lg'
-        })
-    };
-
-    var admin_labs_set_hardware_types = {
-        parent: admin_labs,
-        url: '/set-hardware-types/:id',
-        title: 'Set Hardware Types',
-        onEnter: _update({
-            templateUrl: 'main-site/views/admin/set-hardware-types.html',
-            controller: 'SetHardwareTypesController'
         })
     };
 
@@ -132,7 +115,6 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
     $stateProvider.state('admin', admin);
     $stateProvider.state('admin.labs', admin_labs);
     $stateProvider.state('admin.labs.add-servers', admin_labs_add_servers);
-    $stateProvider.state('admin.labs.set-hardware-types', admin_labs_set_hardware_types);
     $stateProvider.state('admin.labs.rename', admin_labs_rename);
     $stateProvider.state('admin.labs.delete', admin_labs_delete);
     $stateProvider.state('admin.create-lab', admin_create_lab);
@@ -192,43 +174,6 @@ angular.module('labsome.site.admin').controller('AddServersController', function
 
     $scope.close = function() {
         $uibModalInstance.dismiss('cancel');
-    };
-});
-
-angular.module('labsome.site.admin').controller('SetHardwareTypesController', function($scope, $uibModalInstance, $controller, allLabs, objectTypes, lab_id) {
-    $controller('LabModal', {
-        $scope: $scope,
-        $uibModalInstance: $uibModalInstance,
-        lab_id: lab_id
-    });
-
-    $scope.result.active_types = angular.copy(allLabs.byId[lab_id].active_types || []);
-    $scope.result.type_naming = angular.copy(allLabs.byId[lab_id].type_naming || {});
-
-    $scope.selected_types = {};
-
-    for (var i = 0; i < objectTypes.all.length; ++i) {
-        var type = objectTypes.all[i];
-        if ($scope.result.active_types.indexOf(type.type_key) != -1) {
-            $scope.selected_types[type.type_key] = true;
-        } else {
-            $scope.selected_types[type.type_key] = false;
-        }
-    }
-
-    $scope.toggle_type_selection = function(type_key) {
-        $scope.selected_types[type_key] = !$scope.selected_types[type_key];
-        if ($scope.selected_types[type_key]) {
-            $scope.result.active_types.push(type_key);
-            if (!$scope.result.type_naming[type_key]) {
-                $scope.result.type_naming[type_key] = {
-                    name_singular: objectTypes.byTypeKey[type_key].display_name.toLowerCase(),
-                    name_plural: objectTypes.byTypeKey[type_key].display_name.toLowerCase() + 's'
-                };
-            }
-        } else {
-            $scope.result.active_types.splice($scope.result.active_types.indexOf(type_key), 1);
-        }
     };
 });
 

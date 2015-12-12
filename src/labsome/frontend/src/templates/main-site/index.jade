@@ -9,5 +9,7 @@ append head
   include ../base/favicon-success
 
 append body
-  header(ng-include='"/static/templates/main-site/top-navbar.html"')
-  div(ui-view='main')
+  .top-level-container
+    .sidebar(ng-include="'/static/templates/main-site/sidebar.html'")
+    .main-view-wrapper
+      .main-view(ui-view='')

@@ -1,18 +1,22 @@
-mixin topics
-  ul.nav.nav-pills.nav-stacked
-    li(role='presentation' ui-sref-active='active')
+.page-header
+  .page-header-row
+    .page-header-row-cell
+        user-avatar(id='user.id' size='72px')
+    .page-header-row-cell
+      .x12
+        strong
+          user-display-name(id='user.id')
+      div
+        user-email(id='user.id')
+  ul.page-header-nav
+    li.spacer
+    li(ui-sref-active='active')
       a.link(ui-sref='.profile')
         | Profile
-    li(role='presentation' ui-sref-active='active')
+    li(ui-sref-active='active')
       a.link(ui-sref='.api-tokens')
         | API Tokens
+    li.padding
 
-mixin content
-  .container
-    .row
-      .col-sm-3
-        +topics
-      .col-sm-9
-        div(ui-view='')
-
-+content
+.container
+  ui-view

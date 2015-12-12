@@ -30,7 +30,7 @@ $headings-font-weight:    $labsome-font-weight-mild;
 $btn-font-weight:         $labsome-font-weight-normal;
 $alert-link-font-weight:  $labsome-font-weight-normal;
 $badge-font-weight:       $labsome-font-weight-thin;
-$navbar-height:           70px;
+$sidebar-height:           70px;
 
 //------------------
 // Labsome variables
@@ -42,35 +42,23 @@ $labsome-standalone-box-padding:           2rem .5rem;
 $labsome-standalone-box-radius:            .75rem;
 $labsome-standalone-box-img-margin:        1rem;
 
-$labsome-bg-color:                         #fcfcfc;
+$labsome-bg-color:                         #fafafa;
 
-// Navbar
+$labsome-sidebar-width:                    85px;
+$labsome-sidebar-color:                    white;
+$labsome-sidebar-bg:                       #555;
+$labsome-sidebar-border:                   lighten($labsome-sidebar-bg, 15%);
+$labsome-sidebar-profile-picture-border:   lighten($labsome-sidebar-border, 5%);
+$labsome-sidebar-link-active-color:        $labsome-sidebar-color;
+$labsome-sidebar-link-active-bg:           lighten($labsome-sidebar-bg, 20%);
 
-$navbar-labsome-color:                     white;
-$navbar-labsome-bg:                        #456;
-$navbar-labsome-border:                    lighten($navbar-labsome-bg, 10%);
-$navbar-labsome-profile-picture-size:      35px;
-$navbar-labsome-logo-height:               30px;
-
-$navbar-labsome-link-color:                $navbar-labsome-color;
-$navbar-labsome-link-hover-color:          $navbar-labsome-color;
-$navbar-labsome-link-hover-bg:             transparent;
-$navbar-labsome-link-active-color:         darken($navbar-labsome-color, 7.5%);
-$navbar-labsome-link-active-bg:            lighten($navbar-labsome-bg, 7.5%);
-$navbar-labsome-link-disabled-color:       #ccc;
-$navbar-labsome-link-disabled-bg:          transparent;
-
-$navbar-labsome-toggle-hover-bg:           #ddd;
-$navbar-labsome-toggle-icon-bar-bg:        #888;
-$navbar-labsome-toggle-border-color:       #ddd;
-
-// Dropdown menu heading
+$labsome-page-header-bg:                   white;
+$labsome-page-header-border-color:         #ddd;
+$labsome-page-header-spacing:              .25rem;
 
 $labsome-dropdown-menu-heading-color:      #aaa;
 $labsome-dropdown-menu-heading-padding:    3px 20px; // Bootstrap value
 $labsome-dropdown-menu-heading-font-size:  .8rem;
-
-// Navigation pills
 
 $nav-link-padding:                         .5rem 1rem;
 $labsome-nav-pills-color:                  gray;

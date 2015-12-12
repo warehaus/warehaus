@@ -2,21 +2,22 @@
 
 @import "../../../static/bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
 
-@import "common/typography";
-@import "common/dashboard";
-@import "common/top-navbar";
-@import "common/tabs";
-@import "common/colors";
-@import "common/links";
-@import "common/dropdown-menu";
-@import "common/navigation";
-@import "common/status-dots";
-@import "common/profile-picture";
-@import "common/details-table";
-@import "common/forms";
-@import "common/opacity";
+@import "typography";
+@import "colors";
+@import "links";
+@import "opacity";
 
-@import "security/login";
+@import "sidebar";
+@import "tabs";
+@import "dropdown-menu";
+@import "navigation";
+@import "status-dots";
+@import "profile-picture";
+@import "details-table";
+@import "forms";
+@import "page-header";
 
-@import "first-setup/first-setup";
-@import "first-setup/no-db";
+@import "login";
+@import "first-setup";
+@import "no-database";
+@import "main-layout";

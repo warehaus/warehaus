@@ -1,0 +1,67 @@
+.page-header {
+  background-color: $labsome-page-header-bg;
+  margin: 0 0 (4 * $labsome-page-header-spacing) 0;
+  padding: 0;
+  border-width: 0;
+
+  .page-header-row {
+    display: table;
+    width: 100%;
+    margin: 0;
+    padding: 0 (4 * $labsome-page-header-spacing);
+
+    .page-header-row-cell {
+      display: table-cell;
+      vertical-align: middle;
+      margin: 0;
+      padding: (4 * $labsome-page-header-spacing) 0 0 (2 * $labsome-page-header-spacing);
+
+      &:last-child {
+        width: 100%;
+      }
+    }
+  }
+
+  ul.page-header-nav {
+    list-style-type: none;
+    margin: 0;
+    padding: (3 * $labsome-page-header-spacing) 0 0 0;
+    width: 100%;
+    display: table;
+
+    li {
+      display: table-cell;
+      white-space: nowrap;
+      margin: 0;
+      padding: (2 * $labsome-page-header-spacing) (3 * $labsome-page-header-spacing);
+      border-width: 0 0 1px 0;
+      border-style: solid;
+      border-color: $labsome-page-header-border-color;
+
+      a {
+        outline: 0;
+
+        &:hover,
+        &:focus {
+          text-decoration: none;
+        }
+      }
+    }
+
+    li.spacer {
+      content: ' ';
+    }
+
+    li.active {
+      border-width: 1px 1px 0 1px;
+      border-top-left-radius: $border-radius-base;
+      border-top-right-radius: $border-radius-base;
+      background-color: $labsome-bg-color;
+    }
+
+    li.padding {
+      width: 100%;
+      content: ' ';
+    }
+  }
+}

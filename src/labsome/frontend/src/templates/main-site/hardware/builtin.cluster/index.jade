@@ -12,7 +12,7 @@ mixin no_clusters
           | Create a Cluster
 
 mixin cluster_actions
-  span(ng-if='curUser.is_admin || (cluster.ownerships | isEmpty) || (cluster.ownerships[0].owner_id == curUser.id)')
+  .dropdown(ng-if='curUser.is_admin || (cluster.ownerships | isEmpty) || (cluster.ownerships[0].owner_id == curUser.id)')
     a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
       i.icon-options-vertical(style='padding:0 1rem;')
     ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')

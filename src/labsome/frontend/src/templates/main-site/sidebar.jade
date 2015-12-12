@@ -1,0 +1,24 @@
+mixin content
+  ul.sidebar-nav
+    li.user-info
+      user-avatar(id='curUser.id')
+    li(ui-sref-active='active')
+      a(ui-sref='labs')
+        .nav-icon
+          i.icon-chemistry
+        .nav-text
+          | Labs
+    li(ui-sref-active='active')
+      a(ui-sref='account')
+        .nav-icon
+          i.icon-user
+        .nav-text
+          | Account
+    li(ui-sref-active='active' ng-if='curUser.is_admin')
+      a(ui-sref='admin')
+        .nav-icon
+          i.icon-settings
+        .nav-text
+          | Admin
+
++content

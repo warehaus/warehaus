@@ -22,15 +22,16 @@ mixin server_row
       td.heading(style={'width': '100%', 'vertical-align': 'middle'})
         object-name.uppercase(id='server.id')
       td
-        a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
-          i.icon-options-vertical(style='padding:0 1rem;')
-        ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
-          li.text-left(ng-if='!server.cluster_id')
-            a(ui-sref='.object-action({actionName: "add-to-cluster", id: "{{ server.id }}"})')
-              | Add To Cluster
-          li.text-left(ng-if='server.cluster_id')
-            a(ui-sref='.object-action({actionName: "remove-from-cluster", id: "{{ server.id }}"})')
-              | Remove From Cluster
+        .dropdown
+          a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+            i.icon-options-vertical(style='padding:0 1rem;')
+          ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
+            li.text-left(ng-if='!server.cluster_id')
+              a(ui-sref='.object-action({actionName: "add-to-cluster", id: "{{ server.id }}"})')
+                | Add To Cluster
+            li.text-left(ng-if='server.cluster_id')
+              a(ui-sref='.object-action({actionName: "remove-from-cluster", id: "{{ server.id }}"})')
+                | Remove From Cluster
     tr(ng-if='server.cluster_id')
       td
       td.tagline

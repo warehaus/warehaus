@@ -1,14 +1,18 @@
-@import "../../../../static/bower_components/lato-font/scss/lato-font";
+@import "../../../static/bower_components/lato-font/scss/lato-font";
+
+html, html a {
+  -webkit-font-smoothing: subpixel-antialiased;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+}
 
 html, body {
   font-size: $font-size-base;
   font-weight: $labsome-font-weight-normal;
-  -webkit-font-smoothing: subpixel-antialiased;
 }
 
 b, strong {
-    font-family: $font-family-sans-serif;
-    font-weight: $labsome-font-weight-strong;
+  font-family: $font-family-sans-serif;
+  font-weight: $labsome-font-weight-strong;
 }
 
 mild {
@@ -16,8 +20,8 @@ mild {
 }
 
 .label {
-    font-family: $font-family-sans-serif;
-    font-weight: $labsome-font-weight-normal;
+  font-family: $font-family-sans-serif;
+  font-weight: $labsome-font-weight-normal;
 }
 
 .x08 { font-size: .8rem;  }

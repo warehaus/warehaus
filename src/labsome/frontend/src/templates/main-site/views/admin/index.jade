@@ -1,25 +1,27 @@
-mixin topics
-  ul.nav.nav-pills.nav-stacked
-    li.heading
-      | Labs
-    li(role='presentation' ui-sref-active='active')
-      a.link(ui-sref='.labs')
-        | All Labs
-        span.badge.pull-right(ng-if'allLabs.ready')
-          | {{ allLabs.all.length }}
-    li(role='presentation' ui-sref-active='active')
-      a.link(ui-sref='.create-lab')
-        | Create a New Lab
-    li.heading
-      | Authentication
-    li(role='presentation' ui-sref-active='active')
-      a.link(ui-sref='.auth-users')
-        | Users
-        span.badge.pull-right(ng-if'users.ready')
-          | {{ users.all.length }}
-    li(role='presentation' ui-sref-active='active')
-      a.link(ui-sref='.auth-ldap')
-        | LDAP Settings
+mixin page_header
+  .page-header(ng-if='curUser.is_admin')
+    .page-header-row
+      .page-header-row-cell.x3
+        i.icon-settings
+      .page-header-row-cell
+        .x12
+          strong
+            | Administration
+    ul.page-header-nav
+      li.spacer
+      li(ui-sref-active='active')
+        a.link(ui-sref='.labs')
+          | Labs
+      li(ui-sref-active='active')
+        a.link(ui-sref='.create-lab')
+          | Create a New Lab
+      li(ui-sref-active='active')
+        a.link(ui-sref='.auth-users')
+          | Users
+      li(ui-sref-active='active')
+        a.link(ui-sref='.auth-ldap')
+          | LDAP Settings
+      li.padding
 
 mixin forbidden
   h3.text-center
@@ -37,17 +39,14 @@ mixin forbidden
           | No, I should be here
 
 mixin content
-  .container(ng-if='curUser.is_admin')
-    .row
-      .col-sm-3
-        +topics
-      .col-sm-9
-        div(ui-view='')
   .container(ng-if='!curUser.is_admin')
     .row
       .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
         .panel.panel-default
           .panel-body
             +forbidden
+  +page_header
+  .container
+    ui-view(ng-if='curUser.is_admin')
 
 +content

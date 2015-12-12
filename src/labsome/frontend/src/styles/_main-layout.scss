@@ -1,0 +1,23 @@
+.top-level-container {
+  .sidebar {
+    margin: 0 0 0 0;
+    left: 0;
+    width: $labsome-sidebar-width;
+    position: fixed;
+    height: 100%;
+    overflow-y: hide;
+  }
+
+  .main-view-wrapper {
+    margin: 0 0 0 ($labsome-sidebar-width);
+
+    .main-view {
+      width: 100%;
+
+      .container,
+      .container-fluid {
+        max-width: 100%;
+      }
+    }
+  }
+}

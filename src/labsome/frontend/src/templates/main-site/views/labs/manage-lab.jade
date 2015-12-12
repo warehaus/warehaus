@@ -1,10 +1,3 @@
-.modal-header
-  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
-    span(aria-hidden="true") &times;
-  h4.modal-title
-    | Hardware Types For
-    lab-name(id='lab_id')
-
 mixin type_selection
   ul.list-group
     list.list-group-item(ng-repeat='type in objectTypes.all' ng-class="{'opacity05': !selected_types[type.type_key]}")
@@ -27,18 +20,19 @@ mixin type_selection
         | &nbsp;
         input.inline(type='text' ng-model='result.type_naming[type.type_key].name_plural' required='')
 
-.modal-body
-  p
-    div
-      | Please select the hardware types to include in this lab.
-    div
-      | For each type you can also specify a different term users will see for that type.
-  form(name='setHardwareTypes' ng-submit='ok()')
+mixin content
+  form(name='setHardwareTypes' ng-submit='save_changes()')
     .panel.panel-default
+      .panel-heading
+        | Hardware Types
+      .panel-body
+        div
+          | Please select the hardware types to include in this lab.
+        div
+          | For each type you can also specify a different term users will see for that type.
       +type_selection
+      .panel-footer.text-right
+        button.btn.btn-primary(type='button' ng-click='save_changes()' ng-disabled='setHardwareTypes.$invalid')
+          | Save Changes
 
-.modal-footer
-  button.btn.btn-link(type='button' ng-click='cancel()')
-    | Cancel
-  button.btn.btn-primary(type='button' ng-click='ok()' ng-disabled='setHardwareTypes.$invalid')
-    | Save Changes
++content

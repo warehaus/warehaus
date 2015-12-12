@@ -1,3 +1,41 @@
+mixin one_lab
+  span(ng-if='allLabs.ready && (allLabs.all.length == 1)')
+    strong
+      lab-name(id='lab_id')
+
+mixin multiple_labs
+  .dropdown(ng-if='allLabs.ready && (allLabs.all.length > 1)')
+    .dropdown-toggle(data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false')
+      strong
+        lab-name(id='lab_id')
+      i.fa.fa-fw.fa-angle-down
+    ul.dropdown-menu
+      li.heading
+        | Other Labs
+      li(ng-repeat='other_lab in allLabs.all | orderBy:"display_name"')
+        a.link(ui-sref='labs.lab-page({labSlug: other_lab.slug})' ng-if='other_lab.id != lab_id')
+          lab-name(id='other_lab.id')
+
+mixin page_header
+  .page-header
+    .page-header-row
+      .page-header-row-cell.x3
+        i.icon-chemistry
+      .page-header-row-cell
+        .x12
+          +one_lab
+          +multiple_labs
+    ul.page-header-nav
+      li.spacer
+      li(ng-repeat='type_key in allLabs.byId[lab_id].active_types | orderBy:type_name_from_key' ui-sref-active='active')
+        a.link(ui-sref='.object-type({typeKey: "{{ type_key }}"})')
+          | {{ allLabs.byId[lab_id].type_naming[type_key].name_plural | titlecase }}
+      li.padding
+      li(ng-if='curUser.is_admin' ui-sref-active='active')
+        a.link(ui-sref='.manage')
+          i.icon-settings
+      li.spacer
+
 mixin lab_empty
   .panel.panel-default
     .panel-body
@@ -11,27 +49,15 @@ mixin lab_empty
       p.text-center.x12(ng-if='curUser.is_admin')
         | You need to start by choosing which hardware types are in this lab
       p.text-center.x2(ng-if='curUser.is_admin')
-        button.btn.btn-lg.btn-success(ui-sref='admin.labs.set-hardware-types({id: "{{ lab_id }}"})')
+        button.btn.btn-lg.btn-success(ui-sref='.manage')
           | Set Hardware Types
 
-mixin current_lab_menu
-  ul.nav.nav-pills.nav-stacked
-    li.heading
-      | Hardware
-    li(role='presentation' ng-repeat='type_key in allLabs.byId[lab_id].active_types | orderBy:type_name_from_key' ui-sref-active='active')
-      a.link(ui-sref='.object-type({typeKey: "{{ type_key }}"})')
-        | {{ allLabs.byId[lab_id].type_naming[type_key].name_plural | titlecase }}
-        span.badge.pull-right
-          | {{ (labObjects.byLabId[lab_id].byObjectType[type_key] || []).length }}
-
 mixin content
-  .row(ng-if='allLabs.byId[lab_id].active_types | isEmpty')
-    .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
-      +lab_empty
-  .row(ng-if='allLabs.byId[lab_id].active_types | isNotEmpty')
-    .col-sm-3
-      +current_lab_menu
-    .col-sm-9
-      div(ui-view='')
+  ui-view
+    .row(ng-if='allLabs.byId[lab_id].active_types | isEmpty')
+      .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
+        +lab_empty
 
-+content
++page_header
+.container
+  +content

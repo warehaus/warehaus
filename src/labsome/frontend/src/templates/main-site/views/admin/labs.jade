@@ -8,21 +8,12 @@ mixin lab_row
             | &nbsp;
             lab-name(id='lab.id')
         .lh175
-          span(ng-if='lab.active_types | isEmpty')
-            mild.text-danger
-              i.fa.fa-warning
-              | &nbsp;
-              | No hardware type is associated with this lab.
-              | &nbsp;
-              a.link(ui-sref='.set-hardware-types({id: "{{ lab.id }}"})')
-                | Click here to fix this
-          span(ng-if='lab.active_types | isNotEmpty')
-            mild.text-danger(ng-if='labObjects.byLabId[lab.id].all | isEmpty')
-              i.fa.fa-warning
-              | &nbsp;
-              | This lab is empty
-            span(ng-if='labObjects.byLabId[lab.id].all | isNotEmpty')
-              | {{ labObjects.byLabId[lab.id].all.length }} objects in this lab
+          .text-danger(ng-if='labObjects.byLabId[lab.id].all | isEmpty')
+            i.fa.fa-warning
+            | &nbsp;
+            | This lab is empty
+          span(ng-if='labObjects.byLabId[lab.id].all | isNotEmpty')
+            | {{ labObjects.byLabId[lab.id].all.length }} objects in this lab
       td
         a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
           i.icon-options-vertical(style='padding:0 1rem;')
@@ -32,9 +23,6 @@ mixin lab_row
           li.text-left
             a(ui-sref='.add-servers({id: "{{ lab.id }}"})')
               | Add Servers
-          li.text-left
-            a(ui-sref='.set-hardware-types({id: "{{ lab.id }}"})')
-              | Set Hardware Types
           li.divider
           li.heading
             | More Options
@@ -46,11 +34,11 @@ mixin lab_row
               | Delete This Lab
 
 mixin content
-  .panel.panel-default
+  div(ng-if='allLabs.all.length == 0')
+    include ../labs/no-labs
+  .panel.panel-default(ng-if='allLabs.all.length > 0')
     ul.list-group(ng-if='allLabs.ready')
       li.list-group-item(ng-repeat='lab in allLabs.all | orderBy:"display_name"')
         +lab_row
-      li.list-group-item(ng-if='allLabs.all.length == 0')
-        include ../labs/no-labs
     
 +content

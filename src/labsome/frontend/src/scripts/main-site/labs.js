@@ -7,16 +7,8 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
         name: 'labs',
         url: '/labs',
         title: 'Labs',
-        views: {
-            navbar: {
-                templateUrl: viewPath('main-site/views/labs/lab-selector.html'),
-                controller: 'LabSelectorController'
-            },
-            main: {
-                templateUrl: viewPath('main-site/views/labs/index.html'),
-                controller: 'AllLabsController'
-            }
-        }
+        templateUrl: viewPath('main-site/views/labs/index.html'),
+        controller: 'AllLabsController'
     };
 
     var lab_page = {
@@ -25,12 +17,21 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
         url: '/:labSlug',
         title: 'Lab',
         templateUrl: viewPath('main-site/views/labs/lab-page.html'),
-        controller: 'CurrentLabPageController',
+        controller: 'LabPageController',
         resolve: {
             labSlug: ['$stateParams', function($stateParams) {
                 return $stateParams.labSlug;
             }]
         }
+    };
+
+    var manage_lab = {
+        name: lab_page.name + '.manage',
+        parent: lab_page,
+        url: '/manage',
+        title: 'Manage',
+        templateUrl: viewPath('main-site/views/labs/manage-lab.html'),
+        controller: 'ManageLabController'
     };
 
     var object_type = {
@@ -66,6 +67,7 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
 
     $stateProvider.state(labs);
     $stateProvider.state(lab_page);
+    $stateProvider.state(manage_lab);
     $stateProvider.state(object_type);
     $stateProvider.state(object_action);
 });
@@ -186,10 +188,6 @@ angular.module('labsome.site.labs').service('selectedLab', function() {
     };
 });
 
-angular.module('labsome.site.labs').controller('LabSelectorController', function($scope, selectedLab) {
-    $scope.selectedLab = selectedLab;
-});
-
 angular.module('labsome.site.labs').controller('AllLabsController', function($scope, $state, selectedLab, allLabs) {
     var _goto_lab = function(lab_id) {
         $state.go('labs.lab-page', {labSlug: allLabs.byId[lab_id].slug});
@@ -218,7 +216,7 @@ angular.module('labsome.site.labs').controller('AllLabsController', function($sc
     });
 });
 
-angular.module('labsome.site.labs').controller('CurrentLabPageController', function($scope, $state, selectedLab, allLabs, labObjects, objectTypes, labSlug) {
+angular.module('labsome.site.labs').controller('LabPageController', function($scope, $state, selectedLab, allLabs, labObjects, objectTypes, labSlug) {
     $scope.lab_slug = labSlug;
     $scope.lab_id = undefined;
     if (allLabs.bySlug[$scope.lab_slug]) {
@@ -255,6 +253,44 @@ angular.module('labsome.site.labs').controller('CurrentLabPageController', funct
             }
         }
     });
+});
+
+angular.module('labsome.site.admin').controller('ManageLabController', function($scope, $state, allLabs, objectTypes) {
+    $scope.result = {
+        active_types: angular.copy(allLabs.byId[$scope.lab_id].active_types || []),
+        type_naming: angular.copy(allLabs.byId[$scope.lab_id].type_naming || {})
+    };
+
+    $scope.selected_types = {};
+
+    for (var i = 0; i < objectTypes.all.length; ++i) {
+        var type = objectTypes.all[i];
+        if ($scope.result.active_types.indexOf(type.type_key) != -1) {
+            $scope.selected_types[type.type_key] = true;
+        } else {
+            $scope.selected_types[type.type_key] = false;
+        }
+    }
+
+    $scope.toggle_type_selection = function(type_key) {
+        $scope.selected_types[type_key] = !$scope.selected_types[type_key];
+        if ($scope.selected_types[type_key]) {
+            $scope.result.active_types.push(type_key);
+            if (!$scope.result.type_naming[type_key]) {
+                $scope.result.type_naming[type_key] = {
+                    name_singular: objectTypes.byTypeKey[type_key].display_name.toLowerCase(),
+                    name_plural: objectTypes.byTypeKey[type_key].display_name.toLowerCase() + 's'
+                };
+            }
+        } else {
+            $scope.result.active_types.splice($scope.result.active_types.indexOf(type_key), 1);
+        }
+    };
+
+    $scope.save_changes = function() {
+        allLabs.update($scope.lab_id, $scope.result);
+        $state.go('^');
+    };
 });
 
 angular.module('labsome.site.labs').controller('CurrentObjectTypeController', function($scope, $state, allLabs, typeKey) {

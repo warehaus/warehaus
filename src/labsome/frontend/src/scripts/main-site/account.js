@@ -6,15 +6,8 @@ angular.module('labsome.site.account').config(function($stateProvider, $urlRoute
     var account = {
         url: '/account',
         title: 'Account',
-        views: {
-            navbar: {
-                templateUrl: viewPath('main-site/views/account/navbar.html')
-            },
-            main: {
-                templateUrl: viewPath('main-site/views/account/index.html'),
-                controller: 'AccountController'
-            }
-        }
+        templateUrl: viewPath('main-site/views/account/index.html'),
+        controller: 'AccountController'
     };
 
     var account_profile = {
