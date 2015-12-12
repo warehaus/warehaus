@@ -2,7 +2,7 @@
 
 angular.module('labsome.site.labs', []);
 
-angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
+angular.module('labsome.site.labs').config(function($stateProvider, $urlRouterProvider, viewPath) {
     var labs = {
         name: 'labs',
         url: '/labs',
@@ -30,8 +30,25 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
         parent: lab_page,
         url: '/manage',
         title: 'Manage',
-        templateUrl: viewPath('main-site/views/labs/manage-lab.html'),
-        controller: 'ManageLabController'
+        templateUrl: viewPath('main-site/views/labs/manage/index.html')
+    };
+
+    var manage_add_servers = {
+        name: manage_lab.name + '.add-servers',
+        parent: manage_lab,
+        url: '/add-servers',
+        title: 'Add servers',
+        templateUrl: viewPath('main-site/views/labs/manage/add-servers.html'),
+        controller: 'AddServersController'
+    };
+
+    var manage_hardware_types = {
+        name: manage_lab.name + '.set-hardware-types',
+        parent: manage_lab,
+        url: '/hardware-types',
+        title: 'Hardware Types',
+        templateUrl: viewPath('main-site/views/labs/manage/hardware-types.html'),
+        controller: 'SetHardwareTypesController'
     };
 
     var object_type = {
@@ -65,9 +82,14 @@ angular.module('labsome.site.labs').config(function($stateProvider, viewPath) {
         }
     };
 
+    $urlRouterProvider.when(labs.url + lab_page.url + manage_lab.url,
+                            labs.url + lab_page.url + manage_lab.url + manage_add_servers.url);
+
     $stateProvider.state(labs);
     $stateProvider.state(lab_page);
     $stateProvider.state(manage_lab);
+    $stateProvider.state(manage_add_servers);
+    $stateProvider.state(manage_hardware_types);
     $stateProvider.state(object_type);
     $stateProvider.state(object_action);
 });
@@ -255,7 +277,17 @@ angular.module('labsome.site.labs').controller('LabPageController', function($sc
     });
 });
 
-angular.module('labsome.site.admin').controller('ManageLabController', function($scope, $state, allLabs, objectTypes) {
+angular.module('labsome.site.admin').controller('AddServersController', function($scope, $location) {
+    var base_url = $location.protocol() + '://' + $location.host();
+    if ((($location.protocol() == 'http') && ($location.port() != 80)) ||
+        (($location.protocol() == 'https') && ($location.port() != 443))) {
+        base_url += ':' + $location.port();
+    }
+
+    $scope.agent_url = base_url + '/api/hardware/v1/builtin/server/code/agent.py?lab_id=' + $scope.lab_id;
+});
+
+angular.module('labsome.site.admin').controller('SetHardwareTypesController', function($scope, $state, allLabs, objectTypes) {
     $scope.result = {
         active_types: angular.copy(allLabs.byId[$scope.lab_id].active_types || []),
         type_naming: angular.copy(allLabs.byId[$scope.lab_id].type_naming || {})

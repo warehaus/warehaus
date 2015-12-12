@@ -11,7 +11,7 @@ mixin no_servers
       p.text-center.x12(ng-if='curUser.is_admin')
         | You need to install Labsome's agent on your servers to see them here
       p.text-center.x2(ng-if='curUser.is_admin')
-        button.btn.btn-lg.btn-success(ui-sref='admin.labs.add-servers({id: "{{ labId }}"})')
+        button.btn.btn-lg.btn-success(ui-sref='^.manage.add-servers')
           | Start Adding Servers
 
 mixin server_row

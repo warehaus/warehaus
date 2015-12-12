@@ -1,0 +1,17 @@
+mixin menu
+  ul.nav.nav-pills.nav-stacked
+    li(ui-sref-active='active')
+      a(ui-sref='.add-servers')
+        | How to Add Servers
+    li(ui-sref-active='active')
+      a(ui-sref='.set-hardware-types')
+        | Hardware Types
+
+mixin content
+  .row
+    .col-sm-9
+      ui-view
+    .col-sm-3
+      +menu
+      
++content
