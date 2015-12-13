@@ -42,17 +42,19 @@ $labsome-standalone-box-padding:           2rem .5rem;
 $labsome-standalone-box-radius:            .75rem;
 $labsome-standalone-box-img-margin:        1rem;
 
-$labsome-bg-color:                         #fafafa;
+$labsome-bg-color-gray:                    #fafafa;
+$labsome-bg-color-white:                   white;
 
 $labsome-sidebar-width:                    85px;
 $labsome-sidebar-color:                    white;
 $labsome-sidebar-bg:                       #555;
-$labsome-sidebar-border:                   lighten($labsome-sidebar-bg, 15%);
-$labsome-sidebar-profile-picture-border:   lighten($labsome-sidebar-border, 5%);
+$labsome-sidebar-border-width:             1px;
+$labsome-sidebar-border-color:             #eee;
+$labsome-sidebar-profile-picture-border:   lighten($labsome-sidebar-border-color, 5%);
 $labsome-sidebar-link-active-color:        $labsome-sidebar-color;
 $labsome-sidebar-link-active-bg:           lighten($labsome-sidebar-bg, 20%);
 
-$labsome-page-header-bg:                   white;
+$labsome-page-header-bg:                   $labsome-bg-color-gray;
 $labsome-page-header-border-color:         #ddd;
 $labsome-page-header-spacing:              .25rem;
 

@@ -4,8 +4,8 @@
                                           $end-color: lighten($labsome-sidebar-bg, 3%),
                                           $color-stop: 25%);
   border-style: solid;
-  border-width: 0 1px 0 0;
-  border-color: $labsome-sidebar-border;
+  border-width: 0 $labsome-sidebar-border-width 0 0;
+  border-color: $labsome-sidebar-border-color;
 
   color: $labsome-sidebar-color;
 
@@ -52,6 +52,9 @@
                                      $end-color: $labsome-sidebar-link-active-bg,
                                      $start-percent: 2%, $end-percent: 3%);
         color: $labsome-sidebar-link-active-color;
+        border-style: solid;
+        border-width: 0 $labsome-sidebar-border-width 0 0;
+        border-color: $labsome-sidebar-border-color;
       }
     }
   }
