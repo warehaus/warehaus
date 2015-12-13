@@ -16,7 +16,7 @@ First clone the git repo
 
 Then run the `labsome/frontend-builder` image so that it builds and monitors the frontend files for changes:
 
-    docker run -ti --rm -v `pwd`:/build labsome/frontend-builder:v3 /bin/sh -c "cd /build/src/labsome/frontend && bower install --allow-root && gulp"
+    docker run -ti --rm -v `pwd`:/build labsome/frontend-builder:v4 /bin/sh -c "cd /build/src/labsome/frontend && bower install --allow-root && gulp"
     
 Finally, in another terminal, run the `labsome/labsome` container while mapping the sources into `/opt/labsome`. Remember that we still need a running RethinkDB instance as shown in the quick start:
 

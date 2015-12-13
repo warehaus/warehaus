@@ -5,6 +5,6 @@ services:
 
 script:
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker run -ti --rm --volume `pwd`:/build labsome/frontend-builder:v3 /bin/sh -c "cd /build/src/labsome/frontend && bower install --allow-root && gulp build"
+  - docker run -ti --rm --volume `pwd`:/build labsome/frontend-builder:v4 /bin/sh -c "cd /build/src/labsome/frontend && bower install --allow-root && gulp build"
   - docker build -t labsome/labsome:latest .
   - docker push labsome/labsome:latest
