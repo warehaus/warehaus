@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('labsome.common').constant('viewPath', function(uri) {
-    return '/static/templates/' + uri;
+    return '/inline/' + uri;
 });
 
 angular.module('labsome.common').directive('focusMe', function($timeout) {

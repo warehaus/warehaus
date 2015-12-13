@@ -19,7 +19,7 @@ def _no_db_routes(app):
     @app.route('/')
     @app.route('/<path:path>')
     def no_database(path=None):
-        return app.send_static_file('templates/first-setup/no-database.html')
+        return app.send_static_file('pages/no-database/index.html')
 
 def _first_setup_routes(app):
     @app.route('/')
@@ -30,7 +30,7 @@ def _first_setup_routes(app):
     @app.route('/first-setup/')
     @app.route('/first-setup/<path:path>')
     def first_setup(path=None):
-        return app.send_static_file('templates/first-setup/index.html')
+        return app.send_static_file('pages/first-setup/index.html')
 
     app.register_blueprint(first_setup_api, url_prefix='/api/first-setup')
 
@@ -43,7 +43,7 @@ def _full_app_routes(app):
     @app.route('/ui/')
     @app.route('/ui/<path:path>')
     def ui(path=None):
-        return app.send_static_file('templates/main-site/index.html')
+        return app.send_static_file('pages/main-site/index.html')
 
     app.register_blueprint(auth_api, url_prefix='/api/auth')
     app.register_blueprint(settings_api, url_prefix='/api/settings')
@@ -52,7 +52,7 @@ def _full_app_routes(app):
 def create_app():
     log_to_console()
     static_folder = pkg_resources.resource_filename('labsome', 'static')
-    template_folder = os.path.join(static_folder, 'templates')
+    template_folder = os.path.join(static_folder, 'pages')
     app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
     app.json_encoder = CustomJSONEncoder
     app.config.from_object(database_config())

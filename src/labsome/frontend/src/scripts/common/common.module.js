@@ -6,7 +6,8 @@ angular.module('labsome.common', [
     'ui.bootstrap',
     'ui.select',
     'ngSanitize',
-    'slugifier'
+    'slugifier',
+    'labsome.templates'
 ]);
 
 angular.module('labsome.common').run(function($rootScope, $state) {

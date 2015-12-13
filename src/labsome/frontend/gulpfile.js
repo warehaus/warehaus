@@ -5,11 +5,13 @@ var ngAnnotate = require('gulp-ng-annotate');
 var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var jade = require('gulp-jade');
+var templateCache = require('gulp-angular-templatecache');
 
 var dirs = {
-    scripts: 'src/scripts',
-    styles: 'src/styles',
-    templates: 'src/templates',
+    scripts:   'src/scripts',
+    styles:    'src/styles',
+    pages:     'src/templates/pages',
+    partials:  'src/templates/partials',
     resources: 'resources',
 };
 
@@ -31,11 +33,23 @@ gulp.task('styles', function() {
     ;
 });
 
-gulp.task('templates', function() {
-    gulp.src([dirs.templates + '/**/*.jade',
-              '!' + dirs.templates + '/partials/**/*'])
+gulp.task('pages', function() {
+    gulp.src([dirs.pages + '/**/*.jade',
+              '!' + dirs.pages + '/base/**/*'])
         .pipe(jade())
-        .pipe(gulp.dest('../static/templates'))
+        .pipe(gulp.dest('../static/pages'))
+    ;
+});
+
+gulp.task('partials', function() {
+    gulp.src([dirs.partials + '/**/*.jade'])
+        .pipe(jade())
+        .pipe(templateCache({
+            root: '/inline',
+            module: 'labsome.templates',
+            standalone: true
+        }))
+        .pipe(gulp.dest('../static'))
     ;
 });
 
@@ -44,10 +58,11 @@ gulp.task('resources', function() {
         .pipe(gulp.dest('../static'))
 });
 
-gulp.task('default', ['scripts', 'styles', 'templates', 'resources'], function() {
+gulp.task('default', ['scripts', 'styles', 'pages', 'partials', 'resources'], function() {
     gulp.watch([dirs.scripts + '/**'], ['scripts']);
     gulp.watch([dirs.styles + '/**'], ['styles']);
-    gulp.watch([dirs.templates + '/**'], ['templates']);
+    gulp.watch([dirs.pages + '/**'], ['pages']);
+    gulp.watch([dirs.partials + '/**'], ['partials']);
     gulp.watch([dirs.resources + '/**'], ['resources']);
 });
 
