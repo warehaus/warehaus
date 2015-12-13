@@ -19,17 +19,13 @@
       text-align: center;
       padding: .5rem 0;
 
-      &.user-info {
+      &.logo {
         margin: .5rem 0 .75rem 0;
 
-        user-avatar {
-          display: block;
-
-          img.profile-picture {
-            width: $labsome-sidebar-width * 0.7;
-            height: $labsome-sidebar-width * 0.7;
-            border-width: 0;
-          }
+        img {
+          width: $labsome-sidebar-width * 0.7;
+          height: $labsome-sidebar-width * 0.7;
+          border-width: 0;
         }
       }
 

@@ -1,7 +1,8 @@
 mixin content
   ul.sidebar-nav
-    li.user-info
-      user-avatar(id='curUser.id')
+    li.logo
+      a(ui-sref='labs')
+        img(src='/static/img/logo-round.png')
     li(ui-sref-active='active')
       a(ui-sref='labs')
         .nav-icon
