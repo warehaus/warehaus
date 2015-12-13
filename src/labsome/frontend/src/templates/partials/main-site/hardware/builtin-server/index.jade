@@ -27,10 +27,10 @@ mixin server_row
             i.icon-options-vertical(style='padding:0 1rem;')
           ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
             li.text-left(ng-if='!server.cluster_id')
-              a(ui-sref='.object-action({actionName: "add-to-cluster", id: "{{ server.id }}"})')
+              a.link(ng-click='add_to_cluster(server.id)')
                 | Add To Cluster
             li.text-left(ng-if='server.cluster_id')
-              a(ui-sref='.object-action({actionName: "remove-from-cluster", id: "{{ server.id }}"})')
+              a.link(ng-click='remove_from_cluster(server.id)')
                 | Remove From Cluster
     tr(ng-if='server.cluster_id')
       td

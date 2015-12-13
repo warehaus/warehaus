@@ -1,3 +1,10 @@
+.modal-header
+  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+    span(aria-hidden="true") &times;
+  h4.modal-title
+    | Delete
+    object-name(id='cluster_id')
+
 mixin alert
   .alert.alert-danger
     p
@@ -6,7 +13,7 @@ mixin alert
     p
       | You are about to delete
       strong
-        object-name(id='object_id')
+        object-name(id='cluster_id')
       | .
 
 mixin outcome
@@ -15,18 +22,12 @@ mixin outcome
   p
     | Are you are you want to delete this cluster?
 
-mixin confirm_button
+.modal-body
+  +alert
+  +outcome
+
+.modal-footer
+  button.btn.btn-default(ng-click='cancel()')
+    | Cancel
   button.btn.btn-danger(ng-click='ok()')
     | Yes, Delete This Cluster
-  | &nbsp;
-  button.btn.btn-default(ui-sref='^')
-    | No, Take Me Back
-
-mixin content
-  .panel.panel-default(ng-controller='DeleteClusterController')
-    .panel-body
-      +alert
-      +outcome
-      +confirm_button
-
-+content

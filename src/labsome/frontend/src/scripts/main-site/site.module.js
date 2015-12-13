@@ -6,8 +6,7 @@ angular.module('labsome.site', [
     'labsome.auth',
     'labsome.site.labs',
     'labsome.site.account',
-    'labsome.site.admin',
-    'labsome.site.hardware'
+    'labsome.site.admin'
 ]);
 
 angular.module('labsome.site').config(function($stateProvider, $locationProvider, $urlRouterProvider) {

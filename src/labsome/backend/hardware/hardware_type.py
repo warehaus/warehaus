@@ -1,3 +1,4 @@
+import re
 from logging import getLogger
 from .models import Object
 
@@ -10,8 +11,8 @@ class HardwareTypeType(type):
                 value = attrs[attr_name]
                 if not value or not isinstance(value, basestring):
                     raise TypeError('You must set a string value for `{}` in {}'.format(attr_name, name))
-                if '.' in value:
-                    raise TypeError('The `{}` cannot contain a dot')
+                if not re.match(r'\w+', value):
+                    raise TypeError('The `{}` attribute must be alphanumeric'.format(attr_name))
         return type.__new__(mcs, name, bases, attrs)
 
 class HardwareType(object):
@@ -23,7 +24,7 @@ class HardwareType(object):
     @classmethod
     def type_key(cls):
         '''Returns a unique `type_key` to be referenced by `Lab`s and `Object`s'''
-        return '{}.{}'.format(cls.TYPE_VENDOR, cls.TYPE_NAME)
+        return '{}-{}'.format(cls.TYPE_VENDOR, cls.TYPE_NAME)
 
     @classmethod
     def display_name(cls):

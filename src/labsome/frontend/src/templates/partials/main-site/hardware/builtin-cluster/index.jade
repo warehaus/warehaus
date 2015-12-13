@@ -8,7 +8,7 @@ mixin no_clusters
       p.text-center.x12
         | Create your first cluster and add some servers to it
       p.text-center.x2
-        button.btn.btn-lg.btn-success(ui-sref='.object-action({actionName: "create"})')
+        button.btn.btn-lg.btn-success(ng-click='create_cluster()')
           | Create a Cluster
 
 mixin cluster_actions
@@ -17,14 +17,14 @@ mixin cluster_actions
       i.icon-options-vertical(style='padding:0 1rem;')
     ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
       li.text-left(ng-if='cluster.ownerships | isEmpty')
-        a(ui-sref='.object-action({actionName: "take-ownership", id: "{{ cluster.id }}"})')
+        a.link(ng-click='take_ownership(cluster.id)')
           | Take Ownership
       li.text-left(ng-if='cluster.ownerships | isNotEmpty')
-        a(ui-sref='.object-action({actionName: "release-ownership", id: "{{ cluster.id }}"})')
+        a.link(ng-click='release_ownership(cluster.id)')
           | Release Ownership
       li.divider
       li.text-left
-        a(ui-sref='.object-action({actionName: "delete", id: "{{ cluster.id }}"})')
+        a.link(ng-click='delete_cluster(cluster.id)')
           | Delete This Cluster
 
 mixin cluster_row
@@ -60,7 +60,7 @@ mixin cluster_list
 
 mixin create_button
   p.text-right(ng-if='curUser.is_admin')
-    button.btn.btn-default(ui-sref='.object-action({actionName: "create"})')
+    button.btn.btn-default(ng-click='create_cluster()')
       | Create a Cluster
 
 mixin content

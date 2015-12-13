@@ -1,5 +1,11 @@
-mixin form
-  form(role='form' name='newCluster' ng-submit='create()')
+form(role='form' name='newCluster' ng-submit='create()')
+  .modal-header
+    button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+      span(aria-hidden="true") &times;
+    h4.modal-title
+      | Create Cluster
+
+  .modal-body
     .form-group
       label.control-label
         | Cluster Name
@@ -14,15 +20,9 @@ mixin form
         | This cluster's API name will be:&nbsp;
         samp
           | {{ cluster.slug }}
-    .btn-group
-      button.btn.btn-success(ng-click='create()' ng-disabled='newCluster.$invalid || working')
-        | Create Cluster
 
-mixin content
-  .panel.panel-default(ng-controller='CreateClusterController')
-    .panel-body
-      p.x2
-        | Create a Cluster
-      +form
-
-+content
+  .modal-footer
+    button.btn.btn-default(ng-click='cancel()')
+      | Cancel
+    button.btn.btn-success(ng-click='create()' ng-disabled='newCluster.$invalid || working')
+      | Create Cluster

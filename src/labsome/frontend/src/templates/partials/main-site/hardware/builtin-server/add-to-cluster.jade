@@ -1,0 +1,30 @@
+.modal-header
+  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+    span(aria-hidden="true") &times;
+  h4.modal-title
+    | Add
+    object-name(id='server_id')
+    | to Cluster
+
+.modal-body
+  p
+    | Select the cluster to add
+    strong
+      object-name(id='server_id')
+    |  to
+  form
+    ul.list-group
+      a.link.list-group-item(ng-repeat='cluster in clusters'
+                             ng-click='select_cluster(cluster.id)',
+                             ng-class="{active: selected_cluster == cluster.id}")
+        .radio
+          label
+            input(type='radio' name='clusterId' value='{{ cluster.id }}' ng-model='selected_cluster')
+            | &nbsp;
+            object-name(id='cluster.id')
+
+.modal-footer
+  button.btn.btn-link(type='button' ng-click='cancel()')
+    | Cancel
+  button.btn.btn-primary(type='button' ng-click='ok()')
+    | Add to Cluster

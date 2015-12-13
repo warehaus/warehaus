@@ -28,7 +28,7 @@ mixin page_header
     ul.page-header-nav
       li.spacer
       li(ng-repeat='type_key in allLabs.byId[lab_id].active_types | orderBy:type_name_from_key' ui-sref-active='active')
-        a.link(ui-sref='.object-type({typeKey: "{{ type_key }}"})')
+        a.link(ui-sref='.{{ type_key }}')
           | {{ allLabs.byId[lab_id].type_naming[type_key].name_plural | titlecase }}
       li.padding
       li(ng-if='curUser.is_admin' ui-sref-active='active')
@@ -49,7 +49,7 @@ mixin lab_empty
       p.text-center.x12(ng-if='curUser.is_admin')
         | You need to start by choosing which hardware types are in this lab
       p.text-center.x2(ng-if='curUser.is_admin')
-        button.btn.btn-lg.btn-success(ui-sref='.manage')
+        button.btn.btn-lg.btn-success(ui-sref='.manage.set-hardware-types')
           | Set Hardware Types
 
 mixin content

@@ -2,6 +2,7 @@
 
 angular.module('labsome.common', [
     'ui.router',
+    'ui.router.stateHelper',
     'angular.filter',
     'ui.bootstrap',
     'ui.select',

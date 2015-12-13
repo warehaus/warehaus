@@ -1,91 +1,18 @@
 'use strict';
 
 angular.module('labsome.site.hardware', [
-    'labsome.site.labs'
+    'labsome.site.hardware.server',
+    'labsome.site.hardware.cluster'
 ]);
 
-angular.module('labsome.site.hardware').service('clusterServersAssigner', function($rootScope, labObjects) {
-    var BUILTIN_SERVER = 'builtin.server';
-    $rootScope.$on('labsome.objects_inventory_changed', function() {
-        if (angular.isUndefined(labObjects.byObjectType[BUILTIN_SERVER])) {
-            return;
+angular.module('labsome.site.hardware').provider('hardwareUrlRoutes', function(hwServerUrlRoutesProvider, hwClusterUrlRoutesProvider) {
+    var hardware_url_routes = [].concat(
+        hwServerUrlRoutesProvider.$get(),
+        hwClusterUrlRoutesProvider.$get()
+    );
+    return {
+        $get: function() {
+            return hardware_url_routes;
         }
-        for (var i = 0; i < labObjects.byObjectType[BUILTIN_SERVER].length; ++i) {
-            var server = labObjects.byObjectType[BUILTIN_SERVER][i];
-            if (server.cluster_id) {
-                var cluster = labObjects.byObjectId[server.cluster_id];
-                if (cluster) {
-                    if (angular.isUndefined(cluster.servers)) {
-                        cluster.servers = [];
-                    }
-                    cluster.servers.push(server.id);
-                }
-            }
-        }
-    });
-});
-
-angular.module('labsome.site.hardware').controller('AddServerToClusterController', function($scope, $http, $state) {
-    $scope.add_to_cluster = function(cluster_id) {
-        $http.put('/api/hardware/v1/builtin/server/' + $scope.object_id, {cluster_id: cluster_id}).then(function() {
-            $state.go('^');
-        });
     };
-});
-
-angular.module('labsome.site.hardware').controller('RemoveServerFromClusterController', function($scope, $http, $state) {
-    $http.put('/api/hardware/v1/builtin/server/' + $scope.object_id, {cluster_id: null}).then(function() {
-        $state.go('^');
-    });
-});
-
-angular.module('labsome.site.hardware').controller('DeleteClusterController', function($scope, $http, $q, $state, labObjects) {
-    $scope.ok = function() {
-        var cluster = labObjects.byObjectId[$scope.object_id];
-        var unassign_promises = [];
-        if (cluster.servers) {
-            for (var i = 0; i < cluster.servers.length; ++i) {
-                var server_id = cluster.servers[i];
-                unassign_promises.push($http.put('/api/hardware/v1/builtin/server/' + server_id, {cluster_id: null}));
-            }
-        }
-        $q.all(unassign_promises).then(function() {
-            $http.delete('/api/hardware/v1/builtin/cluster/' + $scope.object_id).then(function() {
-                $state.go('^');
-            });
-        });
-    };
-});
-
-angular.module('labsome.site.hardware').controller('CreateClusterController', function($scope, $http, $state) {
-    $scope.cluster = {
-        lab_id: $scope.lab_id
-    };
-
-    $scope.create = function() {
-        $scope.working = true;
-        $http.post('/api/hardware/v1/builtin/cluster', $scope.cluster).then(function() {
-            $state.go('^');
-        });
-    };
-});
-
-angular.module('labsome.site.hardware').run(function(clusterServersAssigner) {
-});
-
-angular.module('labsome.site.hardware').controller('TakeClusterOwnership', function($scope, $http, $state, curUser) {
-    $http.post('/api/hardware/v1/objects/' + $scope.object_id + '/ownership/' + curUser.id).then(function() {
-        $state.go('^');
-    });
-});
-
-angular.module('labsome.site.hardware').controller('ReleaseClusterOwnership', function($scope, $http, $state, $q, labObjects) {
-    var promises = [];
-    for (var i = 0; i < labObjects.byObjectId[$scope.object_id].ownerships.length; ++i) {
-        var ownership = labObjects.byObjectId[$scope.object_id].ownerships[i];
-        promises.push($http.delete('/api/hardware/v1/objects/' + $scope.object_id + '/ownership/' + ownership.owner_id));
-    }
-    $q.all(promises).then(function() {
-        $state.go('^');
-    });
 });
