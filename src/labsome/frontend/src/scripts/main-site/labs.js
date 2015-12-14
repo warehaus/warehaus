@@ -86,17 +86,19 @@ angular.module('labsome.site.labs').config(function($urlRouterProvider, stateHel
     stateHelperProvider.state(labs_url_routes);
 });
 
-angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScope, socketIo) {
+angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScope, $q, socketIo) {
+    var ready_promise = $q.defer();
+
     var self = {
         ready: false,
         all: [],
         byId: {},
-        bySlug: {}
+        bySlug: {},
+        whenReady: ready_promise.promise
     };
 
     var refresh = function() {
         return $http.get('/api/hardware/v1/labs').then(function(res) {
-            self.ready = true;
             self.all = res.data.objects;
             self.byId = {};
             self.bySlug = {};
@@ -106,6 +108,8 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
                 self.bySlug[lab.slug] = lab;
             }
             $rootScope.$broadcast('labsome.labs_inventory_changed');
+            self.ready = true;
+            ready_promise.resolve();
         });
     };
 
@@ -129,12 +133,16 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
     return self;
 });
 
-angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $http, socketIo) {
+angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $http, $q, socketIo) {
+    var ready_promise = $q.defer();
+
     var self = {
+        ready: false,
         objects: [],
         byLabId: {},
         byObjectType: {},
-        byObjectId: {}
+        byObjectId: {},
+        whenReady: ready_promise.promise
     };
 
     var refresh = function() {
@@ -165,6 +173,8 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
                 self.byObjectId[obj.id] = obj;
             }
             $rootScope.$broadcast('labsome.objects_inventory_changed');
+            self.ready = true;
+            ready_promise.resolve();
         });
     };
 
