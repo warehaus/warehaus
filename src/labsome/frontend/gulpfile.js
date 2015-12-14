@@ -66,4 +66,4 @@ gulp.task('default', ['scripts', 'styles', 'pages', 'partials', 'resources'], fu
     gulp.watch([dirs.resources + '/**'], ['resources']);
 });
 
-gulp.task('build', ['scripts', 'styles', 'templates', 'resources']);
+gulp.task('build', ['scripts', 'styles', 'pages', 'partials', 'resources']);
