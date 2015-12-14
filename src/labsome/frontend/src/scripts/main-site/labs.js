@@ -49,6 +49,14 @@ angular.module('labsome.site.labs').provider('labsUrlRoutes', function(hardwareU
                 resolve: {
                     labSlug: ['$stateParams', function($stateParams) {
                         return $stateParams.labSlug;
+                    }],
+                    labId: ['$stateParams', 'allLabs', function($stateParams, allLabs) {
+                        return allLabs.whenReady.then(function() {
+                            if (!allLabs.bySlug[$stateParams.labSlug]) {
+                                return undefined;
+                            }
+                            return allLabs.bySlug[$stateParams.labSlug].id;
+                        });
                     }]
                 },
                 children: lab_page_children.concat(hardware_children)
@@ -363,12 +371,9 @@ angular.module('labsome.site.labs').controller('CurrentObjectTypeController', fu
     $scope.$on('$stateChangeSuccess', refresh);
 });
 
-angular.module('labsome.site.labs').controller('ObjectActionController', function($scope, $state, viewPath, allLabs, labSlug, typeKey, actionName, objId) {
+angular.module('labsome.site.labs').controller('ObjectActionController', function($scope, $state, viewPath, allLabs, labId, typeKey, actionName, objId) {
     $scope.viewPath = viewPath;
-    $scope.lab_id = undefined;
-    if (allLabs.ready && allLabs.bySlug[labSlug]) {
-        $scope.lab_id = allLabs.bySlug[labSlug].id;
-    }
+    $scope.lab_id = labId;
     if (!$scope.lab_id) {
         $state.go('^');
     }
