@@ -420,7 +420,24 @@ angular.module('labsome.site.labs').directive('objectTypeName', function(allLabs
 
     return {
         restrict: 'AE',
-        template: '{{ (!count && (count != 0)) ? "" : (count + " ") }}{{ allLabs.byId[labId].type_naming[typeKey][(count == 1) ? "name_singular" : "name_plural"] | titlecase }}',
+        template: '{{ allLabs.byId[labId].type_naming[typeKey][(sample == 1) ? "name_singular" : "name_plural"] | titlecase }}',
+        link: link,
+        scope: {
+            labId: '=',
+            typeKey: '=',
+            sample: '@'
+        }
+    };
+});
+
+angular.module('labsome.site.labs').directive('objectCountWithType', function(allLabs) {
+    var link = function(scope, elem, attrs) {
+        scope.allLabs = allLabs;
+    };
+
+    return {
+        restrict: 'AE',
+        template: '{{ (!count && (count != 0)) ? "" : (count + " ") }}<object-type-name lab-id="labId" type-key="typeKey" sample="{{ count }}"/>',
         link: link,
         scope: {
             labId: '=',

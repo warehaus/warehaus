@@ -1,0 +1,89 @@
+mixin actions
+  .dropdown(ng-if='curUser.is_admin || (cluster.ownerships | isEmpty) || (cluster.ownerships[0].owner_id == curUser.id)')
+    button.btn.btn-default.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+      | Actions
+      i.fa.fa-fw.fa-angle-down
+    ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
+      li.text-left(ng-if='cluster.ownerships | isEmpty')
+        a.link(ng-click='take_ownership()')
+          | Take Ownership
+      li.text-left(ng-if='cluster.ownerships | isNotEmpty')
+        a.link(ng-click='release_ownership()')
+          | Release Ownership
+      li.divider
+      li.text-left
+        a.link(ng-click='delete_cluster()')
+          | Delete This Cluster
+
+mixin page_header
+  .page-header
+    .page-header-row
+      .page-header-row-cell.x3
+        i.icon-chemistry
+      .page-header-row-cell
+        .x12
+          a(ui-sref='^')
+            lab-name(id='lab_id')
+          i.fa.fa-fw.fa-angle-right
+          strong
+            object-name(id='cluster.id')
+      .page-header-row-cell.text-right
+        +actions
+    ul.page-header-nav
+      li.padding
+
+mixin servers
+  .panel.panel-default
+    .panel-heading
+      | Servers In This Cluster
+    ul.list-group
+      li.list-group-item(ng-repeat='server_id in cluster.servers')
+        object-name(id='server_id')
+      li.list-group-item(ng-if='cluster.servers | isEmpty')
+        div(style={'font-style': 'italic'})
+          i.fa.fa-meh-o
+          | &nbsp;
+          | No servers in this cluster.
+        div
+          | Try 
+          mild
+            a.link
+              | adding some servers
+          |  or maybe 
+          mild
+            a.link(ng-click='delete_cluster()')
+              | delete this cluster
+          |  if you don't need it anymore.
+
+mixin owners
+  a(ng-repeat='ownership in cluster.ownerships')
+    user-avatar(id='ownership.owner_id' size='1.5rem')
+    | &nbsp;
+    user-display-name(id='ownership.owner_id')
+  a(ng-if='cluster.ownerships | isEmpty' style={'font-style': 'italic'})
+    i.fa.fa-fw.fa-meh-o
+    | Nobody
+
+mixin navigation
+  ul.nav.nav-pills.nav-stacked
+    li.heading
+      | Owners
+    li
+      +owners
+    li.heading
+      | Downloads
+    li
+      a
+        i.fa.fa-fw.fa-code
+        | config.json
+
+mixin content
+  .container
+    .row
+      .col-sm-9.col-lg-offset-1.col-lg-8
+        +servers
+      .col-sm-3
+        +navigation
+
++page_header
++content

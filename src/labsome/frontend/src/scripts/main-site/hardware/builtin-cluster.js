@@ -18,6 +18,38 @@ angular.module('labsome.site.hardware.cluster').provider('clusterView', function
 
 angular.module('labsome.site.hardware.cluster').provider('hwClusterUrlRoutes', function(hwClusterTypeKey, clusterViewProvider) {
     var clusterView = clusterViewProvider.$get();
+
+    var cluster_page = {
+        name: 'cluster-page',
+        url: '/:clusterSlug',
+        title: 'Cluster page', // XXX
+        views: {
+            '@': {
+                templateUrl: clusterView('cluster-page.html'),
+                controller: 'ClusterPageController',
+                resolve: {
+                    clusterId: ['$stateParams', 'labObjects', 'labId', function($stateParams, labObjects, labId) {
+                        return labObjects.whenReady.then(function() {
+                            if (angular.isUndefined(labId)) {
+                                return undefined;
+                            }
+                            if (angular.isUndefined(labObjects.byLabId[labId])) {
+                                return undefined;
+                            }
+                            var cluster_id;
+                            labObjects.byLabId[labId].byObjectType[hwClusterTypeKey].forEach(function(cluster) {
+                                if (cluster.slug == $stateParams.clusterSlug) {
+                                    cluster_id = cluster.id;
+                                }
+                            });
+                            return cluster_id;
+                        });
+                    }]
+                }
+            }
+        }
+    };
+
     return {
         $get: function() {
             return [
@@ -28,6 +60,7 @@ angular.module('labsome.site.hardware.cluster').provider('hwClusterUrlRoutes', f
                     templateUrl: clusterView('index.html'),
                     controller: 'ClusterListController',
                     children: [
+                        cluster_page
                     ]
                 }
             ];
@@ -58,7 +91,7 @@ angular.module('labsome.site.hardware.cluster').service('clusterServersAssigner'
 angular.module('labsome.site.hardware.cluster').run(function(clusterServersAssigner) {
 });
 
-angular.module('labsome.site.hardware.cluster').controller('ClusterListController', function($scope, $controller, $http, $q, $uibModal, labObjects, curUser, hwClusterTypeKey, clusterView) {
+angular.module('labsome.site.hardware.cluster').controller('ClusterListController', function($scope, $controller, $http, $uibModal, hwClusterTypeKey, clusterView) {
     $controller('CurrentObjectTypeController', {
         $scope: $scope,
         typeKey: hwClusterTypeKey
@@ -75,27 +108,42 @@ angular.module('labsome.site.hardware.cluster').controller('ClusterListControlle
             }
         });
     };
+});
 
-    $scope.take_ownership = function(cluster_id) {
-        $http.post('/api/hardware/v1/objects/' + cluster_id + '/ownership/' + curUser.id);
+angular.module('labsome.site.hardware.cluster').controller('ClusterPageController', function($scope, $controller, $http, $uibModal, $state, labObjects, curUser, hwClusterTypeKey, clusterView, labId, clusterId) {
+    if (angular.isUndefined(clusterId)) {
+        $state.go('^');
+    }
+
+    $scope.lab_id = labId;
+    $scope.cluster = labObjects.byObjectId[clusterId];
+
+    $scope.$on('labsome.objects_inventory_changed', function() {
+        $scope.cluster = labObjects.byObjectId[clusterId];
+    });
+
+    $scope.take_ownership = function() {
+        $http.post('/api/hardware/v1/objects/' + $scope.cluster.id + '/ownership/' + curUser.id);
     };
 
-    $scope.release_ownership = function(cluster_id) {
-        for (var i = 0; i < labObjects.byObjectId[cluster_id].ownerships.length; ++i) {
-            var ownership = labObjects.byObjectId[cluster_id].ownerships[i];
-            $http.delete('/api/hardware/v1/objects/' + cluster_id + '/ownership/' + ownership.owner_id);
+    $scope.release_ownership = function() {
+        for (var i = 0; i < $scope.cluster.ownerships.length; ++i) {
+            var ownership = $scope.cluster.ownerships[i];
+            $http.delete('/api/hardware/v1/objects/' + $scope.cluster.id + '/ownership/' + ownership.owner_id);
         }
     };
 
-    $scope.delete_cluster = function(cluster_id) {
+    $scope.delete_cluster = function() {
         $uibModal.open({
             templateUrl: clusterView('delete.html'),
             controller: 'DeleteClusterController',
             resolve: {
                 cluster_id: function() {
-                    return cluster_id
+                    return $scope.cluster.id;
                 }
             }
+        }).result.then(function() {
+            $state.go('^');
         });
     };
 });

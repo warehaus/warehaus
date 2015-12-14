@@ -47,10 +47,13 @@ mixin server_list
         +server_row
 
 mixin content
-  span(ng-if='objects | isEmpty')
-    +no_servers
-  span(ng-if='objects | isNotEmpty')
-    +server_list
+  .container
+    .row
+      .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
+        span(ng-if='objects | isEmpty')
+          +no_servers
+        span(ng-if='objects | isNotEmpty')
+          +server_list
 
 ui-view
   +content
