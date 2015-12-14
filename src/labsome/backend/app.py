@@ -56,6 +56,7 @@ def create_app():
     app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
     app.json_encoder = CustomJSONEncoder
     app.config.from_object(database_config())
+    socketio.init_app(app)
 
     if not app.config['RETHINKDB_HOST']:
         _no_db_routes(app)
@@ -64,7 +65,6 @@ def create_app():
             db.init_app(app)
             app.config.from_object(full_config())
             auth.init_app(app)
-            socketio.init_app(app)
 
             if not get_settings().is_initialized:
                 _first_setup_routes(app)
