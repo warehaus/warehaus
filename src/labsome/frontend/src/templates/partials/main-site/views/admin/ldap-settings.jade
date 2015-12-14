@@ -9,16 +9,16 @@ mixin form
             | ldaps://
     .col-sm-7
       .form-group(ng-class="{'has-error': theForm.ldapServerAddress.$dirty && theForm.ldapServerAddress.$invalid}")
-        input.form-control(type='text' name='ldapServerAddress' placeholder='Server Address' required='' ng-disabled='working' ng-model='settings.ldap.server_address' ng-change='eval_server_address()')
+        input.form-control(type='text' name='ldapServerAddress' placeholder='Server Address' required='' ng-disabled='working' ng-model='settings.ldap.server_address' ng-change='eval_server_address()' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
     .col-sm-3
       .form-group(ng-class="{'has-error': theForm.ldapServerPort.$dirty && theForm.ldapServerPort.$invalid}")
-        input.form-control(type='number' name='ldapServerPort' placeholder='Port (optional)' ng-disabled='working' ng-model='settings.ldap.server_port' ng-change='eval_server_address()')
+        input.form-control(type='number' name='ldapServerPort' placeholder='Port (optional)' ng-disabled='working' ng-model='settings.ldap.server_port' ng-change='eval_server_address()' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
   .row
     .col-sm-6
       .form-group(ng-class="{'has-error': theForm.ldapBaseDN.$dirty && theForm.ldapBaseDN.$invalid}")
         label.control-label
           | LDAP Base DN
-        input.form-control(type='text' name='ldapBaseDN' placeholder='Organization Base DN' required='' ng-disabled='working' ng-model='settings.ldap.base_dn')
+        input.form-control(type='text' name='ldapBaseDN' placeholder='Organization Base DN' required='' ng-disabled='working' ng-model='settings.ldap.base_dn' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
         p.help-block
           | Example:&nbsp;
           samp
@@ -27,7 +27,7 @@ mixin form
       .form-group(ng-class="{'has-error': theForm.ldapUsersDN.$dirty && theForm.ldapUsersDN.$invalid}")
         label.control-label
           | LDAP Users DN
-        input.form-control(type='text' name='ldapUsersDN' placeholder='Users DN' required='' ng-disabled='working' ng-model='settings.ldap.users_dn')
+        input.form-control(type='text' name='ldapUsersDN' placeholder='Users DN' required='' ng-disabled='working' ng-model='settings.ldap.users_dn' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
         p.help-block
           | Example:&nbsp;
           samp
@@ -37,22 +37,22 @@ mixin form
       .form-group(ng-class="{'has-error': theForm.ldapUsernameAttribute.$dirty && theForm.ldapUsernameAttribute.$invalid}")
         label.control-label
           | LDAP Username Attribute
-        input.form-control(type='text' name='ldapUsernameAttribute' placeholder='Username attribute' ng-disabled='working' ng-model='settings.ldap.attribute_username')
+        input.form-control(type='text' name='ldapUsernameAttribute' placeholder='Username attribute' ng-disabled='working' ng-model='settings.ldap.attribute_username' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
     .col-sm-6
       .form-group(ng-class="{'has-error': theForm.ldapFirstNameAttribute.$dirty && theForm.ldapFirstNameAttribute.$invalid}")
         label.control-label
           | LDAP First Name Attribute
-        input.form-control(type='text' name='ldapFirstNameAttribute' placeholder='First name attribute' ng-disabled='working' ng-model='settings.ldap.attribute_first_name')
+        input.form-control(type='text' name='ldapFirstNameAttribute' placeholder='First name attribute' ng-disabled='working' ng-model='settings.ldap.attribute_first_name' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
   .row
     .col-sm-6
       .form-group(ng-class="{'has-error': theForm.ldapLastNameAttribute.$dirty && theForm.ldapLastNameAttribute.$invalid}")
         label.control-label
           | LDAP Last Name Attribute
-        input.form-control(type='text' name='ldapLastNameAttribute' placeholder='Last name attribute' ng-disabled='working' ng-model='settings.ldap.attribute_last_name')
+        input.form-control(type='text' name='ldapLastNameAttribute' placeholder='Last name attribute' ng-disabled='working' ng-model='settings.ldap.attribute_last_name' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
     .col-sm-6
       .form-group(ng-class="{'has-error': theForm.ldapEmailAttribute.$dirty && theForm.ldapEmailAttribute.$invalid}")
         label.control-label
           | LDAP Email Attribute
-        input.form-control(type='text' name='ldapEmailAttribute' placeholder='Email attribute' ng-disabled='working' ng-model='settings.ldap.attribute_email')
+        input.form-control(type='text' name='ldapEmailAttribute' placeholder='Email attribute' ng-disabled='working' ng-model='settings.ldap.attribute_email' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
 
 +form

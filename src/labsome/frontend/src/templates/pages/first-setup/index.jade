@@ -29,10 +29,10 @@ mixin admin_user
   .row
     .col-sm-6
       .form-group(ng-class="{'has-error': theForm.adminUsername.$dirty && theForm.adminUsername.$invalid}")
-        input.form-control(type='text', name='adminUsername', placeholder='Administrator username or email', required='', ng-disabled='working', ng-model='settings.admin_username')
+        input.form-control(type='text', name='adminUsername', placeholder='Administrator username or email', required='', ng-disabled='working', ng-model='settings.admin_username' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
     .col-sm-6
       .form-group(ng-class="{'has-error': theForm.adminPassword.$dirty && theForm.adminPassword.$invalid}")
-        input.form-control(type='password' name='adminPassword' placeholder='Administrator password (for testing)' required='' ng-disabled='working' ng-model='settings.admin_password')
+        input.form-control(type='password' name='adminPassword' placeholder='Administrator password (for testing)' required='' ng-disabled='working' ng-model='settings.admin_password' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
 
 mixin save_button
   .text-center(ng-if='error')
