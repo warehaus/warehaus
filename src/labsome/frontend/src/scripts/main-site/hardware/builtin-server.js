@@ -6,7 +6,18 @@ angular.module('labsome.site.hardware.server', [
 
 angular.module('labsome.site.hardware.server').constant('hwServerTypeKey', 'builtin-server');
 
-angular.module('labsome.site.hardware.server').provider('hwServerUrlRoutes', function(hwServerTypeKey, viewPath) {
+angular.module('labsome.site.hardware.server').provider('serverView', function(viewPath, hwServerTypeKey) {
+    return {
+        $get: function() {
+            return function(viewName) {
+                return viewPath('main-site/hardware/' + hwServerTypeKey + '/' + viewName);
+            };
+        }
+    };
+});
+
+angular.module('labsome.site.hardware.server').provider('hwServerUrlRoutes', function(hwServerTypeKey, serverViewProvider) {
+    var serverView = serverViewProvider.$get();
     return {
         $get: function() {
             return [
@@ -14,7 +25,7 @@ angular.module('labsome.site.hardware.server').provider('hwServerUrlRoutes', fun
                     name: hwServerTypeKey,
                     url: '/' + hwServerTypeKey,
                     title: hwServerTypeKey, // XXX take title from lab's type_naming
-                    templateUrl: viewPath('main-site/hardware/' + hwServerTypeKey + '/index.html'),
+                    templateUrl: serverView('index.html'),
                     controller: 'ServerListController',
                     children: [
                     ]
@@ -24,7 +35,7 @@ angular.module('labsome.site.hardware.server').provider('hwServerUrlRoutes', fun
     };
 });
 
-angular.module('labsome.site.hardware.server').controller('ServerListController', function($scope, $controller, $http, $uibModal, viewPath, hwServerTypeKey) {
+angular.module('labsome.site.hardware.server').controller('ServerListController', function($scope, $controller, $http, $uibModal, hwServerTypeKey, serverView) {
     $controller('CurrentObjectTypeController', {
         $scope: $scope,
         typeKey: hwServerTypeKey
@@ -32,7 +43,7 @@ angular.module('labsome.site.hardware.server').controller('ServerListController'
 
     $scope.add_to_cluster = function(server_id) {
         $uibModal.open({
-            templateUrl: viewPath('main-site/hardware/builtin-server/add-to-cluster.html'),
+            templateUrl: serverView('add-to-cluster.html'),
             controller: 'ClusterSelectionController',
             resolve: {
                 lab_id: function() {

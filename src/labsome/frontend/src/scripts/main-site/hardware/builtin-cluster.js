@@ -6,7 +6,18 @@ angular.module('labsome.site.hardware.cluster', [
 
 angular.module('labsome.site.hardware.cluster').constant('hwClusterTypeKey', 'builtin-cluster');
 
-angular.module('labsome.site.hardware.cluster').provider('hwClusterUrlRoutes', function(hwClusterTypeKey, viewPath) {
+angular.module('labsome.site.hardware.cluster').provider('clusterView', function(viewPath, hwClusterTypeKey) {
+    return {
+        $get: function() {
+            return function(viewName) {
+                return viewPath('main-site/hardware/' + hwClusterTypeKey + '/' + viewName);
+            };
+        }
+    };
+});
+
+angular.module('labsome.site.hardware.cluster').provider('hwClusterUrlRoutes', function(hwClusterTypeKey, clusterViewProvider) {
+    var clusterView = clusterViewProvider.$get();
     return {
         $get: function() {
             return [
@@ -14,7 +25,7 @@ angular.module('labsome.site.hardware.cluster').provider('hwClusterUrlRoutes', f
                     name: hwClusterTypeKey,
                     url: '/' + hwClusterTypeKey,
                     title: hwClusterTypeKey, // XXX take title from lab's type_naming
-                    templateUrl: viewPath('main-site/hardware/' + hwClusterTypeKey + '/index.html'),
+                    templateUrl: clusterView('index.html'),
                     controller: 'ClusterListController',
                     children: [
                     ]
@@ -47,7 +58,7 @@ angular.module('labsome.site.hardware.cluster').service('clusterServersAssigner'
 angular.module('labsome.site.hardware.cluster').run(function(clusterServersAssigner) {
 });
 
-angular.module('labsome.site.hardware.cluster').controller('ClusterListController', function($scope, $controller, $http, $q, $uibModal, labObjects, curUser, viewPath, hwClusterTypeKey) {
+angular.module('labsome.site.hardware.cluster').controller('ClusterListController', function($scope, $controller, $http, $q, $uibModal, labObjects, curUser, hwClusterTypeKey, clusterView) {
     $controller('CurrentObjectTypeController', {
         $scope: $scope,
         typeKey: hwClusterTypeKey
@@ -55,7 +66,7 @@ angular.module('labsome.site.hardware.cluster').controller('ClusterListControlle
 
     $scope.create_cluster = function() {
         $uibModal.open({
-            templateUrl: viewPath('main-site/hardware/' + hwClusterTypeKey + '/create.html'),
+            templateUrl: clusterView('create.html'),
             controller: 'CreateClusterController',
             resolve: {
                 lab_id: function() {
@@ -78,7 +89,7 @@ angular.module('labsome.site.hardware.cluster').controller('ClusterListControlle
 
     $scope.delete_cluster = function(cluster_id) {
         $uibModal.open({
-            templateUrl: viewPath('main-site/hardware/' + hwClusterTypeKey + '/delete.html'),
+            templateUrl: clusterView('delete.html'),
             controller: 'DeleteClusterController',
             resolve: {
                 cluster_id: function() {
