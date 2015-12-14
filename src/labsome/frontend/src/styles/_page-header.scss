@@ -33,13 +33,16 @@
       display: table-cell;
       white-space: nowrap;
       margin: 0;
-      padding: (2 * $labsome-page-header-spacing) (3 * $labsome-page-header-spacing);
+      padding: 0;
       border-width: 0 0 1px 0;
       border-style: solid;
       border-color: $labsome-page-header-border-color;
 
       a {
         outline: 0;
+        margin: 0;
+        display: block;
+        padding: (2 * $labsome-page-header-spacing) (3 * $labsome-page-header-spacing);
 
         &:hover,
         &:focus {
@@ -49,6 +52,7 @@
     }
 
     li.spacer {
+      padding: (2 * $labsome-page-header-spacing) (3 * $labsome-page-header-spacing);
       content: ' ';
     }
 
