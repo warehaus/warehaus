@@ -413,6 +413,23 @@ angular.module('labsome.site.labs').directive('objectName', function(labObjects)
     };
 });
 
+angular.module('labsome.site.labs').directive('objectTypeName', function(allLabs) {
+    var link = function(scope, elem, attrs) {
+        scope.allLabs = allLabs;
+    };
+
+    return {
+        restrict: 'AE',
+        template: '{{ (!count && (count != 0)) ? "" : (count + " ") }}{{ allLabs.byId[labId].type_naming[typeKey][(count == 1) ? "name_singular" : "name_plural"] | titlecase }}',
+        link: link,
+        scope: {
+            labId: '=',
+            typeKey: '=',
+            count: '@'
+        }
+    };
+});
+
 angular.module('labsome.site.labs').run(function($rootScope, allLabs, labObjects, objectTypes) {
     $rootScope.allLabs = allLabs;
     $rootScope.labObjects = labObjects;
