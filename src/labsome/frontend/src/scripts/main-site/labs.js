@@ -347,6 +347,7 @@ angular.module('labsome.site.labs').controller('CurrentObjectTypeController', fu
     $scope.type_key = typeKey;
 
     var refresh = function() {
+        $scope.objects = undefined;
         if (!allLabs.ready) {
             return;
         }
