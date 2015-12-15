@@ -115,8 +115,8 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
                 self.byId[lab.id] = lab;
                 self.bySlug[lab.slug] = lab;
             }
-            $rootScope.$broadcast('labsome.labs_inventory_changed');
             self.ready = true;
+            $rootScope.$broadcast('labsome.labs_inventory_changed');
             ready_promise.resolve();
         });
     };
@@ -180,8 +180,8 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
                 self.byObjectType[obj.type_key].push(obj);
                 self.byObjectId[obj.id] = obj;
             }
-            $rootScope.$broadcast('labsome.objects_inventory_changed');
             self.ready = true;
+            $rootScope.$broadcast('labsome.objects_inventory_changed');
             ready_promise.resolve();
         });
     };
