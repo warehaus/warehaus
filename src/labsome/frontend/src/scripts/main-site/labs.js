@@ -9,23 +9,35 @@ angular.module('labsome.site.labs').provider('labsUrlRoutes', function(hardwareU
         {
             name: 'manage',
             url: '/manage',
-            title: 'Manage',
             templateUrl: viewPath('main-site/views/labs/manage/index.html'),
             autoRedirectToChild: 'add-servers',
+            resolve: {
+                $title: function() {
+                    return 'Manage';
+                }
+            },
             children: [
                 {
                     name: 'add-servers',
                     url: '/add-servers',
-                    title: 'Add servers',
                     templateUrl: viewPath('main-site/views/labs/manage/add-servers.html'),
-                    controller: 'AddServersController'
+                    controller: 'AddServersController',
+                    resolve: {
+                        $title: function() {
+                            return 'Add Servers';
+                        }
+                    }
                 },
                 {
                     name: 'set-hardware-types',
                     url: '/hardware-types',
-                    title: 'Hardware Types',
                     templateUrl: viewPath('main-site/views/labs/manage/hardware-types.html'),
-                    controller: 'SetHardwareTypesController'
+                    controller: 'SetHardwareTypesController',
+                    resolve: {
+                        $title: function() {
+                            return 'Hardware Types';
+                        }
+                    }
                 }
             ]
         }
@@ -36,14 +48,17 @@ angular.module('labsome.site.labs').provider('labsUrlRoutes', function(hardwareU
     var labs_url_routes = {
         name: 'labs',
         url: '/labs',
-        title: 'Labs',
         templateUrl: viewPath('main-site/views/labs/index.html'),
         controller: 'AllLabsController',
+        resolve: {
+            $title: function() {
+                return 'Labs';
+            }
+        },
         children: [
             {
                 name: 'lab-page',
                 url: '/:labSlug',
-                title: 'Lab',
                 templateUrl: viewPath('main-site/views/labs/lab-page.html'),
                 controller: 'LabPageController',
                 resolve: {
@@ -57,6 +72,9 @@ angular.module('labsome.site.labs').provider('labsUrlRoutes', function(hardwareU
                             }
                             return allLabs.bySlug[$stateParams.labSlug].id;
                         });
+                    }],
+                    $title: ['allLabs', 'labId', function(allLabs, labId) {
+                        return allLabs.byId[labId].display_name;
                     }]
                 },
                 children: lab_page_children.concat(hardware_children)

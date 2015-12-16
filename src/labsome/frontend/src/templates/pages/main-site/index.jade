@@ -6,7 +6,8 @@ append vars
 
 append head
   base(href='/ui/')
-  title(ng-controller='TitleController' ng-bind="title || 'Labsome'")
+  title
+    | {{ $breadcrumbs | map:'title' | reverse | join:' - ' }} - Labsome
   include ../base/favicon-success
 
 append body

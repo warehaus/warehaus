@@ -22,30 +22,32 @@ angular.module('labsome.site.hardware.cluster').provider('hwClusterUrlRoutes', f
     var cluster_page = {
         name: 'cluster-page',
         url: '/:clusterSlug',
-        title: 'Cluster page', // XXX
+        resolve: {
+            clusterId: ['$stateParams', 'labObjects', 'labId', function($stateParams, labObjects, labId) {
+                return labObjects.whenReady.then(function() {
+                    if (angular.isUndefined(labId)) {
+                        return undefined;
+                    }
+                    if (angular.isUndefined(labObjects.byLabId[labId])) {
+                        return undefined;
+                    }
+                    var cluster_id;
+                    labObjects.byLabId[labId].byObjectType[hwClusterTypeKey].forEach(function(cluster) {
+                        if (cluster.slug == $stateParams.clusterSlug) {
+                            cluster_id = cluster.id;
+                        }
+                    });
+                    return cluster_id;
+                });
+            }],
+            $title: ['clusterId', 'labObjects', function(clusterId, labObjects) {
+                return labObjects.byObjectId[clusterId].display_name;
+            }]
+        },
         views: {
             '@': {
                 templateUrl: clusterView('cluster-page.html'),
-                controller: 'ClusterPageController',
-                resolve: {
-                    clusterId: ['$stateParams', 'labObjects', 'labId', function($stateParams, labObjects, labId) {
-                        return labObjects.whenReady.then(function() {
-                            if (angular.isUndefined(labId)) {
-                                return undefined;
-                            }
-                            if (angular.isUndefined(labObjects.byLabId[labId])) {
-                                return undefined;
-                            }
-                            var cluster_id;
-                            labObjects.byLabId[labId].byObjectType[hwClusterTypeKey].forEach(function(cluster) {
-                                if (cluster.slug == $stateParams.clusterSlug) {
-                                    cluster_id = cluster.id;
-                                }
-                            });
-                            return cluster_id;
-                        });
-                    }]
-                }
+                controller: 'ClusterPageController'
             }
         }
     };
@@ -56,9 +58,13 @@ angular.module('labsome.site.hardware.cluster').provider('hwClusterUrlRoutes', f
                 {
                     name: hwClusterTypeKey,
                     url: '/' + hwClusterTypeKey,
-                    title: hwClusterTypeKey, // XXX take title from lab's type_naming
                     templateUrl: clusterView('index.html'),
                     controller: 'ClusterListController',
+                    resolve: {
+                        $title: ['$filter', 'allLabs', 'labId', function($filter, allLabs, labId) {
+                            return $filter('titlecase')(allLabs.byId[labId].type_naming[hwClusterTypeKey].name_plural);
+                        }]
+                    },
                     children: [
                         cluster_page
                     ]

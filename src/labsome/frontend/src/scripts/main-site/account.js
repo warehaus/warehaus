@@ -5,9 +5,13 @@ angular.module('labsome.site.account', []);
 angular.module('labsome.site.account').config(function($stateProvider, $urlRouterProvider, viewPath) {
     var account = {
         url: '/account',
-        title: 'Account',
         templateUrl: viewPath('main-site/views/account/index.html'),
-        controller: 'AccountController'
+        controller: 'AccountController',
+        resolve: {
+            $title: function() {
+                return 'Account';
+            }
+        }
     };
 
     var account_profile = {

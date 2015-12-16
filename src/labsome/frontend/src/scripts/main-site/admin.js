@@ -5,16 +5,24 @@ angular.module('labsome.site.admin', []);
 angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterProvider, viewPath) {
     var admin = {
         url: '/admin',
-        title: 'Admin',
         templateUrl: viewPath('main-site/views/admin/index.html'),
-        controller: 'AdminController'
+        controller: 'AdminController',
+        resolve: {
+            $title: function() {
+                return 'Admin';
+            }
+        }
     };
 
     var admin_labs = {
         parent: admin,
         url: '/labs',
-        title: 'Labs',
-        templateUrl: viewPath('main-site/views/admin/labs.html')
+        templateUrl: viewPath('main-site/views/admin/labs.html'),
+        resolve: {
+            $title: function() {
+                return 'Labs';
+            }
+        }
     };
 
     var _update = function(options) {
@@ -43,7 +51,11 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
     var admin_labs_rename = {
         parent: admin_labs,
         url: '/rename/:id',
-        title: 'Rename',
+        resolve: {
+            $title: function() {
+                return 'Rename';
+            }
+        },
         onEnter: _update({
             templateUrl: 'main-site/views/admin/rename-lab.html',
             controller: 'LabModal'
@@ -53,7 +65,11 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
     var admin_labs_delete = {
         parent: admin_labs,
         url: '/delete/:id',
-        title: 'Delete',
+        resolve: {
+            $title: function() {
+                return 'Delete';
+            }
+        },
         onEnter: ['$uibModal', '$state', '$stateParams', 'curUser', 'allLabs', function($uibModal, $state, $stateParams, curUser, allLabs) {
             if (!curUser.is_admin) {
                 $state.go('admin');
@@ -78,25 +94,37 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
     var admin_create_lab = {
         parent: admin,
         url: '/create-lab',
-        title: 'Create Lab',
         templateUrl: viewPath('main-site/views/admin/create-lab.html'),
-        controller: 'CreateLabController'
+        controller: 'CreateLabController',
+        resolve: {
+            $title: function() {
+                return 'Create Lab';
+            }
+        }
     };
 
     var admin_auth_users = {
         parent: admin,
         url: '/users?id',
-        title: 'Users',
         templateUrl: viewPath('main-site/views/admin/users.html'),
         controller: 'UsersAdminController',
+        resolve: {
+            $title: function() {
+                return 'Users';
+            }
+        }
     };
 
     var admin_auth_ldap = {
         parent: admin,
         url: '/ldap',
-        title: 'LDAP',
         templateUrl: viewPath('main-site/views/admin/ldap.html'),
-        controller: 'LDAPSettingsController'
+        controller: 'LDAPSettingsController',
+        resolve: {
+            $title: function() {
+                return 'LDAP';
+            }
+        }
     };
 
     $urlRouterProvider.when(admin.url, admin.url + admin_labs.url);

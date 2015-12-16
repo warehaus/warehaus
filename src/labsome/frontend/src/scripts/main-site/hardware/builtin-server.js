@@ -24,9 +24,13 @@ angular.module('labsome.site.hardware.server').provider('hwServerUrlRoutes', fun
                 {
                     name: hwServerTypeKey,
                     url: '/' + hwServerTypeKey,
-                    title: hwServerTypeKey, // XXX take title from lab's type_naming
                     templateUrl: serverView('index.html'),
                     controller: 'ServerListController',
+                    resolve: {
+                        $title: ['$filter', 'allLabs', 'labId', function($filter, allLabs, labId) {
+                            return $filter('titlecase')(allLabs.byId[labId].type_naming[hwServerTypeKey].name_plural);
+                        }]
+                    },
                     children: [
                     ]
                 }
