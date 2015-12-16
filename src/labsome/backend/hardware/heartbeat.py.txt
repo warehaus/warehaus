@@ -41,7 +41,7 @@ def collect_info():
     )
 
 def send(data):
-    send_url = urljoin(LABSOME_URL, '/api/hardware/v1/builtin/server/heartbeat')
+    send_url = urljoin(LABSOME_URL, '/api/hardware/v1/builtin-server/heartbeat')
     request = Request(send_url, json.dumps(data), {'Content-Type': 'application/json'})
     response = urlopen(request).read()
 
