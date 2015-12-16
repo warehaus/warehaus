@@ -73,7 +73,7 @@ mixin navigation
     li.heading
       | Downloads
     li
-      a
+      a(target='_{{ cluster.id }}_config.json' href='/api/hardware/v1/{{ hwClusterTypeKey }}/{{ allLabs.byId[lab_id].slug }}/{{ cluster.slug }}/config.json')
         i.fa.fa-fw.fa-code
         | config.json
 
