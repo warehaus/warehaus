@@ -40,6 +40,8 @@ def register_ownership_api(hardware_api):
         _check_allows_ownership(obj)
         if (roles.Admin not in current_user.roles) and (owner_id != current_user.id):
             flask_abort(httplib.FORBIDDEN, 'You cannot add ownerships for other users')
+        if len(obj.ownerships) >= 1:
+            flask_abort(httplib.CONFLICT, 'Only one owner allowed')
         if all(ownership['owner_id'] != owner_id for ownership in obj.ownerships):
             obj.ownerships.append(dict(
                 owner_id = owner_id,
