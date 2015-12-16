@@ -48,13 +48,17 @@
       }
 
       &.active {
-        @include gradient-horizontal($start-color: lighten($labsome-sidebar-link-active-bg, 25%),
+        @include gradient-horizontal($start-color: darken($labsome-sidebar-link-active-color, 20%),
                                      $end-color: $labsome-sidebar-link-active-bg,
                                      $start-percent: 2%, $end-percent: 3%);
         color: $labsome-sidebar-link-active-color;
         border-style: solid;
         border-width: 0 $labsome-sidebar-border-width 0 0;
         border-color: $labsome-sidebar-border-color;
+
+        a {
+          color: $labsome-sidebar-link-active-color;
+        }
       }
     }
   }

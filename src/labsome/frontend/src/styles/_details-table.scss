@@ -1,15 +1,15 @@
 table.details {
   td {
     vertical-align: middle;
+  }
 
-    &.heading {
-      font-size: 1.25rem;
-      line-height: 2rem;
-    }
+  .heading {
+    font-size: 1.25rem;
+    line-height: 2rem;
+  }
 
-    &.tagline {
-      font-size: .875rem;
-    }
+  .tagline {
+    font-size: .875rem;
   }
 
   td.main {
