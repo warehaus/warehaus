@@ -6,6 +6,7 @@ from flask.ext.login import current_user
 from ..db.times import now
 from ..auth.models import User
 from ..auth.roles import roles
+from ..auth.roles import user_required
 from .models import Object
 from .all_types import all_types
 
@@ -34,6 +35,7 @@ def _check_allows_ownership(obj):
 
 def register_ownership_api(hardware_api):
     @hardware_api.route('/objects/<obj_id>/ownership/<owner_id>', methods=['POST'])
+    @user_required
     def add_owner_to_object(obj_id, owner_id):
         obj = _get_object(obj_id)
         new_owner = _get_user(owner_id)
@@ -51,6 +53,7 @@ def register_ownership_api(hardware_api):
         return jsonify(obj.as_dict()), httplib.ACCEPTED
 
     @hardware_api.route('/objects/<obj_id>/ownership/<owner_id>', methods=['DELETE'])
+    @user_required
     def delete_owner_from_object(obj_id, owner_id):
         obj = _get_object(obj_id)
         owner = _get_user(owner_id)

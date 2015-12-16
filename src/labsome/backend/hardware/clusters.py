@@ -3,6 +3,7 @@ from slugify import slugify
 from flask import request
 from flask import abort as flask_abort
 from flask.json import jsonify
+from ..auth.roles import user_required
 from .hardware_type import HardwareType
 from .models import Lab
 
@@ -21,6 +22,7 @@ class Cluster(HardwareType):
     @classmethod
     def register_api(cls, app_or_blueprint, url_prefix):
         @app_or_blueprint.route(url_prefix, methods=['POST'])
+        @user_required
         def create_cluster():
             lab_id = request.json['lab_id']
             display_name = request.json['display_name']
@@ -35,6 +37,7 @@ class Cluster(HardwareType):
             return jsonify(cluster.as_dict()), httplib.CREATED
 
         @app_or_blueprint.route(url_prefix + '/<cluster_id>', methods=['DELETE'])
+        @user_required
         def delete_cluster(cluster_id):
             cluster = cls.get_by_id(cluster_id)
             if cluster is None:

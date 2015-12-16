@@ -6,6 +6,7 @@ from flask import Response
 from flask import abort as flask_abort
 from flask.json import jsonify
 from ..db.times import now
+from ..auth.roles import user_required
 from .models import Lab
 from .hardware_type import HardwareType
 
@@ -74,6 +75,7 @@ class Server(HardwareType):
             return jsonify(server.as_dict()), httplib.ACCEPTED
 
         @app_or_blueprint.route(url_prefix + '/<server_id>', methods=['PUT'])
+        @user_required
         def update_server_by_id(server_id):
             server = cls.get_by_id(server_id)
             if server is None:
@@ -83,6 +85,7 @@ class Server(HardwareType):
             return _update_server(server)
 
         @app_or_blueprint.route(url_prefix + '/<lab_slug>/<server_slug>', methods=['PUT'])
+        @user_required
         def update_server_by_slug(lab_slug, server_slug):
             lab = Lab.get_by_slug(lab_slug)
             if lab is None:
