@@ -14,7 +14,7 @@ class HardwareTypesRegistry(object):
 
     def register_api(self, app_or_blueprint):
         for hardware_type in self._hardware_types.itervalues():
-            url_prefix = '/{}/{}'.format(hardware_type.TYPE_VENDOR, hardware_type.TYPE_NAME)
+            url_prefix = '/' + hardware_type.type_key()
             hardware_type.register_api(app_or_blueprint, url_prefix)
 
     def __iter__(self):

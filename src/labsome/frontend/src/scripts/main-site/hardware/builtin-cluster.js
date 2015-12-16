@@ -123,6 +123,7 @@ angular.module('labsome.site.hardware.cluster').controller('ClusterPageControlle
 
     $scope.lab_id = labId;
     $scope.cluster = labObjects.byObjectId[clusterId];
+    $scope.hwClusterTypeKey = hwClusterTypeKey;
 
     $scope.$on('labsome.objects_inventory_changed', function() {
         $scope.cluster = labObjects.byObjectId[clusterId];
@@ -154,14 +155,14 @@ angular.module('labsome.site.hardware.cluster').controller('ClusterPageControlle
     };
 });
 
-angular.module('labsome.site.hardware.cluster').controller('CreateClusterController', function($scope, $uibModalInstance, $http, lab_id) {
+angular.module('labsome.site.hardware.cluster').controller('CreateClusterController', function($scope, $uibModalInstance, $http, hwClusterTypeKey, lab_id) {
     $scope.cluster = {
         lab_id: lab_id
     };
 
     $scope.create = function() {
         $scope.working = true;
-        $http.post('/api/hardware/v1/builtin/cluster', $scope.cluster).then(function() {
+        $http.post('/api/hardware/v1/' + hwClusterTypeKey, $scope.cluster).then(function() {
             $uibModalInstance.close();
         });
     };
@@ -171,7 +172,7 @@ angular.module('labsome.site.hardware.cluster').controller('CreateClusterControl
     };
 });
 
-angular.module('labsome.site.hardware.cluster').controller('DeleteClusterController', function($scope, $uibModalInstance, $http, $q, labObjects, cluster_id) {
+angular.module('labsome.site.hardware.cluster').controller('DeleteClusterController', function($scope, $uibModalInstance, $http, $q, labObjects, hwClusterTypeKey, hwServerTypeKey, cluster_id) {
     $scope.cluster_id = cluster_id;
 
     $scope.ok = function() {
@@ -180,11 +181,11 @@ angular.module('labsome.site.hardware.cluster').controller('DeleteClusterControl
         if (cluster.servers) {
             for (var i = 0; i < cluster.servers.length; ++i) {
                 var server_id = cluster.servers[i];
-                unassign_promises.push($http.put('/api/hardware/v1/builtin/server/' + server_id, {cluster_id: null}));
+                unassign_promises.push($http.put('/api/hardware/v1/' + hwServerTypeKey + '/' + server_id, {cluster_id: null}));
             }
         }
         $q.all(unassign_promises).then(function() {
-            $http.delete('/api/hardware/v1/builtin/cluster/' + cluster_id).then(function() {
+            $http.delete('/api/hardware/v1/' + hwClusterTypeKey + '/' + cluster_id).then(function() {
                 $uibModalInstance.close();
             });
         });

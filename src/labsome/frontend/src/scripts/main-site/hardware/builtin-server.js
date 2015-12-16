@@ -58,12 +58,12 @@ angular.module('labsome.site.hardware.server').controller('ServerListController'
                 }
             }
         }).result.then(function(cluster_id) {
-            $http.put('/api/hardware/v1/builtin/server/' + server_id, {cluster_id: cluster_id});
+            $http.put('/api/hardware/v1/' + hwServerTypeKey + '/' + server_id, {cluster_id: cluster_id});
         });
     };
 
     $scope.remove_from_cluster = function(server_id) {
-        $http.put('/api/hardware/v1/builtin/server/' + server_id, {cluster_id: null});
+        $http.put('/api/hardware/v1/' + hwServerTypeKey + '/' + server_id, {cluster_id: null});
     };
 });
 

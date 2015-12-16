@@ -313,14 +313,14 @@ angular.module('labsome.site.labs').controller('LabPageController', function($sc
     });
 });
 
-angular.module('labsome.site.admin').controller('AddServersController', function($scope, $location) {
+angular.module('labsome.site.admin').controller('AddServersController', function($scope, $location, hwServerTypeKey) {
     var base_url = $location.protocol() + '://' + $location.host();
     if ((($location.protocol() == 'http') && ($location.port() != 80)) ||
         (($location.protocol() == 'https') && ($location.port() != 443))) {
         base_url += ':' + $location.port();
     }
 
-    $scope.agent_url = base_url + '/api/hardware/v1/builtin/server/code/agent.py?lab_id=' + $scope.lab_id;
+    $scope.agent_url = base_url + '/api/hardware/v1/' + hwServerTypeKey + '/code/agent.py?lab_id=' + $scope.lab_id;
 });
 
 angular.module('labsome.site.admin').controller('SetHardwareTypesController', function($scope, $state, allLabs, objectTypes) {
