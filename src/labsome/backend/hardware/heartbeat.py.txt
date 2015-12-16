@@ -33,11 +33,31 @@ def collect_net_info():
             net_info[iface_name].setdefault('inet6', []).append(iface_info[1])
     return net_info
 
+def collect_pci_info():
+    lspci = run('lspci -mm')
+    pci_devices = []
+    for line in lspci.splitlines():
+        mo = re.match(r'^(?P<address>[:\w.]+)\s+"(?P<type>[^"]+)" "(?P<vendor>[^"]+)" "(?P<name>[^"]+)".*$', line)
+        if mo is not None:
+            pci_devices.append(mo.groupdict())
+    return pci_devices
+
+def collect_block_dev_info():
+    lsblk = run('lsblk --bytes --nodeps')
+    block_devices = []
+    for line in lsblk.splitlines():
+        mo = re.match(r'^(?P<device>\w+)\s+(?P<major>\d+):(?P<minor>\d+)\s+(?P<removable>\d+)\s+(?P<bytes>\d+)\s+(?P<readonly>\d+)\s+(?P<type>\w+)\s*$', line)
+        if mo is not None:
+            block_devices.append(mo.groupdict())
+    return block_devices
+
 def collect_info():
     return dict(
         hostname = open('/proc/sys/kernel/hostname').read().strip(),
         lab_id = LABSOME_LAB_ID,
         net = collect_net_info(),
+        pci_devices = collect_pci_info(),
+        block_devices = collect_block_dev_info(),
     )
 
 def send(data):
