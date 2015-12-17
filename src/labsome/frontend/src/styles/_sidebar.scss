@@ -23,8 +23,8 @@
         margin: .5rem 0 .75rem 0;
 
         img {
-          width: $labsome-sidebar-width * 0.7;
-          height: $labsome-sidebar-width * 0.7;
+          width: $labsome-sidebar-logo-width;
+          height: $labsome-sidebar-logo-width / 4;
           border-width: 0;
         }
       }
