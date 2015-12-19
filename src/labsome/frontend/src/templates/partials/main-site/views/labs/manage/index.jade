@@ -1,11 +1,21 @@
 mixin menu
   ul.nav.nav-pills.nav-stacked
-    li(ui-sref-active='active')
-      a(ui-sref='.add-servers')
-        | How to Add Servers
+    li.heading
+      | Lab Hardware
     li(ui-sref-active='active')
       a(ui-sref='.set-hardware-types')
         | Hardware Types
+    li(ui-sref-active='active')
+      a(ui-sref='.add-servers')
+        | Adding Servers
+    li.heading
+      | Other Actions
+    li(ui-sref-active='active')
+      a(ui-sref='.rename')
+        | Rename Lab
+    li(ui-sref-active='active')
+      a(ui-sref='.delete')
+        | Delete Lab
 
 mixin content
   .row

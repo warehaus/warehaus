@@ -5,12 +5,16 @@ angular.module('labsome.site.labs', [
 ]);
 
 angular.module('labsome.site.labs').provider('labsUrlRoutes', function(hardwareUrlRoutesProvider, viewPath) {
+    var labsView = function(path) {
+        return viewPath('main-site/views/labs/' + path);
+    };
+
     var lab_page_children = [
         {
             name: 'manage',
             url: '/manage',
-            templateUrl: viewPath('main-site/views/labs/manage/index.html'),
-            autoRedirectToChild: 'add-servers',
+            templateUrl: labsView('manage/index.html'),
+            autoRedirectToChild: 'set-hardware-types',
             resolve: {
                 $title: function() {
                     return 'Manage';
@@ -18,9 +22,20 @@ angular.module('labsome.site.labs').provider('labsUrlRoutes', function(hardwareU
             },
             children: [
                 {
+                    name: 'set-hardware-types',
+                    url: '/hardware-types',
+                    templateUrl: labsView('manage/hardware-types.html'),
+                    controller: 'SetHardwareTypesController',
+                    resolve: {
+                        $title: function() {
+                            return 'Hardware Types';
+                        }
+                    }
+                },
+                {
                     name: 'add-servers',
                     url: '/add-servers',
-                    templateUrl: viewPath('main-site/views/labs/manage/add-servers.html'),
+                    templateUrl: labsView('manage/add-servers.html'),
                     controller: 'AddServersController',
                     resolve: {
                         $title: function() {
@@ -29,13 +44,24 @@ angular.module('labsome.site.labs').provider('labsUrlRoutes', function(hardwareU
                     }
                 },
                 {
-                    name: 'set-hardware-types',
-                    url: '/hardware-types',
-                    templateUrl: viewPath('main-site/views/labs/manage/hardware-types.html'),
-                    controller: 'SetHardwareTypesController',
+                    name: 'rename',
+                    url: '/rename',
+                    templateUrl: labsView('manage/rename-lab.html'),
+                    controller: 'RenameLabController',
                     resolve: {
                         $title: function() {
-                            return 'Hardware Types';
+                            return 'Rename';
+                        }
+                    }
+                },
+                {
+                    name: 'delete',
+                    url: '/delete',
+                    templateUrl: labsView('manage/delete-lab.html'),
+                    controller: 'DeleteLabController',
+                    resolve: {
+                        $title: function() {
+                            return 'Delete';
                         }
                     }
                 }
@@ -48,7 +74,7 @@ angular.module('labsome.site.labs').provider('labsUrlRoutes', function(hardwareU
     var labs_url_routes = {
         name: 'labs',
         url: '/labs',
-        templateUrl: viewPath('main-site/views/labs/index.html'),
+        templateUrl: labsView('index.html'),
         controller: 'AllLabsController',
         resolve: {
             $title: function() {
@@ -59,7 +85,7 @@ angular.module('labsome.site.labs').provider('labsUrlRoutes', function(hardwareU
             {
                 name: 'lab-page',
                 url: '/:labSlug',
-                templateUrl: viewPath('main-site/views/labs/lab-page.html'),
+                templateUrl: labsView('lab-page.html'),
                 controller: 'LabPageController',
                 resolve: {
                     labSlug: ['$stateParams', function($stateParams) {
@@ -238,7 +264,7 @@ angular.module('labsome.site.labs').service('selectedLab', function() {
     };
 });
 
-angular.module('labsome.site.labs').controller('AllLabsController', function($scope, $state, selectedLab, allLabs) {
+angular.module('labsome.site.labs').controller('AllLabsController', function($scope, $state, $uibModal, viewPath, selectedLab, allLabs) {
     var _goto_lab = function(lab_id) {
         $state.go('labs.lab-page', {labSlug: allLabs.byId[lab_id].slug});
     };
@@ -264,6 +290,37 @@ angular.module('labsome.site.labs').controller('AllLabsController', function($sc
             refresh();
         }
     });
+
+    $scope.create_lab = function() {
+        $uibModal.open({
+            templateUrl: viewPath('main-site/views/labs/create-lab.html'),
+            controller: 'CreateLabController'
+        }).result.then(function(new_lab) {
+            $state.go('labs.lab-page', {labSlug: new_lab.slug});
+        });
+    };
+});
+
+angular.module('labsome.site.labs').controller('CreateLabController', function($scope, $state, $uibModalInstance, allLabs) {
+    $scope.lab = {};
+
+    $scope.save = function() {
+        $scope.working = true;
+        allLabs.create($scope.lab).then(function(res) {
+            $uibModalInstance.close(res.data);
+        }, function(res) {
+            $scope.working = false;
+            if (angular.isDefined(res.data.message)) {
+                $scope.error = res.data.message;
+            } else {
+                $scope.error = res.data;
+            }
+        });
+    };
+
+    $scope.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
+    };
 });
 
 angular.module('labsome.site.labs').controller('LabPageController', function($scope, $state, selectedLab, allLabs, labObjects, objectTypes, labSlug) {
@@ -358,6 +415,26 @@ angular.module('labsome.site.admin').controller('SetHardwareTypesController', fu
     $scope.save_changes = function() {
         allLabs.update($scope.lab_id, $scope.result);
         $state.go('^');
+    };
+});
+
+angular.module('labsome.site.labs').controller('RenameLabController', function($scope, $state, allLabs) {
+    $scope.result = {
+        display_name: allLabs.byId[$scope.lab_id].display_name
+    };
+
+    $scope.ok = function() {
+        allLabs.update($scope.lab_id, $scope.result).then(function() {
+            $state.go('labs');
+        });
+    };
+});
+
+angular.module('labsome.site.labs').controller('DeleteLabController', function($scope, $state, allLabs) {
+    $scope.ok = function() {
+        allLabs.delete($scope.lab_id).then(function() {
+            $state.go('labs');
+        });
     };
 });
 

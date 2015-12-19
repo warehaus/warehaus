@@ -1,5 +1,11 @@
-mixin form
-  form(name='createLab' role='form' ng-submit='save()')
+form(name='createLab' role='form' ng-submit='save()')
+  .modal-header
+    button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+      span(aria-hidden="true") &times;
+    h4.modal-title
+      | Create Lab
+
+  .modal-body
     .form-group
       label.control-label
         | Lab Display Name
@@ -14,13 +20,9 @@ mixin form
         | This lab's API name will be:&nbsp;
         samp
           | {{ lab.slug }}
-    h4.text-left
-      button.btn.btn-success(ng-click='save()' ng-disabled='working || createLab.$invalid')
-        | Create Lab
 
-mixin content
-  .panel.panel-default
-    .panel-body
-      +form
-
-+content
+  .modal-footer
+    button.btn.btn-default(ng-click='cancel()')
+      | Cancel
+    button.btn.btn-success(ng-click='create()' ng-disabled='createLab.$invalid || working')
+      | Create Lab

@@ -14,95 +14,6 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
         }
     };
 
-    var admin_labs = {
-        parent: admin,
-        url: '/labs',
-        templateUrl: viewPath('main-site/views/admin/labs.html'),
-        resolve: {
-            $title: function() {
-                return 'Labs';
-            }
-        }
-    };
-
-    var _update = function(options) {
-        return ['$uibModal', '$state', '$stateParams', 'curUser', 'allLabs', function($uibModal, $state, $stateParams, curUser, allLabs) {
-            if (!curUser.is_admin) {
-                $state.go('admin');
-                return;
-            }
-            $uibModal.open({
-                templateUrl: viewPath(options.templateUrl),
-                controller: options.controller,
-                size: options.size,
-                resolve: {
-                    lab_id: function() {
-                        return $stateParams.id;
-                    }
-                }
-            }).result.then(function(result) {
-                return allLabs.update($stateParams.id, result);
-            }).finally(function() {
-                $state.go('^');
-            });
-        }];
-    };
-
-    var admin_labs_rename = {
-        parent: admin_labs,
-        url: '/rename/:id',
-        resolve: {
-            $title: function() {
-                return 'Rename';
-            }
-        },
-        onEnter: _update({
-            templateUrl: 'main-site/views/admin/rename-lab.html',
-            controller: 'LabModal'
-        })
-    };
-
-    var admin_labs_delete = {
-        parent: admin_labs,
-        url: '/delete/:id',
-        resolve: {
-            $title: function() {
-                return 'Delete';
-            }
-        },
-        onEnter: ['$uibModal', '$state', '$stateParams', 'curUser', 'allLabs', function($uibModal, $state, $stateParams, curUser, allLabs) {
-            if (!curUser.is_admin) {
-                $state.go('admin');
-                return;
-            }
-            $uibModal.open({
-                templateUrl: viewPath('main-site/views/admin/delete-lab.html'),
-                controller: 'LabModal',
-                resolve: {
-                    lab_id: function() {
-                        return $stateParams.id;
-                    }
-                }
-            }).result.then(function() {
-                return allLabs.delete($stateParams.id);
-            }).finally(function() {
-                $state.go('^');
-            });
-        }]
-    };
-
-    var admin_create_lab = {
-        parent: admin,
-        url: '/create-lab',
-        templateUrl: viewPath('main-site/views/admin/create-lab.html'),
-        controller: 'CreateLabController',
-        resolve: {
-            $title: function() {
-                return 'Create Lab';
-            }
-        }
-    };
-
     var admin_auth_users = {
         parent: admin,
         url: '/users?id',
@@ -127,13 +38,9 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
         }
     };
 
-    $urlRouterProvider.when(admin.url, admin.url + admin_labs.url);
+    $urlRouterProvider.when(admin.url, admin.url + admin_auth_users.url);
 
     $stateProvider.state('admin', admin);
-    $stateProvider.state('admin.labs', admin_labs);
-    $stateProvider.state('admin.labs.rename', admin_labs_rename);
-    $stateProvider.state('admin.labs.delete', admin_labs_delete);
-    $stateProvider.state('admin.create-lab', admin_create_lab);
     $stateProvider.state('admin.auth-users', admin_auth_users);
     $stateProvider.state('admin.auth-ldap', admin_auth_ldap);
 });
@@ -144,37 +51,6 @@ angular.module('labsome.site.admin').controller('AdminController', function($sco
             $location.url('/admin');
         }
     });
-});
-
-angular.module('labsome.site.admin').controller('LabModal', function($scope, $uibModalInstance, lab_id) {
-    $scope.lab_id = lab_id
-    $scope.result = {};
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
-    };
-
-    $scope.ok = function() {
-        $uibModalInstance.close($scope.result);
-    };
-});
-
-angular.module('labsome.site.admin').controller('CreateLabController', function($scope, $state, allLabs) {
-    $scope.lab = {};
-
-    $scope.save = function() {
-        $scope.working = true;
-        allLabs.create($scope.lab).then(function(res) {
-            $state.go('admin.labs');
-        }, function(res) {
-            $scope.working = false;
-            if (angular.isDefined(res.data.message)) {
-                $scope.error = res.data.message;
-            } else {
-                $scope.error = res.data;
-            }
-        });
-    };
 });
 
 angular.module('labsome.site.admin').controller('UsersAdminController', function($scope, $stateParams) {
