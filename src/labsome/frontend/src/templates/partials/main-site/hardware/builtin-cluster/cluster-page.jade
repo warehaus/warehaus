@@ -65,7 +65,7 @@ mixin owners
     | Nobody
 
 mixin navigation
-  ul.nav.nav-pills.nav-stacked
+  ul
     li.heading
       | Owners
     li
@@ -78,12 +78,11 @@ mixin navigation
         | config.json
 
 mixin content
-  .container
-    .row
-      .col-sm-9.col-lg-offset-1.col-lg-8
-        +servers
-      .col-sm-3
-        +navigation
+  .page-layout
+    .page-layout-nav
+      +navigation
+    .page-layout-content
+      +servers
 
 +page_header
 +content

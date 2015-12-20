@@ -17,30 +17,40 @@ mixin page_header
           | LDAP Settings
       li.padding
 
-mixin forbidden
-  h3.text-center
-    i.icon-directions.x6
-  p.text-center.x2
-    | It seems like you're lost
-  .row
-    .col-sm-6
-      h4
-        button.btn.btn-lg.btn-block.btn-success(ui-sref='labs')
-          | Yes, take me somewhere safe
-    .col-sm-6
-      h4
-        button.btn.btn-lg.btn-block.btn-default(ui-sref='labs')
-          | No, I should be here
+mixin forbidden_message
+  .big-message
+    h3.text-center
+      i.icon-directions.x6
+    p.text-center.x2
+      | It looks like you're lost
+    .row
+      .col-sm-6
+        h4
+          button.btn.btn-lg.btn-block.btn-success(ui-sref='labs')
+            | Yes, take me somewhere safe
+      .col-sm-6
+        h4
+          button.btn.btn-lg.btn-block.btn-default(ui-sref='labs')
+            | No, I should be here
+
+mixin non_admin_message
+  .page-header(ng-if='!curUser.is_admin')
+    .page-header-row
+      .page-header-row-cell.x3
+        i.icon-close
+      .page-header-row-cell
+        .x12
+          strong
+            | Oh no
+    ul.page-header-nav
+      li.padding
+  .page-layout(ng-if='!curUser.is_admin')
+    .page-layout-content-no-nav
+      +forbidden_message
 
 mixin content
-  .container(ng-if='!curUser.is_admin')
-    .row
-      .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
-        .panel.panel-default
-          .panel-body
-            +forbidden
+  +non_admin_message
   +page_header
-  .container
-    ui-view(ng-if='curUser.is_admin')
+  ui-view(ng-if='curUser.is_admin')
 
 +content

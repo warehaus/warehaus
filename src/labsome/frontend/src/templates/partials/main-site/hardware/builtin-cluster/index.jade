@@ -1,15 +1,14 @@
 mixin no_clusters
-  .panel.panel-default
-    .panel-body
-      h3.text-center
-        i.icon-ghost.x6
-      p.text-center.x2
-        | No Clusters Yet
-      p.text-center.x12
-        | Create your first cluster and add some servers to it
-      p.text-center.x2
-        button.btn.btn-lg.btn-success(ng-click='create_cluster()')
-          | Create a Cluster
+  .big-message
+    h3.text-center
+      i.icon-ghost.x6
+    p.text-center.x2
+      | No Clusters Yet
+    p.text-center.x12
+      | Create your first cluster and add some servers to it
+    p.text-center.x2
+      button.btn.btn-lg.btn-success(ng-click='create_cluster()')
+        | Create a Cluster
 
 mixin cluster_row
   table.details
@@ -45,14 +44,12 @@ mixin create_button
       | Create a Cluster
 
 mixin content
-  .container
-    .row
-      .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
-        span(ng-if='objects | isEmpty')
-          +no_clusters
-        span(ng-if='objects | isNotEmpty')
-          +cluster_list
-          +create_button
+  .page-layout
+    .page-layout-content-no-nav(ng-if='objects | isEmpty')
+      +no_clusters
+    .page-layout-content-no-nav(ng-if='objects | isNotEmpty')
+      +cluster_list
+      +create_button
 
 ui-view
   +content

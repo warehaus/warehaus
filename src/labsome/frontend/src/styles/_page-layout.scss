@@ -1,0 +1,46 @@
+.page-layout {
+  position: relative;
+  width: $labsome-page-layout-width;
+  min-width: $labsome-page-layout-width;
+  max-width: $labsome-page-layout-width;
+  margin: 0;
+  padding: 0;
+
+  .page-layout-nav {
+    position: absolute;
+    top: 0;
+    left: (4 * $labsome-page-header-spacing);
+    padding: 0 (4 * $labsome-page-header-spacing) 0 0;
+    width: $labsome-page-layout-nav-width;
+    min-width: $labsome-page-layout-nav-width;
+    max-width: $labsome-page-layout-nav-width;
+    font-size: $labsome-page-layout-nav-font-size;
+  }
+
+  .page-layout-content {
+    position: absolute;
+    padding: 0 0 0 (4 * $labsome-page-header-spacing);
+    top: 0;
+    left: $labsome-page-layout-nav-width;
+    width: ($labsome-page-layout-width - $labsome-page-layout-nav-width);
+    min-width: ($labsome-page-layout-width - $labsome-page-layout-nav-width);
+    max-width: ($labsome-page-layout-width - $labsome-page-layout-nav-width);
+  }
+
+  .page-layout-content-no-nav {
+    position: absolute;
+    top: 0;
+    left: (4 * $labsome-page-header-spacing);
+    width: $labsome-page-layout-width;
+    min-width: $labsome-page-layout-width;
+    max-width: $labsome-page-layout-width;
+
+    .big-message {
+      padding: 1rem;
+      border-width: 1px;
+      border-style: solid;
+      border-color: darken($labsome-bg-color-gray, 10%);
+      border-radius: $border-radius-base;
+    }
+  }
+}

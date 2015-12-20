@@ -41,27 +41,25 @@ mixin page_header
       li.spacer
 
 mixin lab_empty
-  .panel.panel-default
-    .panel-body
-      h3.text-center
-        i.icon-clock.x6(ng-if='!curUser.is_admin')
-        i.icon-ghost.x6(ng-if='curUser.is_admin')
-      p.text-center.x2
-        | This lab is still empty
-      p.text-center.x12(ng-if='!curUser.is_admin')
-        | Please wait you administrator is adding new hardware
-      p.text-center.x12(ng-if='curUser.is_admin')
-        | You need to start by choosing which hardware types are in this lab
-      p.text-center.x2(ng-if='curUser.is_admin')
-        button.btn.btn-lg.btn-success(ui-sref='.manage.set-hardware-types')
-          | Set Hardware Types
+  .big-message
+    h3.text-center
+      i.icon-clock.x6(ng-if='!curUser.is_admin')
+      i.icon-ghost.x6(ng-if='curUser.is_admin')
+    p.text-center.x2
+      | This lab is still empty
+    p.text-center.x12(ng-if='!curUser.is_admin')
+      | Please wait you administrator is adding new hardware
+    p.text-center.x12(ng-if='curUser.is_admin')
+      | You need to start by choosing which hardware types are in this lab
+    p.text-center.x2(ng-if='curUser.is_admin')
+      button.btn.btn-lg.btn-success(ui-sref='.manage.set-hardware-types')
+        | Set Hardware Types
 
 mixin content
   ui-view
-    .row(ng-if='allLabs.byId[lab_id].active_types | isEmpty')
-      .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
+    .page-layout(ng-if='allLabs.byId[lab_id].active_types | isEmpty')
+      .page-layout-content-no-nav
         +lab_empty
 
 +page_header
-.container
-  +content
++content

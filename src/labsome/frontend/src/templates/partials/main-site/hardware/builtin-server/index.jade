@@ -1,24 +1,23 @@
 mixin no_servers
-  .panel.panel-default
-    .panel-body
-      h3.text-center
-        i.icon-clock.x6(ng-if='!curUser.is_admin')
-        i.icon-ghost.x6(ng-if='curUser.is_admin')
-      p.text-center.x2
-        | No 
+  .big-message
+    h3.text-center
+      i.icon-clock.x6(ng-if='!curUser.is_admin')
+      i.icon-ghost.x6(ng-if='curUser.is_admin')
+    p.text-center.x2
+      | No 
+      object-type-name(lab-id='lab_id' type-key='type_key')
+      |  Yet
+    p.text-center.x12(ng-if='!curUser.is_admin')
+      | Please wait you administrator is adding new 
+      object-type-name.lowercase(lab-id='lab_id' type-key='type_key')
+    p.text-center.x12(ng-if='curUser.is_admin')
+      | You need to install Labsome's agent on your 
+      object-type-name.lowercase(lab-id='lab_id' type-key='type_key')
+      |  to see them here
+    p.text-center.x2(ng-if='curUser.is_admin')
+      button.btn.btn-lg.btn-success(ui-sref='^.manage.add-servers')
+        | Start Adding 
         object-type-name(lab-id='lab_id' type-key='type_key')
-        |  Yet
-      p.text-center.x12(ng-if='!curUser.is_admin')
-        | Please wait you administrator is adding new 
-        object-type-name.lowercase(lab-id='lab_id' type-key='type_key')
-      p.text-center.x12(ng-if='curUser.is_admin')
-        | You need to install Labsome's agent on your 
-        object-type-name.lowercase(lab-id='lab_id' type-key='type_key')
-        |  to see them here
-      p.text-center.x2(ng-if='curUser.is_admin')
-        button.btn.btn-lg.btn-success(ui-sref='^.manage.add-servers')
-          | Start Adding 
-          object-type-name(lab-id='lab_id' type-key='type_key')
 
 mixin server_row
   table.details
@@ -53,13 +52,11 @@ mixin server_list
         +server_row
 
 mixin content
-  .container
-    .row
-      .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
-        span(ng-if='objects | isEmpty')
-          +no_servers
-        span(ng-if='objects | isNotEmpty')
-          +server_list
+  .page-layout
+    .page-layout-content-no-nav(ng-if='objects | isEmpty')
+      +no_servers
+    .page-layout-content-no-nav(ng-if='objects | isNotEmpty')
+      +server_list
 
 ui-view
   +content

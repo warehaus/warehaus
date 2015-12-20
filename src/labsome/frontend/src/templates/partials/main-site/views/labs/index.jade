@@ -1,29 +1,26 @@
 mixin no_labs
-  .row
-    .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
-      .panel.panel-default
-        .panel-body
-          h3.text-center(ng-if='curUser.is_admin')
-            i.icon-ghost.x6
-          h3.text-center(ng-if='!curUser.is_admin')
-            i.icon-clock.x6
-          p.text-center.x2
-            | No labs were added yet
-          p.text-center.x12(ng-if='curUser.is_admin')
-            | To add servers and other types of hardware, start by creating a lab.
-          p.text-center.x2(ng-if='curUser.is_admin')
-            button.btn.btn-lg.btn-success(ng-click='create_lab()')
-              | Create a New Lab
-          p.text-center.x12(ng-if='!curUser.is_admin')
-            | Your administrator is now creating your first lab, it will show up as soon as it's ready
+  .big-message
+    h3.text-center(ng-if='curUser.is_admin')
+      i.icon-ghost.x6
+    h3.text-center(ng-if='!curUser.is_admin')
+      i.icon-clock.x6
+    p.text-center.x2
+      | No labs were added yet
+    p.text-center.x12(ng-if='curUser.is_admin')
+      | To add servers and other types of hardware, start by creating a lab.
+    p.text-center.x2(ng-if='curUser.is_admin')
+      button.btn.btn-lg.btn-success(ng-click='create_lab()')
+        | Create a New Lab
+    p.text-center.x12(ng-if='!curUser.is_admin')
+      | Your administrator is now creating your first lab, it will show up as soon as it's ready
 
-.container(ng-if='!allLabs.ready')
-  .text-center(style={'opacity': '0.5'})
-    i.fa.fa-3x.fa-spin.fa-circle-o-notch
+.page-layout(ng-if='!allLabs.ready')
+  .page-layout-content-no-nav(style={'opacity': '0.5'})
+    .text-center
+      i.fa.fa-3x.fa-spin.fa-circle-o-notch
 
-.container(ng-if='allLabs.ready && (allLabs.all.length == 0)')
-  h1
-    | &nbsp;
-  +no_labs
+.page-layout(ng-if='allLabs.ready && (allLabs.all.length == 0)')
+  .page-layout-content-no-nav
+    +no_labs
 
 ui-view(ng-if='allLabs.ready && (allLabs.all.length > 0)')

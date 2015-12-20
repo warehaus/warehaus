@@ -1,14 +1,13 @@
 mixin under_construction
-  p &nbsp;
-  h3.text-center
-    i.icon-wrench.x6
-  .x12.text-center
-    | This page is under construction
-  p &nbsp;
+  .big-message
+    h3.text-center
+      i.icon-wrench.x6
+    .x12.text-center
+      | This page is under construction
 
 mixin content
-  .panel.panel-default
-    .panel-body
+  .page-layout
+    .page-layout-content-no-nav
       +under_construction
 
 +content

@@ -1,22 +1,23 @@
-.page-header
-  .page-header-row
-    .page-header-row-cell
-        user-avatar(id='user.id' size='72px')
-    .page-header-row-cell
-      .x12
-        strong
-          user-display-name(id='user.id')
-      div
-        user-email(id='user.id')
-  ul.page-header-nav
-    li.spacer
-    li(ui-sref-active='active')
-      a.link(ui-sref='.profile')
-        | Profile
-    li(ui-sref-active='active')
-      a.link(ui-sref='.api-tokens')
-        | API Tokens
-    li.padding
+mixin page_header
+  .page-header
+    .page-header-row
+      .page-header-row-cell
+          user-avatar(id='user.id' size='72px')
+      .page-header-row-cell
+        .x12
+          strong
+            user-display-name(id='user.id')
+        div
+          user-email(id='user.id')
+    ul.page-header-nav
+      li.spacer
+      li(ui-sref-active='active')
+        a.link(ui-sref='.profile')
+          | Profile
+      li(ui-sref-active='active')
+        a.link(ui-sref='.api-tokens')
+          | API Tokens
+      li.padding
 
-.container
-  ui-view
++page_header
+ui-view

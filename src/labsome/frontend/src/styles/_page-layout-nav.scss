@@ -1,0 +1,44 @@
+.page-layout-nav {
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+
+    li {
+      white-space: nowrap;
+      margin: 0;
+      padding: 0;
+
+      &.heading {
+        display: block;
+        font-weight: $labsome-font-weight-mild;
+        text-transform: uppercase;
+        padding: (3 * $labsome-page-layout-nav-spacing) (3 * $labsome-page-layout-nav-spacing) $labsome-page-layout-nav-spacing (3 * $labsome-page-layout-nav-spacing);
+      }
+
+      &.active {
+        background-color: #eee;
+        border-width: 0 2px 0 0;
+        border-style: solid;
+        border-color: #aaa;
+      }
+
+      a {
+        outline: 0;
+        margin: 0;
+        display: block;
+        padding: $labsome-page-layout-nav-spacing (3 * $labsome-page-layout-nav-spacing);
+
+        &:hover,
+        &:focus {
+          text-decoration: none;
+        }
+      }
+
+      &:first-child {
+        padding-top: 0;
+      }
+    }
+  }
+}

@@ -2,14 +2,18 @@ mixin token_row
   code
     | {{ api_token }}
 
+mixin api_tokens
+  ul.list-group
+    li.list-group-item(ng-repeat='api_token in user.api_tokens')
+      +token_row
+    button.list-group-item(ng-if='curUser.is_admin' ng-click='users.new_api_token(user.id)' style={'color': '#888'})
+      i.fa.fa-plus
+      | &nbsp;
+      | Create New Token
+
 mixin content
-  .panel.panel-default
-    ul.list-group
-      li.list-group-item(ng-repeat='api_token in user.api_tokens')
-        +token_row
-      button.list-group-item(ng-if='curUser.is_admin' ng-click='users.new_api_token(user.id)' style={'color': '#888'})
-        i.fa.fa-plus
-        | &nbsp;
-        | Create New Token
+  .page-layout
+    .page-layout-content-no-nav
+      +api_tokens
 
 +content

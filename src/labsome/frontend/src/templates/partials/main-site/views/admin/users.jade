@@ -41,7 +41,7 @@ mixin user_details
           +api_tokens
 
 mixin user_list
-  ul.nav.nav-pills.nav-stacked
+  ul
     li(ng-repeat='user in users.all | orderBy:"display_name"' ui-sref-active='active')
       a(ui-sref='.({id: "{{ user.id }}"})')
         user-avatar(id='user.id' size='1.5rem')
@@ -49,10 +49,10 @@ mixin user_list
         user-display-name(id='user.id')
 
 mixin content
-  .row
-    .col-sm-3
+  .page-layout
+    .page-layout-nav
       +user_list
-    .col-sm-9
+    .page-layout-content
       +user_details
 
 +content

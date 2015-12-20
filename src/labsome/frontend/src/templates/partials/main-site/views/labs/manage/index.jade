@@ -1,5 +1,5 @@
 mixin menu
-  ul.nav.nav-pills.nav-stacked
+  ul
     li.heading
       | Lab Hardware
     li(ui-sref-active='active')
@@ -18,10 +18,10 @@ mixin menu
         | Delete Lab
 
 mixin content
-  .row
-    .col-sm-9
-      ui-view
-    .col-sm-3
+  .page-layout
+    .page-layout-nav
       +menu
-      
+    .page-layout-content
+      ui-view
+
 +content
