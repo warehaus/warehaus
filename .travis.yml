@@ -3,8 +3,12 @@ sudo: required
 services:
   - docker
 
+env:
+  - DOCKER_IMAGE=labsome/labsome FRONTEND_BUILDER_IMAGE=labsome/frontend-builder:v4
+
 script:
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker run -ti --rm --volume `pwd`:/build labsome/frontend-builder:v4 /bin/sh -c "cd /build/src/labsome/frontend && bower install --allow-root && gulp build"
-  - docker build -t labsome/labsome:latest .
-  - docker push labsome/labsome:latest
+  - docker run -ti --rm --volume `pwd`:/build $FRONTEND_BUILDER_IMAGE /bin/sh -c "cd /build/src/labsome/frontend && bower install --allow-root && gulp build"
+  - docker build -t $DOCKER_IMAGE:latest .
+  - if [ ! -z "$TRAVIS_TAG" ]; then docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE:$TRAVIS_TAG; fi
+  - docker push $DOCKER_IMAGE
