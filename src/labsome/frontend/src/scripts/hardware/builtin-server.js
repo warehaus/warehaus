@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('labsome.site.hardware.server', [
-    'labsome.site.labs'
+angular.module('labsome.hardware.server', [
+    'labsome.labs'
 ]);
 
-angular.module('labsome.site.hardware.server').constant('hwServerTypeKey', 'builtin-server');
+angular.module('labsome.hardware.server').constant('hwServerTypeKey', 'builtin-server');
 
-angular.module('labsome.site.hardware.server').provider('serverView', function(viewPath, hwServerTypeKey) {
+angular.module('labsome.hardware.server').provider('serverView', function(viewPath, hwServerTypeKey) {
     return {
         $get: function() {
             return function(viewName) {
@@ -16,7 +16,7 @@ angular.module('labsome.site.hardware.server').provider('serverView', function(v
     };
 });
 
-angular.module('labsome.site.hardware.server').provider('hwServerUrlRoutes', function(hwServerTypeKey, serverViewProvider) {
+angular.module('labsome.hardware.server').provider('hwServerUrlRoutes', function(hwServerTypeKey, serverViewProvider) {
     var serverView = serverViewProvider.$get();
     return {
         $get: function() {
@@ -39,7 +39,7 @@ angular.module('labsome.site.hardware.server').provider('hwServerUrlRoutes', fun
     };
 });
 
-angular.module('labsome.site.hardware.server').controller('ServerListController', function($scope, $controller, $http, $uibModal, hwServerTypeKey, serverView) {
+angular.module('labsome.hardware.server').controller('ServerListController', function($scope, $controller, $http, $uibModal, hwServerTypeKey, serverView) {
     $controller('CurrentObjectTypeController', {
         $scope: $scope,
         typeKey: hwServerTypeKey
@@ -67,7 +67,7 @@ angular.module('labsome.site.hardware.server').controller('ServerListController'
     };
 });
 
-angular.module('labsome.site.hardware.server').controller('ClusterSelectionController', function($scope, $uibModalInstance, labObjects, hwClusterTypeKey, lab_id, server_id) {
+angular.module('labsome.hardware.server').controller('ClusterSelectionController', function($scope, $uibModalInstance, labObjects, hwClusterTypeKey, lab_id, server_id) {
     $scope.lab_id = lab_id;
     $scope.server_id = server_id;
     $scope.clusters = labObjects.byLabId[lab_id].byObjectType[hwClusterTypeKey];

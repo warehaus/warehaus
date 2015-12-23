@@ -9,7 +9,7 @@ mixin form
             | ldaps://
     .col-sm-7
       .form-group(ng-class="{'has-error': theForm.ldapServerAddress.$dirty && theForm.ldapServerAddress.$invalid}")
-        input.form-control(type='text' name='ldapServerAddress' placeholder='Server Address' required='' ng-disabled='working' ng-model='settings.ldap.server_address' ng-change='eval_server_address()' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
+        input.form-control(type='text' name='ldapServerAddress' placeholder='Server Address' required='' ng-disabled='working' ng-model='settings.ldap.server_address' ng-change='eval_server_address()' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' focus-me='true')
     .col-sm-3
       .form-group(ng-class="{'has-error': theForm.ldapServerPort.$dirty && theForm.ldapServerPort.$invalid}")
         input.form-control(type='number' name='ldapServerPort' placeholder='Port (optional)' ng-disabled='working' ng-model='settings.ldap.server_port' ng-change='eval_server_address()' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')

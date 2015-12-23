@@ -1,14 +1,8 @@
 'use strict';
 
-angular.module('labsome.first_setup', [
-    'labsome.common'
-]);
+angular.module('labsome.first_setup', []);
 
-angular.module('labsome.first_setup').config(function($locationProvider) {
-    $locationProvider.html5Mode(true);
-});
-
-angular.module('labsome.first_setup').controller('FirstSetupController', function($scope, $http, $uibModal, $timeout, viewPath) {
+angular.module('labsome.first_setup').controller('FirstSetupController', function($scope, $http, $uibModal, $timeout, labsomeState, viewPath) {
     $scope.settings = {
         ldap: {
             server_scheme: 'ldap://',
@@ -55,8 +49,8 @@ angular.module('labsome.first_setup').controller('FirstSetupController', functio
                 $http.post('/api/first-setup/configure', $scope.settings).then(function() {
                     $http.post('/api/first-setup/restart-server');
                     $timeout(function() {
-                        window.location = '/';
-                    }, 5000);
+                        labsomeState.refresh();
+                    }, 1000);
                 }, _http_error);
             }, _reset);
         }, _http_error);

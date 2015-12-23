@@ -1,0 +1,70 @@
+mixin favicon
+  link(rel="apple-touch-icon" sizes="57x57" href="/static/favicon/success/apple-icon-57x57.png")
+  link(rel="apple-touch-icon" sizes="60x60" href="/static/favicon/success/apple-icon-60x60.png")
+  link(rel="apple-touch-icon" sizes="72x72" href="/static/favicon/success/apple-icon-72x72.png")
+  link(rel="apple-touch-icon" sizes="76x76" href="/static/favicon/success/apple-icon-76x76.png")
+  link(rel="apple-touch-icon" sizes="114x114" href="/static/favicon/success/apple-icon-114x114.png")
+  link(rel="apple-touch-icon" sizes="120x120" href="/static/favicon/success/apple-icon-120x120.png")
+  link(rel="apple-touch-icon" sizes="144x144" href="/static/favicon/success/apple-icon-144x144.png")
+  link(rel="apple-touch-icon" sizes="152x152" href="/static/favicon/success/apple-icon-152x152.png")
+  link(rel="apple-touch-icon" sizes="180x180" href="/static/favicon/success/apple-icon-180x180.png")
+  link(rel="icon" type="image/png" sizes="192x192"  href="/static/favicon/success/android-icon-192x192.png")
+  link(rel="icon" type="image/png" sizes="32x32" href="/static/favicon/success/favicon-32x32.png")
+  link(rel="icon" type="image/png" sizes="96x96" href="/static/favicon/success/favicon-96x96.png")
+  link(rel="icon" type="image/png" sizes="16x16" href="/static/favicon/success/favicon-16x16.png")
+  link(rel="manifest" href="/static/favicon/success/manifest.json")
+  meta(name="msapplication-TileColor" content="#ffffff")
+  meta(name="msapplication-TileImage" content="/static/favicon/success/ms-icon-144x144.png")
+  meta(name="theme-color" content="#ffffff")
+
+mixin styles
+  link(rel='stylesheet' href='/static/bower_components/fontawesome/css/font-awesome.min.css')
+  link(rel='stylesheet' href='/static/bower_components/simple-line-icons/css/simple-line-icons.css')
+  link(rel='stylesheet' href='/static/bower_components/ui-select/dist/select.min.css')
+  link(rel='stylesheet' href='/static/bower_components/angular-spinkit/build/angular-spinkit.min.css')
+  link(rel='stylesheet' href='/static/labsome.css')
+
+mixin scripts
+  script(src='/static/bower_components/jquery/dist/jquery.min.js')
+  script(src='/static/bower_components/socket.io-client/socket.io.js')
+  script(src='/static/bower_components/angular/angular.min.js')
+  script(src='/static/bower_components/angular-bootstrap/ui-bootstrap.min.js')
+  script(src='/static/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js')
+  script(src='/static/bower_components/angular-sanitize/angular-sanitize.min.js')
+  script(src='/static/bower_components/angular-ui-router/release/angular-ui-router.min.js')
+  script(src='/static/bower_components/angular-ui-router.stateHelper/statehelper.min.js')
+  script(src='/static/bower_components/angular-ui-router-title/angular-ui-router-title.js')
+  script(src='/static/bower_components/angular-filter/dist/angular-filter.min.js')
+  script(src='/static/bower_components/angular-socket-io/socket.min.js')
+  script(src='/static/bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js')
+  script(src='/static/bower_components/moment/min/moment.min.js')
+  script(src='/static/bower_components/angular-slugify/angular-slugify.js')
+  script(src='/static/bower_components/js-md5/build/md5.min.js')
+  script(src='/static/bower_components/ui-select/dist/select.min.js')
+  script(src='/static/bower_components/angular-spinkit/build/angular-spinkit.min.js')
+  script(src='/static/templates.js')
+  script(src='/static/labsome.js')
+
+mixin head
+  meta(charset='utf-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1')
+  base(href='/ui/')
+  title
+    | {{ $breadcrumbs | map:'title' | reverse | join:' - ' }} - Labsome
+  +styles
+  +favicon
+
+mixin body
+  .ng-cloak(style={'opacity': '0.5'} ng-if='!labsomeState.loaded')
+    three-bounce-spinner
+  .ng-cloak(ng-if='labsomeState.loaded && !labsomeState.is_initialized' ng-include="'/inline/first-setup/index.html'")
+  .ng-cloak(ng-if='labsomeState.loaded && labsomeState.is_initialized && !labsomeState.is_authenticated' ng-include="'/inline/auth/login.html'")
+  .ng-cloak(ng-if='labsomeState.loaded && labsomeState.is_initialized && labsomeState.is_authenticated' ng-include="'/inline/main-site/index.html'")
+
+doctype html
+html(lang='en' ng-app='labsome' ng-strict-di='')
+  head
+    +head
+  body.labsome-white
+    +body
+    +scripts

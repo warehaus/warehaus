@@ -4,9 +4,8 @@ angular.module('labsome.auth', [
     'labsome.users'
 ]);
 
-angular.module('labsome.auth').factory('curUser', function($rootScope, $http, users) {
+angular.module('labsome.auth').factory('curUser', function($rootScope, $http, labsomeState, users) {
     var self = {
-        is_ready: false,
         is_admin: undefined,
         is_authenticated: false
     };
@@ -20,7 +19,7 @@ angular.module('labsome.auth').factory('curUser', function($rootScope, $http, us
         }
     };
 
-    self.update = function(new_user) {
+    var update = function(new_user) {
         for (var attr in new_user) {
             self[attr] = new_user[attr];
         }
@@ -30,31 +29,38 @@ angular.module('labsome.auth').factory('curUser', function($rootScope, $http, us
         $rootScope.$broadcast('labsome.auth.user_authorized');
     };
 
-    var _remove_user = function() {
+    var unload_current_user = function() {
         self.is_authenticated = false;
         $rootScope.$broadcast('labsome.auth.user_unauthorized');
     };
 
     self.logout = function() {
-        $http.get('/api/auth/v1/logout').then(_remove_user);
+        $http.get('/api/auth/v1/logout').then(labsomeState.refresh);
     };
 
-    var initial_load = function() {
+    var load_current_user = function() {
         $http.get('/api/auth/v1/self').then(function(res) {
-            self.update(res.data);
-        }, _remove_user).finally(function() {
-            self.is_ready = true;
+            update(res.data);
         });
     };
 
-    initial_load();
+    $rootScope.$on('labsome.state.update', function(event, state) {
+        if (!state.is_initialized) {
+            return;
+        }
+        if (state.is_authenticated) {
+            load_current_user();
+        } else {
+            unload_current_user();
+        }
+    });
 
     $rootScope.$on('labsome.users.inventory_changed', update_user_fields);
 
     return self;
 });
 
-angular.module('labsome.auth').controller('LoginController', function($scope, $http, curUser) {
+angular.module('labsome.auth').controller('LoginController', function($scope, $http, labsomeState) {
     $scope.input = {};
     $scope.error = undefined;
 
@@ -62,7 +68,7 @@ angular.module('labsome.auth').controller('LoginController', function($scope, $h
         $scope.working = true;
         $http.post('/api/auth/v1/login', $scope.input).then(function(res) {
             $scope.error = undefined;
-            curUser.update(res.data);
+            labsomeState.refresh();
         }, function(res) {
             $scope.working = false;
             $scope.error = res.data.error;

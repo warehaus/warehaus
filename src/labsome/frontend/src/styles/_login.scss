@@ -12,3 +12,12 @@
   margin: $labsome-standalone-box-padding;
 }
  
+.login-spinner {
+  .three-bounce-spinner {
+    margin: 0 auto;
+
+    > div {
+      background-color: $brand-primary;
+    }
+  }
+}

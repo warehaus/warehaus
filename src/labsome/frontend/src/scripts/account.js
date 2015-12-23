@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('labsome.site.account', []);
+angular.module('labsome.account', []);
 
-angular.module('labsome.site.account').config(function($stateProvider, $urlRouterProvider, viewPath) {
+angular.module('labsome.account').config(function($stateProvider, $urlRouterProvider, viewPath) {
     var account = {
         url: '/account',
         templateUrl: viewPath('main-site/views/account/index.html'),
@@ -33,6 +33,6 @@ angular.module('labsome.site.account').config(function($stateProvider, $urlRoute
     $stateProvider.state('account.api-tokens', account_api_tokens);
 });
 
-angular.module('labsome.site.account').controller('AccountController', function($scope, curUser) {
+angular.module('labsome.account').controller('AccountController', function($scope, curUser) {
     $scope.user = curUser;
 });

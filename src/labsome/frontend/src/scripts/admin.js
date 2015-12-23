@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('labsome.site.admin', []);
+angular.module('labsome.admin', []);
 
-angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterProvider, viewPath) {
+angular.module('labsome.admin').config(function($stateProvider, $urlRouterProvider, viewPath) {
     var admin = {
         url: '/admin',
         templateUrl: viewPath('main-site/views/admin/index.html'),
@@ -45,7 +45,7 @@ angular.module('labsome.site.admin').config(function($stateProvider, $urlRouterP
     $stateProvider.state('admin.auth-ldap', admin_auth_ldap);
 });
 
-angular.module('labsome.site.admin').controller('AdminController', function($scope, $location, curUser) {
+angular.module('labsome.admin').controller('AdminController', function($scope, $location, curUser) {
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if (toState.parent && !curUser.is_admin) {
             $location.url('/admin');
@@ -53,11 +53,11 @@ angular.module('labsome.site.admin').controller('AdminController', function($sco
     });
 });
 
-angular.module('labsome.site.admin').controller('UsersAdminController', function($scope, $stateParams) {
+angular.module('labsome.admin').controller('UsersAdminController', function($scope, $stateParams) {
     $scope.selected_user_id = $stateParams.id;
 });
 
-angular.module('labsome.site.admin').controller('LDAPSettingsController', function($scope, $http) {
+angular.module('labsome.admin').controller('LDAPSettingsController', function($scope, $http) {
     $scope.working = true;
 
     var _update_from_res = function(res) {

@@ -1,14 +1,3 @@
-extends ../base/base
-
-append vars
-  - html_attributes = {'ng-app': 'labsome.first_setup', 'ng-strict-di': ''}
-
-append head
-  base(href='/first-setup')
-  include ../base/favicon-success
-  title
-    | Welcome - Labsome
-
 mixin content_welcome
   p
     | Hey there! We just need a few settings before starting up.
@@ -17,7 +6,7 @@ mixin auth_method
   h2 Users Directory
   p
     | Labsome uses LDAP to log users in, please fill-in your LDAP directory information:
-  include ../../partials/main-site/views/admin/ldap-settings
+  div(ng-include="'/inline/main-site/views/admin/ldap-settings.html'")
 
 mixin admin_user
   h2 Admin User
@@ -42,10 +31,10 @@ mixin save_button
       p
         | {{ error }}
   h4.text-center
-    button.btn.btn-lg.btn-primary(ng-disabled='working || theForm.$invalid' ng-click='test_settings()')
-      span.fa.fa-fw.fa-circle-o-notch.fa-spin(ng-if='working')
-      span(ng-if='!working')
-        | Test Settings
+    button.btn.btn-lg.btn-primary(ng-disabled='theForm.$invalid' ng-click='test_settings()' ng-if='!working')
+      | Test Settings
+    a.btn.btn-lg(ng-disabled='true' ng-if='working')
+      three-bounce-spinner.login-spinner
 
 mixin content
   form(role='form', name='theForm', novalidate='', ng-controller='FirstSetupController')
@@ -54,7 +43,7 @@ mixin content
     +admin_user
     +save_button
 
-append body
+.first-setup-wrapper
   .container.first-setup.ng-cloak(ng-controller='FirstSetupController')
     .row
       .col-sm-12.col-md-offset-1.col-md-10.col-lg-offset-2.col-lg-8
@@ -63,10 +52,4 @@ append body
         .panel.panel-default
           .panel-body
             +content
-        include ../base/footer
-
-append scripts
-  script(type='text/javascript').
-    $(function() {
-      $('input').first().focus();
-    });
+        div(ng-include="'/inline/auth/footer.html'")

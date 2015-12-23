@@ -10,7 +10,7 @@ var templateCache = require('gulp-angular-templatecache');
 var dirs = {
     scripts:   'src/scripts',
     styles:    'src/styles',
-    pages:     'src/templates/pages',
+    index:     'src/templates/index.jade',
     partials:  'src/templates/partials',
     resources: 'resources',
 };
@@ -33,11 +33,10 @@ gulp.task('styles', function() {
     ;
 });
 
-gulp.task('pages', function() {
-    gulp.src([dirs.pages + '/**/*.jade',
-              '!' + dirs.pages + '/base/**/*'])
+gulp.task('index', function() {
+    gulp.src([dirs.index])
         .pipe(jade())
-        .pipe(gulp.dest('../static/pages'))
+        .pipe(gulp.dest('../static'))
     ;
 });
 
@@ -58,12 +57,12 @@ gulp.task('resources', function() {
         .pipe(gulp.dest('../static'))
 });
 
-gulp.task('default', ['scripts', 'styles', 'pages', 'partials', 'resources'], function() {
+gulp.task('default', ['scripts', 'styles', 'index', 'partials', 'resources'], function() {
     gulp.watch([dirs.scripts + '/**'], ['scripts']);
     gulp.watch([dirs.styles + '/**'], ['styles']);
-    gulp.watch([dirs.pages + '/**'], ['pages']);
+    gulp.watch([dirs.index], ['index']);
     gulp.watch([dirs.partials + '/**'], ['partials']);
     gulp.watch([dirs.resources + '/**'], ['resources']);
 });
 
-gulp.task('build', ['scripts', 'styles', 'pages', 'partials', 'resources']);
+gulp.task('build', ['scripts', 'styles', 'index', 'partials', 'resources']);

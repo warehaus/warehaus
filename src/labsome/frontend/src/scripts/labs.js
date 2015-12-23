@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('labsome.site.labs', [
-    'labsome.site.hardware'
+angular.module('labsome.labs', [
+    'labsome.hardware'
 ]);
 
-angular.module('labsome.site.labs').provider('labsUrlRoutes', function(hardwareUrlRoutesProvider, viewPath) {
+angular.module('labsome.labs').provider('labsUrlRoutes', function(hardwareUrlRoutesProvider, viewPath) {
     var labsView = function(path) {
         return viewPath('main-site/views/labs/' + path);
     };
@@ -115,7 +115,7 @@ angular.module('labsome.site.labs').provider('labsUrlRoutes', function(hardwareU
     };
 });
 
-angular.module('labsome.site.labs').config(function($urlRouterProvider, stateHelperProvider, labsUrlRoutesProvider) {
+angular.module('labsome.labs').config(function($urlRouterProvider, stateHelperProvider, labsUrlRoutesProvider) {
     var register_auto_redirects = function(base_url, state) {
         var cur_url = base_url + state.url;
         if (state.autoRedirectToChild) {
@@ -138,7 +138,7 @@ angular.module('labsome.site.labs').config(function($urlRouterProvider, stateHel
     stateHelperProvider.state(labs_url_routes);
 });
 
-angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScope, $q) {
+angular.module('labsome.labs').factory('allLabs', function($http, $rootScope, $q) {
     var ready_promise = $q.defer();
 
     var self = {
@@ -186,7 +186,7 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
     return self;
 });
 
-angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $http, $q) {
+angular.module('labsome.labs').factory('labObjects', function($rootScope, $http, $q) {
     var ready_promise = $q.defer();
 
     var self = {
@@ -240,7 +240,7 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
     return self;
 });
 
-angular.module('labsome.site.labs').factory('objectTypes', function($rootScope, $http) {
+angular.module('labsome.labs').factory('objectTypes', function($rootScope, $http) {
     var self = {
         all: [],
         byTypeKey: {}
@@ -263,14 +263,14 @@ angular.module('labsome.site.labs').factory('objectTypes', function($rootScope, 
     return self;
 });
 
-angular.module('labsome.site.labs').service('selectedLab', function() {
+angular.module('labsome.labs').service('selectedLab', function() {
     this.lab_id = undefined;
     this.set = function(new_lab_id) {
         this.lab_id = new_lab_id;
     };
 });
 
-angular.module('labsome.site.labs').controller('AllLabsController', function($scope, $state, $uibModal, viewPath, selectedLab, allLabs) {
+angular.module('labsome.labs').controller('AllLabsController', function($scope, $state, $uibModal, viewPath, selectedLab, allLabs) {
     var _goto_lab = function(lab_id) {
         $state.go('labs.lab-page', {labSlug: allLabs.byId[lab_id].slug});
     };
@@ -307,7 +307,7 @@ angular.module('labsome.site.labs').controller('AllLabsController', function($sc
     };
 });
 
-angular.module('labsome.site.labs').controller('CreateLabController', function($scope, $state, $uibModalInstance, allLabs) {
+angular.module('labsome.labs').controller('CreateLabController', function($scope, $state, $uibModalInstance, allLabs) {
     $scope.lab = {};
 
     $scope.save = function() {
@@ -329,7 +329,7 @@ angular.module('labsome.site.labs').controller('CreateLabController', function($
     };
 });
 
-angular.module('labsome.site.labs').controller('LabPageController', function($scope, $state, selectedLab, allLabs, labObjects, objectTypes, labSlug) {
+angular.module('labsome.labs').controller('LabPageController', function($scope, $state, selectedLab, allLabs, labObjects, objectTypes, labSlug) {
     $scope.lab_slug = labSlug;
     $scope.lab_id = undefined;
     if (allLabs.bySlug[$scope.lab_slug]) {
@@ -376,7 +376,7 @@ angular.module('labsome.site.labs').controller('LabPageController', function($sc
     });
 });
 
-angular.module('labsome.site.admin').controller('AddServersController', function($scope, $location, hwServerTypeKey) {
+angular.module('labsome.labs').controller('AddServersController', function($scope, $location, hwServerTypeKey) {
     var base_url = $location.protocol() + '://' + $location.host();
     if ((($location.protocol() == 'http') && ($location.port() != 80)) ||
         (($location.protocol() == 'https') && ($location.port() != 443))) {
@@ -386,7 +386,7 @@ angular.module('labsome.site.admin').controller('AddServersController', function
     $scope.agent_url = base_url + '/api/hardware/v1/' + hwServerTypeKey + '/code/agent.py?lab_id=' + $scope.lab_id;
 });
 
-angular.module('labsome.site.admin').controller('SetHardwareTypesController', function($scope, $state, allLabs, objectTypes) {
+angular.module('labsome.labs').controller('SetHardwareTypesController', function($scope, $state, allLabs, objectTypes) {
     $scope.result = {
         active_types: angular.copy(allLabs.byId[$scope.lab_id].active_types || []),
         type_naming: angular.copy(allLabs.byId[$scope.lab_id].type_naming || {})
@@ -424,7 +424,7 @@ angular.module('labsome.site.admin').controller('SetHardwareTypesController', fu
     };
 });
 
-angular.module('labsome.site.labs').controller('RenameLabController', function($scope, $state, allLabs) {
+angular.module('labsome.labs').controller('RenameLabController', function($scope, $state, allLabs) {
     $scope.result = {
         display_name: allLabs.byId[$scope.lab_id].display_name
     };
@@ -436,7 +436,7 @@ angular.module('labsome.site.labs').controller('RenameLabController', function($
     };
 });
 
-angular.module('labsome.site.labs').controller('DeleteLabController', function($scope, $state, allLabs) {
+angular.module('labsome.labs').controller('DeleteLabController', function($scope, $state, allLabs) {
     $scope.ok = function() {
         allLabs.delete($scope.lab_id).then(function() {
             $state.go('labs');
@@ -444,7 +444,7 @@ angular.module('labsome.site.labs').controller('DeleteLabController', function($
     };
 });
 
-angular.module('labsome.site.labs').controller('CurrentObjectTypeController', function($scope, $state, allLabs, labObjects, typeKey) {
+angular.module('labsome.labs').controller('CurrentObjectTypeController', function($scope, $state, allLabs, labObjects, typeKey) {
     $scope.type_key = typeKey;
 
     var refresh = function() {
@@ -473,7 +473,7 @@ angular.module('labsome.site.labs').controller('CurrentObjectTypeController', fu
     $scope.$on('$stateChangeSuccess', refresh);
 });
 
-angular.module('labsome.site.labs').controller('ObjectActionController', function($scope, $state, viewPath, allLabs, labId, typeKey, actionName, objId) {
+angular.module('labsome.labs').controller('ObjectActionController', function($scope, $state, viewPath, allLabs, labId, typeKey, actionName, objId) {
     $scope.viewPath = viewPath;
     $scope.lab_id = labId;
     if (!$scope.lab_id) {
@@ -484,7 +484,7 @@ angular.module('labsome.site.labs').controller('ObjectActionController', functio
     $scope.object_id = objId;
 });
 
-angular.module('labsome.site.labs').directive('labName', function(allLabs) {
+angular.module('labsome.labs').directive('labName', function(allLabs) {
     var link = function(scope, elem, attrs) {
         scope.allLabs = allLabs;
     };
@@ -499,7 +499,7 @@ angular.module('labsome.site.labs').directive('labName', function(allLabs) {
     };
 });
 
-angular.module('labsome.site.labs').directive('objectName', function(labObjects) {
+angular.module('labsome.labs').directive('objectName', function(labObjects) {
     var link = function(scope, elem, attrs) {
         scope.labObjects = labObjects;
     };
@@ -514,7 +514,7 @@ angular.module('labsome.site.labs').directive('objectName', function(labObjects)
     };
 });
 
-angular.module('labsome.site.labs').directive('objectTypeName', function(allLabs) {
+angular.module('labsome.labs').directive('objectTypeName', function(allLabs) {
     var link = function(scope, elem, attrs) {
         scope.allLabs = allLabs;
     };
@@ -531,7 +531,7 @@ angular.module('labsome.site.labs').directive('objectTypeName', function(allLabs
     };
 });
 
-angular.module('labsome.site.labs').directive('objectCountWithType', function(allLabs) {
+angular.module('labsome.labs').directive('objectCountWithType', function(allLabs) {
     var link = function(scope, elem, attrs) {
         scope.allLabs = allLabs;
     };
@@ -548,7 +548,7 @@ angular.module('labsome.site.labs').directive('objectCountWithType', function(al
     };
 });
 
-angular.module('labsome.site.labs').run(function($rootScope, allLabs, labObjects, objectTypes) {
+angular.module('labsome.labs').run(function($rootScope, allLabs, labObjects, objectTypes) {
     $rootScope.allLabs = allLabs;
     $rootScope.labObjects = labObjects;
     $rootScope.objectTypes = objectTypes;

@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('labsome.site.hardware.cluster', [
-    'labsome.site.labs'
+angular.module('labsome.hardware.cluster', [
+    'labsome.labs'
 ]);
 
-angular.module('labsome.site.hardware.cluster').constant('hwClusterTypeKey', 'builtin-cluster');
+angular.module('labsome.hardware.cluster').constant('hwClusterTypeKey', 'builtin-cluster');
 
-angular.module('labsome.site.hardware.cluster').provider('clusterView', function(viewPath, hwClusterTypeKey) {
+angular.module('labsome.hardware.cluster').provider('clusterView', function(viewPath, hwClusterTypeKey) {
     return {
         $get: function() {
             return function(viewName) {
@@ -16,7 +16,7 @@ angular.module('labsome.site.hardware.cluster').provider('clusterView', function
     };
 });
 
-angular.module('labsome.site.hardware.cluster').provider('hwClusterUrlRoutes', function(hwClusterTypeKey, clusterViewProvider) {
+angular.module('labsome.hardware.cluster').provider('hwClusterUrlRoutes', function(hwClusterTypeKey, clusterViewProvider) {
     var clusterView = clusterViewProvider.$get();
 
     var cluster_page = {
@@ -74,7 +74,7 @@ angular.module('labsome.site.hardware.cluster').provider('hwClusterUrlRoutes', f
     };
 });
 
-angular.module('labsome.site.hardware.cluster').service('clusterServersAssigner', function($rootScope, labObjects, hwServerTypeKey) {
+angular.module('labsome.hardware.cluster').service('clusterServersAssigner', function($rootScope, labObjects, hwServerTypeKey) {
     $rootScope.$on('labsome.objects_inventory_changed', function() {
         if (angular.isUndefined(labObjects.byObjectType[hwServerTypeKey])) {
             return;
@@ -94,10 +94,10 @@ angular.module('labsome.site.hardware.cluster').service('clusterServersAssigner'
     });
 });
 
-angular.module('labsome.site.hardware.cluster').run(function(clusterServersAssigner) {
+angular.module('labsome.hardware.cluster').run(function(clusterServersAssigner) {
 });
 
-angular.module('labsome.site.hardware.cluster').controller('ClusterListController', function($scope, $controller, $http, $uibModal, hwClusterTypeKey, clusterView) {
+angular.module('labsome.hardware.cluster').controller('ClusterListController', function($scope, $controller, $http, $uibModal, hwClusterTypeKey, clusterView) {
     $controller('CurrentObjectTypeController', {
         $scope: $scope,
         typeKey: hwClusterTypeKey
@@ -116,7 +116,7 @@ angular.module('labsome.site.hardware.cluster').controller('ClusterListControlle
     };
 });
 
-angular.module('labsome.site.hardware.cluster').controller('ClusterPageController', function($scope, $controller, $http, $uibModal, $state, labObjects, curUser, hwClusterTypeKey, clusterView, labId, clusterId) {
+angular.module('labsome.hardware.cluster').controller('ClusterPageController', function($scope, $controller, $http, $uibModal, $state, labObjects, curUser, hwClusterTypeKey, clusterView, labId, clusterId) {
     if (angular.isUndefined(clusterId)) {
         $state.go('^');
     }
@@ -155,7 +155,7 @@ angular.module('labsome.site.hardware.cluster').controller('ClusterPageControlle
     };
 });
 
-angular.module('labsome.site.hardware.cluster').controller('CreateClusterController', function($scope, $uibModalInstance, $http, hwClusterTypeKey, lab_id) {
+angular.module('labsome.hardware.cluster').controller('CreateClusterController', function($scope, $uibModalInstance, $http, hwClusterTypeKey, lab_id) {
     $scope.cluster = {
         lab_id: lab_id
     };
@@ -172,7 +172,7 @@ angular.module('labsome.site.hardware.cluster').controller('CreateClusterControl
     };
 });
 
-angular.module('labsome.site.hardware.cluster').controller('DeleteClusterController', function($scope, $uibModalInstance, $http, $q, labObjects, hwClusterTypeKey, hwServerTypeKey, cluster_id) {
+angular.module('labsome.hardware.cluster').controller('DeleteClusterController', function($scope, $uibModalInstance, $http, $q, labObjects, hwClusterTypeKey, hwServerTypeKey, cluster_id) {
     $scope.cluster_id = cluster_id;
 
     $scope.ok = function() {

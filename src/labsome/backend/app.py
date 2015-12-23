@@ -3,6 +3,8 @@ import sys
 import pkg_resources
 from flask import Flask
 from flask import redirect
+from flask import jsonify
+from flask.ext.login import current_user
 from .logs import log_to_console
 from .settings import database_config
 from .settings import full_config
@@ -29,20 +31,7 @@ To manually pass database configuration, you can use:
    RETHINKDB_DB                  -- Database name (default: labsome)
 '''
 
-def _first_setup_routes(app):
-    @app.route('/')
-    @app.route('/first-setup')
-    def first_setup_redirect():
-        return redirect('/first-setup/')
-
-    @app.route('/first-setup/')
-    @app.route('/first-setup/<path:path>')
-    def first_setup(path=None):
-        return app.send_static_file('pages/first-setup/index.html')
-
-    app.register_blueprint(first_setup_api, url_prefix='/api/first-setup')
-
-def _full_app_routes(app):
+def _ui_routes(app):
     @app.route('/')
     @app.route('/ui')
     def ui_redirect():
@@ -51,8 +40,22 @@ def _full_app_routes(app):
     @app.route('/ui/')
     @app.route('/ui/<path:path>')
     def ui(path=None):
-        return app.send_static_file('pages/main-site/index.html')
+        return app.send_static_file('index.html')
 
+    @app.route('/api/state')
+    def server_state():
+        is_initialized = False
+        is_authenticated = False
+        if get_settings().is_initialized:
+            is_initialized = True
+            if current_user.is_authenticated:
+                is_authenticated = True
+        return jsonify(dict(is_initialized=is_initialized, is_authenticated=is_authenticated))
+
+def _first_setup_routes(app):
+    app.register_blueprint(first_setup_api, url_prefix='/api/first-setup')
+
+def _full_app_routes(app):
     app.register_blueprint(auth_api, url_prefix='/api/auth')
     app.register_blueprint(settings_api, url_prefix='/api/settings')
     app.register_blueprint(hardware_api, url_prefix='/api/hardware/v1')
@@ -74,7 +77,7 @@ def create_app():
         db.init_app(app)
         app.config.from_object(full_config())
         auth.init_app(app)
-
+        _ui_routes(app)
         if not get_settings().is_initialized:
             _first_setup_routes(app)
         else:

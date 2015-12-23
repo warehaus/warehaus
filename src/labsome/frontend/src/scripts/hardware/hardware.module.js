@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('labsome.site.hardware', [
-    'labsome.site.hardware.server',
-    'labsome.site.hardware.cluster'
+angular.module('labsome.hardware', [
+    'labsome.hardware.server',
+    'labsome.hardware.cluster'
 ]);
 
-angular.module('labsome.site.hardware').provider('hardwareUrlRoutes', function(hwServerUrlRoutesProvider, hwClusterUrlRoutesProvider) {
+angular.module('labsome.hardware').provider('hardwareUrlRoutes', function(hwServerUrlRoutesProvider, hwClusterUrlRoutesProvider) {
     var hardware_url_routes = [].concat(
         hwServerUrlRoutesProvider.$get(),
         hwClusterUrlRoutesProvider.$get()
