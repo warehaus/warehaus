@@ -1,4 +1,5 @@
 import os
+import sys
 import pkg_resources
 from flask import Flask
 from flask import redirect
@@ -15,11 +16,18 @@ from .settings.api import settings_api
 from .hardware.api import hardware_api
 from .sio import socketio
 
-def _no_db_routes(app):
-    @app.route('/')
-    @app.route('/<path:path>')
-    def no_database(path=None):
-        return app.send_static_file('pages/no-database/index.html')
+NO_DB_ERROR = '''
+error: Could not find database configuration.
+
+If you're running with Docker, please use --link to a RethinkDB container.
+
+To manually pass database configuration, you can use:
+
+   RETHINKDB_PORT_28015_TCP_ADDR -- RethinkDB hostname
+   RETHINKDB_PORT_28015_TCP_PORT -- RethinkDB port
+   RETHINKDB_AUTH                -- Authentication string (optional)
+   RETHINKDB_DB                  -- Database name (default: labsome)
+'''
 
 def _first_setup_routes(app):
     @app.route('/')
@@ -59,16 +67,17 @@ def create_app():
     socketio.init_app(app)
 
     if not app.config['RETHINKDB_HOST']:
-        _no_db_routes(app)
-    else:
-        with app.app_context():
-            db.init_app(app)
-            app.config.from_object(full_config())
-            auth.init_app(app)
+        print >>sys.stderr, NO_DB_ERROR
+        raise SystemExit(1)
 
-            if not get_settings().is_initialized:
-                _first_setup_routes(app)
-            else:
-                _full_app_routes(app)
+    with app.app_context():
+        db.init_app(app)
+        app.config.from_object(full_config())
+        auth.init_app(app)
+
+        if not get_settings().is_initialized:
+            _first_setup_routes(app)
+        else:
+            _full_app_routes(app)
 
     return app
