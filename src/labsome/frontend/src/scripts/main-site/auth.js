@@ -1,138 +1,75 @@
 'use strict';
 
-angular.module('labsome.auth', []);
-
-angular.module('labsome.auth').factory('users', function($rootScope, $http, socketIo) {
-    var self = {
-        ready: false,
-        all: [],
-        byUserId: {}
-    };
-
-    var annotate_user = function(user) {
-        user.display_name = user.first_name + ' ' + user.last_name;
-        user.email = user.email || '';
-        var avatar_base_url = 'https://gravatar.com/avatar/' + md5(user.email) + '?d=mm';
-        user.avatar_32 = avatar_base_url + '&s=70';
-        user.avatar_96 = avatar_base_url + '&s=192';
-    };
-
-    var refresh = function() {
-        return $http.get('/api/auth/v1/users').then(function(res) {
-            self.all = res.data.objects;
-            for (var i = 0; i < self.all.length; ++i) {
-                var user = self.all[i];
-                annotate_user(user);
-                self.byUserId[user.id] = user;
-            }
-            self.ready = true;
-            $rootScope.$broadcast('labsome.users_inventory_changed');
-        });
-    };
-
-    self.new_api_token = function(user_id) {
-        $http.post('/api/auth/v1/users/' + user_id + '/api-token').then(refresh);
-    };
-
-    refresh();
-
-    socketIo.on('object_changed:user', refresh);
-    socketIo.on('object_deleted:user', refresh);
-
-    return self;
-});
+angular.module('labsome.auth', [
+    'labsome.users'
+]);
 
 angular.module('labsome.auth').factory('curUser', function($rootScope, $http, users) {
     var self = {
-        is_admin: undefined
+        is_ready: false,
+        is_admin: undefined,
+        is_authenticated: false
     };
 
-    var refresh = function() {
+    var update_user_fields = function() {
+        if (users.ready) {
+            var more_attrs = users.byUserId[self.id];
+            for (var attr in more_attrs) {
+                self[attr] = more_attrs[attr];
+            }
+        }
+    };
+
+    self.update = function(new_user) {
+        for (var attr in new_user) {
+            self[attr] = new_user[attr];
+        }
+        update_user_fields();
+        self.is_admin = self.roles.indexOf('admin') != -1;
+        self.is_authenticated = true;
+        $rootScope.$broadcast('labsome.auth.user_authorized');
+    };
+
+    var _remove_user = function() {
+        self.is_authenticated = false;
+        $rootScope.$broadcast('labsome.auth.user_unauthorized');
+    };
+
+    self.logout = function() {
+        $http.get('/api/auth/v1/logout').then(_remove_user);
+    };
+
+    var initial_load = function() {
         $http.get('/api/auth/v1/self').then(function(res) {
-            for (var attr in res.data) {
-                self[attr] = res.data[attr];
-            }
-            if (users.ready) {
-                var more_attrs = users.byUserId[self.id];
-                for (var attr in more_attrs) {
-                    self[attr] = more_attrs[attr];
-                }
-            }
-            self.is_admin = self.roles.indexOf('admin') != -1;
+            self.update(res.data);
+        }, _remove_user).finally(function() {
+            self.is_ready = true;
         });
     };
 
-    refresh();
+    initial_load();
 
-    $rootScope.$on('labsome.users_inventory_changed', refresh);
+    $rootScope.$on('labsome.users.inventory_changed', update_user_fields);
 
     return self;
 });
 
-angular.module('labsome.auth').directive('userAvatar', function(users) {
-    var link = function(scope, elem, attrs) {
-        scope.users = users;
-    };
+angular.module('labsome.auth').controller('LoginController', function($scope, $http, curUser) {
+    $scope.input = {};
+    $scope.error = undefined;
 
-    return {
-        restrict: 'AE',
-        template: '<img class="img-circle profile-picture" ng-src="{{ users.byUserId[id].avatar_32 }}" style="width: {{ size }}; height: {{ size }};">',
-        link: link,
-        scope: {
-            'id': '=',
-            'size': '@'
-        }
-    };
-});
-
-angular.module('labsome.auth').directive('userDisplayName', function(users) {
-    var link = function(scope, elem, attrs) {
-        scope.users = users;
-    };
-
-    return {
-        restrict: 'AE',
-        template: '{{ users.byUserId[id].display_name }} ',
-        link: link,
-        scope: {
-            'id': '='
-        }
+    $scope.login = function() {
+        $scope.working = true;
+        $http.post('/api/auth/v1/login', $scope.input).then(function(res) {
+            $scope.error = undefined;
+            curUser.update(res.data);
+        }, function(res) {
+            $scope.working = false;
+            $scope.error = res.data.error;
+        });
     };
 });
 
-angular.module('labsome.auth').directive('userEmail', function(users) {
-    var link = function(scope, elem, attrs) {
-        scope.users = users;
-    };
-
-    return {
-        restrict: 'AE',
-        template: '{{ users.byUserId[id].email }} ',
-        link: link,
-        scope: {
-            'id': '='
-        }
-    };
-});
-
-angular.module('labsome.auth').factory('loginRedirection', function($q, $window) {
-    return {
-        'responseError': function(res) {
-            if (res.status == 401) {
-                var redirect_uri = $window.location.href;
-                redirect_uri = redirect_uri.slice(($window.location.protocol + '//' + $window.location.host).length);
-                $window.location = '/auth/login?next=' + $window.encodeURIComponent(redirect_uri);
-            }
-            return $q.reject(res);
-        }
-    };
-});
-
-angular.module('labsome.auth').config(function($httpProvider) {
-    $httpProvider.interceptors.push('loginRedirection');
-});
-
-angular.module('labsome.auth').run(function($rootScope, users, curUser) {
-    $rootScope.users = users;
+angular.module('labsome.auth').run(function($rootScope, curUser) {
     $rootScope.curUser = curUser;
 });

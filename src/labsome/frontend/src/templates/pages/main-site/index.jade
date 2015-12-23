@@ -11,7 +11,7 @@ append head
   include ../base/favicon-success
 
 append body
-  .top-level-container
-    .sidebar(ng-include="'/inline/main-site/sidebar.html'")
-    .main-view-wrapper
-      .main-view(ui-view='')
+  .ng-cloak(style={'opacity': '0.5'} ng-if='!curUser.is_ready')
+    three-bounce-spinner
+  .ng-cloak(ng-if='curUser.is_ready && !curUser.is_authenticated' ng-include="'/inline/auth/login.html'")
+  .ng-cloak(ng-if='curUser.is_ready && curUser.is_authenticated' ng-include="'/inline/main-site/index.html'")

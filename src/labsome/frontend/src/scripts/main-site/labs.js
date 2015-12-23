@@ -138,7 +138,7 @@ angular.module('labsome.site.labs').config(function($urlRouterProvider, stateHel
     stateHelperProvider.state(labs_url_routes);
 });
 
-angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScope, $q, socketIo) {
+angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScope, $q) {
     var ready_promise = $q.defer();
 
     var self = {
@@ -177,15 +177,16 @@ angular.module('labsome.site.labs').factory('allLabs', function($http, $rootScop
         return $http.delete('/api/hardware/v1/labs/' + lab_id);
     };
 
-    refresh();
-
-    socketIo.on('object_changed:lab', refresh);
-    socketIo.on('object_deleted:lab', refresh);
+    $rootScope.$on('labsome.notify.new_socket_available', function(event, socket) {
+        socket.on('object_changed:lab', refresh);
+        socket.on('object_deleted:lab', refresh);
+        refresh();
+    });
 
     return self;
 });
 
-angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $http, $q, socketIo) {
+angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $http, $q) {
     var ready_promise = $q.defer();
 
     var self = {
@@ -230,10 +231,11 @@ angular.module('labsome.site.labs').factory('labObjects', function($rootScope, $
         });
     };
 
-    refresh();
-
-    socketIo.on('object_changed:object', refresh);
-    socketIo.on('object_deleted:object', refresh);
+    $rootScope.$on('labsome.notify.new_socket_available', function(event, socket) {
+        socket.on('object_changed:object', refresh);
+        socket.on('object_deleted:object', refresh);
+        refresh();
+    });
 
     return self;
 });
@@ -244,15 +246,19 @@ angular.module('labsome.site.labs').factory('objectTypes', function($rootScope, 
         byTypeKey: {}
     };
 
-    $http.get('/api/hardware/v1/types').then(function(res) {
-        self.all = res.data.types;
-        self.byTypeKey = {};
-        for (var i = 0; i < self.all.length; ++i) {
-            var type = self.all[i];
-            self.byTypeKey[type.type_key] = type;
-        }
-        $rootScope.$broadcast('labsome.object_types_refreshed');
-    });
+    var refresh = function() {
+        $http.get('/api/hardware/v1/types').then(function(res) {
+            self.all = res.data.types;
+            self.byTypeKey = {};
+            for (var i = 0; i < self.all.length; ++i) {
+                var type = self.all[i];
+                self.byTypeKey[type.type_key] = type;
+            }
+            $rootScope.$broadcast('labsome.object_types_refreshed');
+        });
+    };
+
+    $rootScope.$on('labsome.auth.user_authorized', refresh);
 
     return self;
 });

@@ -17,7 +17,7 @@ mixin no_labs
 .page-layout(ng-if='!allLabs.ready')
   .page-layout-content-no-nav(style={'opacity': '0.5'})
     .text-center
-      i.fa.fa-3x.fa-spin.fa-circle-o-notch
+      three-bounce-spinner
 
 .page-layout(ng-if='allLabs.ready && (allLabs.all.length == 0)')
   .page-layout-content-no-nav

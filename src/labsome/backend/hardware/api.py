@@ -1,6 +1,5 @@
 from flask import Blueprint
 from flask import jsonify
-from flask.ext.login import login_required
 from ..db import register_resource
 from ..auth import user_required
 from ..auth import admin_required
@@ -24,7 +23,7 @@ register_resource(hardware_api, Object, url_prefix='/objects',
                   read_decorators=[user_required])
 
 @hardware_api.route('/types')
-@login_required
+@user_required
 def get_hardware_types():
     return jsonify(types=[dict(
         type_key     = hardware_type.type_key(),

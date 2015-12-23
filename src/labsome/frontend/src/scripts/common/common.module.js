@@ -5,6 +5,7 @@ angular.module('labsome.common', [
     'ui.router.stateHelper',
     'ui.router.title',
     'angular.filter',
+    'angular-spinkit',
     'ui.bootstrap',
     'ui.select',
     'ngSanitize',

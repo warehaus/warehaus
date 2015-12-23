@@ -1,15 +1,21 @@
 import os
 import httplib
+from logging import getLogger
 from flask import Blueprint
+from flask import request
 from flask import abort as flask_abort
 from flask.json import jsonify
 from flask.ext.login import current_user
-from flask.ext.login import login_required
+from flask.ext.login import login_user
+from flask.ext.login import logout_user
 from ..db import register_resource
-from ..auth import user_required
-from ..auth import admin_required
 from .models import User
+from .roles import user_required
+from .roles import admin_required
 from .roles import roles
+from .ldap_login import validate_ldap_user
+
+logger = getLogger(__name__)
 
 auth_api = Blueprint('auth_api', __name__)
 
@@ -27,12 +33,34 @@ def cleaned_user(user):
         return user
     return {field_name: user[field_name] for field_name in SAFE_FIELDS}
 
-@auth_api.route('/v1/self')
-@login_required
-def whoami():
+def cleaned_current_user():
     user = cleaned_user(current_user.as_dict())
     user['roles'] = current_user.roles
     return jsonify(user)
+
+@auth_api.route('/v1/login', methods=['POST'])
+def login():
+    username = request.json.get('username', '')
+    password = request.json.get('password', '')
+    try:
+        user = validate_ldap_user(username, password)
+    except Exception as error:
+        response = jsonify(error=str(error))
+        response.status_code = httplib.BAD_REQUEST
+        return response
+    logger.info('Logging in user: username={!r} id={!r}'.format(user.username, user.id))
+    login_user(user, remember=True)
+    return cleaned_current_user()
+
+@auth_api.route('/v1/logout')
+def logout():
+    logout_user()
+    return jsonify(dict(bye=True))
+
+@auth_api.route('/v1/self')
+@user_required
+def whoami():
+    return cleaned_current_user()
 
 def _new_api_token(user_id):
     user = User.query.get(user_id)
@@ -44,7 +72,7 @@ def _new_api_token(user_id):
     return jsonify(dict(api_token=api_token))
 
 @auth_api.route('/v1/self/api-token', methods=['POST'])
-@login_required
+@user_required
 def new_self_api_token():
     return _new_api_token(current_user.id)
 

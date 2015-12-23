@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('labsome.site', [
-    'btford.socket-io',
     'labsome.common',
+    'labsome.notify',
+    'labsome.users',
     'labsome.auth',
     'labsome.site.labs',
     'labsome.site.account',
@@ -12,8 +13,4 @@ angular.module('labsome.site', [
 angular.module('labsome.site').config(function($stateProvider, $locationProvider, $urlRouterProvider) {
     $locationProvider.html5Mode(true);
     $urlRouterProvider.otherwise('/labs');
-});
-
-angular.module('labsome.site').factory('socketIo', function(socketFactory) {
-    return socketFactory();
 });

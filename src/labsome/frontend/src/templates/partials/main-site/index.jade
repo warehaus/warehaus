@@ -1,4 +1,4 @@
-mixin content
+mixin sidebar
   ul.sidebar-nav
     li.logo
       a(ui-sref='labs')
@@ -22,4 +22,8 @@ mixin content
         .nav-text
           | Admin
 
-+content
+.top-level-container
+  .sidebar
+    +sidebar
+  .main-view-wrapper
+    .main-view(ui-view='')
