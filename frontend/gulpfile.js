@@ -13,6 +13,7 @@ var dirs = {
     index:     'src/templates/index.jade',
     partials:  'src/templates/partials',
     resources: 'resources',
+    dest:      '../dist/static',
 };
 
 gulp.task('scripts', function() {
@@ -21,7 +22,7 @@ gulp.task('scripts', function() {
         .pipe(ngAnnotate())
         .pipe(concat('labsome.js'))
         .pipe(uglify())
-        .pipe(gulp.dest('../static'))
+        .pipe(gulp.dest(dirs.dest))
     ;
 });
 
@@ -29,14 +30,14 @@ gulp.task('styles', function() {
     gulp.src([dirs.styles + '/labsome.scss'])
         .pipe(sass())
         .pipe(minifyCSS())
-        .pipe(gulp.dest('../static'))
+        .pipe(gulp.dest(dirs.dest))
     ;
 });
 
 gulp.task('index', function() {
     gulp.src([dirs.index])
         .pipe(jade())
-        .pipe(gulp.dest('../static'))
+        .pipe(gulp.dest(dirs.dest))
     ;
 });
 
@@ -48,13 +49,13 @@ gulp.task('partials', function() {
             module: 'labsome.templates',
             standalone: true
         }))
-        .pipe(gulp.dest('../static'))
+        .pipe(gulp.dest(dirs.dest))
     ;
 });
 
 gulp.task('resources', function() {
     gulp.src([dirs.resources + '/**'])
-        .pipe(gulp.dest('../static'))
+        .pipe(gulp.dest(dirs.dest))
 });
 
 gulp.task('default', ['scripts', 'styles', 'index', 'partials', 'resources'], function() {

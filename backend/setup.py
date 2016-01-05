@@ -9,8 +9,8 @@ setup(
     name = 'labsome',
     version = open(os.path.join(here, '..', 'VERSION')).read().strip(),
     url = 'http://www.labsome.com/',
-    license = 'AGPL-3.0',
-    zip_safe = False,
+    license = 'Commercial',
+    zip_safe = True,
 
     packages = find_packages(),
     include_package_data = True,
@@ -32,12 +32,6 @@ setup(
         'rethinkdb >= 2.2.0',
         'setuptools',
     ],
-
-    extras_require = {
-        'docs': [
-            'mkdocs',
-        ],
-    },
 
     entry_points = {
         'console_scripts': [

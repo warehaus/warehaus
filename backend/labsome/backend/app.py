@@ -1,6 +1,5 @@
 import os
 import sys
-import pkg_resources
 from flask import Flask
 from flask import redirect
 from flask import jsonify
@@ -62,9 +61,8 @@ def _full_app_routes(app):
 
 def create_app():
     log_to_console()
-    static_folder = pkg_resources.resource_filename('labsome', 'static')
-    template_folder = os.path.join(static_folder, 'pages')
-    app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
+    static_folder = os.environ.get('LABSOME_STATIC_FOLDER', '/opt/labsome/static')
+    app = Flask(__name__, static_folder=static_folder)
     app.json_encoder = CustomJSONEncoder
     app.config.from_object(database_config())
     socketio.init_app(app)

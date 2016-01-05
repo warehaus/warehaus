@@ -1,6 +1,6 @@
-src/*.egg-info
-src/build
-src/dist
-src/labsome/frontend
+backend/*.egg-info
+backend/build
+frontend
+dist/.gitignore
 .DS_Store
 .git
