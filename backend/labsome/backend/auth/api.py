@@ -5,15 +5,12 @@ from flask import Blueprint
 from flask import request
 from flask import abort as flask_abort
 from flask.json import jsonify
-from flask.ext.login import current_user
-from flask.ext.login import login_user
-from flask.ext.login import logout_user
+from flask_jwt import current_identity
 from ..db import register_resource
 from .models import User
 from .roles import user_required
 from .roles import admin_required
 from .roles import roles
-from .ldap_login import validate_ldap_user
 
 logger = getLogger(__name__)
 
@@ -29,33 +26,14 @@ SAFE_FIELDS = (
 )
 
 def cleaned_user(user):
-    if roles.Admin in current_user.roles:
+    if roles.Admin in current_identity.roles:
         return user
     return {field_name: user[field_name] for field_name in SAFE_FIELDS}
 
 def cleaned_current_user():
-    user = cleaned_user(current_user.as_dict())
-    user['roles'] = current_user.roles
+    user = cleaned_user(current_identity.as_dict())
+    user['roles'] = current_identity.roles
     return jsonify(user)
-
-@auth_api.route('/v1/login', methods=['POST'])
-def login():
-    username = request.json.get('username', '')
-    password = request.json.get('password', '')
-    try:
-        user = validate_ldap_user(username, password)
-    except Exception as error:
-        response = jsonify(error=str(error))
-        response.status_code = httplib.BAD_REQUEST
-        return response
-    logger.info('Logging in user: username={!r} id={!r}'.format(user.username, user.id))
-    login_user(user, remember=True)
-    return cleaned_current_user()
-
-@auth_api.route('/v1/logout')
-def logout():
-    logout_user()
-    return jsonify(dict(bye=True))
 
 @auth_api.route('/v1/self')
 @user_required
@@ -74,7 +52,7 @@ def _new_api_token(user_id):
 @auth_api.route('/v1/self/api-token', methods=['POST'])
 @user_required
 def new_self_api_token():
-    return _new_api_token(current_user.id)
+    return _new_api_token(current_identity.id)
 
 @auth_api.route('/v1/users/<user_id>/api-token', methods=['POST'])
 @admin_required

@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('labsome.auth', [
-    'labsome.users'
+    'labsome.users',
+    'angular-jwt'
 ]);
 
 angular.module('labsome.auth').factory('curUser', function($rootScope, $http, labsomeState, users) {
@@ -35,7 +36,8 @@ angular.module('labsome.auth').factory('curUser', function($rootScope, $http, la
     };
 
     self.logout = function() {
-        $http.get('/api/auth/v1/logout').then(labsomeState.refresh);
+        localStorage.removeItem('id_token');
+        labsomeState.refresh();
     };
 
     var load_current_user = function() {
@@ -68,12 +70,22 @@ angular.module('labsome.auth').controller('LoginController', function($scope, $h
         $scope.working = true;
         $http.post('/api/auth/v1/login', $scope.input).then(function(res) {
             $scope.error = undefined;
+            localStorage.setItem('id_token', res.data.access_token);
             labsomeState.refresh();
         }, function(res) {
             $scope.working = false;
             $scope.error = res.data.error;
         });
     };
+});
+
+angular.module('labsome.auth').config(function($httpProvider, jwtInterceptorProvider) {
+    jwtInterceptorProvider.authPrefix = 'JWT ';
+    jwtInterceptorProvider.tokenGetter = function() {
+        return localStorage.getItem('id_token');
+    };
+
+    $httpProvider.interceptors.push('jwtInterceptor');
 });
 
 angular.module('labsome.auth').run(function($rootScope, curUser) {

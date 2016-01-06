@@ -25,7 +25,4 @@ def validate_ldap_user(username, password):
     user.email      = user_details.get('attribute_email', None)
     user.save()
 
-    if not user.is_active:
-        raise ValueError('Your account has been deactivated. If you believe this is a mistake, please contact your administrator.')
-
     return user

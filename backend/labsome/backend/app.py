@@ -3,7 +3,8 @@ import sys
 from flask import Flask
 from flask import redirect
 from flask import jsonify
-from flask.ext.login import current_user
+from flask_jwt import _jwt_required
+from flask_jwt import JWTError
 from .logs import log_to_console
 from .settings import database_config
 from .settings import full_config
@@ -47,7 +48,11 @@ def _ui_routes(app):
         is_authenticated = False
         if get_settings().is_initialized:
             is_initialized = True
-            if current_user.is_authenticated:
+            try:
+                _jwt_required(app.config['JWT_DEFAULT_REALM']) # Refreshes current_identity, raises JWTError if no token exists
+            except JWTError:
+                pass
+            else:
                 is_authenticated = True
         return jsonify(dict(is_initialized=is_initialized, is_authenticated=is_authenticated))
 

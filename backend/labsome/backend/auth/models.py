@@ -1,7 +1,6 @@
-from flask.ext.login import UserMixin
 from .. import db
 
-class User(db.Model, UserMixin):
+class User(db.Model):
     username   = db.Field(db.Index())
     roles      = db.Field()
     first_name = db.Field()

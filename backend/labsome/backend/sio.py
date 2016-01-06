@@ -1,14 +1,12 @@
+from logging import getLogger
+from flask import current_app
 from flask_socketio import SocketIO
-from flask.ext.login import current_user
 from .db.models import db_object_changed
 from .db.models import db_object_deleted
 
-socketio = SocketIO()
+logger = getLogger(__name__)
 
-@socketio.on('connect')
-def connect_handler():
-    if not current_user.is_authenticated:
-        return False
+socketio = SocketIO()
 
 @db_object_changed.connect
 def broadcast_object_changed_message(sender, table_name, id):

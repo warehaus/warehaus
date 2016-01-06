@@ -20,8 +20,7 @@ setup(
 
     install_requires = [
         'Flask == 0.10.1',
-        'Flask-Login == 0.3.2',
-        'Flask-Principal == 0.4.0',
+        'Flask-JWT == 0.3.2',
         'Flask-RethinkDB == 0.2',
         'Flask-SocketIO == 1.2',
         'python-slugify == 1.1.4',

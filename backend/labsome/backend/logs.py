@@ -2,7 +2,7 @@ import sys
 import logging
 
 def log_to_console():
-    root = logging.getLogger(__package__)
+    root = logging.getLogger()
     root.setLevel(logging.DEBUG)
     ch = logging.StreamHandler(sys.stdout)
     ch.setLevel(logging.DEBUG)
