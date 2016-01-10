@@ -27,7 +27,7 @@ tagged-docker-image: docker-image
 push-docker-image: tagged-docker-image
 	@if [ ! -z "$(DOCKER_EMAIL)" ]; then \
 		echo "Logging in to Docker Hub"; \
-		docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"; \
+		docker login -e="$(DOCKER_EMAIL)" -u="$(DOCKER_USERNAME)" -p="$(DOCKER_PASSWORD)"; \
 	fi
 	@echo "Pushing image..."
 	@docker push $(DOCKER_IMAGE)
