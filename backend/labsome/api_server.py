@@ -1,6 +1,5 @@
 from argparse import ArgumentParser
 from .app import create_app
-from .sio import socketio
 
 def print_config(app):
     print 'Configuration:'
@@ -23,7 +22,7 @@ def main():
     app = create_app()
     if args.print_config:
         print_config(app)
-    socketio.run(app, host=args.host, port=args.port, debug=args.debug)
+    app.run(host=args.host, port=args.port, debug=args.debug)
 
 if __name__ == '__main__':
     main()

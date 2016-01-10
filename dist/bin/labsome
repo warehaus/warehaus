@@ -2,6 +2,7 @@
 
 import os
 import sys
+import commands
 
 # Made with http://patorjk.com/software/taag/#p=display&f=Rectangles&t=labsome
 ASCII_LOGO = """\
@@ -33,7 +34,11 @@ if not os.environ.get('RETHINKDB_PORT_28015_TCP_ADDR', None) or not os.environ.g
     print >>sys.stderr, NO_DB_ERROR
     raise SystemExit(1)
 
-supervisor_cmdline = ['/usr/bin/supervisord', '-c', '/opt/labsome/etc/supervisor-labsome.conf']
+if os.system('/usr/local/bin/labsome-init-db') != 0:
+    print >>sys.stderr, 'error: Could not initialize database'
+    raise SystemExit(1)
+
+supervisor_cmdline = ['/usr/bin/supervisord', '-c', '/opt/labsome/dist/etc/supervisor-labsome.conf']
 os.execve(supervisor_cmdline[0], supervisor_cmdline, os.environ)
 
 SUPERVISOR_EXEC_ERROR = 'error: Could not run ' + ' '.join(supervisor_cmdline)

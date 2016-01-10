@@ -2,7 +2,6 @@ import rethinkdb as r
 from copy import deepcopy
 from logging import getLogger
 from bunch import Bunch
-from blinker import signal
 from flask import current_app
 from rethinkdb import ReqlRuntimeError
 from rethinkdb import ReqlOpFailedError
@@ -11,9 +10,6 @@ from .exceptions import RethinkDBError
 from .fields import Field
 
 logger = getLogger(__name__)
-
-db_object_changed = signal('db_object_changed')
-db_object_deleted = signal('db_object_deleted')
 
 class Query(object):
     def __init__(self, model_type):
@@ -97,7 +93,6 @@ class Model(object):
                 raise RethinkDBError('Expected 1 insertion, instead: {!r}'.format(result))
             if 'id' not in self:
                 [self._data['id']] = result['generated_keys']
-        db_object_changed.send(type(self).__name__, table_name=self._table_name, id=self._data['id'])
 
     def delete(self):
         if 'id' not in self._data or self._data['id'] is None:
@@ -105,7 +100,6 @@ class Model(object):
         result = self._table.get(self._data['id']).delete().run(db.conn)
         if result['deleted'] != 1:
             raise RethinkDBError('Expected 1 deletion, instead: {!r}'.format(result))
-        db_object_deleted.send(type(self).__name__, table_name=self._table_name, id=self._data['id'])
         del self._data['id']
 
     def _attr_allowed(self, attr):
