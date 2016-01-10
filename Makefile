@@ -4,13 +4,13 @@ DOCKER_IMAGE := labsome/labsome
 EGG_BUILDER_IMAGE := python:2.7
 FRONTEND_BUILDER_IMAGE := labsome/frontend-builder:v4
 
-build: build-backend
+build: build-backend build-frontend
 
 build-frontend:
 	@echo "Building frontend..."
 	@docker run -ti --rm --volume $(SRC_DIR):/build $(FRONTEND_BUILDER_IMAGE) /bin/sh -c "cd /build/frontend && bower install --allow-root && gulp build"
 
-build-backend: build-frontend
+build-backend:
 	@echo "Building backend egg..."
 	@docker run -ti --rm --volume $(SRC_DIR):/opt $(EGG_BUILDER_IMAGE) /bin/sh -c "cd /opt/backend && python setup.py bdist_egg --exclude-source-files --dist-dir /opt/dist"
 

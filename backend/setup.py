@@ -9,7 +9,7 @@ setup(
     name = 'labsome',
     version = open(os.path.join(here, '..', 'VERSION')).read().strip(),
     url = 'http://www.labsome.com/',
-    license = 'Commercial',
+    license = 'AGPL-3.0',
     zip_safe = True,
 
     packages = find_packages(),
@@ -34,7 +34,7 @@ setup(
 
     entry_points = {
         'console_scripts': [
-            'labsome-test-server=labsome.backend.test_server:main',
+            'labsome-test-server=labsome.test_server:main',
         ],
     },
 )
