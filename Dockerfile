@@ -1,4 +1,4 @@
-FROM labsome/base-image:v7
+FROM labsome/base-image:v8
 
 RUN mkdir -p /var/log/labsome/dist
 
