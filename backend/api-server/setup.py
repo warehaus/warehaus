@@ -6,8 +6,8 @@ from setuptools import find_packages
 here = os.path.dirname(__file__)
 
 setup(
-    name = 'labsome',
-    version = open(os.path.join(here, '..', 'VERSION')).read().strip(),
+    name = 'labsome_api',
+    version = open(os.path.join(here, '..', '..', 'VERSION')).read().strip(),
     url = 'http://www.labsome.com/',
     license = 'AGPL-3.0',
     zip_safe = True,

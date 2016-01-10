@@ -11,8 +11,8 @@ build-frontend:
 	@docker run -ti --rm --volume $(SRC_DIR):/build $(FRONTEND_BUILDER_IMAGE) /bin/sh -c "cd /build/frontend && bower install --allow-root && gulp build"
 
 build-backend:
-	@echo "Building backend egg..."
-	@docker run -ti --rm --volume $(SRC_DIR):/opt $(EGG_BUILDER_IMAGE) /bin/sh -c "cd /opt/backend && python setup.py bdist_egg --exclude-source-files --dist-dir /opt/dist"
+	@echo "Building API egg..."
+	@docker run -ti --rm --volume $(SRC_DIR):/opt $(EGG_BUILDER_IMAGE) /bin/sh -c "cd /opt/backend/api-server && python setup.py bdist_egg --exclude-source-files --dist-dir /opt/dist"
 
 docker-image: build
 	@echo "Building Docker image..."
