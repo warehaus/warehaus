@@ -2,17 +2,6 @@ from argparse import ArgumentParser
 from .app import create_app
 from .sio import socketio
 
-# Made with http://patorjk.com/software/taag/#p=display&f=Rectangles&t=labsome
-ASCII_LOGO = """\
-+--------------------------------------+
-|      _     _                         |
-|     | |___| |_ ___ ___ _____ ___     |
-|     | | .'| . |_ -| . |     | -_|    |
-|     |_|__,|___|___|___|_|_|_|___|    |
-|                                      |
-+--------------------------------------+\
-"""
-
 def print_config(app):
     print 'Configuration:'
     for key, value in sorted(app.config.iteritems()):
@@ -31,7 +20,6 @@ def main():
                               'requests. CAREFUL: This prints sensitive information, do ' +
                               'not share or post your configuration anywhere.'))
     args = parser.parse_args()
-    print ASCII_LOGO
     app = create_app()
     if args.print_config:
         print_config(app)

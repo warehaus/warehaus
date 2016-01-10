@@ -1,0 +1,42 @@
+#!/usr/bin/python
+
+import os
+import sys
+
+# Made with http://patorjk.com/software/taag/#p=display&f=Rectangles&t=labsome
+ASCII_LOGO = """\
++--------------------------------------+
+|      _     _                         |
+|     | |___| |_ ___ ___ _____ ___     |
+|     | | .'| . |_ -| . |     | -_|    |
+|     |_|__,|___|___|___|_|_|_|___|    |
+|                                      |
++--------------------------------------+\
+"""
+
+print ASCII_LOGO
+
+NO_DB_ERROR = '''
+error: Could not find database configuration.
+
+If you're running with Docker, please use --link to a RethinkDB container.
+
+To manually pass database configuration, you can use:
+
+   RETHINKDB_PORT_28015_TCP_ADDR -- RethinkDB hostname
+   RETHINKDB_PORT_28015_TCP_PORT -- RethinkDB port
+   RETHINKDB_AUTH                -- Authentication string (optional)
+   RETHINKDB_DB                  -- Database name (default: labsome)
+'''
+
+if not os.environ.get('RETHINKDB_PORT_28015_TCP_ADDR', None) or not os.environ.get('RETHINKDB_PORT_28015_TCP_PORT'):
+    print >>sys.stderr, NO_DB_ERROR
+    raise SystemExit(1)
+
+supervisor_cmdline = ['/usr/bin/supervisord', '-c', '/opt/labsome/etc/supervisor-labsome.conf']
+os.execve(supervisor_cmdline[0], supervisor_cmdline, os.environ)
+
+SUPERVISOR_EXEC_ERROR = 'error: Could not run ' + ' '.join(supervisor_cmdline)
+
+print >>sys.stderr, SUPERVISOR_EXEC_ERROR
+raise SystemExit(2)

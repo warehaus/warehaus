@@ -5,7 +5,8 @@ RUN mkdir -p /var/log/labsome
 COPY dist /opt/labsome
 
 RUN cd /opt/labsome && easy_install *.egg
+RUN ln -s /opt/labsome/bin/labsome /usr/local/bin/labsome
 
 EXPOSE 80
 
-CMD ["/usr/bin/supervisord", "-c", "/opt/labsome/etc/supervisor-labsome.conf"]
+CMD ["labsome"]

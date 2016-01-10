@@ -18,19 +18,6 @@ from .settings.api import settings_api
 from .hardware.api import hardware_api
 from .sio import socketio
 
-NO_DB_ERROR = '''
-error: Could not find database configuration.
-
-If you're running with Docker, please use --link to a RethinkDB container.
-
-To manually pass database configuration, you can use:
-
-   RETHINKDB_PORT_28015_TCP_ADDR -- RethinkDB hostname
-   RETHINKDB_PORT_28015_TCP_PORT -- RethinkDB port
-   RETHINKDB_AUTH                -- Authentication string (optional)
-   RETHINKDB_DB                  -- Database name (default: labsome)
-'''
-
 def _ui_routes(app):
     @app.route('/')
     @app.route('/ui')
@@ -71,10 +58,6 @@ def create_app():
     app.json_encoder = CustomJSONEncoder
     app.config.from_object(database_config())
     socketio.init_app(app)
-
-    if not app.config['RETHINKDB_HOST']:
-        print >>sys.stderr, NO_DB_ERROR
-        raise SystemExit(1)
 
     with app.app_context():
         db.init_app(app)
