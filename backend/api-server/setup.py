@@ -34,8 +34,8 @@ setup(
 
     entry_points = {
         'console_scripts': [
-            'labsome-init-db=labsome.init_db:main',
-            'labsome-api-server=labsome.api_server:main',
+            'labsome-init-db=labsome_api.init_db:main',
+            'labsome-api-server=labsome_api.api_server:main',
         ],
     },
 )

@@ -1,4 +1,4 @@
 *.pyc
 *.pyo
 *.egg-info
-_venv
+node_modules
