@@ -1,6 +1,5 @@
 import os
 import sys
-from flask import redirect
 from flask import jsonify
 from flask_jwt import _jwt_required
 from flask_jwt import JWTError
@@ -13,17 +12,7 @@ from .auth.api import auth_api
 from .settings.api import settings_api
 from .hardware.api import hardware_api
 
-def _ui_routes(app):
-    @app.route('/')
-    @app.route('/ui')
-    def ui_redirect():
-        return redirect('/ui/')
-
-    @app.route('/ui/')
-    @app.route('/ui/<path:path>')
-    def ui(path=None):
-        return app.send_static_file('index.html')
-
+def _state_api(app):
     @app.route('/api/state')
     def server_state():
         is_initialized = False
@@ -48,12 +37,11 @@ def _full_app_routes(app):
 
 def create_app():
     log_to_console()
-    static_folder = os.environ.get('LABSOME_STATIC_FOLDER', '/opt/labsome/dist/static')
-    app = create_base_app(static_folder=static_folder)
+    app = create_base_app()
 
     with app.app_context():
         auth.init_app(app)
-        _ui_routes(app)
+        _state_api(app)
         if not get_settings().is_initialized:
             _first_setup_routes(app)
         else:
