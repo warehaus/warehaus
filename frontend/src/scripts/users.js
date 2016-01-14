@@ -31,7 +31,7 @@ angular.module('labsome.users').factory('users', function($rootScope, $http) {
     };
 
     self.new_api_token = function(user_id) {
-        $http.post('/api/auth/v1/users/' + user_id + '/api-token').then(refresh);
+        $http.post('/api/auth/v1/users/' + user_id + '/api-tokens').then(refresh);
     };
 
     $rootScope.$on('labsome.notify.new_socket_available', function(event, socket) {

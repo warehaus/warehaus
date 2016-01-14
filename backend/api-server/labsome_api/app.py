@@ -1,16 +1,34 @@
 import os
 import sys
+import json
+from datetime import datetime
 from flask import jsonify
+from flask import make_response
 from flask_jwt import _jwt_required
 from flask_jwt import JWTError
+from flask_restful import Api
 from .logs import log_to_console
 from .base_app import create_base_app
 from .settings.models import get_settings
 from . import auth
 from .first_setup.api import first_setup_api
-from .auth.api import auth_api
-from .settings.api import settings_api
+from .auth.resources import CurrentUser
+from .settings.resources import LdapResource
+from .auth.resources import AllUsers
+from .auth.resources import SingleUser
+from .auth.resources import UserTokens
+from .hardware.resources import AllLabs
+from .hardware.resources import SingleLab
+from .hardware.resources import AllObjects
+from .hardware.resources import SingleObject
+from .hardware.resources import Types
 from .hardware.api import hardware_api
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return str(obj)
+        return json.JSONEncoder.default(self, obj)
 
 def _state_api(app):
     @app.route('/api/state')
@@ -31,20 +49,43 @@ def _first_setup_routes(app):
     app.register_blueprint(first_setup_api, url_prefix='/api/first-setup')
 
 def _full_app_routes(app):
-    app.register_blueprint(auth_api, url_prefix='/api/auth')
-    app.register_blueprint(settings_api, url_prefix='/api/settings')
+    api = Api(app)
+
+    @api.representation('application/json')
+    def output_json(data, code, headers=None):
+        resp = make_response(json.dumps(data, cls=CustomJSONEncoder), code)
+        resp.headers.extend(headers or {})
+        return resp
+
+    # Settings resources
+    api.add_resource(LdapResource, '/api/settings/v1/ldap',                   methods=['GET', 'POST'])
+
+    # Auth resources
+    api.add_resource(CurrentUser,  '/api/auth/v1/self',                       methods=['GET'])
+    api.add_resource(AllUsers,     '/api/auth/v1/users',                      methods=['GET', 'POST'])
+    api.add_resource(SingleUser,   '/api/auth/v1/users/<user_id>',            methods=['GET', 'PUT', 'DELETE'])
+    api.add_resource(UserTokens,   '/api/auth/v1/users/<user_id>/api-tokens', methods=['POST', 'DELETE'])
+
+    # Hardware resources
+    api.add_resource(AllLabs,      '/api/hardware/v1/labs',                   methods=['GET', 'POST'])
+    api.add_resource(SingleLab,    '/api/hardware/v1/labs/<lab_id>',          methods=['GET', 'PUT', 'DELETE'])
+    api.add_resource(AllObjects,   '/api/hardware/v1/objects',                methods=['GET'])
+    api.add_resource(SingleObject, '/api/hardware/v1/objects/<obj_id>',       methods=['GET'])
+    api.add_resource(Types,        '/api/hardware/v1/types',                  methods=['GET'])
+
     app.register_blueprint(hardware_api, url_prefix='/api/hardware/v1')
+
+def create_api(app):
+    _state_api(app)
+    if get_settings().is_initialized:
+        _full_app_routes(app)
+    else:
+        _first_setup_routes(app)
 
 def create_app():
     log_to_console()
     app = create_base_app()
-
     with app.app_context():
         auth.init_app(app)
-        _state_api(app)
-        if not get_settings().is_initialized:
-            _first_setup_routes(app)
-        else:
-            _full_app_routes(app)
-
+        create_api(app)
     return app

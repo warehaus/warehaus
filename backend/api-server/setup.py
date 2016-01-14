@@ -23,6 +23,7 @@ setup(
         'Flask-JWT == 0.3.2',
         'Flask-RethinkDB == 0.2',
         'Flask-SocketIO == 1.2',
+        'flask-restful == 0.3.5',
         'python-slugify == 1.1.4',
         'bunch == 1.0.1',
         'eventlet == 0.17.4',
