@@ -6,13 +6,13 @@ from .models import User
 from .roles import roles
 from .roles import user_required
 from .roles import admin_required
-from .ldap_login import validate_ldap_user
+from .login import validate_user
 
 logger = getLogger(__name__)
 
 def authenticate(username, password):
     try:
-        user = validate_ldap_user(username, password)
+        user = validate_user(username, password)
         logger.info('Successfully authenticated {!r}'.format(username))
         return user
     except Exception as error:
