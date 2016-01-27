@@ -2,87 +2,97 @@ import httplib
 from slugify import slugify
 from flask import request
 from flask import abort as flask_abort
-from flask.json import jsonify
-from ..auth.roles import user_required
+from flask_restful.reqparse import RequestParser
+from flask_jwt import current_identity
+from ..auth.roles import require_user
+from ..auth.roles import roles
 from ..auth.models import User
-from .hardware_type import HardwareType
-from .models import Lab
+from ..db.times import now
 from .models import Object
-from .servers import Server
+from .type_class import TypeClass
+from .type_class import type_action
+from .type_class import object_action
+from .labs import get_lab_from_type_object
+from .labs import ensure_unique_slug
 
-class Cluster(HardwareType):
+class Cluster(TypeClass):
     TYPE_VENDOR = 'builtin'
     TYPE_NAME = 'cluster'
 
-    @classmethod
-    def display_name(cls):
+    def display_name(self):
         return 'Cluster'
 
-    @classmethod
-    def allow_ownership(cls):
-        return True
+    create_cluster_parser = RequestParser()
+    create_cluster_parser.add_argument('display_name', required=True)
 
-    @classmethod
-    def register_api(cls, app_or_blueprint, url_prefix):
-        @app_or_blueprint.route(url_prefix, methods=['POST'])
-        @user_required
-        def create_cluster():
-            lab_id = request.json['lab_id']
-            display_name = request.json['display_name']
-            slug = slugify(display_name)
-            if Lab.query.get(lab_id) is None:
-                flask_abort(httplib.NOT_FOUND, 'No lab with id={!r}'.format(lab_id))
-            cluster = cls.get_by_slug_and_lab(slug, lab_id)
-            if cluster is not None:
-                flask_abort(httplib.CONFLICT, 'Cluster slug {!r} already in use'.format(slug))
-            cluster = cls.create(slug=slug, display_name=display_name, lab_id=lab_id)
-            cluster.save()
-            return jsonify(cluster.as_dict()), httplib.CREATED
+    @type_action('POST', '')
+    def create_cluster(self, typeobj):
+        require_user()
+        lab = get_lab_from_type_object(typeobj)
+        args = self.create_cluster_parser.parse_args()
+        slug = slugify(args['display_name'])
+        ensure_unique_slug(lab.id, slug)
+        cluster = Object(slug=slug, display_name=args['display_name'], parent_id=lab.id, type_id=typeobj.id)
+        cluster.save()
+        return cluster.as_dict(), httplib.CREATED
 
-        @app_or_blueprint.route(url_prefix + '/<cluster_id>', methods=['DELETE'])
-        @user_required
-        def delete_cluster(cluster_id):
-            cluster = cls.get_by_id(cluster_id)
-            if cluster is None:
-                flask_abort(httplib.NOT_FOUND, 'No cluster with id {!r}'.format(cluster_id))
-            if cluster.type_key != cls.type_key():
-                flask_abort(httplib.NOT_FOUND, 'No cluster with id {!r}'.format(cluster_id))
-            cluster.delete()
-            return jsonify(cluster.as_dict()), httplib.NO_CONTENT
+    @object_action('DELETE', '')
+    def delete_cluster(self, cluster):
+        require_user()
+        cluster.delete()
+        return cluster.as_dict(), httplib.NO_CONTENT
 
-        def _get_lab(lab_slug):
-            lab = Lab.get_by_slug(lab_slug)
-            if lab is None:
-                flask_abort(httplib.NOT_FOUND, 'Unknown lab {!r}'.format(lab_slug))
-            return lab
+    add_owner_parser = RequestParser()
+    add_owner_parser.add_argument('username', required=True)
 
-        def _get_cluster(lab, cluster_slug):
-            cluster = cls.get_by_slug_and_lab(cluster_slug, lab.id)
-            if cluster is None:
-                flask_abort(httplib.NOT_FOUND, 'Unknown cluster {!r}'.format(cluster_slug))
-            return cluster
+    @object_action('POST', 'owner')
+    def add_owner(self, cluster):
+        require_user()
+        args = self.add_owner_parser.parse_args()
+        new_owner = User.get_by_username(args['username'])
+        if new_owner is None:
+            flask_abort(httplib.BAD_REQUEST, 'Cannot find a user with username={!r}'.format(args['username']))
+        if 'ownerships' in cluster and cluster['ownerships']:
+            for ownership in cluster['ownerships']:
+                if ownership['owner_id'] == new_owner['id']:
+                    return ownership
+            flask_abort(httplib.CONFLICT, 'Cluster is already owned by someone else')
+        cluster.ownerships = [dict(owner_id=new_owner['id'], obtained_at=now())]
+        cluster.save()
+        return cluster.ownerships, httplib.CREATED
 
-        @app_or_blueprint.route(url_prefix + '/<lab_slug>/<cluster_slug>/config.json')
-        @user_required
-        def cluster_config(lab_slug, cluster_slug):
-            lab = _get_lab(lab_slug)
-            cluster = _get_cluster(lab, cluster_slug)
-            servers = tuple(server.as_dict() for server in Object.query.filter(
-                dict(lab_id=lab.id, type_key=Server.type_key(), cluster_id=cluster.id)))
-            ownerships = tuple(dict(owner_id    = ownership['owner_id'],
-                                    obtained_at = ownership['obtained_at'],
-                                    username    = User.query.get(ownership['owner_id'])['username'])
-                               for ownership in cluster['ownerships'])
-            config = dict(
-                id           = cluster['id'],
-                slug         = cluster['slug'],
-                display_name = cluster['display_name'],
-                servers      = servers,
-                ownerships   = ownerships,
-                lab = dict(
-                    id           = lab['id'],
-                    slug         = lab['slug'],
-                    display_name = lab['display_name'],
-                ),
-            )
-            return jsonify(config)
+    @object_action('DELETE', 'owner')
+    def remove_owner(self, cluster):
+        require_user()
+        if 'ownerships' not in cluster:
+            return None, httplib.NO_CONTENT
+        if roles.Admin not in current_identity.roles and all(ownership['owner_id'] != current_identity.id
+                                                             for ownership in cluster.ownerships):
+            flask_abort(httplib.FORBIDDEN, 'You cannot remove ownerships of other users')
+        cluster.ownerships = []
+        cluster.save()
+        return None, httplib.NO_CONTENT
+
+    @object_action('GET', 'config.json')
+    def cluster_config(self, cluster):
+        require_user()
+        lab = Object.query.get(cluster.parent_id)
+        servers = tuple(server.as_dict() for server in Object.query.filter(
+            dict(parent_id=lab.id, cluster_id=cluster.id)))
+        ownerships = tuple(dict(owner_id    = ownership['owner_id'],
+                                obtained_at = ownership['obtained_at'],
+                                username    = User.query.get(ownership['owner_id'])['username'])
+                           for ownership in cluster['ownerships']) if 'ownerships' in cluster else ()
+        config = dict(
+            id           = cluster['id'],
+            slug         = cluster['slug'],
+            display_name = cluster['display_name'],
+            servers      = servers,
+            ownerships   = ownerships,
+            lab = dict(
+                id           = lab['id'],
+                slug         = lab['slug'],
+                display_name = lab['display_name'],
+            ),
+        )
+        return config

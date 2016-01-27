@@ -1,15 +1,76 @@
 'use strict';
 
 angular.module('labsome.labs', [
+    'labsome.models',
     'labsome.hardware'
 ]);
 
-angular.module('labsome.labs').provider('labsUrlRoutes', function(hardwareUrlRoutesProvider, viewPath) {
+angular.module('labsome.labs').provider('labsUrlRoutes', function(viewPath) {
     var labsView = function(path) {
         return viewPath('main-site/views/labs/' + path);
     };
 
     var lab_page_children = [
+        {
+            name: 'browse-type',
+            url: '/browse/:typeSlug?tab',
+            template: '<div ng-include="type_template_path"/>',
+            controller: 'BrowseTypeController',
+            resolve: {
+                typeSlug: ['$stateParams', function($stateParams) {
+                    return $stateParams.typeSlug;
+                }],
+                typeObjId: ['$stateParams', 'dbObjects', 'labId', function($stateParams, dbObjects, labId) {
+                    var lab = dbObjects.byId[labId];
+                    if (angular.isUndefined(lab)) {
+                        return undefined;
+                    }
+                    for (var type_obj_id in dbObjects.byParentId[lab.type_id]) {
+                        var type_obj = dbObjects.byId[type_obj_id];
+                        if (angular.isDefined(type_obj) && (type_obj.slug == $stateParams.typeSlug)) {
+                            return type_obj_id;
+                        }
+                    }
+                    return undefined;
+                }],
+                $title: ['$filter', 'dbObjects', 'typeObjId', function($filter, dbObjects, typeObjId) {
+                    return $filter('titlecase')(dbObjects.byId[typeObjId].display_name.plural);
+                }]
+            },
+            children: [
+                {
+                    name: 'object-page',
+                    url: '/:objSlug',
+                    views: {
+                        '@': {
+                            template: '<div ng-include="object_template_path"/>',
+                            controller: 'ObjectPageController'
+                        }
+                    },
+                    resolve: {
+                        objSlug: ['$stateParams', function($stateParams) {
+                            return $stateParams.objSlug;
+                        }],
+                        objId: ['$stateParams', 'dbObjects', 'labId', function($stateParams, dbObjects, labId) {
+                            var lab = dbObjects.byId[labId];
+                            if (angular.isUndefined(lab)) {
+                                return undefined;
+                            }
+                            for (var obj_id in dbObjects.byParentId[lab.id]) {
+                                var obj = dbObjects.byId[obj_id];
+                                if (angular.isDefined(obj) && (obj.slug == $stateParams.objSlug)) {
+                                    return obj_id;
+                                }
+                            }
+                            return undefined;
+                        }],
+                        $title: ['dbObjects', 'objId', function(dbObjects, objId) {
+                            return dbObjects.byId[objId].display_name;
+                        }]
+                    }
+                }
+            ]
+        },
         {
             name: 'manage',
             url: '/manage',
@@ -25,21 +86,10 @@ angular.module('labsome.labs').provider('labsUrlRoutes', function(hardwareUrlRou
                     name: 'set-hardware-types',
                     url: '/hardware-types',
                     templateUrl: labsView('manage/hardware-types.html'),
-                    controller: 'SetHardwareTypesController',
+                    controller: 'HardwareTypesController',
                     resolve: {
                         $title: function() {
                             return 'Hardware Types';
-                        }
-                    }
-                },
-                {
-                    name: 'add-servers',
-                    url: '/add-servers',
-                    templateUrl: labsView('manage/add-servers.html'),
-                    controller: 'AddServersController',
-                    resolve: {
-                        $title: function() {
-                            return 'Add Servers';
                         }
                     }
                 },
@@ -68,8 +118,6 @@ angular.module('labsome.labs').provider('labsUrlRoutes', function(hardwareUrlRou
             ]
         }
     ];
-
-    var hardware_children = hardwareUrlRoutesProvider.$get();
 
     var labs_url_routes = {
         name: 'labs',
@@ -103,7 +151,7 @@ angular.module('labsome.labs').provider('labsUrlRoutes', function(hardwareUrlRou
                         return allLabs.byId[labId].display_name;
                     }]
                 },
-                children: lab_page_children.concat(hardware_children)
+                children: lab_page_children
             }
         ]
     };
@@ -138,141 +186,19 @@ angular.module('labsome.labs').config(function($urlRouterProvider, stateHelperPr
     stateHelperProvider.state(labs_url_routes);
 });
 
-angular.module('labsome.labs').factory('allLabs', function($http, $rootScope, $q) {
-    var ready_promise = $q.defer();
-
-    var self = {
-        ready: false,
-        all: [],
-        byId: {},
-        bySlug: {},
-        whenReady: ready_promise.promise
-    };
-
-    var refresh = function() {
-        return $http.get('/api/hardware/v1/labs').then(function(res) {
-            self.all = res.data.objects;
-            self.byId = {};
-            self.bySlug = {};
-            for (var i = 0; i < self.all.length; ++i) {
-                var lab = self.all[i];
-                self.byId[lab.id] = lab;
-                self.bySlug[lab.slug] = lab;
-            }
-            self.ready = true;
-            $rootScope.$broadcast('labsome.labs_inventory_changed');
-            ready_promise.resolve();
-        });
-    };
-
-    self.create = function(lab) {
-        return $http.post('/api/hardware/v1/labs', lab);
-    };
-
-    self.update = function(lab_id, update) {
-        return $http.put('/api/hardware/v1/labs/' + lab_id, update);
-    };
-
-    self.delete = function(lab_id) {
-        return $http.delete('/api/hardware/v1/labs/' + lab_id);
-    };
-
-    $rootScope.$on('labsome.notify.new_socket_available', function(event, socket) {
-        socket.on('object_changed:lab', refresh);
-        socket.on('object_deleted:lab', refresh);
-        refresh();
-    });
-
-    return self;
-});
-
-angular.module('labsome.labs').factory('labObjects', function($rootScope, $http, $q) {
-    var ready_promise = $q.defer();
-
-    var self = {
-        ready: false,
-        objects: [],
-        byLabId: {},
-        byObjectType: {},
-        byObjectId: {},
-        whenReady: ready_promise.promise
-    };
-
-    var refresh = function() {
-        return $http.get('/api/hardware/v1/objects').then(function(res) {
-            self.objects = res.data.objects;
-            self.byLabId = {};
-            self.byObjectType = {};
-            self.byObjectId = {};
-            for (var i = 0; i < self.objects.length; ++i) {
-                var obj = self.objects[i];
-                if (angular.isDefined(obj.lab_id)) {
-                    if (angular.isUndefined(self.byLabId[obj.lab_id])) {
-                        self.byLabId[obj.lab_id] = {
-                            all: [],
-                            byObjectType: {}
-                        };
-                    }
-                    self.byLabId[obj.lab_id].all.push(obj);
-                    if (angular.isUndefined(self.byLabId[obj.lab_id].byObjectType[obj.type_key])) {
-                        self.byLabId[obj.lab_id].byObjectType[obj.type_key] = [];
-                    }
-                    self.byLabId[obj.lab_id].byObjectType[obj.type_key].push(obj);
-                }
-                if (angular.isUndefined(self.byObjectType[obj.type_key])) {
-                    self.byObjectType[obj.type_key] = [];
-                }
-                self.byObjectType[obj.type_key].push(obj);
-                self.byObjectId[obj.id] = obj;
-            }
-            self.ready = true;
-            $rootScope.$broadcast('labsome.objects_inventory_changed');
-            ready_promise.resolve();
-        });
-    };
-
-    $rootScope.$on('labsome.notify.new_socket_available', function(event, socket) {
-        socket.on('object_changed:object', refresh);
-        socket.on('object_deleted:object', refresh);
-        refresh();
-    });
-
-    return self;
-});
-
-angular.module('labsome.labs').factory('objectTypes', function($rootScope, $http) {
-    var self = {
-        all: [],
-        byTypeKey: {}
-    };
-
-    var refresh = function() {
-        $http.get('/api/hardware/v1/types').then(function(res) {
-            self.all = res.data.types;
-            self.byTypeKey = {};
-            for (var i = 0; i < self.all.length; ++i) {
-                var type = self.all[i];
-                self.byTypeKey[type.type_key] = type;
-            }
-            $rootScope.$broadcast('labsome.object_types_refreshed');
-        });
-    };
-
-    $rootScope.$on('labsome.auth.user_authorized', refresh);
-
-    return self;
-});
-
-angular.module('labsome.labs').service('selectedLab', function() {
+angular.module('labsome.labs').service('selectedLab', function($log) {
     this.lab_id = undefined;
     this.set = function(new_lab_id) {
+        $log.info('Selecting lab:', new_lab_id);
         this.lab_id = new_lab_id;
     };
 });
 
-angular.module('labsome.labs').controller('AllLabsController', function($scope, $state, $uibModal, viewPath, selectedLab, allLabs) {
+angular.module('labsome.labs').controller('AllLabsController', function($scope, $log, $state, $uibModal, viewPath, selectedLab, allLabs) {
     var _goto_lab = function(lab_id) {
-        $state.go('labs.lab-page', {labSlug: allLabs.byId[lab_id].slug});
+        var slug = allLabs.byId[lab_id].slug;
+        $log.info('Redirecting to lab:', slug);
+        $state.go('labs.lab-page', {labSlug: slug});
     };
 
     var refresh = function() {
@@ -302,7 +228,10 @@ angular.module('labsome.labs').controller('AllLabsController', function($scope, 
             templateUrl: viewPath('main-site/views/labs/create-lab.html'),
             controller: 'CreateLabController'
         }).result.then(function(new_lab) {
-            $state.go('labs.lab-page', {labSlug: new_lab.slug});
+            // Set selectedLab and wait for the new lab to be refreshed from
+            // the database. When that happens the user will be redirected
+            // to the new lab page.
+            selectedLab.set(new_lab.id);
         });
     };
 });
@@ -329,27 +258,13 @@ angular.module('labsome.labs').controller('CreateLabController', function($scope
     };
 });
 
-angular.module('labsome.labs').controller('LabPageController', function($scope, $state, selectedLab, allLabs, labObjects, objectTypes, labSlug) {
+angular.module('labsome.labs').controller('LabPageController', function($scope, $state, $log, selectedLab, allLabs, labSlug) {
     $scope.lab_slug = labSlug;
     $scope.lab_id = undefined;
     if (allLabs.bySlug[$scope.lab_slug]) {
         $scope.lab_id = allLabs.bySlug[$scope.lab_slug].id;
     }
     selectedLab.set($scope.lab_id);
-
-    $scope.type_name_from_key = function(type_key) {
-        return allLabs.byId[$scope.lab_id].type_naming[type_key].name_plural;
-    };
-
-    var _first_type_key = function(active_types) {
-        var type_key = active_types[0];
-        active_types.forEach(function(other_type_key) {
-            if ($scope.type_name_from_key(other_type_key) < $scope.type_name_from_key(type_key)) {
-                type_key = other_type_key;
-            }
-        });
-        return type_key;
-    };
 
     var refresh = function() {
         if (!allLabs.ready) {
@@ -376,51 +291,103 @@ angular.module('labsome.labs').controller('LabPageController', function($scope, 
     });
 });
 
-angular.module('labsome.labs').controller('AddServersController', function($scope, $location, hwServerTypeKey) {
-    var base_url = $location.protocol() + '://' + $location.host();
-    if ((($location.protocol() == 'http') && ($location.port() != 80)) ||
-        (($location.protocol() == 'https') && ($location.port() != 443))) {
-        base_url += ':' + $location.port();
-    }
+angular.module('labsome.labs').controller('BrowseTypeController', function($scope, $state, dbObjects, typeObjId, allLabs, viewPath) {
+    $scope.type_obj_id = typeObjId;
+    $scope.type_template_path = viewPath('main-site/hardware/' + dbObjects.byId[$scope.type_obj_id].type_key + '/index.html');
 
-    $scope.agent_url = base_url + '/api/hardware/v1/' + hwServerTypeKey + '/code/agent.py?lab_id=' + $scope.lab_id;
+    var refresh = function() {
+        $scope.objects = undefined;
+        if (!allLabs.ready) {
+            return;
+        }
+        if (angular.isUndefined(allLabs.byId[$scope.lab_id]) ||
+            angular.isUndefined(dbObjects.byId[$scope.type_obj_id])) {
+            $state.go('^');
+            return;
+        }
+        $scope.objects = dbObjects.byTypeId[$scope.type_obj_id];
+    };
+
+    refresh();
+
+    $scope.$on('labsome.labs_inventory_changed', refresh);
+    $scope.$on('labsome.type_classes_loaded', refresh);
+    $scope.$on('labsome.models.objects_reloaded', refresh);
+    $scope.$on('labsome.models.object_changed', refresh);
+    $scope.$on('labsome.models.object_deleted', refresh);
+    $scope.$on('$stateChangeSuccess', refresh);
+
 });
 
-angular.module('labsome.labs').controller('SetHardwareTypesController', function($scope, $state, allLabs, objectTypes) {
-    $scope.result = {
-        active_types: angular.copy(allLabs.byId[$scope.lab_id].active_types || []),
-        type_naming: angular.copy(allLabs.byId[$scope.lab_id].type_naming || {})
+angular.module('labsome.labs').controller('ObjectPageController', function($scope, $state, dbObjects, labId, typeObjId, objId, viewPath) {
+    $scope.lab_id = labId;
+    $scope.type_obj_id = typeObjId;
+    $scope.obj_id = objId;
+
+    $scope.object_template_path = viewPath('main-site/hardware/' + dbObjects.byId[typeObjId].type_key + '/object-page.html');
+
+    var reload_object = function() {
+        $scope.object = dbObjects.byId[$scope.obj_id];
+        if (angular.isUndefined($scope.object)) {
+            $state.go('^');
+        }
     };
 
-    $scope.selected_types = {};
-
-    for (var i = 0; i < objectTypes.all.length; ++i) {
-        var type = objectTypes.all[i];
-        if ($scope.result.active_types.indexOf(type.type_key) != -1) {
-            $scope.selected_types[type.type_key] = true;
-        } else {
-            $scope.selected_types[type.type_key] = false;
+    var reload_object_conditionally = function(event, obj_id) {
+        if ($scope.obj_id == obj_id) {
+            reload_object();
         }
-    }
+    };
 
-    $scope.toggle_type_selection = function(type_key) {
-        $scope.selected_types[type_key] = !$scope.selected_types[type_key];
-        if ($scope.selected_types[type_key]) {
-            $scope.result.active_types.push(type_key);
-            if (!$scope.result.type_naming[type_key]) {
-                $scope.result.type_naming[type_key] = {
-                    name_singular: objectTypes.byTypeKey[type_key].display_name.toLowerCase(),
-                    name_plural: objectTypes.byTypeKey[type_key].display_name.toLowerCase() + 's'
-                };
+    $scope.$on('labsome.models.objects_reloaded', reload_object);
+    $scope.$on('labsome.models.object_changed', reload_object_conditionally);
+    $scope.$on('labsome.models.object_deleted', reload_object_conditionally);
+});
+
+angular.module('labsome.labs').controller('HardwareTypesController', function($scope, $state, $uibModal, allLabs, viewPath) {
+    $scope.new_hardware_type = function() {
+        $uibModal.open({
+            templateUrl: viewPath('main-site/views/labs/manage/new-hardware-type.html'),
+            controller: 'NewHardwareTypeController',
+            resolve: {
+                lab_id: function() {
+                    return $scope.lab_id;
+                }
             }
-        } else {
-            $scope.result.active_types.splice($scope.result.active_types.indexOf(type_key), 1);
+        });
+    };
+
+    $scope.delete_type = function(type_obj) {
+        allLabs.delete_type_object($scope.lab_id, type_obj.id);
+    };
+});
+
+angular.module('labsome.labs').controller('NewHardwareTypeController', function($scope, $uibModalInstance, allLabs, dbTypeClasses, lab_id) {
+    $scope.lab_id = lab_id;
+    $scope.new_type = {
+        display_name: {
+            singular: '',
+            plural: ''
         }
     };
 
-    $scope.save_changes = function() {
-        allLabs.update($scope.lab_id, $scope.result);
-        $state.go('^');
+    $scope.selection_changed = function() {
+        var type_class = dbTypeClasses.byTypeKey[$scope.new_type.type_key];
+        $scope.new_type.display_name.singular = type_class.display_name.toLowerCase();
+        $scope.new_type.display_name.plural = type_class.display_name.toLowerCase() + 's';
+    };
+
+    $scope.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
+    };
+
+    $scope.create = function() {
+        $scope.working = true;
+        $scope.error = undefined;
+        allLabs.create_type_object($scope.lab_id, $scope.new_type).then($uibModalInstance.close, function(res) {
+            $scope.working = false;
+            $scope.error = res.data;
+        });
     };
 });
 
@@ -442,114 +409,4 @@ angular.module('labsome.labs').controller('DeleteLabController', function($scope
             $state.go('labs');
         });
     };
-});
-
-angular.module('labsome.labs').controller('CurrentObjectTypeController', function($scope, $state, allLabs, labObjects, typeKey) {
-    $scope.type_key = typeKey;
-
-    var refresh = function() {
-        $scope.objects = undefined;
-        if (!allLabs.ready) {
-            return;
-        }
-        if (angular.isUndefined(allLabs.byId[$scope.lab_id]) ||
-            angular.isUndefined(allLabs.byId[$scope.lab_id].active_types) ||
-            (allLabs.byId[$scope.lab_id].active_types.indexOf($scope.type_key) == -1)) {
-            $state.go('^');
-            return;
-        }
-        var lab_objects = labObjects.byLabId[$scope.lab_id];
-        if (angular.isUndefined(lab_objects)) {
-            return;
-        }
-        $scope.objects = lab_objects.byObjectType[$scope.type_key];
-    };
-
-    refresh();
-
-    $scope.$on('labsome.labs_inventory_changed', refresh);
-    $scope.$on('labsome.object_types_refreshed', refresh);
-    $scope.$on('labsome.objects_inventory_changed', refresh);
-    $scope.$on('$stateChangeSuccess', refresh);
-});
-
-angular.module('labsome.labs').controller('ObjectActionController', function($scope, $state, viewPath, allLabs, labId, typeKey, actionName, objId) {
-    $scope.viewPath = viewPath;
-    $scope.lab_id = labId;
-    if (!$scope.lab_id) {
-        $state.go('^');
-    }
-    $scope.type_key = typeKey;
-    $scope.action_name = actionName;
-    $scope.object_id = objId;
-});
-
-angular.module('labsome.labs').directive('labName', function(allLabs) {
-    var link = function(scope, elem, attrs) {
-        scope.allLabs = allLabs;
-    };
-
-    return {
-        restrict: 'AE',
-        template: ' {{ allLabs.byId[id].display_name }}',
-        link: link,
-        scope: {
-            'id': '='
-        }
-    };
-});
-
-angular.module('labsome.labs').directive('objectName', function(labObjects) {
-    var link = function(scope, elem, attrs) {
-        scope.labObjects = labObjects;
-    };
-
-    return {
-        restrict: 'AE',
-        template: ' {{ labObjects.byObjectId[id].display_name }}',
-        link: link,
-        scope: {
-            'id': '='
-        }
-    };
-});
-
-angular.module('labsome.labs').directive('objectTypeName', function(allLabs) {
-    var link = function(scope, elem, attrs) {
-        scope.allLabs = allLabs;
-    };
-
-    return {
-        restrict: 'AE',
-        template: '{{ allLabs.byId[labId].type_naming[typeKey][(sample == 1) ? "name_singular" : "name_plural"] | titlecase }}',
-        link: link,
-        scope: {
-            labId: '=',
-            typeKey: '=',
-            sample: '@'
-        }
-    };
-});
-
-angular.module('labsome.labs').directive('objectCountWithType', function(allLabs) {
-    var link = function(scope, elem, attrs) {
-        scope.allLabs = allLabs;
-    };
-
-    return {
-        restrict: 'AE',
-        template: '{{ (!count && (count != 0)) ? "" : (count + " ") }}<object-type-name lab-id="labId" type-key="typeKey" sample="{{ count }}"/>',
-        link: link,
-        scope: {
-            labId: '=',
-            typeKey: '=',
-            count: '@'
-        }
-    };
-});
-
-angular.module('labsome.labs').run(function($rootScope, allLabs, labObjects, objectTypes) {
-    $rootScope.allLabs = allLabs;
-    $rootScope.labObjects = labObjects;
-    $rootScope.objectTypes = objectTypes;
 });

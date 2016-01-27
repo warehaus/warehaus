@@ -1,23 +1,26 @@
 mixin no_servers
-  .big-message
+  .big-message(ng-if='objects | isEmpty')
     h3.text-center
       i.icon-clock.x6(ng-if='!curUser.is_admin')
       i.icon-ghost.x6(ng-if='curUser.is_admin')
     p.text-center.x2
-      | No 
-      object-type-name(lab-id='lab_id' type-key='type_key')
-      |  Yet
+      | No
+      | &#32;
+      object-type-title(type-id='type_obj_id')
+      | &#32;
+      | Yet
     p.text-center.x12(ng-if='!curUser.is_admin')
       | Please wait you administrator is adding new 
-      object-type-name.lowercase(lab-id='lab_id' type-key='type_key')
+      object-type-name(lab-id='lab_id' type-key='type_key')
     p.text-center.x12(ng-if='curUser.is_admin')
       | You need to install Labsome's agent on your 
-      object-type-name.lowercase(lab-id='lab_id' type-key='type_key')
+      object-type-name(lab-id='lab_id' type-key='type_key')
       |  to see them here
     p.text-center.x2(ng-if='curUser.is_admin')
-      button.btn.btn-lg.btn-success(ui-sref='^.manage.add-servers')
-        | Start Adding 
-        object-type-name(lab-id='lab_id' type-key='type_key')
+      button.btn.btn-lg.btn-success(ui-sref='.({tab: "adding-servers"})')
+        | Start Adding
+        | &#32;
+        object-type-title(type-id='type_obj_id')
 
 mixin server_row
   table.details
@@ -31,32 +34,108 @@ mixin server_row
           a.text-link.dropdown-toggle(id='dropdown-menu-{{ lab.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
             i.icon-options-vertical(style='padding:0 1rem;')
           ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ lab.id }}')
-            li.text-left(ng-if='!server.cluster_id')
+            li.text-left(ng-if='!clustersToServers.cluster_of_server[server.id]')
               a.link(ng-click='add_to_cluster(server.id)')
                 | Add To Cluster
-            li.text-left(ng-if='server.cluster_id')
+            li.text-left(ng-if='clustersToServers.cluster_of_server[server.id]')
               a.link(ng-click='remove_from_cluster(server.id)')
                 | Remove From Cluster
-    tr(ng-if='server.cluster_id')
+    tr(ng-if='clustersToServers.cluster_of_server[server.id]')
       td
       td.tagline
         | Part of
         | &nbsp;
         i.fa.fa-server
-        object-name(id='server.cluster_id')
+        object-name(id='clustersToServers.cluster_of_server[server.id]')
 
 mixin server_list
-  .panel.panel-default
+  +no_servers
+  .panel.panel-default(ng-if='objects | isNotEmpty')
     ul.list-group
       li.list-group-item(ng-repeat='server in objects | orderBy:"display_name"')
         +server_row
 
-mixin content
-  .page-layout
-    .page-layout-content-no-nav(ng-if='objects | isEmpty')
-      +no_servers
-    .page-layout-content-no-nav(ng-if='objects | isNotEmpty')
-      +server_list
+mixin adding_servers
+  p
+    | Labsome manages
+    | &#32;
+    object-type-name(type-id='type_obj_id')
+    | &#32;
+    | by running a small agent on them.
+  p
+    | This agent stays connected to Labsome so it knows the
+    | &#32;
+    object-type-name(type-id='type_obj_id' sample='1')
+    | &#32;
+    | is online, plus it sends diagnostic information once
+    | in a while to make sure the
+    | &#32;
+    object-type-name(type-id='type_obj_id' sample='1')
+    | &#32;
+    | is functioning properly.
+  .alert.alert-info
+    p
+      strong
+        i.fa.fa-info-circle
+        | &nbsp;Each hardware type has a different agent
+    p
+      | Labsome generates different agent code for each hardware type. Make sure to download
+      | the agent for each hardware type separarely.
+  h4
+    | 1. Download the agent code
+  p
+    | Run the following on your
+    | &#32;
+    object-type-name(type-id='type_obj_id')
+    | &#32;
+    | to download the agent code:
+  pre
+    | curl {{ agent_url }} > agent.py
+  p
+    | Or in case you only have <samp>wget</samp>:
+  pre
+    | wget -O agent.py {{ agent_url }}
+  h4
+    | 2. Run as root
+  p
+    | Run the agent as the root user, and make sure the agent also starts on boot.
+  p
+    | Once you run the agent, your
+    | &#32;
+    object-type-name(type-id='type_obj_id' sample='1')
+    | &#32;
+    | will immediately show up in Labsome.
 
-ui-view
-  +content
+mixin side_menu
+  ul
+    li.heading
+      | Filter
+    li(ui-sref-active='active')
+      a(ui-sref='.({tab: "all"})')
+        | All
+        | &#32;
+        object-type-title(type-id='type_obj_id')
+    li
+      a
+        i.fa.fa-tag
+        i
+          | &#32;
+          | Coming soon: Tags
+    li.heading(ng-if='curUser.is_admin')
+      | Admin Stuff
+    li(ng-if='curUser.is_admin' ui-sref-active='active')
+      a(ui-sref='.({tab: "adding-servers"})')
+        | Adding
+        | &#32;
+        object-type-title(type-id='type_obj_id')
+
+mixin content
+  .page-layout(ng-controller='ServerListController')
+    .page-layout-nav
+      +side_menu
+    .page-layout-content(ng-if='tab == "all"')
+      +server_list
+    .page-layout-content(ng-if='tab == "adding-servers"')
+      +adding_servers
+
++content

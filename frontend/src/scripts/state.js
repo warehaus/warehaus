@@ -6,7 +6,7 @@ angular.module('labsome.state').factory('labsomeState', function($rootScope, $ht
     var self = {};
 
     self.refresh = function() {
-        $http.get('/api/state').then(function(res) {
+        $http.get('/api/v1/state').then(function(res) {
             self.loaded = true;
             self.is_initialized = res.data.is_initialized;
             self.is_authenticated = res.data.is_authenticated;

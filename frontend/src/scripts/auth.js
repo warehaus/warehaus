@@ -5,7 +5,7 @@ angular.module('labsome.auth', [
     'angular-jwt'
 ]);
 
-angular.module('labsome.auth').factory('curUser', function($rootScope, $http, labsomeState, users) {
+angular.module('labsome.auth').factory('curUser', function($rootScope, $http, $log, labsomeState, users) {
     var self = {
         is_admin: undefined,
         is_authenticated: false
@@ -27,11 +27,13 @@ angular.module('labsome.auth').factory('curUser', function($rootScope, $http, la
         update_user_fields();
         self.is_admin = self.roles.indexOf('admin') != -1;
         self.is_authenticated = true;
+        $log.info('Authorized current user');
         $rootScope.$broadcast('labsome.auth.user_authorized');
     };
 
     var unload_current_user = function() {
         self.is_authenticated = false;
+        $log.info('Unauthorized current user');
         $rootScope.$broadcast('labsome.auth.user_unauthorized');
     };
 
@@ -41,7 +43,7 @@ angular.module('labsome.auth').factory('curUser', function($rootScope, $http, la
     };
 
     var load_current_user = function() {
-        $http.get('/api/auth/v1/self').then(function(res) {
+        $http.get('/api/v1/auth/self').then(function(res) {
             update(res.data);
         });
     };
@@ -62,19 +64,21 @@ angular.module('labsome.auth').factory('curUser', function($rootScope, $http, la
     return self;
 });
 
-angular.module('labsome.auth').controller('LoginController', function($scope, $http, labsomeState) {
+angular.module('labsome.auth').controller('LoginController', function($scope, $http, $log, labsomeState) {
     $scope.input = {};
     $scope.error = undefined;
 
     $scope.login = function() {
         $scope.working = true;
-        $http.post('/api/auth/v1/login', $scope.input).then(function(res) {
+        $http.post('/api/v1/auth/login', $scope.input).then(function(res) {
             $scope.error = undefined;
             localStorage.setItem('id_token', res.data.access_token);
+            $log.info('Successfully logged-in');
             labsomeState.refresh();
         }, function(res) {
             $scope.working = false;
             $scope.error = res.data.error;
+            $log.info('Could not log-in:', res.data.error);
         });
     };
 });

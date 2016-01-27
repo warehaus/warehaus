@@ -22,9 +22,8 @@ def identify(payload):
     logger.debug('Got payload: {!r}'.format(payload))
     return User.query.get(payload.get('identity', None))
 
-def init_app(app):
-    app.config['JWT_AUTH_URL_RULE'] = '/api/auth/v1/login'
+def init_auth(app):
+    app.config['JWT_AUTH_URL_RULE'] = '/api/v1/auth/login'
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(days=7)
     app.config['JWT_AUTH_HEADER_PREFIX'] = 'JWT'
-
     jwt = JWT(app, authenticate, identify)

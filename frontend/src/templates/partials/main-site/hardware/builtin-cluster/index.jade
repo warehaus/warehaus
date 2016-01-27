@@ -3,12 +3,18 @@ mixin no_clusters
     h3.text-center
       i.icon-ghost.x6
     p.text-center.x2
-      | No Clusters Yet
+      | No
+      | &#32;
+      object-type-title(type-id='type_obj_id')
+      | &#32;
+      | Yet
     p.text-center.x12
       | Create your first cluster and add some servers to it
     p.text-center.x2
       button.btn.btn-lg.btn-success(ng-click='create_cluster()')
-        | Create a Cluster
+        | Create a
+        | &#32;
+        object-type-title(type-id='type_obj_id' sample='1')
 
 mixin cluster_row
   table.details
@@ -21,11 +27,12 @@ mixin cluster_row
     tr
       td
       td
-        span.tagline.opacity08(ng-if='cluster.servers | isEmpty')
+        span.tagline.opacity08(ng-if='clustersToServers.servers_of_cluster[cluster.id] | isEmpty')
           | This cluster is empty
-        span(ng-if='cluster.servers | isNotEmpty')
+        span(ng-if='clustersToServers.servers_of_cluster[cluster.id] | isNotEmpty')
           span.label.label-success
-            object-count-with-type(lab-id='lab_id' type-key='labObjects.byObjectId[cluster.servers[0]].type_key' count='{{ cluster.servers.length }}')
+            object-count-with-type(type-id='dbObjects.byId[clustersToServers.servers_of_cluster[cluster.id][0]].type_id'
+                                   count='{{ clustersToServers.servers_of_cluster[cluster.id].length }}')
         span(ng-repeat='ownership in cluster.ownerships' style={'padding': '0 0 0 .5rem'})
           user-avatar(id='ownership.owner_id' size='1.5rem')
           | &nbsp;
@@ -35,7 +42,7 @@ mixin cluster_list
   .panel.panel-default
     ul.list-group
       a.link.list-group-item(ng-repeat='cluster in objects | orderBy:"display_name"'
-                             ui-sref='.cluster-page({clusterSlug: "{{ cluster.slug }}"})')
+                             ui-sref='.object-page({objSlug: "{{ cluster.slug }}"})')
         +cluster_row
 
 mixin create_button
@@ -44,12 +51,11 @@ mixin create_button
       | Create a Cluster
 
 mixin content
-  .page-layout
+  .page-layout(ng-controller='ClusterListController')
     .page-layout-content-no-nav(ng-if='objects | isEmpty')
       +no_clusters
     .page-layout-content-no-nav(ng-if='objects | isNotEmpty')
       +cluster_list
       +create_button
 
-ui-view
-  +content
++content

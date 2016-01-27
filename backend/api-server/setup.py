@@ -25,12 +25,18 @@ setup(
         'Flask-SocketIO == 1.2',
         'flask-restful == 0.3.5',
         'python-slugify == 1.1.4',
+        'blinker == 1.4',
         'bunch == 1.0.1',
         'eventlet == 0.17.4',
         'gunicorn == 19.4.1',
         'pytz',
         'rethinkdb >= 2.2.0',
         'setuptools',
+    ],
+
+    test_suite = 'tests.suite',
+    tests_require = [
+        'requests',
     ],
 
     entry_points = {

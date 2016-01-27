@@ -67,10 +67,10 @@ angular.module('labsome.admin').controller('LDAPSettingsController', function($s
         };
     };
 
-    $http.get('/api/settings/v1/ldap').then(_update_from_res);
+    $http.get('/api/v1/settings/ldap').then(_update_from_res);
 
     $scope.save_settings = function() {
         $scope.working = true;
-        $http.post('/api/settings/v1/ldap', $scope.settings.ldap).then(_update_from_res);
+        $http.post('/api/v1/settings/ldap', $scope.settings.ldap).then(_update_from_res);
     };
 });

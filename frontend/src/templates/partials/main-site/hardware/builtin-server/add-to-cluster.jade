@@ -3,18 +3,23 @@
     span(aria-hidden="true") &times;
   h4.modal-title
     | Add
+    | &#32;
     object-name(id='server_id')
+    | &#32;
     | to Cluster
 
 .modal-body
   p
     | Select the cluster to add
+    | &#32;
     strong
       object-name(id='server_id')
-    |  to
+    | &#32;
+    | to
   form
-    ul.list-group
-      a.link.list-group-item(ng-repeat='cluster in clusters'
+    ul.list-group(ng-repeat='(type_obj_id, type_obj) in dbObjects.byParentId[dbObjects.byId[lab_id].type_id]'
+                  ng-if='type_obj.type_key == hwClusterTypeKey')
+      a.link.list-group-item(ng-repeat='(cluster_id, cluster) in dbObjects.byTypeId[type_obj_id]'
                              ng-click='select_cluster(cluster.id)',
                              ng-class="{active: selected_cluster == cluster.id}")
         .radio

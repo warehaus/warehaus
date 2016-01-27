@@ -31,9 +31,9 @@ mixin page_header
           +multiple_labs
     ul.page-header-nav
       li.spacer
-      li(ng-repeat='type_key in allLabs.byId[lab_id].active_types | orderBy:type_name_from_key' ui-sref-active='active')
-        a.link(ui-sref='.{{ type_key }}')
-          object-type-name(lab-id='lab_id' type-key='type_key')
+      li(ng-repeat='(type_obj_id, type_obj) in dbObjects.byParentId[allLabs.byId[lab_id].type_id] | orderBy:"type_obj.display_name.plural"' ui-sref-active='active')
+        a.link(ui-sref='.browse-type({typeSlug: type_obj.slug})')
+          object-type-title(type-id='type_obj.id')
       li.padding
       li(ng-if='curUser.is_admin' ui-sref-active='active')
         a.link(ui-sref='.manage')
@@ -50,14 +50,14 @@ mixin lab_empty
     p.text-center.x12(ng-if='!curUser.is_admin')
       | Please wait you administrator is adding new hardware
     p.text-center.x12(ng-if='curUser.is_admin')
-      | You need to start by choosing which hardware types are in this lab
+      | You need to start by configuring which hardware goes in this lab
     p.text-center.x2(ng-if='curUser.is_admin')
       button.btn.btn-lg.btn-success(ui-sref='.manage.set-hardware-types')
-        | Set Hardware Types
+        | Configure This Lab
 
 mixin content
   ui-view
-    .page-layout(ng-if='allLabs.byId[lab_id].active_types | isEmpty')
+    .page-layout(ng-if='dbObjects.byParentId[allLabs.byId[lab_id].type_id] | isEmpty')
       .page-layout-content-no-nav
         +lab_empty
 

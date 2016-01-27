@@ -19,7 +19,7 @@ var r = require('rethinkdb');
 http_server.listen(5001);
 logger.info('Notification server listening on :5001');
 
-const db_tables = ['lab', 'object', 'user'];
+const db_tables = ['object', 'user'];
 
 var send_notification = function(db_table, err, change) {
     logger.debug(`Received notification: db_table=${db_table} err=${err} change:`, change);

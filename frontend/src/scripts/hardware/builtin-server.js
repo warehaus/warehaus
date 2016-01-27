@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('labsome.hardware.server', [
-    'labsome.labs'
+    'labsome.models'
 ]);
 
 angular.module('labsome.hardware.server').constant('hwServerTypeKey', 'builtin-server');
@@ -16,61 +16,57 @@ angular.module('labsome.hardware.server').provider('serverView', function(viewPa
     };
 });
 
-angular.module('labsome.hardware.server').provider('hwServerUrlRoutes', function(hwServerTypeKey, serverViewProvider) {
-    var serverView = serverViewProvider.$get();
-    return {
-        $get: function() {
-            return [
-                {
-                    name: hwServerTypeKey,
-                    url: '/' + hwServerTypeKey,
-                    templateUrl: serverView('index.html'),
-                    controller: 'ServerListController',
-                    resolve: {
-                        $title: ['$filter', 'allLabs', 'labId', function($filter, allLabs, labId) {
-                            return $filter('titlecase')(allLabs.byId[labId].type_naming[hwServerTypeKey].name_plural);
-                        }]
-                    },
-                    children: [
-                    ]
-                }
-            ];
-        }
-    };
-});
+angular.module('labsome.hardware.server').controller('ServerListController', function($scope, $location, $http, $stateParams, $uibModal, dbObjects, serverView) {
+    if (!$stateParams.tab) {
+        $stateParams.tab = 'all';
+    }
+    $scope.tab = $stateParams.tab;
 
-angular.module('labsome.hardware.server').controller('ServerListController', function($scope, $controller, $http, $uibModal, hwServerTypeKey, serverView) {
-    $controller('CurrentObjectTypeController', {
-        $scope: $scope,
-        typeKey: hwServerTypeKey
-    });
+    var base_url = $location.protocol() + '://' + $location.host();
+    if ((($location.protocol() == 'http') && ($location.port() != 80)) ||
+        (($location.protocol() == 'https') && ($location.port() != 443))) {
+        base_url += ':' + $location.port();
+    }
+    var lab = dbObjects.byId[$scope.lab_id];
+    var type_obj = dbObjects.byId[$scope.type_obj_id];
+
+    $scope.agent_url = base_url + '/api/v1/labs/' + lab.slug + '/~/' + type_obj.slug + '/agent.py';
+
+    var server_uri = function(server_id) {
+        var lab = dbObjects.byId[$scope.lab_id];
+        var server = dbObjects.byId[server_id];
+        return '/api/v1/labs/' + lab.slug + '/' + server.slug + '/';
+    };
 
     $scope.add_to_cluster = function(server_id) {
         $uibModal.open({
             templateUrl: serverView('add-to-cluster.html'),
             controller: 'ClusterSelectionController',
             resolve: {
-                lab_id: function() {
+                labId: function() {
                     return $scope.lab_id;
+                },
+                typeObjId: function() {
+                    return $scope.type_obj_id;
                 },
                 server_id: function() {
                     return server_id;
                 }
             }
         }).result.then(function(cluster_id) {
-            $http.put('/api/hardware/v1/' + hwServerTypeKey + '/' + server_id, {cluster_id: cluster_id});
+            $http.put(server_uri(server_id) + 'cluster', {cluster_id: cluster_id});
         });
     };
 
     $scope.remove_from_cluster = function(server_id) {
-        $http.put('/api/hardware/v1/' + hwServerTypeKey + '/' + server_id, {cluster_id: null});
+        $http.put(server_uri(server_id) + 'cluster', {cluster_id: null});
     };
 });
 
-angular.module('labsome.hardware.server').controller('ClusterSelectionController', function($scope, $uibModalInstance, labObjects, hwClusterTypeKey, lab_id, server_id) {
-    $scope.lab_id = lab_id;
+angular.module('labsome.hardware.server').controller('ClusterSelectionController', function($scope, $uibModalInstance, dbObjects, labId, typeObjId, server_id, hwClusterTypeKey) {
+    $scope.lab_id = labId;
     $scope.server_id = server_id;
-    $scope.clusters = labObjects.byLabId[lab_id].byObjectType[hwClusterTypeKey];
+    $scope.hwClusterTypeKey = hwClusterTypeKey;
 
     $scope.selected_cluster = undefined;
 

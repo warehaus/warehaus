@@ -7,8 +7,8 @@ from flask import make_response
 from flask.json import jsonify
 from ..settings.models import edit_settings
 from ..auth.models import User
-from ..auth.ldap_login import LdapServer
-from ..auth.ldap_login import LdapError
+from ..auth.ldap_server import LdapServer
+from ..auth.ldap_server import LdapError
 from ..auth import roles
 
 first_setup_api = Blueprint('first_setup_api', __name__)

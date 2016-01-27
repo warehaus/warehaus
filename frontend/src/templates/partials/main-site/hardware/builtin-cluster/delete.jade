@@ -3,7 +3,7 @@
     span(aria-hidden="true") &times;
   h4.modal-title
     | Delete
-    object-name(id='cluster_id')
+    object-name(id='obj_id')
 
 mixin alert
   .alert.alert-danger
@@ -13,14 +13,21 @@ mixin alert
     p
       | You are about to delete
       strong
-        object-name(id='cluster_id')
+        object-name(id='obj_id')
       | .
 
 mixin outcome
   p
-    | If you proceed, your ownership of this cluster and all servers in it will be released.
+    | If you proceed, your ownership of this
+    | &#32;
+    object-type-name(type-id='type_obj_id' sample='1')
+    | &#32;
+    | and all servers in it will be released.
   p
-    | Are you are you want to delete this cluster?
+    | Are you are you want to delete this
+    | &#32;
+    object-type-name(type-id='type_obj_id' sample='1')
+    | ?
 
 .modal-body
   +alert
@@ -30,4 +37,6 @@ mixin outcome
   button.btn.btn-default(ng-click='cancel()')
     | Cancel
   button.btn.btn-danger(ng-click='ok()')
-    | Yes, Delete This Cluster
+    | Yes, Delete This
+    | &#32;
+    object-type-title(type-id='type_obj_id' sample='1')

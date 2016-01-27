@@ -1,38 +1,49 @@
-mixin type_selection
-  ul.list-group
-    list.list-group-item(ng-repeat='type in objectTypes.all' ng-class="{'opacity05': !selected_types[type.type_key]}")
-      a.link.no-ul(ng-click='toggle_type_selection(type.type_key)')
+mixin no_hardware_types
+  p.text-center
+    | It looks like this lab has no types yet, let's create the first one
+  p.text-center(ng-if='curUser.is_admin')
+    button.btn.btn-success(ng-click='new_hardware_type()')
+      | New Hardware Type
+
+mixin hardware_type_menu
+  .dropdown
+    a.text-link.dropdown-toggle(id='dropdown-menu-{{ type_obj.id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+      i.icon-options-vertical(style='padding:0 1rem;')
+    ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ type_obj.id }}')
+      li.text-left
+        a.link(ng-click='delete_type(type_obj)')
+          | Delete This Type
+
+mixin hardware_type_row
+  table.details
+    tr
+      td.main
         .x12
-          i.fa.fa-fw.fa-toggle-off(ng-if='!selected_types[type.type_key]')
-          i.fa.fa-fw.fa-toggle-on(ng-if='selected_types[type.type_key]')
+          | {{ type_obj.display_name.singular || '??' | titlecase }}
+        div
+          i.fa.fa-fw.fa-code
+          samp
+            | {{ type_obj.slug }}
           | &nbsp;
-          | {{ type.display_name }}
-          span.x08(ng-if='type.display_name != type.type_key')
-            | &nbsp;&nbsp;
-            i.fa.fa-fw.fa-tag
-            | {{ type.type_key }}
-      .x09(ng-if='selected_types[type.type_key]')
-        | Mommy got me one
-        | &nbsp;
-        input.inline(type='text' ng-model='result.type_naming[type.type_key].name_singular' required='')
-        | &nbsp;
-        | for my birthday but I wanted two
-        | &nbsp;
-        input.inline(type='text' ng-model='result.type_naming[type.type_key].name_plural' required='')
+          i.fa.fa-fw.fa-child
+          | {{ type_obj.type_key }}
+        td
+          +hardware_type_menu
+
+mixin hardware_types
+  ul.list-group
+    list.list-group-item(ng-repeat='(type_obj_id, type_obj) in dbObjects.byParentId[allLabs.byId[lab_id].type_id]')
+      +hardware_type_row
+    list.list-group-item(ng-if='dbObjects.byParentId[allLabs.byId[lab_id].type_id] | isEmpty')
+      +no_hardware_types
 
 mixin content
-  form(name='setHardwareTypes' ng-submit='save_changes()')
-    .panel.panel-default
-      .panel-heading
-        | Hardware Types
-      .panel-body
-        div
-          | Please select the hardware types to include in this lab.
-        div
-          | For each type you can also specify a different term users will see for that type.
-      +type_selection
-      .panel-footer.text-right
-        button.btn.btn-primary(type='button' ng-click='save_changes()' ng-disabled='setHardwareTypes.$invalid')
-          | Save Changes
+  .panel.panel-default
+    .panel-heading
+      | Hardware Types
+    +hardware_types
+    .panel-footer.text-right(ng-if='dbObjects.byParentId[allLabs.byId[lab_id].type_id] | isNotEmpty')
+      button.btn.btn-primary(type='button' ng-click='new_hardware_type()')
+        | New Hardware Type
 
 +content

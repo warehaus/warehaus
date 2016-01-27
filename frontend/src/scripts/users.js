@@ -18,7 +18,7 @@ angular.module('labsome.users').factory('users', function($rootScope, $http) {
     };
 
     var refresh = function() {
-        return $http.get('/api/auth/v1/users').then(function(res) {
+        return $http.get('/api/v1/auth/users').then(function(res) {
             self.all = res.data.objects;
             for (var i = 0; i < self.all.length; ++i) {
                 var user = self.all[i];
@@ -31,10 +31,10 @@ angular.module('labsome.users').factory('users', function($rootScope, $http) {
     };
 
     self.new_api_token = function(user_id) {
-        $http.post('/api/auth/v1/users/' + user_id + '/api-tokens').then(refresh);
+        $http.post('/api/v1/auth/users/' + user_id + '/api-tokens').then(refresh);
     };
 
-    $rootScope.$on('labsome.notify.new_socket_available', function(event, socket) {
+    $rootScope.$on('labsome.models.new_socket_available', function(event, socket) {
         socket.on('object_changed:user', refresh);
         socket.on('object_deleted:user', refresh);
         refresh();

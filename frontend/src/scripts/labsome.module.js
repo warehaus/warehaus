@@ -5,7 +5,7 @@ angular.module('labsome', [
     'labsome.templates',
     'labsome.state',
     'labsome.first_setup',
-    'labsome.notify',
+    'labsome.models',
     'labsome.users',
     'labsome.auth',
     'labsome.labs',

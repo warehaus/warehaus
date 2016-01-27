@@ -51,18 +51,25 @@ def collect_block_dev_info():
             block_devices.append(mo.groupdict())
     return block_devices
 
+info_collectors = dict(
+    hostname      = lambda: open('/proc/sys/kernel/hostname').read().strip(),
+    net           = collect_net_info,
+    pci_devices   = collect_pci_info,
+    block_devices = collect_block_dev_info,
+)
+
 def collect_info():
-    return dict(
-        hostname = open('/proc/sys/kernel/hostname').read().strip(),
-        lab_id = LABSOME_LAB_ID,
-        net = collect_net_info(),
-        pci_devices = collect_pci_info(),
-        block_devices = collect_block_dev_info(),
-    )
+    info = dict(errors=[])
+    for key, collect_func in info_collectors.iteritems():
+        try:
+            info[key] = collect_func()
+        except Exception as error:
+            info[key] = None
+            info['errors'].append(str(error))
+    return info
 
 def send(data):
-    send_url = urljoin(LABSOME_URL, '/api/hardware/v1/builtin-server/heartbeat')
-    request = Request(send_url, json.dumps(data), {'Content-Type': 'application/json'})
+    request = Request(LABSOME_HEARTBEAT_POST_URL, json.dumps(data), {'Content-Type': 'application/json'})
     response = urlopen(request).read()
 
 info = collect_info()

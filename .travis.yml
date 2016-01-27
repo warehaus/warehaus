@@ -3,5 +3,8 @@ sudo: required
 services:
   - docker
 
+before_script:
+  - docker run -d rethinkdb
+
 script:
-  - make push-docker-image
+  - make test push-docker-image

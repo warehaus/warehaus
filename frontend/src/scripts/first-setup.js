@@ -30,7 +30,7 @@ angular.module('labsome.first_setup').controller('FirstSetupController', functio
     $scope.test_settings = function() {
         _reset();
         $scope.working = true;
-        $http.post('/api/first-setup/test', $scope.settings).then(function(response) {
+        $http.post('/api/v1/first-setup/test', $scope.settings).then(function(response) {
             $scope.working = false;
             var modalInstance = $uibModal.open({
                 templateUrl: viewPath('first-setup/verification.html'),
@@ -46,8 +46,8 @@ angular.module('labsome.first_setup').controller('FirstSetupController', functio
             });
             modalInstance.result.then(function() {
                 $scope.working = true;
-                $http.post('/api/first-setup/configure', $scope.settings).then(function() {
-                    $http.post('/api/first-setup/restart-server');
+                $http.post('/api/v1/first-setup/configure', $scope.settings).then(function() {
+                    $http.post('/api/v1/first-setup/restart-server');
                     $timeout(function() {
                         labsomeState.refresh();
                     }, 1000);

@@ -35,7 +35,19 @@ docker-image: build
 run: docker-image
 	@echo "Running..."
 	@mkdir -p $(LOCAL_LOGS)
-	@docker run -ti --link rethinkdb -p 80:80 --volume $(LOCAL_LOGS):/var/log/labsome $(DOCKER_IMAGE):latest
+	@$(DOCKER_RUN_CMDLINE) \
+		--link rethinkdb \
+		--port 80:80 \
+		--volume $(LOCAL_LOGS):/var/log/labsome \
+		$(DOCKER_IMAGE):latest
+
+test: docker-image
+	@echo "Running backend tests..."
+	@$(DOCKER_RUN_CMDLINE) \
+		--link rethinkdb \
+		--volume $(SRC_DIR):/opt/src \
+		$(DOCKER_IMAGE):latest \
+		bash -c "cd /opt/src/backend/api-server && python setup.py test"
 
 tagged-docker-image: docker-image
 	@if [ ! -z "$(TRAVIS_TAG)" ]; then \

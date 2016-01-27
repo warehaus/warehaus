@@ -1,0 +1,96 @@
+mixin actions
+  .dropdown(ng-if='curUser.is_admin || (dbObjects.byId[obj_id].ownerships | isEmpty) || (dbObjects.byId[obj_id].ownerships[0].owner_id == curUser.id)')
+    button.btn.btn-default.dropdown-toggle(id='dropdown-menu-{{ obj_id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+      | Actions
+      i.fa.fa-fw.fa-angle-down
+    ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ obj_id }}')
+      li.text-left(ng-if='dbObjects.byId[obj_id].ownerships | isEmpty')
+        a.link(ng-click='take_ownership()')
+          | Take Ownership
+      li.text-left(ng-if='dbObjects.byId[obj_id].ownerships | isNotEmpty')
+        a.link(ng-click='release_ownership()')
+          | Release Ownership
+      li.divider
+      li.text-left
+        a.link(ng-click='delete_cluster()')
+          | Delete This
+          | &#32;
+          object-type-title(type-id='type_obj_id' sample='1')
+
+mixin page_header
+  .page-header
+    .page-header-row
+      .page-header-row-cell.x3
+        i.icon-chemistry
+      .page-header-row-cell
+        .x12
+          a(ui-sref='^')
+            lab-name(id='lab_id')
+          i.fa.fa-fw.fa-angle-right
+          strong
+            object-name(id='obj_id')
+      .page-header-row-cell.text-right
+        +actions
+    ul.page-header-nav
+      li.padding
+
+mixin servers
+  .panel.panel-default
+    .panel-heading
+      | Servers In This
+      | &#32;
+      object-type-title(type-id='type_obj_id' sample='1')
+    ul.list-group
+      li.list-group-item(ng-repeat='server_id in clustersToServers.servers_of_cluster[obj_id]')
+        object-name(id='server_id')
+      li.list-group-item(ng-if='clustersToServers.servers_of_cluster[obj_id] | isEmpty')
+        div(style={'font-style': 'italic'})
+          i.fa.fa-meh-o
+          | &nbsp;
+          | No servers in this
+          | &#32;
+          object-type-name(type-id='type_obj_id' sample='1')
+          | .
+        div
+          | Try adding some servers or maybe
+          | &#32;
+          mild
+            a.link(ng-click='delete_cluster()')
+              | delete this
+              | &#32;
+              object-type-name(type-id='type_obj_id' sample='1')
+          | &#32;
+          | if you don't need it anymore.
+
+mixin owners
+  a(ng-repeat='ownership in dbObjects.byId[obj_id].ownerships')
+    user-avatar(id='ownership.owner_id' size='1.5rem')
+    | &nbsp;
+    user-display-name(id='ownership.owner_id')
+  a(ng-if='dbObjects.byId[obj_id].ownerships | isEmpty' style={'font-style': 'italic'})
+    i.fa.fa-fw.fa-meh-o
+    | Nobody
+
+mixin navigation
+  ul
+    li.heading
+      | Owners
+    li
+      +owners
+    li.heading
+      | Downloads
+    li
+      a(target='_{{ obj_id }}_config.json' href='/api/v1/labs/{{ allLabs.byId[lab_id].slug }}/{{ dbObjects.byId[obj_id].slug }}/config.json')
+        i.fa.fa-fw.fa-code
+        | config.json
+
+mixin content
+  .page-layout
+    .page-layout-nav
+      +navigation
+    .page-layout-content
+      +servers
+
+div(ng-controller='ClusterPageController')
+  +page_header
+  +content
