@@ -63,8 +63,6 @@ class LabsomeApiTest(LabsomeApiTestBase):
         '''Calls /api/v1/state with and without an authorization token.'''
         without_auth = requests.get(self.app_url('/api/v1/state')).json()
         with_auth = self.get('/api/v1/state')
-        self.assertEqual(without_auth['is_authenticated'], False)
-        self.assertEqual(with_auth['is_authenticated'], True)
 
     def test_type_classes_api(self):
         '''Gets the supported type classes.'''
