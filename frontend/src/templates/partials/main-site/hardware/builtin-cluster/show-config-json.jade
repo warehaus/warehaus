@@ -1,0 +1,13 @@
+.modal-header
+  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+    span(aria-hidden="true") &times;
+  h4.modal-title
+    | {{ dbObjects.byId[obj_id].display_name }}'s config.json
+
+.modal-body
+  pre
+    | {{ config_json | json }}
+
+.modal-footer
+  button.btn.btn-success(ng-click='close()')
+    | Close This Window

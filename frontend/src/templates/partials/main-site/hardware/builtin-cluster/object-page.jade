@@ -80,7 +80,7 @@ mixin navigation
     li.heading
       | Downloads
     li
-      a(target='_{{ obj_id }}_config.json' href='/api/v1/labs/{{ allLabs.byId[lab_id].slug }}/{{ dbObjects.byId[obj_id].slug }}/config.json')
+      a(prevent-default target='_{{ obj_id }}_config.json' href='/api/v1/labs/{{ allLabs.byId[lab_id].slug }}/{{ dbObjects.byId[obj_id].slug }}/config.json' ng-click='show_config_json()')
         i.fa.fa-fw.fa-code
         | config.json
 

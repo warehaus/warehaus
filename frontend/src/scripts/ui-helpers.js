@@ -84,3 +84,16 @@ angular.module('labsome.ui_helpers').filter('isNotEmpty', function() {
         return !_is_empty(o);
     };
 });
+
+angular.module('labsome.ui_helpers').directive('preventDefault', function() {
+    var link = function(scope, elem, attrs) {
+        elem.on('click', function(event) {
+            event.preventDefault();
+        });
+    };
+
+    return {
+        restrict: 'A',
+        link: link
+    };
+});
