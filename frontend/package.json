@@ -1,17 +1,17 @@
 {
-  "name": "labsome-frontend",
+  "name": "warehaus-frontend",
   "version": "0.1.0",
-  "description": "Labsome frontend",
+  "description": "Warehaus frontend",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/labsome/labsome.git"
+    "url": "git+https://github.com/warehaus/warehaus.git"
   },
   "author": "Zohar Zilberman <popen2@gmail.com>",
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/labsome/labsome/issues"
+    "url": "https://github.com/warehaus/warehaus/issues"
   },
-  "homepage": "https://github.com/labsome/labsome#readme",
+  "homepage": "https://github.com/warehaus/warehaus#readme",
   "devDependencies": {
     "bower": "^1.6.9",
     "gulp": "^3.9.0",

@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('labsome.hardware.server', [
-    'labsome.models'
+angular.module('warehaus.hardware.server', [
+    'warehaus.models'
 ]);
 
-angular.module('labsome.hardware.server').constant('hwServerTypeKey', 'builtin-server');
+angular.module('warehaus.hardware.server').constant('hwServerTypeKey', 'builtin-server');
 
-angular.module('labsome.hardware.server').provider('serverView', function(viewPath, hwServerTypeKey) {
+angular.module('warehaus.hardware.server').provider('serverView', function(viewPath, hwServerTypeKey) {
     return {
         $get: function() {
             return function(viewName) {
@@ -16,7 +16,7 @@ angular.module('labsome.hardware.server').provider('serverView', function(viewPa
     };
 });
 
-angular.module('labsome.hardware.server').controller('ServerListController', function($scope, $location, $http, $stateParams, $uibModal, dbObjects, serverView) {
+angular.module('warehaus.hardware.server').controller('ServerListController', function($scope, $location, $http, $stateParams, $uibModal, dbObjects, serverView) {
     if (!$stateParams.tab) {
         $stateParams.tab = 'all';
     }
@@ -63,7 +63,7 @@ angular.module('labsome.hardware.server').controller('ServerListController', fun
     };
 });
 
-angular.module('labsome.hardware.server').controller('ClusterSelectionController', function($scope, $uibModalInstance, dbObjects, labId, typeObjId, server_id, hwClusterTypeKey) {
+angular.module('warehaus.hardware.server').controller('ClusterSelectionController', function($scope, $uibModalInstance, dbObjects, labId, typeObjId, server_id, hwClusterTypeKey) {
     $scope.lab_id = labId;
     $scope.server_id = server_id;
     $scope.hwClusterTypeKey = hwClusterTypeKey;

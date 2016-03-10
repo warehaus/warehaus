@@ -12,9 +12,9 @@
 
       &.heading {
         display: block;
-        font-weight: $labsome-font-weight-mild;
+        font-weight: $warehaus-font-weight-mild;
         text-transform: uppercase;
-        padding: (3 * $labsome-page-layout-nav-spacing) (3 * $labsome-page-layout-nav-spacing) $labsome-page-layout-nav-spacing (3 * $labsome-page-layout-nav-spacing);
+        padding: (3 * $warehaus-page-layout-nav-spacing) (3 * $warehaus-page-layout-nav-spacing) $warehaus-page-layout-nav-spacing (3 * $warehaus-page-layout-nav-spacing);
       }
 
       &.active {
@@ -28,7 +28,7 @@
         outline: 0;
         margin: 0;
         display: block;
-        padding: $labsome-page-layout-nav-spacing (3 * $labsome-page-layout-nav-spacing);
+        padding: $warehaus-page-layout-nav-spacing (3 * $warehaus-page-layout-nav-spacing);
 
         &:hover,
         &:focus {

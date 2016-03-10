@@ -1,9 +1,9 @@
 import random
 import httplib
 from urlparse import urljoin
-from .labsome_test_base import LabsomeApiTestBase
+from .warehaus_test_base import WarehausApiTestBase
 
-class ClusterTests(LabsomeApiTestBase):
+class ClusterTests(WarehausApiTestBase):
     def test_cluster_operations(self):
         '''Create and delete some clusters in labs:
         - Create two cluster types.

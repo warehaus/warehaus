@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('labsome.labs', [
-    'labsome.models',
-    'labsome.hardware'
+angular.module('warehaus.labs', [
+    'warehaus.models',
+    'warehaus.hardware'
 ]);
 
-angular.module('labsome.labs').provider('labsUrlRoutes', function(viewPath) {
+angular.module('warehaus.labs').provider('labsUrlRoutes', function(viewPath) {
     var labsView = function(path) {
         return viewPath('main-site/views/labs/' + path);
     };
@@ -163,7 +163,7 @@ angular.module('labsome.labs').provider('labsUrlRoutes', function(viewPath) {
     };
 });
 
-angular.module('labsome.labs').config(function($urlRouterProvider, stateHelperProvider, labsUrlRoutesProvider) {
+angular.module('warehaus.labs').config(function($urlRouterProvider, stateHelperProvider, labsUrlRoutesProvider) {
     var register_auto_redirects = function(base_url, state) {
         var cur_url = base_url + state.url;
         if (state.autoRedirectToChild) {
@@ -186,7 +186,7 @@ angular.module('labsome.labs').config(function($urlRouterProvider, stateHelperPr
     stateHelperProvider.state(labs_url_routes);
 });
 
-angular.module('labsome.labs').service('selectedLab', function($log) {
+angular.module('warehaus.labs').service('selectedLab', function($log) {
     this.lab_id = undefined;
     this.set = function(new_lab_id) {
         $log.info('Selecting lab:', new_lab_id);
@@ -194,7 +194,7 @@ angular.module('labsome.labs').service('selectedLab', function($log) {
     };
 });
 
-angular.module('labsome.labs').controller('AllLabsController', function($scope, $log, $state, $uibModal, viewPath, selectedLab, allLabs) {
+angular.module('warehaus.labs').controller('AllLabsController', function($scope, $log, $state, $uibModal, viewPath, selectedLab, allLabs) {
     var _goto_lab = function(lab_id) {
         var slug = allLabs.byId[lab_id].slug;
         $log.info('Redirecting to lab:', slug);
@@ -215,7 +215,7 @@ angular.module('labsome.labs').controller('AllLabsController', function($scope, 
         }
     }
 
-    $scope.$on('labsome.labs_inventory_changed', refresh);
+    $scope.$on('warehaus.labs_inventory_changed', refresh);
 
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if (toState.name == 'labs') {
@@ -236,7 +236,7 @@ angular.module('labsome.labs').controller('AllLabsController', function($scope, 
     };
 });
 
-angular.module('labsome.labs').controller('CreateLabController', function($scope, $state, $uibModalInstance, allLabs) {
+angular.module('warehaus.labs').controller('CreateLabController', function($scope, $state, $uibModalInstance, allLabs) {
     $scope.lab = {};
 
     $scope.save = function() {
@@ -258,7 +258,7 @@ angular.module('labsome.labs').controller('CreateLabController', function($scope
     };
 });
 
-angular.module('labsome.labs').controller('LabPageController', function($scope, $state, $log, selectedLab, allLabs, labSlug) {
+angular.module('warehaus.labs').controller('LabPageController', function($scope, $state, $log, selectedLab, allLabs, labSlug) {
     $scope.lab_slug = labSlug;
     $scope.lab_id = undefined;
     if (allLabs.bySlug[$scope.lab_slug]) {
@@ -282,7 +282,7 @@ angular.module('labsome.labs').controller('LabPageController', function($scope, 
 
     refresh();
 
-    $scope.$on('labsome.labs_inventory_changed', refresh);
+    $scope.$on('warehaus.labs_inventory_changed', refresh);
 
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if (toState.name == 'labs.lab-page') {
@@ -291,7 +291,7 @@ angular.module('labsome.labs').controller('LabPageController', function($scope, 
     });
 });
 
-angular.module('labsome.labs').controller('BrowseTypeController', function($scope, $state, dbObjects, typeObjId, allLabs, viewPath) {
+angular.module('warehaus.labs').controller('BrowseTypeController', function($scope, $state, dbObjects, typeObjId, allLabs, viewPath) {
     $scope.type_obj_id = typeObjId;
     $scope.type_template_path = viewPath('main-site/hardware/' + dbObjects.byId[$scope.type_obj_id].type_key + '/index.html');
 
@@ -310,16 +310,16 @@ angular.module('labsome.labs').controller('BrowseTypeController', function($scop
 
     refresh();
 
-    $scope.$on('labsome.labs_inventory_changed', refresh);
-    $scope.$on('labsome.type_classes_loaded', refresh);
-    $scope.$on('labsome.models.objects_reloaded', refresh);
-    $scope.$on('labsome.models.object_changed', refresh);
-    $scope.$on('labsome.models.object_deleted', refresh);
+    $scope.$on('warehaus.labs_inventory_changed', refresh);
+    $scope.$on('warehaus.type_classes_loaded', refresh);
+    $scope.$on('warehaus.models.objects_reloaded', refresh);
+    $scope.$on('warehaus.models.object_changed', refresh);
+    $scope.$on('warehaus.models.object_deleted', refresh);
     $scope.$on('$stateChangeSuccess', refresh);
 
 });
 
-angular.module('labsome.labs').controller('ObjectPageController', function($scope, $state, dbObjects, labId, typeObjId, objId, viewPath) {
+angular.module('warehaus.labs').controller('ObjectPageController', function($scope, $state, dbObjects, labId, typeObjId, objId, viewPath) {
     $scope.lab_id = labId;
     $scope.type_obj_id = typeObjId;
     $scope.obj_id = objId;
@@ -339,12 +339,12 @@ angular.module('labsome.labs').controller('ObjectPageController', function($scop
         }
     };
 
-    $scope.$on('labsome.models.objects_reloaded', reload_object);
-    $scope.$on('labsome.models.object_changed', reload_object_conditionally);
-    $scope.$on('labsome.models.object_deleted', reload_object_conditionally);
+    $scope.$on('warehaus.models.objects_reloaded', reload_object);
+    $scope.$on('warehaus.models.object_changed', reload_object_conditionally);
+    $scope.$on('warehaus.models.object_deleted', reload_object_conditionally);
 });
 
-angular.module('labsome.labs').controller('HardwareTypesController', function($scope, $state, $uibModal, allLabs, viewPath) {
+angular.module('warehaus.labs').controller('HardwareTypesController', function($scope, $state, $uibModal, allLabs, viewPath) {
     $scope.new_hardware_type = function() {
         $uibModal.open({
             templateUrl: viewPath('main-site/views/labs/manage/new-hardware-type.html'),
@@ -362,7 +362,7 @@ angular.module('labsome.labs').controller('HardwareTypesController', function($s
     };
 });
 
-angular.module('labsome.labs').controller('NewHardwareTypeController', function($scope, $uibModalInstance, allLabs, dbTypeClasses, lab_id) {
+angular.module('warehaus.labs').controller('NewHardwareTypeController', function($scope, $uibModalInstance, allLabs, dbTypeClasses, lab_id) {
     $scope.lab_id = lab_id;
     $scope.new_type = {
         display_name: {
@@ -391,7 +391,7 @@ angular.module('labsome.labs').controller('NewHardwareTypeController', function(
     };
 });
 
-angular.module('labsome.labs').controller('RenameLabController', function($scope, $state, allLabs) {
+angular.module('warehaus.labs').controller('RenameLabController', function($scope, $state, allLabs) {
     $scope.result = {
         display_name: allLabs.byId[$scope.lab_id].display_name
     };
@@ -403,7 +403,7 @@ angular.module('labsome.labs').controller('RenameLabController', function($scope
     };
 });
 
-angular.module('labsome.labs').controller('DeleteLabController', function($scope, $state, allLabs) {
+angular.module('warehaus.labs').controller('DeleteLabController', function($scope, $state, allLabs) {
     $scope.ok = function() {
         allLabs.delete($scope.lab_id).then(function() {
             $state.go('labs');

@@ -8,9 +8,9 @@ from urllib2 import urlopen
 logger = logging.getLogger(__name__)
 
 env = dict(
-    LABSOME_HEARTBEAT_CODE_URL = '$$LABSOME_HEARTBEAT_CODE_URL$$',
-    LABSOME_HEARTBEAT_POST_URL = '$$LABSOME_HEARTBEAT_POST_URL$$',
-    LABSOME_INTERVAL = int('$$LABSOME_INTERVAL$$'),
+    WAREHAUS_HEARTBEAT_CODE_URL = '$$WAREHAUS_HEARTBEAT_CODE_URL$$',
+    WAREHAUS_HEARTBEAT_POST_URL = '$$WAREHAUS_HEARTBEAT_POST_URL$$',
+    WAREHAUS_INTERVAL = int('$$WAREHAUS_INTERVAL$$'),
 )
 
 def log_to_console():
@@ -23,8 +23,8 @@ def log_to_console():
     root.addHandler(ch)
 
 def get_heartbeat_code():
-    logger.debug('Downloading heartbeat code from {}'.format(env['LABSOME_HEARTBEAT_CODE_URL']))
-    heartbeat_code = urlopen(env['LABSOME_HEARTBEAT_CODE_URL']).read()
+    logger.debug('Downloading heartbeat code from {}'.format(env['WAREHAUS_HEARTBEAT_CODE_URL']))
+    heartbeat_code = urlopen(env['WAREHAUS_HEARTBEAT_CODE_URL']).read()
     heartbeat_md5 = md5(heartbeat_code).hexdigest()
     logger.debug('Received heartbeat code with MD5={}'.format(heartbeat_md5))
     return heartbeat_code
@@ -46,8 +46,8 @@ def main():
         except Exception as error:
             logger.exception('Error in main loop')
         else:
-            logger.info('Done running, sleeping for {} seconds'.format(env['LABSOME_INTERVAL']))
-        time.sleep(max(env['LABSOME_INTERVAL'], 1))
+            logger.info('Done running, sleeping for {} seconds'.format(env['WAREHAUS_INTERVAL']))
+        time.sleep(max(env['WAREHAUS_INTERVAL'], 1))
 
 if __name__ == '__main__':
     try:

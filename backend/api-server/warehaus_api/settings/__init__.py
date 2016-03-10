@@ -10,7 +10,7 @@ def database_config():
         RETHINKDB_HOST = os.environ.get('RETHINKDB_PORT_28015_TCP_ADDR', None)
         RETHINKDB_PORT = os.environ.get('RETHINKDB_PORT_28015_TCP_PORT', None)
         RETHINKDB_AUTH = os.environ.get('RETHINKDB_AUTH', '')
-        RETHINKDB_DB   = os.environ.get('RETHINKDB_DB', 'labsome')
+        RETHINKDB_DB   = os.environ.get('RETHINKDB_DB', 'warehaus')
     return DatabaseConfig
 
 def full_config():

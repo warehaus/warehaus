@@ -1,6 +1,6 @@
 from unittest import TestSuite
 from unittest import makeSuite
-from labsome_api.logs import log_to_console
+from warehaus_api.logs import log_to_console
 from .state_api_test import StateApiTest
 from .type_system_tests import TypeSystemTests
 from .cluster_tests import ClusterTests

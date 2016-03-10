@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('labsome.users', []);
+angular.module('warehaus.users', []);
 
-angular.module('labsome.users').factory('users', function($rootScope, $http) {
+angular.module('warehaus.users').factory('users', function($rootScope, $http) {
     var self = {
         ready: false,
         all: [],
@@ -26,7 +26,7 @@ angular.module('labsome.users').factory('users', function($rootScope, $http) {
                 self.byUserId[user.id] = user;
             }
             self.ready = true;
-            $rootScope.$broadcast('labsome.users.inventory_changed');
+            $rootScope.$broadcast('warehaus.users.inventory_changed');
         });
     };
 
@@ -34,7 +34,7 @@ angular.module('labsome.users').factory('users', function($rootScope, $http) {
         $http.post('/api/v1/auth/users/' + user_id + '/api-tokens').then(refresh);
     };
 
-    $rootScope.$on('labsome.models.new_socket_available', function(event, socket) {
+    $rootScope.$on('warehaus.models.new_socket_available', function(event, socket) {
         socket.on('object_changed:user', refresh);
         socket.on('object_deleted:user', refresh);
         refresh();
@@ -43,7 +43,7 @@ angular.module('labsome.users').factory('users', function($rootScope, $http) {
     return self;
 });
 
-angular.module('labsome.users').directive('userAvatar', function(users) {
+angular.module('warehaus.users').directive('userAvatar', function(users) {
     var link = function(scope, elem, attrs) {
         scope.users = users;
     };
@@ -59,7 +59,7 @@ angular.module('labsome.users').directive('userAvatar', function(users) {
     };
 });
 
-angular.module('labsome.users').directive('userDisplayName', function(users) {
+angular.module('warehaus.users').directive('userDisplayName', function(users) {
     var link = function(scope, elem, attrs) {
         scope.users = users;
     };
@@ -74,7 +74,7 @@ angular.module('labsome.users').directive('userDisplayName', function(users) {
     };
 });
 
-angular.module('labsome.users').directive('userEmail', function(users) {
+angular.module('warehaus.users').directive('userEmail', function(users) {
     var link = function(scope, elem, attrs) {
         scope.users = users;
     };
@@ -89,6 +89,6 @@ angular.module('labsome.users').directive('userEmail', function(users) {
     };
 });
 
-angular.module('labsome.users').run(function($rootScope, users) {
+angular.module('warehaus.users').run(function($rootScope, users) {
     $rootScope.users = users;
 });

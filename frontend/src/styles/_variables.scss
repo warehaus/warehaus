@@ -1,8 +1,8 @@
-$labsome-font-weight-min:           200;
-$labsome-font-weight-thin:          300;
-$labsome-font-weight-normal:        400;
-$labsome-font-weight-mild:          500;
-$labsome-font-weight-strong:        600;
+$warehaus-font-weight-min:           200;
+$warehaus-font-weight-thin:          300;
+$warehaus-font-weight-normal:        400;
+$warehaus-font-weight-mild:          500;
+$warehaus-font-weight-strong:        600;
 
 //-------------------------------
 // Overridden Bootstrap variables
@@ -26,60 +26,60 @@ $font-family-sans-serif:  "Lato", Helvetica, Arial, sans-serif;
 $font-family-serif:       $font-family-sans-serif;
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
 $headings-font-family:    $font-family-sans-serif;
-$headings-font-weight:    $labsome-font-weight-mild;
-$btn-font-weight:         $labsome-font-weight-normal;
-$alert-link-font-weight:  $labsome-font-weight-normal;
-$badge-font-weight:       $labsome-font-weight-thin;
+$headings-font-weight:    $warehaus-font-weight-mild;
+$btn-font-weight:         $warehaus-font-weight-normal;
+$alert-link-font-weight:  $warehaus-font-weight-normal;
+$badge-font-weight:       $warehaus-font-weight-thin;
 
 //------------------
-// Labsome variables
+// Warehaus variables
 //------------------
 
 $lato-font-path:                           '/static/bower_components/lato-font/fonts';
 
-$labsome-standalone-box-padding:           2rem .5rem;
-$labsome-standalone-box-radius:            .75rem;
-$labsome-standalone-box-img-margin:        1rem;
+$warehaus-standalone-box-padding:           2rem .5rem;
+$warehaus-standalone-box-radius:            .75rem;
+$warehaus-standalone-box-img-margin:        1rem;
 
-$labsome-bg-color-gray:                    #f9f9f9;
-$labsome-bg-color-white:                   white;
+$warehaus-bg-color-gray:                    #f9f9f9;
+$warehaus-bg-color-white:                   white;
 
-$labsome-sidebar-width:                    85px;
-$labsome-sidebar-logo-width:               64px;
-$labsome-sidebar-color:                    #aaa;
-$labsome-sidebar-bg:                       #333;
-$labsome-sidebar-border-width:             1px;
-$labsome-sidebar-border-color:             #eee;
-$labsome-sidebar-profile-picture-border:   lighten($labsome-sidebar-border-color, 5%);
-$labsome-sidebar-link-active-color:        white;
-$labsome-sidebar-link-active-bg:           lighten($labsome-sidebar-bg, 20%);
+$warehaus-sidebar-width:                    85px;
+$warehaus-sidebar-logo-width:               64px;
+$warehaus-sidebar-color:                    #aaa;
+$warehaus-sidebar-bg:                       #333;
+$warehaus-sidebar-border-width:             1px;
+$warehaus-sidebar-border-color:             #eee;
+$warehaus-sidebar-profile-picture-border:   lighten($warehaus-sidebar-border-color, 5%);
+$warehaus-sidebar-link-active-color:        white;
+$warehaus-sidebar-link-active-bg:           lighten($warehaus-sidebar-bg, 20%);
 
-$labsome-page-header-bg:                   $labsome-bg-color-gray;
-$labsome-page-header-border-color:         #e7e7e7;
-$labsome-page-header-spacing:              .25rem;
+$warehaus-page-header-bg:                   $warehaus-bg-color-gray;
+$warehaus-page-header-border-color:         #e7e7e7;
+$warehaus-page-header-spacing:              .25rem;
 
-$labsome-page-layout-width:                950px;
-$labsome-page-layout-nav-width:            250px;
-$labsome-page-layout-nav-font-size:        .875rem;
-$labsome-page-layout-nav-spacing:          .4rem;
+$warehaus-page-layout-width:                950px;
+$warehaus-page-layout-nav-width:            250px;
+$warehaus-page-layout-nav-font-size:        .875rem;
+$warehaus-page-layout-nav-spacing:          .4rem;
 
-$labsome-dropdown-menu-heading-color:      #aaa;
-$labsome-dropdown-menu-heading-padding:    3px 20px; // Bootstrap value
-$labsome-dropdown-menu-heading-font-size:  .8rem;
+$warehaus-dropdown-menu-heading-color:      #aaa;
+$warehaus-dropdown-menu-heading-padding:    3px 20px; // Bootstrap value
+$warehaus-dropdown-menu-heading-font-size:  .8rem;
 
 $nav-link-padding:                         .5rem 1rem;
-$labsome-nav-pills-color:                  gray;
-$labsome-nav-pills-font-weight:            $labsome-font-weight-strong;
-$labsome-nav-pills-padding:                1rem 1rem .5rem 1rem;
+$warehaus-nav-pills-color:                  gray;
+$warehaus-nav-pills-font-weight:            $warehaus-font-weight-strong;
+$warehaus-nav-pills-padding:                1rem 1rem .5rem 1rem;
 
-$labsome-profile-picture-border-color:     lighten($gray-base, 70%);
+$warehaus-profile-picture-border-color:     lighten($gray-base, 70%);
 
-$labsome-status-dot-size:                  4px;
-$labsome-status-dot-border-size:           2px;
-$labsome-status-dot-contrast:              10%;
-$labsome-status-dot-color-primary:         $brand-primary;
-$labsome-status-dot-color-success:         $brand-success;
-$labsome-status-dot-color-info:            $brand-info;
-$labsome-status-dot-color-warning:         $brand-warning;
-$labsome-status-dot-color-danger:          $brand-danger;
-$labsome-status-dot-color-unknown:         white;
+$warehaus-status-dot-size:                  4px;
+$warehaus-status-dot-border-size:           2px;
+$warehaus-status-dot-contrast:              10%;
+$warehaus-status-dot-color-primary:         $brand-primary;
+$warehaus-status-dot-color-success:         $brand-success;
+$warehaus-status-dot-color-info:            $brand-info;
+$warehaus-status-dot-color-warning:         $brand-warning;
+$warehaus-status-dot-color-danger:          $brand-danger;
+$warehaus-status-dot-color-unknown:         white;

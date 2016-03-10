@@ -1,13 +1,13 @@
 .sidebar {
-  @include gradient-vertical-three-colors($start-color: lighten($labsome-sidebar-bg, 5%),
-                                          $mid-color: lighten($labsome-sidebar-bg, 10%),
-                                          $end-color: lighten($labsome-sidebar-bg, 3%),
+  @include gradient-vertical-three-colors($start-color: lighten($warehaus-sidebar-bg, 5%),
+                                          $mid-color: lighten($warehaus-sidebar-bg, 10%),
+                                          $end-color: lighten($warehaus-sidebar-bg, 3%),
                                           $color-stop: 25%);
   border-style: solid;
-  border-width: 0 $labsome-sidebar-border-width 0 0;
-  border-color: $labsome-sidebar-border-color;
+  border-width: 0 $warehaus-sidebar-border-width 0 0;
+  border-color: $warehaus-sidebar-border-color;
 
-  color: $labsome-sidebar-color;
+  color: $warehaus-sidebar-color;
 
   ul.sidebar-nav {
     list-style-type: none;
@@ -15,7 +15,7 @@
     padding: 0;
 
     li {
-      width: $labsome-sidebar-width;
+      width: $warehaus-sidebar-width;
       text-align: center;
       padding: .5rem 0;
 
@@ -23,14 +23,14 @@
         margin: .5rem 0 .75rem 0;
 
         img {
-          width: $labsome-sidebar-logo-width;
-          height: $labsome-sidebar-logo-width / 4;
+          width: $warehaus-sidebar-logo-width;
+          height: $warehaus-sidebar-logo-width / 4;
           border-width: 0;
         }
       }
 
       a {
-        color: $labsome-sidebar-color;
+        color: $warehaus-sidebar-color;
         outline: 0;
 
         &:hover,
@@ -48,16 +48,16 @@
       }
 
       &.active {
-        @include gradient-horizontal($start-color: darken($labsome-sidebar-link-active-color, 20%),
-                                     $end-color: $labsome-sidebar-link-active-bg,
+        @include gradient-horizontal($start-color: darken($warehaus-sidebar-link-active-color, 20%),
+                                     $end-color: $warehaus-sidebar-link-active-bg,
                                      $start-percent: 2%, $end-percent: 3%);
-        color: $labsome-sidebar-link-active-color;
+        color: $warehaus-sidebar-link-active-color;
         border-style: solid;
-        border-width: 0 $labsome-sidebar-border-width 0 0;
-        border-color: $labsome-sidebar-border-color;
+        border-width: 0 $warehaus-sidebar-border-width 0 0;
+        border-color: $warehaus-sidebar-border-color;
 
         a {
-          color: $labsome-sidebar-link-active-color;
+          color: $warehaus-sidebar-link-active-color;
         }
       }
     }

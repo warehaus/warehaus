@@ -22,7 +22,7 @@ mixin styles
   link(rel='stylesheet' href='/static/bower_components/simple-line-icons/css/simple-line-icons.css')
   link(rel='stylesheet' href='/static/bower_components/ui-select/dist/select.min.css')
   link(rel='stylesheet' href='/static/bower_components/angular-spinkit/build/angular-spinkit.min.css')
-  link(rel='stylesheet' href='/static/labsome.css')
+  link(rel='stylesheet' href='/static/warehaus.css')
 
 mixin scripts
   script(src='/static/bower_components/jquery/dist/jquery.min.js')
@@ -44,28 +44,28 @@ mixin scripts
   script(src='/static/bower_components/angular-jwt/dist/angular-jwt.min.js')
   script(src='/socket.io/socket.io.js')
   script(src='/static/templates.js')
-  script(src='/static/labsome.js')
+  script(src='/static/warehaus.js')
 
 mixin head
   meta(charset='utf-8')
   meta(name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1')
   base(href='/ui/')
   title
-    | {{ $breadcrumbs | map:'title' | reverse | join:' - ' }} - Labsome
+    | {{ $breadcrumbs | map:'title' | reverse | join:' - ' }} - Warehaus
   +styles
   +favicon
 
 mixin body
-  .ng-cloak(style={'opacity': '0.5'} ng-if='!labsomeState.loaded')
+  .ng-cloak(style={'opacity': '0.5'} ng-if='!warehausState.loaded')
     three-bounce-spinner
-  .ng-cloak(ng-if='labsomeState.loaded && !labsomeState.is_initialized' ng-include="'/inline/first-setup/index.html'")
-  .ng-cloak(ng-if='labsomeState.loaded && labsomeState.is_initialized && !labsomeState.is_authenticated' ng-include="'/inline/auth/login.html'")
-  .ng-cloak(ng-if='labsomeState.loaded && labsomeState.is_initialized && labsomeState.is_authenticated' ng-include="'/inline/main-site/index.html'")
+  .ng-cloak(ng-if='warehausState.loaded && !warehausState.is_initialized' ng-include="'/inline/first-setup/index.html'")
+  .ng-cloak(ng-if='warehausState.loaded && warehausState.is_initialized && !warehausState.is_authenticated' ng-include="'/inline/auth/login.html'")
+  .ng-cloak(ng-if='warehausState.loaded && warehausState.is_initialized && warehausState.is_authenticated' ng-include="'/inline/main-site/index.html'")
 
 doctype html
-html(lang='en' ng-app='labsome' ng-strict-di='')
+html(lang='en' ng-app='warehaus' ng-strict-di='')
   head
     +head
-  body.labsome-white
+  body.warehaus-white
     +body
     +scripts

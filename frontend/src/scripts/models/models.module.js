@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('labsome.models', [
+angular.module('warehaus.models', [
     'btford.socket-io'
 ]);
 
-angular.module('labsome.models').run(function($rootScope, dbObjects, dbTypeClasses, allLabs, socketIoManager) {
+angular.module('warehaus.models').run(function($rootScope, dbObjects, dbTypeClasses, allLabs, socketIoManager) {
     $rootScope.dbObjects = dbObjects;
     $rootScope.dbTypeClasses = dbTypeClasses;
     $rootScope.allLabs = allLabs;

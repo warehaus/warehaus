@@ -4,15 +4,17 @@ import os
 import sys
 import commands
 
-# Made with http://patorjk.com/software/taag/#p=display&f=Rectangles&t=labsome
+# Made with http://patorjk.com/software/taag/#p=display&f=Doom&t=warehaus
 ASCII_LOGO = """\
-+--------------------------------------+
-|      _     _                         |
-|     | |___| |_ ___ ___ _____ ___     |
-|     | | .'| . |_ -| . |     | -_|    |
-|     |_|__,|___|___|___|_|_|_|___|    |
-|                                      |
-+--------------------------------------+\
++--------------------------------------------------+
+|                          _                       |
+|                         | |                      |
+|  __      ____ _ _ __ ___| |__   __ _ _   _ ___   |
+|  \ \ /\ / / _` | '__/ _ \ '_ \ / _` | | | / __|  |
+|   \ V  V / (_| | | |  __/ | | | (_| | |_| \__ \  |
+|    \_/\_/ \__,_|_|  \___|_| |_|\__,_|\__,_|___/  |
+|                                                  |
++--------------------------------------------------+\
 """
 
 print ASCII_LOGO
@@ -27,18 +29,18 @@ To manually pass database configuration, you can use:
    RETHINKDB_PORT_28015_TCP_ADDR -- RethinkDB hostname
    RETHINKDB_PORT_28015_TCP_PORT -- RethinkDB port
    RETHINKDB_AUTH                -- Authentication string (optional)
-   RETHINKDB_DB                  -- Database name (default: labsome)
+   RETHINKDB_DB                  -- Database name (default: warehaus)
 '''
 
 if not os.environ.get('RETHINKDB_PORT_28015_TCP_ADDR', None) or not os.environ.get('RETHINKDB_PORT_28015_TCP_PORT'):
     print >>sys.stderr, NO_DB_ERROR
     raise SystemExit(1)
 
-if os.system('/usr/local/bin/labsome-init-db') != 0:
+if os.system('/usr/local/bin/warehaus-init-db') != 0:
     print >>sys.stderr, 'error: Could not initialize database'
     raise SystemExit(1)
 
-supervisor_cmdline = ['/usr/bin/supervisord', '-c', '/opt/labsome/dist/etc/supervisor-labsome.conf']
+supervisor_cmdline = ['/usr/bin/supervisord', '-c', '/opt/warehaus/dist/etc/supervisor-warehaus.conf']
 os.execve(supervisor_cmdline[0], supervisor_cmdline, os.environ)
 
 SUPERVISOR_EXEC_ERROR = 'error: Could not run ' + ' '.join(supervisor_cmdline)

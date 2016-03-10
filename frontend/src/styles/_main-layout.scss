@@ -2,14 +2,14 @@
   .sidebar {
     margin: 0;
     left: 0;
-    width: $labsome-sidebar-width;
+    width: $warehaus-sidebar-width;
     position: fixed;
     height: 100%;
     overflow-y: hide;
   }
 
   .main-view-wrapper {
-    margin: 0 0 0 ($labsome-sidebar-width);
+    margin: 0 0 0 ($warehaus-sidebar-width);
 
     .main-view {
       width: 100%;

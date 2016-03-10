@@ -6,9 +6,9 @@ from setuptools import find_packages
 here = os.path.dirname(__file__)
 
 setup(
-    name = 'labsome_api',
+    name = 'warehaus_api',
     version = open(os.path.join(here, '..', '..', 'VERSION')).read().strip(),
-    url = 'http://www.labsome.com/',
+    url = 'http://warehaus.io/',
     license = 'AGPL-3.0',
     zip_safe = True,
 
@@ -41,8 +41,8 @@ setup(
 
     entry_points = {
         'console_scripts': [
-            'labsome-init-db=labsome_api.init_db:main',
-            'labsome-api-server=labsome_api.api_server:main',
+            'warehaus-init-db=warehaus_api.init_db:main',
+            'warehaus-api-server=warehaus_api.api_server:main',
         ],
     },
 )

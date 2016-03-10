@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('labsome.models').factory('dbObjects', function($rootScope, $http, $log, $q) {
+angular.module('warehaus.models').factory('dbObjects', function($rootScope, $http, $log, $q) {
     var ready_promise = $q.defer();
 
     var self = {
@@ -36,7 +36,7 @@ angular.module('labsome.models').factory('dbObjects', function($rootScope, $http
             reset_self();
             angular.forEach(res.data.objects, insert_one);
             self.isReady = true;
-            $rootScope.$broadcast('labsome.models.objects_reloaded');
+            $rootScope.$broadcast('warehaus.models.objects_reloaded');
             ready_promise.resolve();
         });
     };
@@ -45,7 +45,7 @@ angular.module('labsome.models').factory('dbObjects', function($rootScope, $http
         $log.debug('Fetching changed object:', notification.id);
         return $http.get('/api/v1/hardware/objects/' + notification.id).then(function(res) {
             insert_one(res.data);
-            $rootScope.$broadcast('labsome.models.object_changed', notification.id);
+            $rootScope.$broadcast('warehaus.models.object_changed', notification.id);
         });
     };
 
@@ -67,12 +67,12 @@ angular.module('labsome.models').factory('dbObjects', function($rootScope, $http
         }
         var deleted_obj = self.byId[notification.id];
         delete self.byId[notification.id];
-        $rootScope.$broadcast('labsome.models.object_deleted', notification.id, deleted_obj);
+        $rootScope.$broadcast('warehaus.models.object_deleted', notification.id, deleted_obj);
     };
 
     reset_self();
 
-    $rootScope.$on('labsome.models.new_socket_available', function(event, socket) {
+    $rootScope.$on('warehaus.models.new_socket_available', function(event, socket) {
         socket.on('object_changed:object', object_changed);
         socket.on('object_deleted:object', object_deleted);
         load_all();
@@ -81,7 +81,7 @@ angular.module('labsome.models').factory('dbObjects', function($rootScope, $http
     return self;
 });
 
-angular.module('labsome.models').factory('dbTypeClasses', function($rootScope, $http) {
+angular.module('warehaus.models').factory('dbTypeClasses', function($rootScope, $http) {
     var self = {
         byTypeKey: {}
     };
@@ -94,16 +94,16 @@ angular.module('labsome.models').factory('dbTypeClasses', function($rootScope, $
         $http.get('/api/v1/hardware/types').then(function(res) {
             self.byTypeKey = {};
             angular.forEach(res.data.types, load_one);
-            $rootScope.$broadcast('labsome.type_classes_loaded');
+            $rootScope.$broadcast('warehaus.type_classes_loaded');
         });
     };
 
-    $rootScope.$on('labsome.auth.user_authorized', load_all);
+    $rootScope.$on('warehaus.auth.user_authorized', load_all);
 
     return self;
 });
 
-angular.module('labsome.models').directive('objectName', function(dbObjects) {
+angular.module('warehaus.models').directive('objectName', function(dbObjects) {
     var link = function(scope, elem, attrs) {
         scope.dbObjects = dbObjects;
     };

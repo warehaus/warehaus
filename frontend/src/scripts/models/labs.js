@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('labsome.models').factory('allLabs', function($http, $rootScope, $log, $q, dbObjects) {
+angular.module('warehaus.models').factory('allLabs', function($http, $rootScope, $log, $q, dbObjects) {
     var ready_promise = $q.defer();
 
     var self = {
@@ -34,7 +34,7 @@ angular.module('labsome.models').factory('allLabs', function($http, $rootScope, 
             }
         });
         self.ready = true;
-        $rootScope.$broadcast('labsome.labs_inventory_changed');
+        $rootScope.$broadcast('warehaus.labs_inventory_changed');
         ready_promise.resolve();
     };
 
@@ -64,16 +64,16 @@ angular.module('labsome.models').factory('allLabs', function($http, $rootScope, 
         return $http.delete('/api/v1/labs/' + lab.slug + '/');
     };
 
-    $rootScope.$on('labsome.models.objects_reloaded', refresh);
+    $rootScope.$on('warehaus.models.objects_reloaded', refresh);
 
-    $rootScope.$on('labsome.models.object_changed', function(event, obj_id) {
+    $rootScope.$on('warehaus.models.object_changed', function(event, obj_id) {
         var obj = dbObjects.byId[obj_id];
         if (is_lab(obj)) {
             refresh();
         }
     });
 
-    $rootScope.$on('labsome.models.object_deleted', function(event, obj_id) {
+    $rootScope.$on('warehaus.models.object_deleted', function(event, obj_id) {
         if (angular.isDefined(self.byId[obj_id])) {
             refresh();
         }
@@ -84,7 +84,7 @@ angular.module('labsome.models').factory('allLabs', function($http, $rootScope, 
     return self;
 });
 
-angular.module('labsome.models').directive('labName', function(allLabs) {
+angular.module('warehaus.models').directive('labName', function(allLabs) {
     var link = function(scope, elem, attrs) {
         scope.allLabs = allLabs;
     };
@@ -99,7 +99,7 @@ angular.module('labsome.models').directive('labName', function(allLabs) {
     };
 });
 
-angular.module('labsome.models').directive('objectTypeName', function(dbObjects) {
+angular.module('warehaus.models').directive('objectTypeName', function(dbObjects) {
     var link = function(scope, elem, attrs) {
         scope.dbObjects = dbObjects;
     };
@@ -115,7 +115,7 @@ angular.module('labsome.models').directive('objectTypeName', function(dbObjects)
     };
 });
 
-angular.module('labsome.models').directive('objectTypeTitle', function(dbObjects) {
+angular.module('warehaus.models').directive('objectTypeTitle', function(dbObjects) {
     var link = function(scope, elem, attrs) {
         scope.dbObjects = dbObjects;
     };
@@ -131,7 +131,7 @@ angular.module('labsome.models').directive('objectTypeTitle', function(dbObjects
     };
 });
 
-angular.module('labsome.models').directive('objectCountWithType', function() {
+angular.module('warehaus.models').directive('objectCountWithType', function() {
     return {
         restrict: 'AE',
         template: '{{ (!count && (count != 0)) ? "" : (count + " ") }}<object-type-title type-id="typeId" sample="{{ count }}"/>',

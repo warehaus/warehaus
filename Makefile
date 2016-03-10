@@ -1,11 +1,11 @@
 SRC_DIR := $(shell pwd)
 DIST_DIR := $(shell pwd)/dist
-DOCKER_IMAGE := labsome/labsome
+DOCKER_IMAGE := warehaus/warehaus
 EGG_BUILDER_IMAGE := python:2.7
 NODE_BUILDER_IMAGE := node:5.4
-FRONTEND_BUILDER_IMAGE := labsome/frontend-builder:v5
+FRONTEND_BUILDER_IMAGE := warehaus/frontend-builder:v7
 DOCKER_RUN_CMDLINE := docker run -ti --rm
-LOCAL_LOGS := ~/.labsome/logs
+LOCAL_LOGS := ~/.warehaus/logs
 
 build: build-backend build-frontend
 
@@ -38,7 +38,7 @@ run: docker-image
 	@$(DOCKER_RUN_CMDLINE) \
 		--link rethinkdb \
 		--port 80:80 \
-		--volume $(LOCAL_LOGS):/var/log/labsome \
+		--volume $(LOCAL_LOGS):/var/log/warehaus \
 		$(DOCKER_IMAGE):latest
 
 test: docker-image

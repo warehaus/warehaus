@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('labsome.auth', [
-    'labsome.users',
+angular.module('warehaus.auth', [
+    'warehaus.users',
     'angular-jwt'
 ]);
 
-angular.module('labsome.auth').factory('curUser', function($rootScope, $http, $log, labsomeState, users) {
+angular.module('warehaus.auth').factory('curUser', function($rootScope, $http, $log, warehausState, users) {
     var self = {
         is_admin: undefined,
         is_authenticated: false
@@ -28,18 +28,18 @@ angular.module('labsome.auth').factory('curUser', function($rootScope, $http, $l
         self.is_admin = self.roles.indexOf('admin') != -1;
         self.is_authenticated = true;
         $log.info('Authorized current user');
-        $rootScope.$broadcast('labsome.auth.user_authorized');
+        $rootScope.$broadcast('warehaus.auth.user_authorized');
     };
 
     var unload_current_user = function() {
         self.is_authenticated = false;
         $log.info('Unauthorized current user');
-        $rootScope.$broadcast('labsome.auth.user_unauthorized');
+        $rootScope.$broadcast('warehaus.auth.user_unauthorized');
     };
 
     self.logout = function() {
         localStorage.removeItem('id_token');
-        labsomeState.refresh();
+        warehausState.refresh();
     };
 
     var load_current_user = function() {
@@ -48,7 +48,7 @@ angular.module('labsome.auth').factory('curUser', function($rootScope, $http, $l
         });
     };
 
-    $rootScope.$on('labsome.state.update', function(event, state) {
+    $rootScope.$on('warehaus.state.update', function(event, state) {
         if (!state.is_initialized) {
             return;
         }
@@ -59,12 +59,12 @@ angular.module('labsome.auth').factory('curUser', function($rootScope, $http, $l
         }
     });
 
-    $rootScope.$on('labsome.users.inventory_changed', update_user_fields);
+    $rootScope.$on('warehaus.users.inventory_changed', update_user_fields);
 
     return self;
 });
 
-angular.module('labsome.auth').controller('LoginController', function($scope, $http, $log, labsomeState) {
+angular.module('warehaus.auth').controller('LoginController', function($scope, $http, $log, warehausState) {
     $scope.input = {};
     $scope.error = undefined;
 
@@ -74,7 +74,7 @@ angular.module('labsome.auth').controller('LoginController', function($scope, $h
             $scope.error = undefined;
             localStorage.setItem('id_token', res.data.access_token);
             $log.info('Successfully logged-in');
-            labsomeState.refresh();
+            warehausState.refresh();
         }, function(res) {
             $scope.working = false;
             $scope.error = res.data.error;
@@ -83,7 +83,7 @@ angular.module('labsome.auth').controller('LoginController', function($scope, $h
     };
 });
 
-angular.module('labsome.auth').config(function($httpProvider, jwtInterceptorProvider) {
+angular.module('warehaus.auth').config(function($httpProvider, jwtInterceptorProvider) {
     jwtInterceptorProvider.authPrefix = 'JWT ';
     jwtInterceptorProvider.tokenGetter = function() {
         return localStorage.getItem('id_token');
@@ -92,6 +92,6 @@ angular.module('labsome.auth').config(function($httpProvider, jwtInterceptorProv
     $httpProvider.interceptors.push('jwtInterceptor');
 });
 
-angular.module('labsome.auth').run(function($rootScope, curUser) {
+angular.module('warehaus.auth').run(function($rootScope, curUser) {
     $rootScope.curUser = curUser;
 });

@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('labsome.first_setup', []);
+angular.module('warehaus.first_setup', []);
 
-angular.module('labsome.first_setup').controller('FirstSetupController', function($scope, $http, $uibModal, $timeout, labsomeState, viewPath) {
+angular.module('warehaus.first_setup').controller('FirstSetupController', function($scope, $http, $uibModal, $timeout, warehausState, viewPath) {
     $scope.settings = {
         ldap: {
             server_scheme: 'ldap://',
@@ -49,7 +49,7 @@ angular.module('labsome.first_setup').controller('FirstSetupController', functio
                 $http.post('/api/v1/first-setup/configure', $scope.settings).then(function() {
                     $http.post('/api/v1/first-setup/restart-server');
                     $timeout(function() {
-                        labsomeState.refresh();
+                        warehausState.refresh();
                     }, 1000);
                 }, _http_error);
             }, _reset);
@@ -57,7 +57,7 @@ angular.module('labsome.first_setup').controller('FirstSetupController', functio
     };
 });
 
-angular.module('labsome.first_setup').controller('VerifyFirstSetupConfigController', function($scope, $uibModalInstance, $http, settings, test_result) {
+angular.module('warehaus.first_setup').controller('VerifyFirstSetupConfigController', function($scope, $uibModalInstance, $http, settings, test_result) {
     $scope.settings = settings;
     $scope.test_result = test_result;
 

@@ -30,9 +30,9 @@ class Server(TypeClass):
         assert cur_url.endswith('agent.py'), cur_url
         this_type_url = cur_url[:-len('agent.py')]
         agent_code = pkg_resources.resource_string(__name__, 'agent.py.txt')
-        agent_code = agent_code.replace('$$LABSOME_HEARTBEAT_CODE_URL$$', urljoin(this_type_url, 'heartbeat.py'))
-        agent_code = agent_code.replace('$$LABSOME_HEARTBEAT_POST_URL$$', urljoin(this_type_url, 'heartbeat'))
-        agent_code = agent_code.replace('$$LABSOME_INTERVAL$$', '30')
+        agent_code = agent_code.replace('$$WAREHAUS_HEARTBEAT_CODE_URL$$', urljoin(this_type_url, 'heartbeat.py'))
+        agent_code = agent_code.replace('$$WAREHAUS_HEARTBEAT_POST_URL$$', urljoin(this_type_url, 'heartbeat'))
+        agent_code = agent_code.replace('$$WAREHAUS_INTERVAL$$', '30')
         return Response(agent_code, status=httplib.OK, mimetype='application/x-python')
 
     @type_action('GET', 'heartbeat.py')

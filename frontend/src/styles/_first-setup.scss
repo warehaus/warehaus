@@ -1,5 +1,5 @@
 .first-setup-wrapper {
-  background-color: $labsome-bg-color-gray;
+  background-color: $warehaus-bg-color-gray;
   position: absolute;
   top: 0;
   right: 0;
@@ -8,11 +8,11 @@
 }
 
 .first-setup {
-  border-radius: $labsome-standalone-box-radius;
-  padding: $labsome-standalone-box-padding;
+  border-radius: $warehaus-standalone-box-radius;
+  padding: $warehaus-standalone-box-padding;
 
   img.logo {
-    margin: $labsome-standalone-box-img-margin;
+    margin: $warehaus-standalone-box-img-margin;
     width: 192px;
     height: 48px;
   }

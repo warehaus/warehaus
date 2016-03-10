@@ -1,12 +1,12 @@
 import httplib
 import itertools
 from contextlib import contextmanager
-from labsome_api.app import create_app
+from warehaus_api.app import create_app
 from .restful_test_base import AuthorizedRestfulTestBase
 
 lab_num = itertools.count()
 
-class LabsomeApiTestBase(AuthorizedRestfulTestBase):
+class WarehausApiTestBase(AuthorizedRestfulTestBase):
     def create_app(self):
         return create_app(TESTING=True)
 

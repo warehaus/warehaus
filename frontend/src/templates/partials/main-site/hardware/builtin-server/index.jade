@@ -13,7 +13,7 @@ mixin no_servers
       | Please wait you administrator is adding new 
       object-type-name(lab-id='lab_id' type-key='type_key')
     p.text-center.x12(ng-if='curUser.is_admin')
-      | You need to install Labsome's agent on your 
+      | You need to install Warehaus's agent on your 
       object-type-name(lab-id='lab_id' type-key='type_key')
       |  to see them here
     p.text-center.x2(ng-if='curUser.is_admin')
@@ -57,13 +57,13 @@ mixin server_list
 
 mixin adding_servers
   p
-    | Labsome manages
+    | Warehaus manages
     | &#32;
     object-type-name(type-id='type_obj_id')
     | &#32;
     | by running a small agent on them.
   p
-    | This agent stays connected to Labsome so it knows the
+    | This agent stays connected to Warehaus so it knows the
     | &#32;
     object-type-name(type-id='type_obj_id' sample='1')
     | &#32;
@@ -79,7 +79,7 @@ mixin adding_servers
         i.fa.fa-info-circle
         | &nbsp;Each hardware type has a different agent
     p
-      | Labsome generates different agent code for each hardware type. Make sure to download
+      | Warehaus generates different agent code for each hardware type. Make sure to download
       | the agent for each hardware type separarely.
   h4
     | 1. Download the agent code
@@ -104,7 +104,7 @@ mixin adding_servers
     | &#32;
     object-type-name(type-id='type_obj_id' sample='1')
     | &#32;
-    | will immediately show up in Labsome.
+    | will immediately show up in Warehaus.
 
 mixin side_menu
   ul

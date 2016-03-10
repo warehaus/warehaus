@@ -2,13 +2,13 @@
   display: inline-block;
   color: white;
   border-radius: 50%;
-  width: $labsome-status-dot-size;
-  height: $labsome-status-dot-size;
+  width: $warehaus-status-dot-size;
+  height: $warehaus-status-dot-size;
 }
 
 @mixin status-dot-size($factor) {
-  width: ($factor * $labsome-status-dot-size);
-  height: ($factor * $labsome-status-dot-size);
+  width: ($factor * $warehaus-status-dot-size);
+  height: ($factor * $warehaus-status-dot-size);
   margin: 0 0 (3px + (-1px * $factor)) 0;
 }
 
@@ -18,13 +18,13 @@
 .status-dot-5x { @include status-dot-size(5); }
 
 @mixin status-dot-style($color) {
-  @include gradient-radial(lighten($color, $labsome-status-dot-contrast * 2), $color);
-  border: $labsome-status-dot-border-size solid darken($color, $labsome-status-dot-contrast)
+  @include gradient-radial(lighten($color, $warehaus-status-dot-contrast * 2), $color);
+  border: $warehaus-status-dot-border-size solid darken($color, $warehaus-status-dot-contrast)
 }
 
-.status-dot-primary { @include status-dot-style($color: $labsome-status-dot-color-primary); }
-.status-dot-success { @include status-dot-style($color: $labsome-status-dot-color-success); }
-.status-dot-info    { @include status-dot-style($color: $labsome-status-dot-color-info); }
-.status-dot-warning { @include status-dot-style($color: $labsome-status-dot-color-warning); }
-.status-dot-danger  { @include status-dot-style($color: $labsome-status-dot-color-danger); }
-.status-dot-unknown { @include status-dot-style($color: $labsome-status-dot-color-unknown); }
+.status-dot-primary { @include status-dot-style($color: $warehaus-status-dot-color-primary); }
+.status-dot-success { @include status-dot-style($color: $warehaus-status-dot-color-success); }
+.status-dot-info    { @include status-dot-style($color: $warehaus-status-dot-color-info); }
+.status-dot-warning { @include status-dot-style($color: $warehaus-status-dot-color-warning); }
+.status-dot-danger  { @include status-dot-style($color: $warehaus-status-dot-color-danger); }
+.status-dot-unknown { @include status-dot-style($color: $warehaus-status-dot-color-unknown); }

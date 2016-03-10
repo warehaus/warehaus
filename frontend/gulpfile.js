@@ -20,14 +20,14 @@ gulp.task('scripts', function() {
     gulp.src([dirs.scripts + '/**/*.module.js',
               dirs.scripts + '/**/*.js'])
         .pipe(ngAnnotate())
-        .pipe(concat('labsome.js'))
+        .pipe(concat('warehaus.js'))
         .pipe(uglify())
         .pipe(gulp.dest(dirs.dest))
     ;
 });
 
 gulp.task('styles', function() {
-    gulp.src([dirs.styles + '/labsome.scss'])
+    gulp.src([dirs.styles + '/warehaus.scss'])
         .pipe(sass())
         .pipe(minifyCSS())
         .pipe(gulp.dest(dirs.dest))
@@ -46,7 +46,7 @@ gulp.task('partials', function() {
         .pipe(jade())
         .pipe(templateCache({
             root: '/inline',
-            module: 'labsome.templates',
+            module: 'warehaus.templates',
             standalone: true
         }))
         .pipe(gulp.dest(dirs.dest))

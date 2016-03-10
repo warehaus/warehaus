@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('labsome.state', []);
+angular.module('warehaus.state', []);
 
-angular.module('labsome.state').factory('labsomeState', function($rootScope, $http, $timeout) {
+angular.module('warehaus.state').factory('warehausState', function($rootScope, $http, $timeout) {
     var self = {};
 
     self.refresh = function() {
@@ -10,7 +10,7 @@ angular.module('labsome.state').factory('labsomeState', function($rootScope, $ht
             self.loaded = true;
             self.is_initialized = res.data.is_initialized;
             self.is_authenticated = res.data.is_authenticated;
-            $rootScope.$broadcast('labsome.state.update', res.data);
+            $rootScope.$broadcast('warehaus.state.update', res.data);
         }, function() {
             $timeout(self.refresh, 1000);
         });
@@ -21,6 +21,6 @@ angular.module('labsome.state').factory('labsomeState', function($rootScope, $ht
     return self;
 });
 
-angular.module('labsome.state').run(function($rootScope, labsomeState) {
-    $rootScope.labsomeState = labsomeState;
+angular.module('warehaus.state').run(function($rootScope, warehausState) {
+    $rootScope.warehausState = warehausState;
 });

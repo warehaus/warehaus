@@ -1,7 +1,7 @@
 import httplib
-from .labsome_test_base import LabsomeApiTestBase
+from .warehaus_test_base import WarehausApiTestBase
 
-class TypeSystemTests(LabsomeApiTestBase):
+class TypeSystemTests(WarehausApiTestBase):
     def test_type_classes_api(self):
         '''Gets the supported type classes.'''
         self.get('/api/v1/hardware/types')

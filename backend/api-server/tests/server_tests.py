@@ -4,9 +4,9 @@ from urlparse import urljoin
 from subprocess import Popen
 from .proc_utils import terminated
 from .proc_utils import deleted_tempfile
-from .labsome_test_base import LabsomeApiTestBase
+from .warehaus_test_base import WarehausApiTestBase
 
-class ServerTests(LabsomeApiTestBase):
+class ServerTests(WarehausApiTestBase):
     def test_server_operations(self):
         '''Test server type creation, agent downloading and running heartbeat
         for creating servers.

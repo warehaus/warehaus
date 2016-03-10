@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('labsome.hardware.cluster', [
-    'labsome.models'
+angular.module('warehaus.hardware.cluster', [
+    'warehaus.models'
 ]);
 
-angular.module('labsome.hardware.cluster').constant('hwClusterTypeKey', 'builtin-cluster');
+angular.module('warehaus.hardware.cluster').constant('hwClusterTypeKey', 'builtin-cluster');
 
-angular.module('labsome.hardware.cluster').provider('clusterView', function(viewPath, hwClusterTypeKey) {
+angular.module('warehaus.hardware.cluster').provider('clusterView', function(viewPath, hwClusterTypeKey) {
     return {
         $get: function() {
             return function(viewName) {
@@ -16,7 +16,7 @@ angular.module('labsome.hardware.cluster').provider('clusterView', function(view
     };
 });
 
-angular.module('labsome.hardware.cluster').factory('clustersToServers', function($rootScope, $log, dbObjects, hwClusterTypeKey, hwServerTypeKey) {
+angular.module('warehaus.hardware.cluster').factory('clustersToServers', function($rootScope, $log, dbObjects, hwClusterTypeKey, hwServerTypeKey) {
     var self = {
         cluster_of_server: {}, // {server_id: cluster_id}
         servers_of_cluster: {} // {cluster_id: [server_id, server_id, ...]}
@@ -84,7 +84,7 @@ angular.module('labsome.hardware.cluster').factory('clustersToServers', function
         });
     };
 
-    $rootScope.$on('labsome.models.objects_reloaded', refresh);
+    $rootScope.$on('warehaus.models.objects_reloaded', refresh);
 
     refresh();
 
@@ -95,12 +95,12 @@ angular.module('labsome.hardware.cluster').factory('clustersToServers', function
         }
     };
 
-    $rootScope.$on('labsome.models.object_changed', function(event, obj_id) {
+    $rootScope.$on('warehaus.models.object_changed', function(event, obj_id) {
         var obj = dbObjects.byId[obj_id];
         call_if_typeclass(obj, hwServerTypeKey, update_server);
     });
 
-    $rootScope.$on('labsome.models.object_deleted', function(event, obj_id, deleted_obj) {
+    $rootScope.$on('warehaus.models.object_deleted', function(event, obj_id, deleted_obj) {
         call_if_typeclass(deleted_obj, hwServerTypeKey, function() {
             remove_server_from_cluster(obj_id);
         });
@@ -112,7 +112,7 @@ angular.module('labsome.hardware.cluster').factory('clustersToServers', function
     return self;
 });
 
-angular.module('labsome.hardware.cluster').run(function($rootScope, clustersToServers) {
+angular.module('warehaus.hardware.cluster').run(function($rootScope, clustersToServers) {
     $rootScope.clustersToServers = clustersToServers;
 });
 
@@ -120,7 +120,7 @@ angular.module('labsome.hardware.cluster').run(function($rootScope, clustersToSe
 // Cluster list
 //----------------------------------------------------------------------------//
 
-angular.module('labsome.hardware.cluster').controller('ClusterListController', function($scope, $http, $uibModal, hwClusterTypeKey, clusterView) {
+angular.module('warehaus.hardware.cluster').controller('ClusterListController', function($scope, $http, $uibModal, hwClusterTypeKey, clusterView) {
     $scope.create_cluster = function() {
         $uibModal.open({
             templateUrl: clusterView('create.html'),
@@ -137,7 +137,7 @@ angular.module('labsome.hardware.cluster').controller('ClusterListController', f
     };
 });
 
-angular.module('labsome.hardware.cluster').controller('CreateClusterController', function($scope, $uibModalInstance, $http, dbObjects, labId, typeObjId) {
+angular.module('warehaus.hardware.cluster').controller('CreateClusterController', function($scope, $uibModalInstance, $http, dbObjects, labId, typeObjId) {
     $scope.lab_id = labId;
     $scope.type_obj_id = typeObjId;
     $scope.cluster = {};
@@ -157,7 +157,7 @@ angular.module('labsome.hardware.cluster').controller('CreateClusterController',
 // Cluster page
 //----------------------------------------------------------------------------//
 
-angular.module('labsome.hardware.cluster').controller('ClusterPageController', function($scope, $http, $uibModal, $state, dbObjects, curUser, hwClusterTypeKey, clusterView) {
+angular.module('warehaus.hardware.cluster').controller('ClusterPageController', function($scope, $http, $uibModal, $state, dbObjects, curUser, hwClusterTypeKey, clusterView) {
     var cluster_uri = function() {
         var lab = dbObjects.byId[$scope.lab_id];
         var cluster = dbObjects.byId[$scope.obj_id];
@@ -217,7 +217,7 @@ angular.module('labsome.hardware.cluster').controller('ClusterPageController', f
     };
 });
 
-angular.module('labsome.hardware.cluster').controller('DeleteClusterController', function($scope, $uibModalInstance, $http, $q, dbObjects, labId, typeObjId, objId) {
+angular.module('warehaus.hardware.cluster').controller('DeleteClusterController', function($scope, $uibModalInstance, $http, $q, dbObjects, labId, typeObjId, objId) {
     $scope.lab_id = labId;
     $scope.type_obj_id = typeObjId;
     $scope.obj_id = objId;
@@ -243,7 +243,7 @@ angular.module('labsome.hardware.cluster').controller('DeleteClusterController',
     };
 });
 
-angular.module('labsome.hardware.cluster').controller('ShowClusterConfigJsonController', function($scope, $uibModalInstance, labId, typeObjId, objId, configJson) {
+angular.module('warehaus.hardware.cluster').controller('ShowClusterConfigJsonController', function($scope, $uibModalInstance, labId, typeObjId, objId, configJson) {
     $scope.lab_id = labId;
     $scope.type_obj_id = typeObjId;
     $scope.obj_id = objId;

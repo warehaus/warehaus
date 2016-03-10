@@ -7,8 +7,8 @@ from .models import Object
 
 logger = getLogger(__name__)
 
-OBJ_ACTION_ATTR = '_labsome_object_action'
-TYPE_ACTION_ATTR = '_labsome_type_action'
+OBJ_ACTION_ATTR = '_warehaus_object_action'
+TYPE_ACTION_ATTR = '_warehaus_type_action'
 
 def object_action(method, name):
     def decorator(func):

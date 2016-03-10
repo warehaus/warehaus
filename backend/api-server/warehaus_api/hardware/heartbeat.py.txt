@@ -69,7 +69,7 @@ def collect_info():
     return info
 
 def send(data):
-    request = Request(LABSOME_HEARTBEAT_POST_URL, json.dumps(data), {'Content-Type': 'application/json'})
+    request = Request(WAREHAUS_HEARTBEAT_POST_URL, json.dumps(data), {'Content-Type': 'application/json'})
     response = urlopen(request).read()
 
 info = collect_info()

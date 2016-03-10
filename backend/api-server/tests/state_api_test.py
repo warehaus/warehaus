@@ -1,7 +1,7 @@
 import requests
-from .labsome_test_base import LabsomeApiTestBase
+from .warehaus_test_base import WarehausApiTestBase
 
-class StateApiTest(LabsomeApiTestBase):
+class StateApiTest(WarehausApiTestBase):
     def test_state_api(self):
         '''Calls /api/v1/state with and without an authorization token.'''
         without_auth = requests.get(self.app_url('/api/v1/state')).json()
