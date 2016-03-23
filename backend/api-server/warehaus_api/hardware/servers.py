@@ -54,13 +54,15 @@ class Server(TypeClass):
     @type_action('POST', 'heartbeat')
     def heartbeat_call(self, typeobj):
         display_name = request.json['hostname']
+        hw_info = request.json['hw_info']
         slug = slugify(display_name)
         server = self._get_server(typeobj, slug)
-        server.update(
-            display_name = display_name,
-            hw_info      = r.literal(request.json['hw_info']),
-            errors       = request.json.get('errors', []),
-        )
+        server.display_name = display_name
+        server.errors = request.json.get('errors', [])
+        if 'id' in server:
+            server.hw_info = r.literal(hw_info)
+        else:
+            server.hw_info = hw_info
         server.last_heartbeat = now()
         server.status = 'success' # XXX calculate this with a background job based on server.last_heartbeat
         server.save()
