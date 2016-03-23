@@ -1,10 +1,12 @@
 import os
 import re
+import sys
 import json
 from urllib2 import Request
 from urllib2 import urlopen
 from urlparse import urljoin
 from commands import getstatusoutput
+from traceback import format_exc
 from collections import defaultdict
 
 def run(cmdline, expected_status=0):
@@ -43,29 +45,68 @@ def collect_pci_info():
     return pci_devices
 
 def collect_block_dev_info():
-    lsblk = run('lsblk --bytes --nodeps')
+    lsblk = run('lsblk --bytes --nodeps --output-all --pairs')
     block_devices = []
     for line in lsblk.splitlines():
-        mo = re.match(r'^(?P<device>\w+)\s+(?P<major>\d+):(?P<minor>\d+)\s+(?P<removable>\d+)\s+(?P<bytes>\d+)\s+(?P<readonly>\d+)\s+(?P<type>\w+)\s*$', line)
-        if mo is not None:
-            block_devices.append(mo.groupdict())
+        fields = {}
+        for mo in re.finditer(r'(?P<key>[^=]+)="(?P<value>[^"]*)"', line):
+            groupdict = mo.groupdict()
+            key, value = groupdict['key'].strip().lower(), groupdict['value'].strip()
+            try:
+                value = int(value)
+            except ValueError:
+                pass
+            fields[key] = value
+        block_devices.append(fields)
     return block_devices
 
+def collect_cpu_info():
+    cpus_info = open('/proc/cpuinfo').read()
+    return [dict(map(lambda x: x.strip(), line.split(':', 1)) for line in cpu_info.splitlines() if line.strip()) for cpu_info in cpus_info.split('\n\n') if cpu_info.strip()]
+
+MEM_KEYS = (
+    'MemTotal',
+    'MemFree',
+    'MemAvailable',
+    'SwapFree',
+    'SwapFree',
+    'SwapCached',
+)
+
+def collect_mem_info():
+    mem_info = {}
+    for line in open('/proc/meminfo').read().splitlines():
+        key, value = map(lambda x: x.strip(), line.split(':', 1))
+        if key not in MEM_KEYS:
+            continue
+        try:
+            value = int(value)
+        except ValueError:
+            if value.endswith('kB'):
+                value = int(value[:-len('kB')]) * 1024
+        mem_info[key] = value
+    return mem_info
+
 info_collectors = dict(
-    hostname      = lambda: open('/proc/sys/kernel/hostname').read().strip(),
     net           = collect_net_info,
     pci_devices   = collect_pci_info,
     block_devices = collect_block_dev_info,
+    cpu           = collect_cpu_info,
+    mem           = collect_mem_info,
 )
 
 def collect_info():
-    info = dict(errors=[])
+    info = dict(
+        hostname = open('/proc/sys/kernel/hostname').read().strip(),
+        hw_info  = {},
+        errors   = [],
+    )
     for key, collect_func in info_collectors.iteritems():
         try:
-            info[key] = collect_func()
+            info['hw_info'][key] = collect_func()
         except Exception as error:
-            info[key] = None
-            info['errors'].append(str(error))
+            info['hw_info'][key] = None
+            info['errors'].append(dict(info=key, error=str(error), traceback=format_exc()))
     return info
 
 def send(data):

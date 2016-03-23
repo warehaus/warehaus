@@ -1,5 +1,6 @@
 import httplib
 import pkg_resources
+import rethinkdb as r
 from urlparse import urljoin
 from slugify import slugify
 from flask import request
@@ -40,13 +41,6 @@ class Server(TypeClass):
         heartbeat_code = pkg_resources.resource_string(__name__, 'heartbeat.py.txt')
         return Response(heartbeat_code, status=httplib.OK, mimetype='application/x-python')
 
-    heartbeat_parser = RequestParser()
-    heartbeat_parser.add_argument('hostname', required=True)
-    heartbeat_parser.add_argument('net', required=True)
-    heartbeat_parser.add_argument('pci_devices', required=True)
-    heartbeat_parser.add_argument('block_devices', required=True)
-    heartbeat_parser.add_argument('errors')
-
     def _get_server(self, typeobj, slug):
         lab = get_lab_from_type_object(typeobj)
         servers = tuple(Object.query.filter(dict(slug=slug, parent_id=lab.id, type_id=typeobj.id)))
@@ -59,16 +53,13 @@ class Server(TypeClass):
 
     @type_action('POST', 'heartbeat')
     def heartbeat_call(self, typeobj):
-        args = self.heartbeat_parser.parse_args()
-        display_name = args['hostname']
+        display_name = request.json['hostname']
         slug = slugify(display_name)
         server = self._get_server(typeobj, slug)
         server.update(
-            display_name  = display_name,
-            net           = args['net'],
-            pci_devices   = args['pci_devices'],
-            block_devices = args['block_devices'],
-            errors        = args.get('errors', []),
+            display_name = display_name,
+            hw_info      = r.literal(request.json['hw_info']),
+            errors       = request.json.get('errors', []),
         )
         server.last_heartbeat = now()
         server.status = 'success' # XXX calculate this with a background job based on server.last_heartbeat
