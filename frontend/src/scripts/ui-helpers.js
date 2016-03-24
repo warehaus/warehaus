@@ -9,8 +9,13 @@ angular.module('warehaus.ui_helpers', [
     'angular.filter',
     'angular-spinkit',
     'ngSanitize',
-    'slugifier'
+    'slugifier',
+    'ngNumeraljs'
 ]);
+
+angular.module('warehaus.ui_helpers').config(function($numeraljsConfigProvider) {
+    $numeraljsConfigProvider.setFormat('capacity', '0,0.00 b');
+});
 
 angular.module('warehaus.ui_helpers').run(function($rootScope, $state) {
     $rootScope.moment = moment;
