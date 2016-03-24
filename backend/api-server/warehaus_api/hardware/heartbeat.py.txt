@@ -87,12 +87,24 @@ def collect_mem_info():
         mem_info[key] = value
     return mem_info
 
+def collect_fs_info():
+    df = run('df --block-size=1 /')
+    lines = df.splitlines()[1:]
+    fields = df.splitlines()[1].split()
+    return {'/': dict(
+        dev             = fields[0],
+        total_bytes     = int(fields[1]),
+        used_bytes      = int(fields[2]),
+        available_bytes = int(fields[3]),
+    )}
+
 info_collectors = dict(
     net           = collect_net_info,
     pci_devices   = collect_pci_info,
     block_devices = collect_block_dev_info,
     cpu           = collect_cpu_info,
     mem           = collect_mem_info,
+    fs            = collect_fs_info,
 )
 
 def collect_info():
