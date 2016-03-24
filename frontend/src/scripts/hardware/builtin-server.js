@@ -16,7 +16,7 @@ angular.module('warehaus.hardware.server').provider('serverView', function(viewP
     };
 });
 
-angular.module('warehaus.hardware.server').controller('ServerListController', function($scope, $location, $http, $stateParams, $uibModal, dbObjects, serverView) {
+angular.module('warehaus.hardware.server').controller('ServerListController', function($scope, $location, $stateParams, dbObjects) {
     if (!$stateParams.tab) {
         $stateParams.tab = 'all';
     }
@@ -31,14 +31,18 @@ angular.module('warehaus.hardware.server').controller('ServerListController', fu
     var type_obj = dbObjects.byId[$scope.type_obj_id];
 
     $scope.agent_url = base_url + '/api/v1/labs/' + lab.slug + '/~/' + type_obj.slug + '/agent.py';
+});
 
-    var server_uri = function(server_id) {
+angular.module('warehaus.hardware.server').controller('ServerPageController', function($scope, $http, $uibModal, dbObjects, serverView) {
+    var lab = dbObjects.byId[$scope.lab_id];
+
+    var server_uri = function() {
         var lab = dbObjects.byId[$scope.lab_id];
-        var server = dbObjects.byId[server_id];
+        var server = dbObjects.byId[$scope.obj_id];
         return '/api/v1/labs/' + lab.slug + '/' + server.slug + '/';
     };
 
-    $scope.add_to_cluster = function(server_id) {
+    $scope.add_to_cluster = function() {
         $uibModal.open({
             templateUrl: serverView('add-to-cluster.html'),
             controller: 'ClusterSelectionController',
@@ -50,16 +54,16 @@ angular.module('warehaus.hardware.server').controller('ServerListController', fu
                     return $scope.type_obj_id;
                 },
                 server_id: function() {
-                    return server_id;
+                    return $scope.obj_id;
                 }
             }
         }).result.then(function(cluster_id) {
-            $http.put(server_uri(server_id) + 'cluster', {cluster_id: cluster_id});
+            $http.put(server_uri($scope.obj_id) + 'cluster', {cluster_id: cluster_id});
         });
     };
 
-    $scope.remove_from_cluster = function(server_id) {
-        $http.put(server_uri(server_id) + 'cluster', {cluster_id: null});
+    $scope.remove_from_cluster = function() {
+        $http.put(server_uri() + 'cluster', {cluster_id: null});
     };
 });
 

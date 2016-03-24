@@ -27,13 +27,16 @@
       a {
         outline: 0;
         margin: 0;
-        display: block;
-        padding: $warehaus-page-layout-nav-spacing (3 * $warehaus-page-layout-nav-spacing);
 
         &:hover,
         &:focus {
           text-decoration: none;
         }
+      }
+
+      > a, > span {
+        display: block;
+        padding: $warehaus-page-layout-nav-spacing (3 * $warehaus-page-layout-nav-spacing);
       }
 
       &:first-child {
