@@ -101,3 +101,16 @@ class Cluster(TypeClass):
             ),
         )
         return config
+
+    @object_action('GET', 'labels')
+    def get_labels(self, cluster):
+        require_user()
+        labels = cluster.labels if 'labels' in cluster else []
+        return dict(labels=labels)
+
+    @object_action('PUT', 'labels')
+    def set_labels(self, cluster):
+        require_user()
+        cluster.labels = request.json['labels']
+        cluster.save()
+        return dict(labels=cluster.labels)

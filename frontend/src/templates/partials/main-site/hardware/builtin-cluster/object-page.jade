@@ -76,6 +76,15 @@ mixin navigation
     li
       +owners
     li.heading
+      | Labels
+    li(ng-repeat='label in dbObjects.byId[obj_id].labels')
+      i.icon-tag
+      | {{ label }}
+    li
+      a(ng-click='add_label()')
+        i.fa.fa-fw.fa-plus
+        | Add Label
+    li.heading
       | Downloads
     li
       a(prevent-default target='_{{ obj_id }}_config.json' href='/api/v1/labs/{{ allLabs.byId[lab_id].slug }}/{{ dbObjects.byId[obj_id].slug }}/config.json' ng-click='show_config_json()')

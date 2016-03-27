@@ -66,3 +66,37 @@ class ClusterTests(WarehausApiTestBase):
             self.assertEqual(len(config['servers']), 0)
             random_server = 'srvr{}'.format(random.randrange(NUM_SERVERS))
             self.put('/api/v1/labs/{}/{}/cluster'.format(lab['slug'], random_server), dict(cluster_id=cluster['id']))
+            config = self.get('/api/v1/labs/{}/some-cluster/config.json'.format(lab['slug']))
+            self.assertEqual(len(config['servers']), 1)
+
+    def test_label_assignment(self):
+        '''Add and remove labels from clusters'''
+        with self.temp_lab() as lab:
+            cluster_type = self.create_type_object(lab, type_key='builtin-cluster', slug='cluster',
+                                                   name_singular='Cluster', name_plural='Clusters')
+            cluster = self.post(cluster_type, dict(display_name='George'))
+            cluster_url = '/api/v1/labs/{}/{}/'.format(lab['slug'], cluster['slug'])
+            cluster_labels_url = urljoin(cluster_url, 'labels')
+            labels = self.get(cluster_labels_url)['labels']
+            self.assertEqual(labels, [])
+            self.put(cluster_labels_url, dict(labels=['A', 'B']))
+            labels = self.get(cluster_labels_url)['labels']
+            self.assertEqual(labels, ['A', 'B'])
+            self.put(cluster_labels_url, dict(labels=['B']))
+            labels = self.get(cluster_labels_url)['labels']
+            self.assertEqual(labels, ['B'])
+            self.put(cluster_labels_url, dict(labels=['B', 'C', 'A']))
+            labels = self.get(cluster_labels_url)['labels']
+            self.assertEqual(labels, ['B', 'C', 'A'])
+            self.put(cluster_labels_url, dict(labels=[]))
+            labels = self.get(cluster_labels_url)['labels']
+            self.assertEqual(labels, [])
+
+    def test_allocation_by_label(self):
+        '''Search and allocate clusters by labels'''
+        NUM_CLUSTERS = 70
+        with self.temp_lab() as lab:
+            cluster_type = self.create_type_object(lab, type_key='builtin-cluster', slug='cluster',
+                                                   name_singular='Cluster', name_plural='Clusters')
+            for i in range(NUM_CLUSTERS):
+                cluster = self.post(cluster_type, dict(display_name='George {}'.format(i)))
