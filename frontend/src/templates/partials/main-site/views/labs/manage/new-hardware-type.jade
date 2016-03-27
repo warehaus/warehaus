@@ -1,4 +1,7 @@
-mixin fields
+h4
+  | New Hardware Type
+
+form(name='newHardwareType' role='form' ng-submit='save()')
   .form-group
     label.control-label
       | Select Type Behavior
@@ -34,18 +37,5 @@ mixin fields
     br
     | {{ error.message }}
 
-form(name='newHardwareType' role='form' ng-submit='save()')
-  .modal-header
-    button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
-      span(aria-hidden="true") &times;
-    h4.modal-title
-      | New Hardware Type
-
-  .modal-body
-    +fields
-
-  .modal-footer
-    button.btn.btn-default(ng-click='cancel()')
-      | Cancel
-    button.btn.btn-success(ng-click='create()' ng-disabled='newHardwareType.$invalid || working')
-      | Create Hardware Type
+  button.btn.btn-success(ng-click='create()' ng-disabled='newHardwareType.$invalid || working' ng-if='new_type.slug')
+    | Create Hardware Type

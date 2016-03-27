@@ -1,11 +1,20 @@
 mixin menu
   ul
     li.heading
-      | Lab Hardware
+      | Overview
     li(ui-sref-active='active')
-      a(ui-sref='.set-hardware-types')
-        | Hardware Types
-     li.heading
+      a(ui-sref='.overview')
+        | Overview
+    li.heading
+      | Hardware Types
+    li(ng-repeat='(type_obj_id, type_obj) in dbObjects.byParentId[allLabs.byId[lab_id].type_id] | orderBy:"display_name.plural"' ui-sref-active='active')
+      a(ui-sref='.hardware-type({typeSlug: type_obj.slug})')
+        object-type-title(type-id='type_obj_id')
+    li(ui-sref-active='active')
+      a(ui-sref='.new-hardware-type')
+        i.fa.fa-fw.fa-plus-circle
+        i New Hardware Type
+    li.heading
       | Other Actions
     li(ui-sref-active='active')
       a(ui-sref='.rename')

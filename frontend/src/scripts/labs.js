@@ -10,6 +10,20 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(viewPath) {
         return viewPath('main-site/views/labs/' + path);
     };
 
+    var typeObjIdResolver = ['$stateParams', 'dbObjects', 'labId', function($stateParams, dbObjects, labId) {
+        var lab = dbObjects.byId[labId];
+        if (angular.isUndefined(lab)) {
+            return undefined;
+        }
+        for (var type_obj_id in dbObjects.byParentId[lab.type_id]) {
+            var type_obj = dbObjects.byId[type_obj_id];
+            if (angular.isDefined(type_obj) && (type_obj.slug == $stateParams.typeSlug)) {
+                return type_obj_id;
+            }
+        }
+        return undefined;
+    }];
+
     var lab_page_children = [
         {
             name: 'browse-type',
@@ -20,19 +34,7 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(viewPath) {
                 typeSlug: ['$stateParams', function($stateParams) {
                     return $stateParams.typeSlug;
                 }],
-                typeObjId: ['$stateParams', 'dbObjects', 'labId', function($stateParams, dbObjects, labId) {
-                    var lab = dbObjects.byId[labId];
-                    if (angular.isUndefined(lab)) {
-                        return undefined;
-                    }
-                    for (var type_obj_id in dbObjects.byParentId[lab.type_id]) {
-                        var type_obj = dbObjects.byId[type_obj_id];
-                        if (angular.isDefined(type_obj) && (type_obj.slug == $stateParams.typeSlug)) {
-                            return type_obj_id;
-                        }
-                    }
-                    return undefined;
-                }],
+                typeObjId: typeObjIdResolver,
                 $title: ['$filter', 'dbObjects', 'typeObjId', function($filter, dbObjects, typeObjId) {
                     return $filter('titlecase')(dbObjects.byId[typeObjId].display_name.plural);
                 }]
@@ -75,7 +77,7 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(viewPath) {
             name: 'manage',
             url: '/manage',
             templateUrl: labsView('manage/index.html'),
-            autoRedirectToChild: 'set-hardware-types',
+            autoRedirectToChild: 'overview',
             resolve: {
                 $title: function() {
                     return 'Manage';
@@ -83,14 +85,37 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(viewPath) {
             },
             children: [
                 {
-                    name: 'set-hardware-types',
-                    url: '/hardware-types',
-                    templateUrl: labsView('manage/hardware-types.html'),
-                    controller: 'HardwareTypesController',
+                    name: 'overview',
+                    url: '/overview',
+                    templateUrl: labsView('manage/overview.html'),
+                    controller: 'ManageLabOverview',
                     resolve: {
                         $title: function() {
-                            return 'Hardware Types';
+                            return 'Overview';
                         }
+                    }
+                },
+                {
+                    name: 'new-hardware-type',
+                    url: '/new-hardware-type',
+                    templateUrl: labsView('manage/new-hardware-type.html'),
+                    controller: 'NewHardwareTypeController',
+                    resolve: {
+                        $title: function() {
+                            return 'New Hardware Type';
+                        }
+                    }
+                },
+                {
+                    name: 'hardware-type',
+                    url: '/hardware-type/:typeSlug',
+                    templateUrl: labsView('manage/hardware-type.html'),
+                    controller: 'HardwareTypeController',
+                    resolve: {
+                        typeObjId: typeObjIdResolver,
+                        $title: ['$filter', 'dbObjects', 'typeObjId', function($filter, dbObjects, typeObjId) {
+                            return $filter('titlecase')(dbObjects.byId[typeObjId].display_name.plural);
+                        }]
                     }
                 },
                 {
@@ -344,26 +369,21 @@ angular.module('warehaus.labs').controller('ObjectPageController', function($sco
     $scope.$on('warehaus.models.object_deleted', reload_object_conditionally);
 });
 
-angular.module('warehaus.labs').controller('HardwareTypesController', function($scope, $state, $uibModal, allLabs, viewPath) {
-    $scope.new_hardware_type = function() {
-        $uibModal.open({
-            templateUrl: viewPath('main-site/views/labs/manage/new-hardware-type.html'),
-            controller: 'NewHardwareTypeController',
-            resolve: {
-                lab_id: function() {
-                    return $scope.lab_id;
-                }
-            }
-        });
-    };
+angular.module('warehaus.labs').controller('ManageLabOverview', function($scope) {
+});
 
-    $scope.delete_type = function(type_obj) {
-        allLabs.delete_type_object($scope.lab_id, type_obj.id);
+angular.module('warehaus.labs').controller('HardwareTypeController', function($scope, $state, allLabs, labId, typeObjId) {
+    $scope.type_obj_id = typeObjId;
+
+    $scope.delete_type = function() {
+        allLabs.delete_type_object(labId, typeObjId).then(function() {
+            $state.go('^');
+        });
     };
 });
 
-angular.module('warehaus.labs').controller('NewHardwareTypeController', function($scope, $uibModalInstance, allLabs, dbTypeClasses, lab_id) {
-    $scope.lab_id = lab_id;
+angular.module('warehaus.labs').controller('NewHardwareTypeController', function($scope, $state, allLabs, dbTypeClasses, labId) {
+    $scope.lab_id = labId;
     $scope.new_type = {
         display_name: {
             singular: '',
@@ -377,14 +397,12 @@ angular.module('warehaus.labs').controller('NewHardwareTypeController', function
         $scope.new_type.display_name.plural = type_class.display_name.toLowerCase() + 's';
     };
 
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
-    };
-
     $scope.create = function() {
         $scope.working = true;
         $scope.error = undefined;
-        allLabs.create_type_object($scope.lab_id, $scope.new_type).then($uibModalInstance.close, function(res) {
+        allLabs.create_type_object($scope.lab_id, $scope.new_type).then(function(res) {
+            $state.go('^.hardware-type', {typeSlug: res.data.slug});
+        }, function(res) {
             $scope.working = false;
             $scope.error = res.data;
         });

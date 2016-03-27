@@ -1,0 +1,53 @@
+mixin type_title
+  h4
+    object-type-title(type-id='type_obj_id')
+
+mixin type_info
+  .panel.panel-default
+    .panel-heading
+      | Type Information
+    table.table
+      tr
+        td(style={'white-space': 'nowrap'})
+          | Slug:
+        td(style={width: '100%'})
+          mild
+            | {{ dbObjects.byId[type_obj_id].slug }}
+      tr
+        td(style={'white-space': 'nowrap'})
+          | Behavior:
+        td
+          mild
+            | {{ dbObjects.byId[type_obj_id].type_key }}
+      tr
+        td(style={'white-space': 'nowrap'})
+          | Singular name:
+          br
+          | Plural name:
+        td
+          mild
+            | {{ dbObjects.byId[type_obj_id].display_name.singular }}
+            br
+            | {{ dbObjects.byId[type_obj_id].display_name.plural }}
+
+mixin delete_type
+  .panel.panel-default
+    .panel-heading
+      | Delete This Type
+    .panel-body
+      div
+        | Deleting this type will immediately remove all objects of this type. Any API that relates to this
+        | type or any of its objects will fail.
+      div
+        i
+          | This cannot be undone.
+      .text-right
+        button.btn.btn-danger(ng-click='delete_type()')
+          | Delete This Type
+
+mixin content
+  +type_title
+  +type_info
+  +delete_type
+
++content
