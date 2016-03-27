@@ -43,58 +43,55 @@ mixin server_info_net
   .panel.panel-default(ng-if='dbObjects.byId[obj_id].hw_info.net')
     .panel-heading
       | Network
-    ul.list-group
-      li.list-group-item(ng-repeat='net in dbObjects.byId[obj_id].hw_info.net | orderBy: "dev"')
-        table.hw-info
-          tr
-            td.icon
-              i.icon-share
-            td.info
-              span.label.label-primary
-                | {{ net.dev }}
-              | &#32;
-              | {{ net.mac }}
-              div(ng-repeat='ipv4 in net.inet', style={color: '#bbb'})
-                | {{ ipv4 }}
-              div(ng-repeat='ipv6 in net.inet6' style={color: '#bbb'})
-                | {{ ipv6 }}
+    table.table.hw-info-table
+      tr(ng-repeat='net in dbObjects.byId[obj_id].hw_info.net | orderBy: "dev"')
+        td.hw-info-icon
+          i.icon-share
+        td.hw-info-content
+          span.label.label-primary
+            | {{ net.dev }}
+          | &#32;
+          | {{ net.mac }}
+          div(ng-repeat='ipv4 in net.inet', style={color: '#bbb'})
+            | {{ ipv4 }}
+          div(ng-repeat='ipv6 in net.inet6' style={color: '#bbb'})
+            | {{ ipv6 }}
+        td.hw-info-switches
+          .x2.text-success
+            i.fa.fa-toggle-on
 
 mixin server_info_block_devices
   .panel.panel-default(ng-if='dbObjects.byId[obj_id].hw_info.block_devices')
     .panel-heading
       | Block Devices
-    ul.list-group
-      li.list-group-item(ng-repeat='blockdev in dbObjects.byId[obj_id].hw_info.block_devices')
-        table.hw-info
-          tr
-            td.icon
-              i.fa.fa-database(ng-if='blockdev.type == "disk"')
-              i.icon-disc(ng-if='blockdev.type == "rom"')
-            td.info
-              span.label.label-primary
-                | /dev/{{ blockdev.name }}
-              br
-              span(style={color: '#bbb'})
-                | {{ blockdev.model }} ({{ blockdev.size | numeraljs:'capacity' }})
+    table.table.hw-info-table
+      tr(ng-repeat='blockdev in dbObjects.byId[obj_id].hw_info.block_devices')
+        td.hw-info-icon
+          i.fa.fa-database(ng-if='blockdev.type == "disk"')
+          i.icon-disc(ng-if='blockdev.type == "rom"')
+        td.hw-info-content
+          span.label.label-primary
+            | /dev/{{ blockdev.name }}
+          br
+          span(style={color: '#bbb'})
+            | {{ blockdev.model }} ({{ blockdev.size | numeraljs:'capacity' }})
 
 mixin server_info_pci_devices
   .panel.panel-default(ng-if='dbObjects.byId[obj_id].hw_info.pci_devices')
     .panel-heading
       | PCI Devices
-    ul.list-group
-      li.list-group-item(ng-repeat='pcidev in dbObjects.byId[obj_id].hw_info.pci_devices')
-        table.hw-info
-          tr
-            td.icon
-              i.fa.fa-sitemap
-            td.info
-              span.label.label-primary
-                | {{ pcidev.address }}
-              | &#32;
-              | {{ pcidev.name }}
-              br
-              span(style={color: '#bbb'})
-                | {{ pcidev.type }}, {{ pcidev.vendor }}
+    table.table.hw-info-table
+      tr(ng-repeat='pcidev in dbObjects.byId[obj_id].hw_info.pci_devices')
+        td.hw-info-icon
+          i.fa.fa-sitemap
+        td.hw-info-content
+          span.label.label-primary
+            | {{ pcidev.address }}
+          | &#32;
+          | {{ pcidev.name }}
+          br
+          span(style={color: '#bbb'})
+            | {{ pcidev.type }}, {{ pcidev.vendor }}
 
 mixin server_info
   +server_info_resources

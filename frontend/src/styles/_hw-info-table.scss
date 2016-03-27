@@ -1,0 +1,30 @@
+.hw-info-table {
+  > thead,
+  > tbody,
+  > tfoot {
+    > tr {
+      > th,
+      > td {
+        &.hw-info-icon {
+          font-size: 1.75rem;
+          padding: 10px 15px;
+          vertical-align: top;
+          white-space: nowrap;
+        }
+
+        &.hw-info-content {
+          padding: 10px 0;
+          vertical-align: middle;
+          line-height: 1.4rem;
+          width: 100%;
+        }
+
+        &.hw-info-switches {
+          padding: 10px 15px;
+          text-align: right;
+          vertical-align: top;
+        }
+      }
+    }
+  }
+}
