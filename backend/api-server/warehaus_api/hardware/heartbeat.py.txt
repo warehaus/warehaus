@@ -33,7 +33,7 @@ def collect_net_info():
             net_info[iface_name].setdefault('inet', []).append(iface_info[1])
         if iface_info[0] == 'inet6':
             net_info[iface_name].setdefault('inet6', []).append(iface_info[1])
-    return net_info
+    return [dict(dev=dev, **fields) for dev, fields in net_info.iteritems()]
 
 def collect_pci_info():
     lspci = run('lspci -mm')
