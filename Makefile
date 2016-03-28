@@ -16,7 +16,12 @@ build-frontend:
 		$(FRONTEND_BUILDER_IMAGE) \
 		/bin/sh -c "cd /build/frontend && bower install --allow-root && gulp build"
 
-build-backend:
+clean-pkg:
+	@echo "Deleting packages in $(DIST_DIR)/pkg:"
+	@rm -rvf $(DIST_DIR)/pkg/*
+	@echo
+
+build-backend: clean-pkg
 	@echo "Building API egg..."
 	@$(DOCKER_RUN_CMDLINE) \
 		--volume $(SRC_DIR):/opt \
@@ -26,7 +31,7 @@ build-backend:
 	@$(DOCKER_RUN_CMDLINE) \
 		--volume $(SRC_DIR):/opt \
 		$(NODE_BUILDER_IMAGE) \
-		/bin/sh -c "cd /opt/dist/pkg && npm pack /opt/backend/notify-server"
+		/bin/sh -c "cd /opt/dist/pkg && npm pack /opt/backend/warehaus-backend"
 
 docker-image: build
 	@echo "Building Docker image..."
