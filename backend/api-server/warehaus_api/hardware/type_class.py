@@ -11,12 +11,22 @@ OBJ_ACTION_ATTR = '_warehaus_object_action'
 TYPE_ACTION_ATTR = '_warehaus_type_action'
 
 def object_action(method, name):
+    '''When defined in a type `T`, this decorator creates an action which can be
+    invoked on objects with type `T`.
+    The `method` argument is the HTTP verb (`GET`, `POST`, etc.) and the `name`
+    argument is the action name to be called through an HTTP URL. Make sure to
+    keep `name` plain-ascii so that actions can be placed in URLs through command
+    line.
+    '''
     def decorator(func):
         setattr(func, OBJ_ACTION_ATTR, dict(method=method, name=name))
         return func
     return decorator
 
 def type_action(method, name):
+    '''Same as `object_action` but for type objects. The action can be invoked
+    on type objects rather than objects.
+    '''
     def decorator(func):
         setattr(func, TYPE_ACTION_ATTR, dict(method=method, name=name))
         return func
