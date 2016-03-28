@@ -63,8 +63,8 @@ class Server(TypeClass):
             server.hw_info = r.literal(hw_info)
         else:
             server.hw_info = hw_info
-        server.last_heartbeat = now()
-        server.status = 'success' # XXX calculate this with a background job based on server.last_heartbeat
+        server.last_seen = now()
+        server.status = 'success' # XXX calculate this with a background job based on server.last_seen
         server.save()
         return 'ok'
 

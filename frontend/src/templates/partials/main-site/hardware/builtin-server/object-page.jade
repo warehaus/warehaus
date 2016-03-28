@@ -57,8 +57,7 @@ mixin server_info_net
           div(ng-repeat='ipv6 in net.inet6' style={color: '#bbb'})
             | {{ ipv6 }}
         td.hw-info-switches
-          .x2.text-success
-            i.fa.fa-toggle-on
+          //i.x2.text-success.fa.fa-toggle-on
 
 mixin server_info_block_devices
   .panel.panel-default(ng-if='dbObjects.byId[obj_id].hw_info.block_devices')
@@ -99,34 +98,43 @@ mixin server_info
   +server_info_block_devices
   +server_info_pci_devices
 
+mixin server_status
+  li
+    span
+      .status-dot.status-dot-3x(class='status-dot-{{ dbObjects.byId[obj_id].status }}')
+      | &#32;
+      | {{ (dbObjects.byId[obj_id].status == 'success') ? 'Online' : 'Offline' }}
+      div.opacity05(ng-if='dbObjects.byId[obj_id].status != "success"')
+        | Last seen {{ moment(dbObjects.byId[obj_id].last_seen).fromNow() }}
+
+mixin cluster
+  li
+    span
+      span(ng-if='clustersToServers.cluster_of_server[obj_id]')
+        i.fa.fa-server
+        object-name(id='clustersToServers.cluster_of_server[obj_id]')
+      span(ng-if='!clustersToServers.cluster_of_server[obj_id]')
+        i Not in cluster
+      .dropdown.pull-right
+        a.text-link.dropdown-toggle(id='dropdown-menu-cluster-{{ obj_id }}' data-toggle='dropdown'
+                                    aria-haspopup='true' aria-expanded='true')
+          i.icon-options-vertical(style='padding:0 0 0 1rem;')
+        ul.dropdown-menu(aria-labelledby='dropdown-menu-{{ type_obj.id }}')
+          li.text-left(ng-if='clustersToServers.cluster_of_server[obj_id]')
+            a.small.link(ng-click='remove_from_cluster()')
+              i.fa.fa-fw.fa-minus-circle
+              | Remove
+          li(ng-if='!clustersToServers.cluster_of_server[obj_id]')
+            a.small.link(ng-click='add_to_cluster()')
+              i.fa.fa-fw.fa-plus-circle
+              | Add To Cluster
+
 mixin navigation
   ul
     li.heading
-      | Status
-    li
-      span
-        .status-dot.status-dot-3x(class='status-dot-{{ dbObjects.byId[obj_id].status }}')
-        | &#32;
-        | Online
-        br
-        span.opacity05
-          | Last seen {{ moment(dbObjects.byId[obj_id].last_heartbeat).fromNow() }}
-    li.heading
-      | Cluster
-    li(ng-if='clustersToServers.cluster_of_server[obj_id]')
-      span
-        i.fa.fa-server
-        object-name(id='clustersToServers.cluster_of_server[obj_id]')
-        br
-        a.link(ng-click='remove_from_cluster()')
-          i.fa.fa-minus-circle
-          | &#32;
-          | Remove From Cluster
-    li(ng-if='!clustersToServers.cluster_of_server[obj_id]')
-      a.link(ng-click='add_to_cluster()')
-        i.fa.fa-plus-circle
-        | &#32;
-        | Add To Cluster
+      | Overview
+    +server_status
+    +cluster
 
 mixin content
   .page-layout
