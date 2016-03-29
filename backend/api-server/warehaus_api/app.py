@@ -9,7 +9,6 @@ from flask_restful import Api
 from .logs import log_to_console
 from .base_app import create_base_app
 from .settings.models import get_settings
-from .first_setup.api import first_setup_api
 from .auth import init_auth
 from .auth.resources import CurrentUser
 from .auth.resources import AllUsers
@@ -37,9 +36,6 @@ def init_api(app):
         return resp
     return api
 
-def first_setup_routes(app):
-    app.register_blueprint(first_setup_api, url_prefix='/api/v1/first-setup')
-
 def app_routes(app):
     api = init_api(app)
     app.config['BUNDLE_ERRORS'] = True
@@ -64,8 +60,6 @@ def create_app(**config):
     with app.app_context():
         init_auth(app)
         app_routes(app)
-        if not get_settings().is_initialized:
-            first_setup_routes(app)
     return app
 
 def create_app_with_console_logging(**config):
