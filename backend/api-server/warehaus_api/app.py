@@ -16,7 +16,6 @@ from .auth.resources import AllUsers
 from .auth.resources import SingleUser
 from .auth.resources import UserTokens
 from .settings.resources import LDAP
-from .settings.resources import State
 from .hardware.resources import RawObjects
 from .hardware.resources import RawObject
 from .hardware.resources import TypeClasses
@@ -45,7 +44,6 @@ def app_routes(app):
     api = init_api(app)
     app.config['BUNDLE_ERRORS'] = True
     # Settings resources
-    api.add_resource(State, '/api/v1/state',         methods=['GET'])
     api.add_resource(LDAP,  '/api/v1/settings/ldap', methods=['GET', 'POST'])
     # Auth resources
     api.add_resource(CurrentUser, '/api/v1/auth/self',                       methods=['GET'])
