@@ -1,11 +1,11 @@
-import os
+import random
 from bunch import Bunch
 from contextlib import contextmanager
 from .. import db
 
 class Settings(db.Model):
     is_initialized = db.Field(default=False)
-    secret_key     = db.Field(default=lambda: os.urandom(48).encode('hex'))
+    secret_key     = db.Field(default=lambda: ''.join(random.choice('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ ') for _ in xrange(48)))
     ldap_settings  = db.Field(default=lambda: {})
 
 SETTINGS_ID = 1 # Allow only one Settings row

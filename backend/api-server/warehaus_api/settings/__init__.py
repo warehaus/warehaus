@@ -20,7 +20,7 @@ def full_config():
     settings = get_settings()
 
     class FullConfig(object):
-        SECRET_KEY = settings.secret_key.decode('hex')
+        SECRET_KEY = settings.secret_key
         LDAP_SETTINGS = settings.ldap_settings
 
     return FullConfig

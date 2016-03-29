@@ -49,9 +49,6 @@ angular.module('warehaus.auth').factory('curUser', function($rootScope, $http, $
     };
 
     $rootScope.$on('warehaus.state.update', function(event, state) {
-        if (!state.is_initialized) {
-            return;
-        }
         if (state.is_authenticated) {
             load_current_user();
         } else {
@@ -67,18 +64,25 @@ angular.module('warehaus.auth').factory('curUser', function($rootScope, $http, $
 angular.module('warehaus.auth').controller('LoginController', function($scope, $http, $log, warehausState) {
     $scope.input = {};
     $scope.error = undefined;
+    $scope.working = false;
+
+    $scope.$on('warehaus.state.update', function(new_state) {
+        if (!new_state.is_authenticated) {
+            $scope.working = false;
+        }
+    });
 
     $scope.login = function() {
         $scope.working = true;
-        $http.post('/api/v1/auth/login', $scope.input).then(function(res) {
-            $scope.error = undefined;
+        $scope.error = undefined;
+        $http.post('/auth/login/local', $scope.input).then(function(res) {
             localStorage.setItem('id_token', res.data.access_token);
             $log.info('Successfully logged-in');
             warehausState.refresh();
         }, function(res) {
             $scope.working = false;
-            $scope.error = res.data.error;
-            $log.info('Could not log-in:', res.data.error);
+            $scope.error = res.data.message;
+            $log.info('Could not log-in:', $scope.error);
         });
     };
 });
