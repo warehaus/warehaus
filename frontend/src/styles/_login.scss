@@ -10,6 +10,11 @@
 .panel-login {
   border-radius: $warehaus-standalone-box-radius;
   margin: $warehaus-standalone-box-padding;
+
+  img {
+    max-width: 60%;
+    margin: 2rem 0;
+  }
 }
  
 .login-spinner {

@@ -20,11 +20,11 @@
       padding: .5rem 0;
 
       &.logo {
-        margin: .5rem 0 .75rem 0;
+        margin: .5rem 0 .5rem 0;
 
         img {
           width: $warehaus-sidebar-logo-width;
-          height: $warehaus-sidebar-logo-width / 4;
+          height: $warehaus-sidebar-logo-width;
           border-width: 0;
         }
       }

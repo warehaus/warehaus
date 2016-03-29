@@ -1,7 +1,7 @@
 mixin login_box
   .panel.panel-default.panel-login(ng-controller='LoginController')
     .panel-body.text-center
-      img(src='/static/img/logo-black.png' style='width:120px; height: 30px; margin:2rem 0;')
+      img(src='/static/img/logo-wide.png')
       .alert.alert-warning(ng-if='error')
         | {{ error }}
       form(role='form' name='loginForm' method='post' ng-submit='login()')
