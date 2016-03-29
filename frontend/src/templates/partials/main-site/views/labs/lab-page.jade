@@ -52,7 +52,7 @@ mixin lab_empty
     p.text-center.x12(ng-if='curUser.is_admin')
       | You need to start by configuring which hardware goes in this lab
     p.text-center.x2(ng-if='curUser.is_admin')
-      button.btn.btn-lg.btn-success(ui-sref='.manage.set-hardware-types')
+      button.btn.btn-lg.btn-success(ui-sref='.manage')
         | Configure This Lab
 
 mixin content
