@@ -2,47 +2,93 @@
 
 angular.module('warehaus.admin', []);
 
-angular.module('warehaus.admin').config(function($stateProvider, $urlRouterProvider, viewPath) {
-    var admin = {
+angular.module('warehaus.admin').provider('adminUrlRoutes', function(viewPath) {
+    var adminView = function(uri) {
+        return viewPath('main-site/views/admin/' + uri);
+    };
+
+    var admin_url_routes = {
+        name: 'admin',
         url: '/admin',
-        templateUrl: viewPath('main-site/views/admin/index.html'),
+        templateUrl: adminView('index.html'),
         controller: 'AdminController',
+        autoRedirectToChild: 'users',
         resolve: {
             $title: function() {
                 return 'Admin';
             }
-        }
-    };
-
-    var admin_auth_users = {
-        parent: admin,
-        url: '/users?id',
-        templateUrl: viewPath('main-site/views/admin/users.html'),
-        controller: 'UsersAdminController',
-        resolve: {
-            $title: function() {
-                return 'Users';
+        },
+        children: [
+            {
+                name: 'users',
+                url: '/users?id',
+                templateUrl: adminView('users.html'),
+                controller: 'UsersAdminController',
+                resolve: {
+                    $title: function() {
+                        return 'Users';
+                    }
+                }
+            },
+            {
+                name: 'auth',
+                url: '/auth',
+                templateUrl: adminView('auth.html'),
+                controller: 'AuthenticationAdminController',
+                autoRedirectToChild: 'local',
+                resolve: {
+                    $title: function() {
+                        return 'Authentication';
+                    }
+                },
+                children: [
+                    {
+                        name: 'local',
+                        url: '/local',
+                        templateUrl: adminView('auth-local.html'),
+                        controller: 'LocalAuthBackendController',
+                        resolve: {
+                            $title: function() {
+                                return 'Local';
+                            }
+                        }
+                    },
+                    {
+                        name: 'google',
+                        url: '/google',
+                        templateUrl: adminView('auth-google.html'),
+                        controller: 'GoogleAuthBackendController',
+                        resolve: {
+                            $title: function() {
+                                return 'Google';
+                            }
+                        }
+                    },
+                    {
+                        name: 'ldap',
+                        url: '/ldap',
+                        templateUrl: adminView('auth-ldap.html'),
+                        controller: 'LDAPAuthBackendController',
+                        resolve: {
+                            $title: function() {
+                                return 'LDAP';
+                            }
+                        }
+                    }
+                ]
             }
-        }
+        ]
     };
 
-    var admin_auth_ldap = {
-        parent: admin,
-        url: '/ldap',
-        templateUrl: viewPath('main-site/views/admin/ldap.html'),
-        controller: 'LDAPSettingsController',
-        resolve: {
-            $title: function() {
-                return 'LDAP';
-            }
+    return {
+        $get: function() {
+            return admin_url_routes;
         }
     };
+});
 
-    $urlRouterProvider.when(admin.url, admin.url + admin_auth_users.url);
-
-    $stateProvider.state('admin', admin);
-    $stateProvider.state('admin.auth-users', admin_auth_users);
-    $stateProvider.state('admin.auth-ldap', admin_auth_ldap);
+angular.module('warehaus.admin').config(function(urlRegisterProvider, adminUrlRoutesProvider) {
+    urlRegisterProvider.$get()(adminUrlRoutesProvider.$get());
 });
 
 angular.module('warehaus.admin').controller('AdminController', function($scope, $location, curUser) {
@@ -57,7 +103,16 @@ angular.module('warehaus.admin').controller('UsersAdminController', function($sc
     $scope.selected_user_id = $stateParams.id;
 });
 
-angular.module('warehaus.admin').controller('LDAPSettingsController', function($scope, $http) {
+angular.module('warehaus.admin').controller('AuthenticationAdminController', function($scope) {
+});
+
+angular.module('warehaus.admin').controller('LocalAuthBackendController', function($scope) {
+});
+
+angular.module('warehaus.admin').controller('GoogleAuthBackendController', function($scope) {
+});
+
+angular.module('warehaus.admin').controller('LDAPAuthBackendController', function($scope, $http) {
     $scope.working = true;
 
     var _update_from_res = function(res) {

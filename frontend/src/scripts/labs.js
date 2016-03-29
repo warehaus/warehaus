@@ -188,27 +188,8 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(viewPath) {
     };
 });
 
-angular.module('warehaus.labs').config(function($urlRouterProvider, stateHelperProvider, labsUrlRoutesProvider) {
-    var register_auto_redirects = function(base_url, state) {
-        var cur_url = base_url + state.url;
-        if (state.autoRedirectToChild) {
-            if (state.children) {
-                state.children.forEach(function(child_state) {
-                    if (child_state.name == state.autoRedirectToChild) {
-                        $urlRouterProvider.when(cur_url, cur_url + child_state.url);
-                    }
-                });
-            }
-        }
-        if (state.children) {
-            state.children.forEach(function(child_state) {
-                register_auto_redirects(cur_url, child_state);
-            });
-        }
-    };
-    var labs_url_routes = labsUrlRoutesProvider.$get()
-    register_auto_redirects('', labs_url_routes);
-    stateHelperProvider.state(labs_url_routes);
+angular.module('warehaus.labs').config(function(urlRegisterProvider, labsUrlRoutesProvider) {
+    urlRegisterProvider.$get()(labsUrlRoutesProvider.$get());
 });
 
 angular.module('warehaus.labs').service('selectedLab', function($log) {

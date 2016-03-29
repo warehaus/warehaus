@@ -27,6 +27,37 @@ angular.module('warehaus.ui_helpers').constant('viewPath', function(uri) {
     return '/inline/' + uri;
 });
 
+angular.module('warehaus.ui_helpers').provider('urlRegister', function($urlRouterProvider, stateHelperProvider) {
+    var register_auto_redirects = function(base_url, state) {
+        var cur_url = base_url + state.url;
+        if (state.autoRedirectToChild) {
+            if (state.children) {
+                state.children.forEach(function(child_state) {
+                    if (child_state.name == state.autoRedirectToChild) {
+                        $urlRouterProvider.when(cur_url, cur_url + child_state.url);
+                    }
+                });
+            }
+        }
+        if (state.children) {
+            state.children.forEach(function(child_state) {
+                register_auto_redirects(cur_url, child_state);
+            });
+        }
+    };
+
+    var register_routes = function(routes) {
+        register_auto_redirects('', routes);
+        stateHelperProvider.state(routes);
+    };
+
+    return {
+        $get: function() {
+            return register_routes;
+        }
+    };
+});
+
 angular.module('warehaus.ui_helpers').directive('focusMe', function($timeout) {
     var link = function(scope, element, attrs) {
         scope.$watch(attrs.focusMe, function(value) {

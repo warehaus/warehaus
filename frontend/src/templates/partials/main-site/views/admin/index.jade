@@ -10,11 +10,11 @@ mixin page_header
     ul.page-header-nav
       li.spacer
       li(ui-sref-active='active')
-        a.link(ui-sref='.auth-users')
+        a.link(ui-sref='.users')
           | Users
       li(ui-sref-active='active')
-        a.link(ui-sref='.auth-ldap')
-          | LDAP Settings
+        a.link(ui-sref='.auth')
+          | Authentication
       li.padding
 
 mixin forbidden_message

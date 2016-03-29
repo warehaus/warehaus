@@ -1,4 +1,4 @@
-mixin form
+mixin inner_form
   .row
     .col-sm-2
       .form-group
@@ -55,4 +55,17 @@ mixin form
           | LDAP Email Attribute
         input.form-control(type='text' name='ldapEmailAttribute' placeholder='Email attribute' ng-disabled='working' ng-model='settings.ldap.attribute_email' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
 
-+form
+mixin form
+  form(role='form', name='theForm', novalidate='')
+    h4.text-center
+      button.btn.btn-primary(ng-disabled='working || theForm.$invalid' ng-click='save_settings()')
+        span.fa.fa-fw.fa-circle-o-notch.fa-spin(ng-if='working')
+        span(ng-if='!working')
+          | Save Settings
+
+h4
+  | LDAP Login
+
+i.fa.fa-fw.fa-wrench
+| &#32;
+| Under Construction

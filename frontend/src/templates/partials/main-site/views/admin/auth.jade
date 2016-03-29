@@ -1,0 +1,20 @@
+mixin navigation
+  ul
+    li(ui-sref-active='active')
+      a(ui-sref='.local')
+        | Local Users
+    li(ui-sref-active='active')
+      a(ui-sref='.google')
+        | Google Login
+    li(ui-sref-active='active')
+      a(ui-sref='.ldap')
+        | LDAP Login
+
+mixin content
+  .page-layout
+    .page-layout-nav
+      +navigation
+    .page-layout-content
+      ui-view
+
++content
