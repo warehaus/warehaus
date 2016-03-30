@@ -1,0 +1,98 @@
+mixin modal_header
+  .modal-header
+    button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+      span(aria-hidden="true") &times;
+    h4.modal-title
+      | {{ action }}
+      | &#32;
+      object-type-title(type-id='type_obj_id' sample='1')
+      | &#32;
+      | Attribute
+
+mixin param_scope
+  .form-group
+    label
+      | Scope
+    select.form-control(name='scope' ng-model='type_attr.scope' required='')
+      option(value='global')
+        | Global
+
+mixin param_name
+  .form-group
+    label
+      | Name
+    input.form-control(name='displayName' ng-model='type_attr.display_name' type='text', placeholder='Attribute Name' required='')
+    input(type='hidden' ng-model='type_attr.slug' required='')
+    slug(from='type_attr.display_name' to='type_attr.slug')
+    p.help-block
+      i.fa.fa-fw.fa-info-circle
+      span(ng-if='!type_attr.slug')
+        | Please start typing...
+      span(ng-if='type_attr.slug')
+        | This attribute's API name will be:&nbsp;
+        samp
+          | {{ type_attr.slug }}
+
+mixin param_data_type
+  .form-group
+    label
+      | Data Type
+    ul.list-group
+      li.list-group-item(ng-class='{"list-group-item-info": type_attr.type == "bool-toggle"}')
+        .radio.no-margin
+          label
+            input(type='radio' name='attrType' value='bool-toggle' ng-model='type_attr.type' required='')
+            | On/Off Toggle
+            p.help-block.no-margin
+              | Either
+              | &#32;
+              i.fa.fa-toggle-off
+              | &#32;
+              | or
+              | &#32;
+              i.fa.fa-toggle-on
+              | , changed with one click
+      li.list-group-item(ng-class='{"list-group-item-info": type_attr.type == "text"}')
+        .radio.no-margin
+          label
+            input(type='radio' name='attrType' value='text' ng-model='type_attr.type' required='')
+            | Text Value
+            p.help-block.no-margin
+              | A free-text field, can be empty
+      li.list-group-item(ng-class='{"list-group-item-info": type_attr.type == "number"}')
+        .radio.no-margin
+          label
+            input(type='radio' name='attrType' value='number' ng-model='type_attr.type' required='')
+            | Number
+            p.help-block.no-margin
+              | A numeric value
+      li.list-group-item(ng-class='{"list-group-item-info": type_attr.type == "select"}')
+        .radio.no-margin
+          label
+            input(type='radio' name='attrType' value='select' ng-model='type_attr.type' required='')
+            | Selection
+            p.help-block.no-margin
+              | Select one of several given options
+  .form-group(ng-if='type_attr.type == "select"')
+    label
+      | Enter Options
+    textarea.form-control(rows='3' ng-model='type_attr.select_options' ng-list='\n' ng-trim='false'
+                          placeholder='Enter options, one option per line' required='')
+
+mixin modal_body
+  .modal-body
+    +param_scope
+    +param_name
+    +param_data_type
+
+mixin modal_footer
+  .modal-footer
+    button.btn.btn-link(type='button' ng-click='cancel()')
+      | Cancel
+    button.btn.btn-primary(type='button' ng-click='ok()' ng-disabled='newAttrForm.$invalid')
+      | Save Changes
+
+form(name='newAttrForm')
+  +modal_header
+  +modal_body
+  +modal_footer

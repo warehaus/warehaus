@@ -1,6 +1,7 @@
 import re
 import httplib
 from logging import getLogger
+from flask import request
 from ..auth.roles import require_user
 from ..auth.roles import require_admin
 from .models import Object
@@ -76,3 +77,23 @@ class TypeClass(object):
         require_admin()
         typeobj.delete()
         return None, httplib.NO_CONTENT
+
+    @type_action('POST', 'attrs')
+    def add_attribute(self, typeobj):
+        require_admin()
+        attr = request.json['attr']
+        if 'attrs' in typeobj:
+            typeobj.attrs.append(attr)
+        else:
+            typeobj.attrs = [attr]
+        typeobj.save()
+        return typeobj.as_dict()
+
+    @type_action('DELETE', 'attrs')
+    def delete_attribute(self, typeobj):
+        require_admin()
+        attr_slug = request.json['slug']
+        if 'attrs' in typeobj:
+            typeobj.attrs = list(attr for attr in typeobj.attrs if attr['slug'] != attr_slug)
+            typeobj.save()
+        return typeobj.as_dict()
