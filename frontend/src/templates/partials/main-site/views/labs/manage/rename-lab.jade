@@ -30,6 +30,8 @@ mixin form
         | This lab's API name will be:&nbsp;
         samp
           | {{ result.slug }}
+    .alert.alert-danger(ng-if='error')
+      | {{ error }}
 
 mixin buttons
   button.btn.btn-primary(type='button' ng-click='ok()')

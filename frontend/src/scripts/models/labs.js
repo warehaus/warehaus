@@ -55,8 +55,9 @@ angular.module('warehaus.models').factory('allLabs', function($http, $rootScope,
         return $http.delete('/api/v1/labs/' + lab.slug + '/~/' + type_obj.slug + '/');
     };
 
-    self.update = function(lab_id, update) {
-        return $http.put('/api/v1/labs/' + lab_id, update);
+    self.rename = function(lab_id, update) {
+        var lab = self.byId[lab_id];
+        return $http.put('/api/v1/labs/' + lab.slug + '/name', update);
     };
 
     self.delete = function(lab_id) {

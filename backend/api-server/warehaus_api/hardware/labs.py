@@ -28,6 +28,16 @@ class Lab(TypeClass):
         type_object.save()
         return type_object.as_dict(), httplib.CREATED
 
+    @object_action('PUT', 'name')
+    def rename_lab(self, lab):
+        require_admin()
+        slug = request.json['slug']
+        ensure_unique_slug(None, slug)
+        lab.display_name = request.json['display_name']
+        lab.slug = slug
+        lab.save()
+        return lab, httplib.ACCEPTED
+
     @object_action('DELETE', '')
     def delete_lab(self, lab):
         require_admin()

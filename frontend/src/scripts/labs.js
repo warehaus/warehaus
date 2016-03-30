@@ -396,8 +396,11 @@ angular.module('warehaus.labs').controller('RenameLabController', function($scop
     };
 
     $scope.ok = function() {
-        allLabs.update($scope.lab_id, $scope.result).then(function() {
+        $scope.error = undefined;
+        allLabs.rename($scope.lab_id, $scope.result).then(function() {
             $state.go('labs');
+        }, function(res) {
+            $scope.error = res.data.message;
         });
     };
 });
