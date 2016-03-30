@@ -22,10 +22,9 @@
       }
 
       &.active {
-        background-color: #eee;
-        border-width: 0 2px 0 0;
-        border-style: solid;
-        border-color: #aaa;
+        @include gradient-vertical($warehaus-page-layout-nav-active-color,
+                                   lighten($warehaus-page-layout-nav-active-color, 2%));
+        border-radius: $nav-pills-border-radius;
       }
 
       a {

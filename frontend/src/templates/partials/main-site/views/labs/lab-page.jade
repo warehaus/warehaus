@@ -1,44 +1,14 @@
-mixin one_lab
-  span(ng-if='allLabs.ready && (allLabs.all.length == 1) && !curUser.is_admin')
-    strong
-      lab-name(id='lab_id')
-
-mixin multiple_labs
-  .dropdown(ng-if='allLabs.ready && ((allLabs.all.length > 1) || curUser.is_admin)')
-    .dropdown-toggle(data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false')
-      strong
-        lab-name(id='lab_id')
-      i.fa.fa-fw.fa-angle-down
-    ul.dropdown-menu
-      li.heading(ng-if='allLabs.all.length > 1')
-        | Other Labs
-      li(ng-repeat='other_lab in allLabs.all | orderBy:"display_name"')
-        a.link(ui-sref='labs.lab-page({labSlug: other_lab.slug})' ng-if='other_lab.id != lab_id')
-          lab-name(id='other_lab.id')
-      li.divider(ng-if='curUser.is_admin && (allLabs.all.length > 1)')
-      li(ng-if='curUser.is_admin')
-        a.link(ng-click='create_lab()')
-          | Create a New Lab
-
 mixin page_header
-  .page-header
-    .page-header-row
-      .page-header-row-cell.x3
-        i.icon-chemistry
-      .page-header-row-cell
-        .x12
-          +one_lab
-          +multiple_labs
-    ul.page-header-nav
-      li.spacer
-      li(ng-repeat='(type_obj_id, type_obj) in dbObjects.byParentId[allLabs.byId[lab_id].type_id] | orderBy:"type_obj.display_name.plural"' ui-sref-active='active')
-        a.link(ui-sref='.browse-type({typeSlug: type_obj.slug})')
-          object-type-title(type-id='type_obj.id')
-      li.padding
-      li(ng-if='curUser.is_admin' ui-sref-active='active')
-        a.link(ui-sref='.manage')
-          i.icon-settings
-      li.spacer
+  .page-top-nav
+    .page-top-nav-links
+      ul
+        li(ng-repeat='(type_obj_id, type_obj) in dbObjects.byParentId[allLabs.byId[lab_id].type_id] | orderBy:"type_obj.display_name.plural"' ui-sref-active='active')
+          a.link(ui-sref='.browse-type({typeSlug: type_obj.slug})')
+            object-type-title(type-id='type_obj.id')
+        li.padding
+        li(ng-if='curUser.is_admin' ui-sref-active='active')
+          a.link(ui-sref='.manage')
+            i.icon-settings
 
 mixin lab_empty
   .big-message

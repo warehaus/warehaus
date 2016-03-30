@@ -1,0 +1,67 @@
+.page-top-nav {
+  background-color: $warehaus-page-top-nav-bg;
+  border-width: 0 0 $warehaus-page-top-nav-border-size 0;
+  border-style: solid;
+  border-color: $warehaus-page-top-nav-border-color;
+  margin: 0 0 (4 * $warehaus-page-top-nav-spacing) 0;
+
+  .page-top-nav-row {
+    display: table;
+    @include container;
+
+    .page-top-nav-row-cell {
+      display: table-cell;
+      vertical-align: middle;
+      white-space: nowrap;
+
+      &:last-child {
+        width: 100%;
+      }
+    }
+  }
+
+  .page-top-nav-links {
+    @include container;
+
+    ul {
+      list-style-type: none;
+      margin: 0 0 (-$warehaus-page-top-nav-border-size) 0;
+      padding: (3 * $warehaus-page-top-nav-spacing) 0 0 0;
+      display: table;
+
+      li {
+        display: table-cell;
+        white-space: nowrap;
+        margin: 0;
+        padding: 0;
+        border-width: 0 0 $warehaus-page-top-nav-border-size 0;
+        border-style: solid;
+        border-color: $warehaus-page-top-nav-border-color;
+
+        a {
+          outline: 0;
+          margin: 0;
+          display: block;
+          padding: (2 * $warehaus-page-top-nav-spacing) (3 * $warehaus-page-top-nav-spacing);
+
+          &:hover,
+          &:focus {
+            text-decoration: none;
+          }
+        }
+      }
+
+      li.active {
+        border-width: $warehaus-page-top-nav-border-size $warehaus-page-top-nav-border-size 0 $warehaus-page-top-nav-border-size;
+        border-top-left-radius: $border-radius-base;
+        border-top-right-radius: $border-radius-base;
+        background-color: white;
+      }
+
+      li.padding {
+        width: 100%;
+        content: ' ';
+      }
+    }
+  }
+}

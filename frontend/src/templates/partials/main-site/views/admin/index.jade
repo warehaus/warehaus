@@ -1,21 +1,21 @@
 mixin page_header
-  .page-header(ng-if='curUser.is_admin')
-    .page-header-row
-      .page-header-row-cell.x3
+  .page-top-nav(ng-if='curUser.is_admin')
+    .page-top-nav-row
+      .page-top-nav-row-cell.x2(style={padding: '0 .5rem 0 0'})
         i.icon-settings
-      .page-header-row-cell
+      .page-top-nav-row-cell
         .x12
           strong
             | Administration
-    ul.page-header-nav
-      li.spacer
-      li(ui-sref-active='active')
-        a.link(ui-sref='.users')
-          | Users
-      li(ui-sref-active='active')
-        a.link(ui-sref='.auth')
-          | Authentication
-      li.padding
+    .page-top-nav-links
+      ul
+        li(ui-sref-active='active')
+          a.link(ui-sref='.users')
+            | Users
+        li(ui-sref-active='active')
+          a.link(ui-sref='.auth')
+            | Authentication
+        li.padding
 
 mixin forbidden_message
   .big-message
@@ -34,16 +34,17 @@ mixin forbidden_message
             | No, I should be here
 
 mixin non_admin_message
-  .page-header(ng-if='!curUser.is_admin')
-    .page-header-row
-      .page-header-row-cell.x3
+  .page-top-nav(ng-if='!curUser.is_admin')
+    .page-top-nav-row
+      .page-top-nav-row-cell.x3
         i.icon-close
-      .page-header-row-cell
+      .page-top-nav-row-cell
         .x12
           strong
             | Oh no
-    ul.page-header-nav
-      li.padding
+    .page-top-nav-links
+      ul
+        li.padding
   .page-layout(ng-if='!curUser.is_admin')
     .page-layout-content-no-nav
       +forbidden_message

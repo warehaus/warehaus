@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('warehaus.labs', [
+    'warehaus.ui_helpers',
     'warehaus.models',
     'warehaus.hardware'
 ]);
@@ -155,8 +156,15 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(labsViewProvi
     var labs_url_routes = {
         name: 'labs',
         url: '/labs',
-        templateUrl: labsView('index.html'),
-        controller: 'AllLabsController',
+        views: {
+            '': {
+                templateUrl: labsView('index.html'),
+                controller: 'AllLabsController',
+            },
+            'nav': {
+                template: '<labs-selector/>'
+            }
+        },
         resolve: {
             $title: function() {
                 return 'Labs';
@@ -208,7 +216,23 @@ angular.module('warehaus.labs').service('selectedLab', function($log) {
     };
 });
 
-angular.module('warehaus.labs').controller('AllLabsController', function($scope, $log, $state, $uibModal, viewPath, selectedLab, allLabs) {
+angular.module('warehaus.labs').directive('labsSelector', function(viewPath, selectedLab, createLab) {
+    var link = function(scope, elem, attrs) {
+        scope.selectedLab = selectedLab;
+        scope.createLab = createLab;
+    };
+
+    return {
+        restrict: 'E',
+        link: link,
+        templateUrl: viewPath('main-site/views/labs/lab-selector.html'),
+        scope: true
+    };
+});
+
+angular.module('warehaus.labs').controller('AllLabsController', function($scope, $log, $state, selectedLab, allLabs, createLab) {
+    $scope.createLab = createLab;
+
     var _goto_lab = function(lab_id) {
         var slug = allLabs.byId[lab_id].slug;
         $log.info('Redirecting to lab:', slug);
@@ -236,8 +260,10 @@ angular.module('warehaus.labs').controller('AllLabsController', function($scope,
             refresh();
         }
     });
+});
 
-    $scope.create_lab = function() {
+angular.module('warehaus.labs').service('createLab', function($uibModal, viewPath, selectedLab) {
+    return function() {
         $uibModal.open({
             templateUrl: viewPath('main-site/views/labs/create-lab.html'),
             controller: 'CreateLabController'
@@ -333,7 +359,9 @@ angular.module('warehaus.labs').controller('BrowseTypeController', function($sco
 
 });
 
-angular.module('warehaus.labs').controller('ObjectPageController', function($scope, $state, dbObjects, labId, typeObjId, objId, viewPath) {
+angular.module('warehaus.labs').controller('ObjectPageController', function($scope, $state, dbObjects, selectedLab, labId, typeObjId, objId, viewPath) {
+    selectedLab.set(labId); // Required when we land directly in an object's page
+
     $scope.lab_id = labId;
     $scope.type_obj_id = typeObjId;
     $scope.obj_id = objId;

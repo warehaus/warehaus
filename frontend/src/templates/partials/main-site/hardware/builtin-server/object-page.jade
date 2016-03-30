@@ -1,9 +1,9 @@
 mixin page_header
-  .page-header
-    .page-header-row
-      .page-header-row-cell.x3
+  .page-top-nav
+    .page-top-nav-row
+      .page-top-nav-row-cell.x3
         i.icon-chemistry
-      .page-header-row-cell
+      .page-top-nav-row-cell
         .x12
           a(ui-sref='^.^')
             lab-name(id='lab_id')
@@ -13,10 +13,8 @@ mixin page_header
           i.fa.fa-fw.fa-angle-right
           strong
             object-name(id='obj_id')
-      .page-header-row-cell.text-right
+      .page-top-nav-row-cell.text-right
         span
-    ul.page-header-nav
-      li.padding
 
 mixin server_info_resources
   .panel.panel-default(ng-if='dbObjects.byId[obj_id].hw_info')

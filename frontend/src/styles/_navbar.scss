@@ -1,0 +1,138 @@
+.navbar-warehaus {
+  background-color: $navbar-warehaus-bg;
+  border-color: $navbar-warehaus-border;
+
+  .navbar-brand {
+    padding: 0 1rem;
+
+    img {
+      display: inline;
+
+      &.square {
+        margin: (($navbar-height - ($navbar-warehaus-brand-size + $navbar-warehaus-brand-frame)) / 2) 0;
+        width: ($navbar-warehaus-brand-size + $navbar-warehaus-brand-frame);
+        height: ($navbar-warehaus-brand-size + $navbar-warehaus-brand-frame);
+      }
+
+      &.overlay {
+        margin: (($navbar-height - $navbar-warehaus-brand-size) / 2)
+                0
+                (($navbar-height - $navbar-warehaus-brand-size) / 2)
+                (-($navbar-warehaus-brand-size + ($navbar-warehaus-brand-frame / 2)));
+        width: $navbar-warehaus-brand-size;
+        height: $navbar-warehaus-brand-size;
+      }
+    }
+  }
+
+  .navbar-text {
+    color: $navbar-warehaus-color;
+  }
+
+  .navbar-nav {
+    > li > a {
+      color: $navbar-warehaus-link-color;
+
+      &:hover,
+      &:focus {
+        color: $navbar-warehaus-link-hover-color;
+        background-color: $navbar-warehaus-link-hover-bg;
+      }
+    }
+    > .active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $navbar-warehaus-link-active-color;
+        background-color: $navbar-warehaus-link-active-bg;
+      }
+    }
+    > .disabled > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $navbar-warehaus-link-disabled-color;
+        background-color: $navbar-warehaus-link-disabled-bg;
+      }
+    }
+  }
+
+  .navbar-toggle {
+    border-color: $navbar-warehaus-toggle-border-color;
+    &:hover,
+    &:focus {
+      background-color: $navbar-warehaus-toggle-hover-bg;
+    }
+    .icon-bar {
+      background-color: $navbar-warehaus-toggle-icon-bar-bg;
+    }
+  }
+
+  .navbar-collapse,
+  .navbar-form {
+    border-color: $navbar-warehaus-border;
+  }
+
+  .navbar-nav {
+    > .open > a {
+      &,
+      &:hover,
+      &:focus {
+        background-color: $navbar-warehaus-link-active-bg;
+        color: $navbar-warehaus-link-active-color;
+      }
+    }
+
+    @media (max-width: $grid-float-breakpoint-max) {
+      .open .dropdown-menu {
+        > li > a {
+          color: $navbar-warehaus-link-color;
+          &:hover,
+          &:focus {
+            color: $navbar-warehaus-link-hover-color;
+            background-color: $navbar-warehaus-link-hover-bg;
+          }
+        }
+        > .active > a {
+          &,
+          &:hover,
+          &:focus {
+            color: $navbar-warehaus-link-active-color;
+            background-color: $navbar-warehaus-link-active-bg;
+          }
+        }
+        > .disabled > a {
+          &,
+          &:hover,
+          &:focus {
+            color: $navbar-warehaus-link-disabled-color;
+            background-color: $navbar-warehaus-link-disabled-bg;
+          }
+        }
+      }
+    }
+  }
+
+
+  .navbar-link {
+    color: $navbar-warehaus-link-color;
+    &:hover {
+      color: $navbar-warehaus-link-hover-color;
+    }
+  }
+
+  .btn-link {
+    color: $navbar-warehaus-link-color;
+    &:hover,
+    &:focus {
+      color: $navbar-warehaus-link-hover-color;
+    }
+    &[disabled],
+    fieldset[disabled] & {
+      &:hover,
+      &:focus {
+        color: $navbar-warehaus-link-disabled-color;
+      }
+    }
+  }
+}

@@ -50,11 +50,26 @@ angular.module('warehaus.users').directive('userAvatar', function(users) {
 
     return {
         restrict: 'AE',
-        template: '<img class="img-circle profile-picture" ng-src="{{ users.byUserId[id].avatar_32 }}" style="width: {{ size }}; height: {{ size }};">',
+        template: '<img class="img-circle profile-picture" ng-src="{{ users.byUserId[id].avatar_32 }}" ng-style="{width: size, height: size}">',
         link: link,
         scope: {
             'id': '=',
             'size': '@'
+        }
+    };
+});
+
+angular.module('warehaus.users').directive('userUsername', function(users) {
+    var link = function(scope, elem, attrs) {
+        scope.users = users;
+    };
+
+    return {
+        restrict: 'AE',
+        template: '{{ users.byUserId[id].username }} ',
+        link: link,
+        scope: {
+            'id': '='
         }
     };
 });

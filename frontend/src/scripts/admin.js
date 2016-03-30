@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('warehaus.admin', []);
+angular.module('warehaus.admin', ['warehaus.ui_helpers']);
 
 angular.module('warehaus.admin').provider('adminUrlRoutes', function(viewPath) {
     var adminView = function(uri) {
@@ -10,8 +10,15 @@ angular.module('warehaus.admin').provider('adminUrlRoutes', function(viewPath) {
     var admin_url_routes = {
         name: 'admin',
         url: '/admin',
-        templateUrl: adminView('index.html'),
-        controller: 'AdminController',
+        views: {
+            '': {
+                templateUrl: adminView('index.html'),
+                controller: 'AdminController',
+            },
+            'nav': {
+                template: '<a ui-sref="labs"><i class="fa fa-angle-left"> </i> Back</a>'
+            }
+        },
         autoRedirectToChild: 'users',
         resolve: {
             $title: function() {

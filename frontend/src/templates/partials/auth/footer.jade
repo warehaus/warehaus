@@ -1,12 +1,17 @@
+mixin divider
+  span(style='opacity:0.25;')
+    | &nbsp;&nbsp;|&nbsp;&nbsp;
+
 .text-center
-  | &copy; 2015
+  | &copy; 2015-{{ moment().year() }}
   a(href='https://github.com/warehaus/warehaus/graphs/contributors' target='_warehaus_gh_contributors')
     | &nbsp;Warehaus contributors
-  span(style='opacity:0.25;')
-    | &nbsp;&nbsp;|&nbsp;&nbsp;
-  a(href='http://warehaus.io', target='_warehaus_documentation')
+  +divider
+  a(href='http://www.warehaus.io/docs/license', target='_warehaus_license')
+    | License
+  +divider
+  a(href='http://www.warehaus.io/docs/', target='_warehaus_documentation')
     | Documentation
-  span(style='opacity:0.25;')
-    | &nbsp;&nbsp;|&nbsp;&nbsp;
+  +divider
   a(href='https://github.com/warehaus/warehaus', target='_warehaus_gh_repo')
     | GitHub page

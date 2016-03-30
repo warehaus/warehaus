@@ -1,0 +1,26 @@
+mixin current_lab
+  strong
+    lab-name(id='selectedLab.lab_id')
+
+mixin one_lab
+  span(ng-if='allLabs.ready && (allLabs.all.length == 1) && !curUser.is_admin')
+    +current_lab
+
+mixin multiple_labs
+  .dropdown(ng-if='allLabs.ready && ((allLabs.all.length > 1) || (curUser.is_admin && (allLabs.all.length == 1)))')
+    a.text-link.dropdown-toggle(data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false')
+      +current_lab
+      i.fa.fa-fw.fa-angle-down
+    ul.dropdown-menu
+      li.heading(ng-if='allLabs.all.length > 1')
+        | Change Lab
+      li(ng-repeat='other_lab in allLabs.all | orderBy:"display_name"')
+        a.link(ui-sref='labs.lab-page({labSlug: other_lab.slug})' ng-if='other_lab.id != selectedLab.lab_id')
+          lab-name(id='other_lab.id')
+      li.divider(ng-if='curUser.is_admin && (allLabs.all.length > 1)')
+      li(ng-if='curUser.is_admin')
+        a.link(ng-click='createLab()')
+          | Create a New Lab
+
++one_lab
++multiple_labs
