@@ -9,14 +9,6 @@ mixin modal_header
       | &#32;
       | Attribute
 
-mixin param_scope
-  .form-group
-    label
-      | Scope
-    select.form-control(name='scope' ng-model='type_attr.scope' required='')
-      option(value='global')
-        | Global
-
 mixin param_name
   .form-group
     label
@@ -81,7 +73,6 @@ mixin param_data_type
 
 mixin modal_body
   .modal-body
-    +param_scope
     +param_name
     +param_data_type
 

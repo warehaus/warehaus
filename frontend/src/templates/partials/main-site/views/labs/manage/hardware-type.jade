@@ -36,18 +36,17 @@ mixin attribute
       td.main
         mild
           | {{ attr.display_name }}
-        .opacity06
-          | Of
-          | &#32;
-          mild
+        .opacity06(ng-switch='attr.type')
+          mild(ng-switch-when='bool-toggle')
+            | On/Off Toggle
+          mild(ng-switch-when='text')
+            | Text
+          mild(ng-switch-when='number')
+            | Number
+          mild(ng-switch-when='select')
+            | Selection
+          mild(ng-switch-default)
             | {{ attr.type }}
-          | &#32;
-          | type in
-          | &#32;
-          mild
-            | {{ attr.scope }}
-          | &#32;
-          | scope
         .opacity06(ng-if='attr.type == "select"')
           i.fa.fa-list-ul
           | &#32;
