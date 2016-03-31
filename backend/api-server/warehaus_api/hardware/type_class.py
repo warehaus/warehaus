@@ -97,3 +97,24 @@ class TypeClass(object):
             typeobj.attrs = list(attr for attr in typeobj.attrs if attr['slug'] != attr_slug)
             typeobj.save()
         return typeobj.as_dict()
+
+    @object_action('PUT', 'attrs')
+    def set_attr(self, obj):
+        require_user()
+        attr_slug = request.json['slug']
+        attr_value = request.json['value']
+        if 'attrs' in obj:
+            obj.attrs[attr_slug] = attr_value
+        else:
+            obj.attrs = {attr_slug: attr_value}
+        obj.save()
+        return obj.as_dict()
+
+    @object_action('DELETE', 'attrs')
+    def delete_attr(self, obj):
+        require_user()
+        attr_slug = request.json['slug']
+        if 'attrs' in obj and attr_slug in obj.attrs:
+            del obj.attrs[attr_slug]
+            obj.save()
+        return obj.as_dict()
