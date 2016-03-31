@@ -20,7 +20,8 @@ mixin attr_with_menu
     .main
       +text_attr_value
     .extra.text-right.dropdown
-      i.link.icon-options-vertical.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' style={padding: '0 .25rem;'})
+      a.link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' style={padding: '0 .25rem;'})
+        i.icon-options-vertical
       ul.dropdown-menu.pull-right(style={'font-size': '.875rem'})
         block
 
