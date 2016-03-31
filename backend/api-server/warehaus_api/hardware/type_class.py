@@ -2,6 +2,7 @@ import re
 import httplib
 from logging import getLogger
 from flask import request
+from flask import abort as flask_abort
 from ..auth.roles import require_user
 from ..auth.roles import require_admin
 from .models import Object
@@ -81,11 +82,13 @@ class TypeClass(object):
     @type_action('POST', 'attrs')
     def add_attribute(self, typeobj):
         require_admin()
-        attr = request.json['attr']
+        new_attr = request.json['attr']
         if 'attrs' in typeobj:
-            typeobj.attrs.append(attr)
+            if any(attr['slug'] == new_attr['slug'] for attr in typeobj.attrs):
+                flask_abort(httplib.CONFLICT, 'Attribute slug {!r} already exists'.format(new_attr['slug']))
+            typeobj.attrs.append(new_attr)
         else:
-            typeobj.attrs = [attr]
+            typeobj.attrs = [new_attr]
         typeobj.save()
         return typeobj.as_dict()
 
