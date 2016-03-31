@@ -167,7 +167,7 @@ angular.module('warehaus.models').directive('objectAttributes', function($http, 
                 return;
             }
             $uibModal.open({
-                templateUrl: viewPath('main-site/hardware/object-edit-attribute.html'),
+                templateUrl: viewPath('main-site/hardware/objects/edit-attribute.html'),
                 controller: 'EditAttributeValueController',
                 resolve: {
                     objId: function() {
@@ -195,7 +195,7 @@ angular.module('warehaus.models').directive('objectAttributes', function($http, 
 
     return {
         restrict: 'E',
-        templateUrl: viewPath('main-site/hardware/object-attributes.html'),
+        templateUrl: viewPath('main-site/hardware/objects/object-attributes.html'),
         replace: true,
         link: link,
         scope: {
