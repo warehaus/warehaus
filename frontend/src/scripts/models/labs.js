@@ -171,30 +171,35 @@ angular.module('warehaus.models').directive('typeAttributes', function($http, $u
             return '/api/v1/labs/' + lab.slug + '/~/' + path_to_type_obj + 'attrs';
         };
 
+        var start_working = function() {
+            scope.working = true;
+        };
+
+        var stop_working = function() {
+            scope.working = false;
+        };
+
         scope.new_attribute = function() {
             edit_attribute_modal().result.then(function(new_attr) {
-                scope.working = true;
-                $http.post(attrs_url(), {attr: new_attr}).then(function() {
-                    scope.working = false;
-                });
+                start_working();
+                $http.post(attrs_url(), {attr: new_attr}).then(stop_working);
             });
         };
 
         scope.edit_attribute = function(attr) {
             edit_attribute_modal(attr).result.then(function(changed_attr) {
-                scope.working = true;
+                start_working();
+                $http.put(attrs_url(), {attr: changed_attr}).then(stop_working);
             });
         };
 
         scope.delete_attribute = function(attr_slug) {
-            scope.working = true;
+            start_working();
             var config = {
                 headers: { 'Content-Type': 'application/json' },
                 data: { slug: attr_slug }
             };
-            $http.delete(attrs_url(), config).then(function() {
-                scope.working = false;
-            });
+            $http.delete(attrs_url(), config).then(stop_working);
         };
     };
 

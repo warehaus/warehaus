@@ -92,6 +92,19 @@ class TypeClass(object):
         typeobj.save()
         return typeobj.as_dict()
 
+    @type_action('PUT', 'attrs')
+    def update_attribute(self, typeobj):
+        require_admin()
+        updated_attr = request.json['attr']
+        if 'slug' not in updated_attr:
+            flask_abort(httplib.BAD_REQUEST, 'Attribute must have a "slug" property')
+        if 'attrs' not in typeobj or not any(attr['slug'] == updated_attr['slug'] for attr in typeobj.attrs):
+            flask_abort(httplib.CONFLICT, 'No such attribute {!r}'.format(attr['slug']))
+        typeobj.attrs = [updated_attr if attr['slug'] == updated_attr['slug'] else attr
+                         for attr in typeobj.attrs]
+        typeobj.save()
+        return typeobj.as_dict()
+
     @type_action('DELETE', 'attrs')
     def delete_attribute(self, typeobj):
         require_admin()
