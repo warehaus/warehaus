@@ -12,9 +12,13 @@
 
       &.heading {
         display: block;
-        font-weight: $warehaus-font-weight-mild;
+        font-weight: $warehaus-font-weight-normal;
         text-transform: uppercase;
-        padding: (3 * $warehaus-page-layout-nav-spacing) (3 * $warehaus-page-layout-nav-spacing) $warehaus-page-layout-nav-spacing (3 * $warehaus-page-layout-nav-spacing);
+        color: $warehaus-page-layout-nav-heading-color;
+        padding: $warehaus-page-layout-nav-section-spacing
+                 $warehaus-page-layout-nav-spacing-horizontal
+                 $warehaus-page-layout-nav-section-items
+                 $warehaus-page-layout-nav-spacing-horizontal;
       }
 
       &.active {
@@ -36,12 +40,16 @@
 
       > a, > span {
         display: block;
-        padding: $warehaus-page-layout-nav-spacing (3 * $warehaus-page-layout-nav-spacing);
+        padding: $warehaus-page-layout-nav-section-items $warehaus-page-layout-nav-spacing-horizontal;
       }
 
       &:first-child {
         padding-top: 0;
       }
     }
+  }
+
+  ul + ul {
+    padding: $warehaus-page-layout-nav-section-spacing 0 0 0;
   }
 }
