@@ -388,74 +388,13 @@ angular.module('warehaus.labs').controller('NewHardwareTypeController', function
     };
 });
 
-angular.module('warehaus.labs').controller('HardwareTypeController', function($scope, $http, $state, $uibModal, dbObjects, allLabs, labId, typeObjId, labsView) {
+angular.module('warehaus.labs').controller('HardwareTypeController', function($scope, $state, allLabs, labId, typeObjId) {
     $scope.type_obj_id = typeObjId;
-
-    var edit_type = function(type_attr) {
-        return $uibModal.open({
-            templateUrl: labsView('manage/type-attribute.html'),
-            controller: 'EditTypeAttributeController',
-            resolve: {
-                typeObjId: function() {
-                    return typeObjId;
-                },
-                typeAttr: function() {
-                    return angular.copy(type_attr);
-                }
-            }
-        });
-    };
-
-    var attrs_url = function() {
-        var lab = dbObjects.byId[labId];
-        var type_obj = dbObjects.byId[typeObjId];
-        return '/api/v1/labs/' + lab.slug + '/~/' + type_obj.slug + '/attrs';
-    };
-
-    $scope.new_type_attr = function() {
-        edit_type().result.then(function(new_attr) {
-            $scope.disable_type_attrs = true;
-            $http.post(attrs_url(), {attr: new_attr}).then(function() {
-                $scope.disable_type_attrs = false;
-            });
-        });
-    };
-
-    $scope.edit_type_attr = function(type_attr) {
-        edit_type(type_attr).result.then(function(changed_type_attr) {
-            $scope.disable_type_attrs = true;
-        });
-    };
-
-    $scope.delete_attribute = function(attr_slug) {
-        $scope.disable_type_attrs = true;
-        var config = {
-            headers: { 'Content-Type': 'application/json' },
-            data: { slug: attr_slug }
-        };
-        $http.delete(attrs_url(), config).then(function() {
-            $scope.disable_type_attrs = false;
-        });
-    };
 
     $scope.delete_type = function() {
         allLabs.delete_type_object(labId, typeObjId).then(function() {
             $state.go('^');
         });
-    };
-});
-
-angular.module('warehaus.labs').controller('EditTypeAttributeController', function($scope, $uibModalInstance, dbObjects, typeObjId, typeAttr) {
-    $scope.type_obj_id = typeObjId;
-    $scope.action = angular.isDefined(typeAttr) ? 'Edit' : 'New';
-    $scope.type_attr = typeAttr || {};
-
-    $scope.ok = function() {
-        $uibModalInstance.close($scope.type_attr);
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
     };
 });
 

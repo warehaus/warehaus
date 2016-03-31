@@ -1,0 +1,52 @@
+mixin attribute
+  table.details
+    tr
+      td.main
+        mild
+          | {{ attr.display_name }}
+        .opacity06(ng-switch='attr.type')
+          mild(ng-switch-when='bool-toggle')
+            | On/Off Toggle
+          mild(ng-switch-when='text')
+            | Text
+          mild(ng-switch-when='number')
+            | Number
+          mild(ng-switch-when='select')
+            | Selection
+          mild(ng-switch-default)
+            | {{ attr.type }}
+        .opacity06(ng-if='attr.type == "select"')
+          i.fa.fa-list-ul
+          | &#32;
+          span(ng-repeat='option in attr.select_options track by $index')
+            | {{ option }}
+            | {{ $last ? '' : ' &middot; ' }}
+      td.pad-both
+        .dropdown.pull-right
+          a.text-link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+            i.icon-options-vertical
+          ul.dropdown-menu
+            li
+              a.link
+                | Edit Attribute
+            li.divider
+            li
+              a.link(ng-click='delete_attribute(attr.slug)')
+                | Delete Attribute
+
+mixin content
+  .panel.panel-default(ng-class='{opacity05: working}')
+    .panel-heading
+      | {{ title }}
+      button.btn.btn-xs.btn-default.pull-right(ng-click='new_attribute()' ng-disabled='working')
+        i.fa.fa-fw.fa-plus
+    ul.list-group
+      li.list-group-item(ng-repeat='attr in dbObjects.byId[typeObjId].attrs')
+        +attribute
+      li.list-group-item.opacity06(ng-if='dbObjects.byId[typeObjId].attrs | isEmpty')
+        i.icon-ghost
+        | &#32;
+        i
+          | This type has no attributes
+
++content

@@ -30,57 +30,6 @@ mixin type_information
             br
             | {{ dbObjects.byId[type_obj_id].display_name.plural }}
 
-mixin attribute
-  table.details
-    tr
-      td.main
-        mild
-          | {{ attr.display_name }}
-        .opacity06(ng-switch='attr.type')
-          mild(ng-switch-when='bool-toggle')
-            | On/Off Toggle
-          mild(ng-switch-when='text')
-            | Text
-          mild(ng-switch-when='number')
-            | Number
-          mild(ng-switch-when='select')
-            | Selection
-          mild(ng-switch-default)
-            | {{ attr.type }}
-        .opacity06(ng-if='attr.type == "select"')
-          i.fa.fa-list-ul
-          | &#32;
-          span(ng-repeat='opt in attr.select_options track by $index')
-            | {{ opt }}
-            | {{ $last ? '' : ' &middot; ' }}
-      td.pad-both
-        .dropdown.pull-right
-          a.text-link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
-            i.icon-options-vertical
-          ul.dropdown-menu
-            li
-              a.link
-                | Edit Attribute
-            li.divider
-            li
-              a.link(ng-click='delete_attribute(attr.slug)')
-                | Delete Attribute
-
-mixin type_attributes
-  .panel.panel-default(ng-class='{opacity05: disable_type_attrs}')
-    .panel-heading
-      | Type Attributes
-      button.btn.btn-xs.btn-default.pull-right(ng-click='new_type_attr()' ng-disabled='disable_type_attrs')
-        i.fa.fa-fw.fa-plus
-    ul.list-group
-      li.list-group-item(ng-repeat='attr in dbObjects.byId[type_obj_id].attrs')
-        +attribute
-      li.list-group-item.opacity06(ng-if='dbObjects.byId[type_obj_id].attrs | isEmpty')
-        i.icon-ghost
-        | &#32;
-        i
-          | This type has no attributes
-
 mixin delete_type
   .panel.panel-default
     .panel-heading
@@ -99,7 +48,7 @@ mixin delete_type
 mixin content
   +type_title
   +type_information
-  +type_attributes
+  type-attributes(title='Type Attributes' lab-id='lab_id' type-obj-id='type_obj_id')
   +delete_type
 
 +content
