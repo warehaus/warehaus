@@ -1,0 +1,63 @@
+mixin bool_attr
+  .main-with-extra
+    .main
+      | {{ attr.display_name }}
+    .extra.link.text-right
+      i.x12.text-unknown.fa.fa-toggle-off(ng-if='!dbObjects.byId[objId].attrs[attr.slug]'
+                                          ng-click='set_attribute(attr.slug, true)')
+      i.x12.text-success.fa.fa-toggle-on(ng-if='dbObjects.byId[objId].attrs[attr.slug]'
+                                         ng-click='set_attribute(attr.slug, false)')
+
+mixin text_attr_value
+  | {{ attr.display_name }}
+  .opacity06.ellipsis(ng-if='dbObjects.byId[objId].attrs[attr.slug]')
+    | {{ dbObjects.byId[objId].attrs[attr.slug] }}
+  .opacity06(ng-if='!dbObjects.byId[objId].attrs[attr.slug]')
+    i (no value)
+
+mixin attr_with_menu
+  .main-with-extra
+    .main
+      +text_attr_value
+    .extra.text-right.dropdown
+      i.link.icon-options-vertical.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' style={padding: '0 .25rem;'})
+      ul.dropdown-menu.pull-right(style={'font-size': '.875rem'})
+        block
+
+mixin text_attr
+  +attr_with_menu
+    li
+      a.link(ng-click='edit_text_attribute(attr.slug)')
+        i.fa.fa-fw.fa-pencil
+        | Edit Attribute
+    li.divider
+    li
+      a.link(ng-click='delete_attribute(attr.slug)')
+        i.fa.fa-fw.fa-trash-o
+        | Clear Value
+
+mixin select_attr
+  +attr_with_menu
+    li(ng-repeat='option in attr.select_options')
+      a.link(ng-click='set_attribute(attr.slug, option)')
+        i.fa.fa-fw(ng-class='{"fa-check": dbObjects.byId[objId].attrs[attr.slug] == option}')
+        | {{ option }}
+    li.divider
+    li
+      a.link(ng-click='delete_attribute(attr.slug)')
+        i.fa.fa-fw.fa-trash-o
+        | Clear Value
+
+ul
+  li.heading(ng-if='dbObjects.byId[dbObjects.byId[objId].type_id].attrs | isNotEmpty')
+    | Attributes
+  li(ng-repeat='attr in dbObjects.byId[dbObjects.byId[objId].type_id].attrs'
+     ng-switch='attr.type')
+    span(ng-switch-when='bool-toggle')
+      +bool_attr
+    span(ng-switch-when='text')
+      +text_attr
+    span(ng-switch-when='number')
+      +text_attr
+    span(ng-switch-when='select')
+      +select_attr

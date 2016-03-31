@@ -142,3 +142,78 @@ angular.module('warehaus.models').directive('objectCountWithType', function() {
         }
     };
 });
+
+angular.module('warehaus.models').directive('objectAttributes', function($http, $uibModal, viewPath, dbObjects) {
+    var link = function(scope, elem, attrs) {
+        scope.dbObjects = dbObjects;
+
+        scope.set_attribute = function(attr_slug, new_value) {
+            var obj = dbObjects.byId[scope.objId];
+            var lab = dbObjects.byId[obj.parent_id];
+            if (angular.isUndefined(obj)) {
+                return;
+            }
+            var data = {
+                slug: attr_slug,
+                value: new_value
+            };
+            return $http.put('/api/v1/labs/' + lab.slug + '/' + obj.slug + '/attrs', data);
+        };
+
+        scope.edit_text_attribute = function(attr_slug) {
+            var obj = dbObjects.byId[scope.objId];
+            var lab = dbObjects.byId[obj.parent_id];
+            if (angular.isUndefined(obj)) {
+                return;
+            }
+            $uibModal.open({
+                templateUrl: viewPath('main-site/hardware/object-edit-attribute.html'),
+                controller: 'EditAttributeValueController',
+                resolve: {
+                    objId: function() {
+                        return scope.objId;
+                    },
+                    attrSlug: function() {
+                        return attr_slug;
+                    },
+                    curValue: function() {
+                        if (angular.isUndefined(obj.attrs)) {
+                            return null;
+                        }
+                        return angular.copy(obj.attrs[attr_slug]);
+                    }
+                }
+            }).result.then(function(new_value) {
+                return scope.set_attribute(attr_slug, new_value);
+            });
+        };
+
+        scope.delete_attribute = function(attr_slug) {
+            return scope.set_attribute(attr_slug, null);
+        };
+    };
+
+    return {
+        restrict: 'E',
+        templateUrl: viewPath('main-site/hardware/object-attributes.html'),
+        replace: true,
+        link: link,
+        scope: {
+            objId: '='
+        }
+    };
+});
+
+angular.module('warehaus.models').controller('EditAttributeValueController', function($scope, $uibModalInstance, objId, attrSlug, curValue) {
+    $scope.obj_id = objId;
+    $scope.attr_slug = attrSlug;
+    $scope.input = { value: curValue };
+
+    $scope.ok = function() {
+        $uibModalInstance.close($scope.input.value);
+    };
+
+    $scope.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
+    };
+});

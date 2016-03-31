@@ -1,4 +1,7 @@
 table.details {
+  width: 100%;
+  max-width: 100%;
+
   td {
     vertical-align: middle;
   }
@@ -27,4 +30,30 @@ table.details {
   td.pad-both {
     padding: 0 .5rem;
   }
+}
+
+.main-with-extra {
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .main {
+    flex-wrap: nowrap;
+    flex: 1 1 auto;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .extra {
+    flex: 1 1 auto;
+  }
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
