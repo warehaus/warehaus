@@ -15,5 +15,5 @@ p
   | {{ (users.all.length == 1) ? 'user' : 'users' }} in this backend.
 
 p
-  button.btn.btn-primary(ng-click='createNewUser()')
+  button.btn.btn-primary(type='button' ng-click='createNewUser()')
     | Create a New User

@@ -58,7 +58,7 @@ mixin inner_form
 mixin form
   form(role='form', name='theForm', novalidate='')
     h4.text-center
-      button.btn.btn-primary(ng-disabled='working || theForm.$invalid' ng-click='save_settings()')
+      button.btn.btn-primary(type='button' ng-disabled='working || theForm.$invalid' ng-click='save_settings()')
         span.fa.fa-fw.fa-circle-o-notch.fa-spin(ng-if='working')
         span(ng-if='!working')
           | Save Settings

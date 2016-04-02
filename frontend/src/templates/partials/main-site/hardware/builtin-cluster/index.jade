@@ -11,7 +11,7 @@ mixin no_clusters
     p.text-center.x12
       | Create your first cluster and add some servers to it
     p.text-center.x2
-      button.btn.btn-lg.btn-success(ng-click='create_cluster()')
+      button.btn.btn-lg.btn-success(type='button' ng-click='create_cluster()')
         | Create a
         | &#32;
         object-type-title(type-id='type_obj_id' sample='1')
@@ -47,7 +47,7 @@ mixin cluster_list
 
 mixin create_button
   p.text-right(ng-if='curUser.is_admin')
-    button.btn.btn-default(ng-click='create_cluster()')
+    button.btn.btn-default(type='button' ng-click='create_cluster()')
       | Create a Cluster
 
 mixin content

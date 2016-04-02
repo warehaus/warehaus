@@ -1,6 +1,6 @@
 mixin actions
   .dropdown(ng-if='curUser.is_admin || (dbObjects.byId[obj_id].ownerships | isEmpty) || (dbObjects.byId[obj_id].ownerships[0].owner_id == curUser.id)')
-    button.btn.btn-default.dropdown-toggle(id='dropdown-menu-{{ obj_id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+    button.btn.btn-default.dropdown-toggle(type='button' id='dropdown-menu-{{ obj_id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
       | Actions
       i.fa.fa-fw.fa-angle-down
     ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ obj_id }}')

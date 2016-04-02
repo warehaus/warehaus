@@ -11,7 +11,7 @@ mixin no_labs
     p.text-center.x12(ng-if='curUser.is_admin')
       | To add servers and other types of hardware, start by creating a lab.
     p.text-center.x2(ng-if='curUser.is_admin')
-      button.btn.btn-lg.btn-success(ng-click='createLab()')
+      button.btn.btn-lg.btn-success(type='button' ng-click='createLab()')
         | Create a New Lab
     p.text-center.x12(ng-if='!curUser.is_admin')
       | Your administrator is now creating your first lab, it will show up as soon as it's ready

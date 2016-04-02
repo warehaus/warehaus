@@ -38,7 +38,7 @@ mixin content
   .panel.panel-default(ng-class='{opacity05: working}')
     .panel-heading
       | {{ title }}
-      button.btn.btn-xs.btn-default.pull-right(ng-click='new_attribute()' ng-disabled='working')
+      button.btn.btn-xs.btn-default.pull-right(type='button' ng-click='new_attribute()' ng-disabled='working')
         i.fa.fa-fw.fa-plus
     ul.list-group
       li.list-group-item(ng-repeat='attr in dbObjects.byId[typeObjId].attrs')

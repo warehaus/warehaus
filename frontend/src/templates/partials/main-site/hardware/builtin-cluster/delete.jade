@@ -34,9 +34,9 @@ mixin outcome
   +outcome
 
 .modal-footer
-  button.btn.btn-default(ng-click='cancel()')
+  button.btn.btn-default(type='button' ng-click='cancel()')
     | Cancel
-  button.btn.btn-danger(ng-click='ok()')
+  button.btn.btn-danger(type='submit' ng-click='ok()')
     | Yes, Delete This
     | &#32;
     object-type-title(type-id='type_obj_id' sample='1')

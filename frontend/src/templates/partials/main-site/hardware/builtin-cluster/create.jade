@@ -22,7 +22,7 @@ form(role='form' name='newCluster' ng-submit='create()')
           | {{ cluster.slug }}
 
   .modal-footer
-    button.btn.btn-default(ng-click='cancel()')
+    button.btn.btn-default(type='button' ng-click='cancel()')
       | Cancel
-    button.btn.btn-success(ng-click='create()' ng-disabled='newCluster.$invalid || working')
+    button.btn.btn-success(type='submit' ng-click='create()' ng-disabled='newCluster.$invalid || working')
       | Create Cluster

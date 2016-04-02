@@ -17,7 +17,7 @@ mixin no_servers
       object-type-name(lab-id='lab_id' type-key='type_key')
       |  to see them here
     p.text-center.x2(ng-if='curUser.is_admin')
-      button.btn.btn-lg.btn-success(ui-sref='.({tab: "adding-servers"})')
+      button.btn.btn-lg.btn-success(type='button' ui-sref='.({tab: "adding-servers"})')
         | Start Adding
         | &#32;
         object-type-title(type-id='type_obj_id')

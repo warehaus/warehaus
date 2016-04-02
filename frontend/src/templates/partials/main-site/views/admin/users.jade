@@ -7,7 +7,7 @@ mixin api_tokens
     ul.list-group
       li.list-group-item(ng-repeat='api_token in users.byUserId[selected_user_id].api_tokens')
         +token_row
-      button.list-group-item(ng-if='curUser.is_admin' ng-click='users.new_api_token(selected_user_id)' style={'color': '#888', 'outline': '0'})
+      button.list-group-item(type='button' ng-if='curUser.is_admin' ng-click='users.new_api_token(selected_user_id)' style={'color': '#888', 'outline': '0'})
         i.fa.fa-plus
         | &nbsp;
         | Create New Token

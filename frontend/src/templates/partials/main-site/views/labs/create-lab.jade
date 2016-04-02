@@ -22,7 +22,7 @@ form(name='createLab' role='form' ng-submit='save()')
           | {{ lab.slug }}
 
   .modal-footer
-    button.btn.btn-default(ng-click='cancel()')
+    button.btn.btn-default(type='button' ng-click='cancel()')
       | Cancel
-    button.btn.btn-success(ng-click='create()' ng-disabled='createLab.$invalid || working')
+    button.btn.btn-success(type='button' ng-click='save()' ng-disabled='createLab.$invalid || working')
       | Create Lab

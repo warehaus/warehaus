@@ -37,5 +37,5 @@ form(name='newHardwareType' role='form' ng-submit='save()')
     br
     | {{ error.message }}
 
-  button.btn.btn-success(ng-click='create()' ng-disabled='newHardwareType.$invalid || working' ng-if='new_type.slug')
+  button.btn.btn-success(type='button' ng-click='create()' ng-disabled='newHardwareType.$invalid || working' ng-if='new_type.slug')
     | Create Hardware Type

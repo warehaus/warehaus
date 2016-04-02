@@ -26,11 +26,11 @@ mixin forbidden_message
     .row
       .col-sm-6
         h4
-          button.btn.btn-lg.btn-block.btn-success(ui-sref='labs')
+          button.btn.btn-lg.btn-block.btn-success(type='button' ui-sref='labs')
             | Yes, take me somewhere safe
       .col-sm-6
         h4
-          button.btn.btn-lg.btn-block.btn-default(ui-sref='labs')
+          button.btn.btn-lg.btn-block.btn-default(type='button' ui-sref='labs')
             | No, I should be here
 
 mixin non_admin_message
