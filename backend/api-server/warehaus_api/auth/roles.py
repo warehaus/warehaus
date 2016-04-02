@@ -13,6 +13,7 @@ logger = getLogger(__name__)
 roles = Bunch(
     Admin = 'admin',
     User = 'user',
+    Bot = 'bot',
 )
 
 def _check_roles(*role_names):
