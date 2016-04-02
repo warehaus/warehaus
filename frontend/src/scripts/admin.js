@@ -2,10 +2,18 @@
 
 angular.module('warehaus.admin', ['warehaus.ui_helpers']);
 
-angular.module('warehaus.admin').provider('adminUrlRoutes', function(viewPath) {
-    var adminView = function(uri) {
-        return viewPath('main-site/views/admin/' + uri);
+angular.module('warehaus.admin').provider('adminView', function(viewPath) {
+    return {
+        $get: function() {
+            return function(uri) {
+                return viewPath('main-site/views/admin/' + uri);
+            };
+        }
     };
+});
+
+angular.module('warehaus.admin').provider('adminUrlRoutes', function(adminViewProvider) {
+    var adminView = adminViewProvider.$get();
 
     var admin_url_routes = {
         name: 'admin',
@@ -113,7 +121,40 @@ angular.module('warehaus.admin').controller('UsersAdminController', function($sc
 angular.module('warehaus.admin').controller('AuthenticationAdminController', function($scope) {
 });
 
-angular.module('warehaus.admin').controller('LocalAuthBackendController', function($scope) {
+angular.module('warehaus.admin').service('createNewUser', function($uibModal, adminView) {
+    return function() {
+        $uibModal.open({
+            templateUrl: adminView('create-user.html'),
+            controller: 'CreateNewUserController'
+        });
+    };
+});
+
+angular.module('warehaus.admin').controller('CreateNewUserController', function($scope, $http, $uibModalInstance) {
+    $scope.user = {};
+
+    var creation_failed = function(res) {
+        $scope.working = false;
+        if (angular.isDefined(res.data.message)) {
+            $scope.error = res.data.message;
+        } else {
+            $scope.error = res.data;
+        }
+    };
+
+    $scope.save = function() {
+        $scope.working = true;
+        $http.post('/api/v1/auth/users', $scope.user).then($uibModalInstance.close, creation_failed);
+    };
+
+    $scope.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
+    };
+});
+
+angular.module('warehaus.admin').controller('LocalAuthBackendController', function($scope, users, createNewUser) {
+    $scope.users = users;
+    $scope.createNewUser = createNewUser;
 });
 
 angular.module('warehaus.admin').controller('GoogleAuthBackendController', function($scope) {
