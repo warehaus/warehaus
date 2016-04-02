@@ -53,34 +53,52 @@ class TypeClass(object):
     def display_name(self):
         return self.type_key()
 
+    #----------------------------------------------------------------#
+    # Actions supported on all objects and type-objects              #
+    #----------------------------------------------------------------#
+
     @object_action('GET', '')
     def get_object(self, obj):
+        '''Returns the object from the database. This action is automatically
+        supported for all objects of all types.
+        '''
         require_user()
         return obj.as_dict()
 
     @type_action('GET', '')
     def get_type(self, typeobj):
+        '''Same as `get_object` but for type objects.'''
         require_user()
         return typeobj.as_dict()
 
     @type_action('GET', 'objects')
     def get_objects_of_type(self, typeobj):
+        '''Returns all objects of this type object.'''
         require_user()
         return dict(objects=list(obj.as_dict() for obj in Object.query.filter(dict(type_id=typeobj.id))))
 
     @type_action('GET', 'children')
     def get_type_children(self, typeobj):
+        '''Get all type-objects which are children of this type-object.'''
         require_user()
         return dict(children=list(child.as_dict() for child in Object.query.filter(dict(parent_id=typeobj.id))))
 
     @type_action('DELETE', '')
     def delete_type(self, typeobj):
+        '''Deletes this object.'''
         require_admin()
         typeobj.delete()
         return None, httplib.NO_CONTENT
 
+    #----------------------------------------------------------------#
+    # User-based attribute support                                   #
+    #----------------------------------------------------------------#
+
     @type_action('POST', 'attrs')
     def add_attribute(self, typeobj):
+        '''Add an attribute to this type-object. After this attribute has been
+        added, users can get/set this attribute from all objects of this type.
+        '''
         require_admin()
         new_attr = request.json['attr']
         if 'attrs' in typeobj:
@@ -94,6 +112,7 @@ class TypeClass(object):
 
     @type_action('PUT', 'attrs')
     def update_attribute(self, typeobj):
+        '''Update an attribute's definition.'''
         require_admin()
         updated_attr = request.json['attr']
         if 'slug' not in updated_attr:
@@ -107,6 +126,7 @@ class TypeClass(object):
 
     @type_action('DELETE', 'attrs')
     def delete_attribute(self, typeobj):
+        '''Delete a user-defined attribute.'''
         require_admin()
         attr_slug = request.json['slug']
         if 'attrs' in typeobj:
@@ -116,6 +136,7 @@ class TypeClass(object):
 
     @object_action('PUT', 'attrs')
     def set_attr(self, obj):
+        '''Sets a user-attribute for an object.'''
         require_user()
         attr_slug = request.json['slug']
         attr_value = request.json['value']
@@ -128,6 +149,7 @@ class TypeClass(object):
 
     @object_action('DELETE', 'attrs')
     def delete_attr(self, obj):
+        '''Remove a user-defined attribute from an object.'''
         require_user()
         attr_slug = request.json['slug']
         if 'attrs' in obj and attr_slug in obj.attrs:
