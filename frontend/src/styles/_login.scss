@@ -1,27 +1,28 @@
 .login-container {
+  background-color: $navbar-warehaus-bg;
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   bottom: 0;
-}
 
-.panel-login {
-  border-radius: $warehaus-standalone-box-radius;
-  margin: $warehaus-standalone-box-padding;
+  .panel-login {
+    border-radius: $warehaus-standalone-box-radius;
+    margin: $warehaus-standalone-box-padding;
 
-  img {
-    max-width: 60%;
-    margin: 2rem 0;
+    img {
+      max-width: 60%;
+      margin: 2rem 0;
+    }
   }
-}
  
-.login-spinner {
-  .three-bounce-spinner {
-    margin: 0 auto;
+  .login-spinner {
+    .three-bounce-spinner {
+      margin: 0 auto;
 
-    > div {
-      background-color: $brand-primary;
+      > div {
+        background-color: $brand-primary;
+      }
     }
   }
 }
