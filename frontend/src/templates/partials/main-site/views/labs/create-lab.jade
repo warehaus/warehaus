@@ -20,6 +20,8 @@ form(name='createLab' role='form' ng-submit='save()')
         | This lab's API name will be:&nbsp;
         samp
           | {{ lab.slug }}
+    .alert.alert-danger(ng-if='error')
+      | {{ error }}
 
   .modal-footer
     button.btn.btn-default(type='button' ng-click='cancel()')
