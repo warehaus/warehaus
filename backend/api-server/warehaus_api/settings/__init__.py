@@ -20,7 +20,6 @@ def full_config():
     settings = get_settings()
 
     class FullConfig(object):
-        SECRET_KEY = settings.secret_key
-        LDAP_SETTINGS = settings.ldap_settings
+        SECRET_KEY = settings.jwt_secret
 
     return FullConfig

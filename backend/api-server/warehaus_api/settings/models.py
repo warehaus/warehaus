@@ -3,10 +3,12 @@ from bunch import Bunch
 from contextlib import contextmanager
 from .. import db
 
+def make_key():
+    return ''.join(random.choice('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ ') for _ in xrange(48))
+
 class Settings(db.Model):
-    is_initialized = db.Field(default=False)
-    secret_key     = db.Field(default=lambda: ''.join(random.choice('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ ') for _ in xrange(48)))
-    ldap_settings  = db.Field(default=lambda: {})
+    jwt_secret    = db.Field(default=make_key)
+    password_salt = db.Field(default=make_key)
 
 SETTINGS_ID = 1 # Allow only one Settings row
 

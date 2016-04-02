@@ -25,12 +25,13 @@ var read_settings = function() {
     return Settings.find(SETTINGS_ID);
 };
 
-var set_secret_key = function(settings) {
-    app.set('secret_key', settings.secret_key);
+var set_secrets = function(settings) {
+    app.set('jwt_secret', settings.jwt_secret);
+    app.set('password_salt', settings.password_salt);
 };
 
-var read_secret_key = function() {
-    return read_settings().then(set_secret_key);
+var read_secret_keys = function() {
+    return read_settings().then(set_secrets);
 };
 
 /*-------------------------------------------------------------------*/
@@ -38,7 +39,7 @@ var read_secret_key = function() {
 /*-------------------------------------------------------------------*/
 
 var dirty_password = function(password) {
-    return app.get('secret_key') + password;
+    return app.get('password_salt') + password;
 };
 
 var hash_password = function(password) {
@@ -174,7 +175,7 @@ app.post('/auth/login/local', function(req, res, next) {
             return res.status(401).json(info);
         }
 
-        var token = jwt.sign({identity: user.id}, app.get('secret_key'), {
+        var token = jwt.sign({identity: user.id}, app.get('jwt_secret'), {
             expiresIn: '7d',
             notBefore: 0,
         });
@@ -195,7 +196,7 @@ var error_handler = function(err) {
     process.exit(1);
 };
 
-read_secret_key()
+read_secret_keys()
     .then(ensure_admin_user)
     .then(configure_passport)
     .then(start_server)
