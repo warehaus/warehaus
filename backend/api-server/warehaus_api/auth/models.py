@@ -3,8 +3,7 @@ from .. import db
 class User(db.Model):
     username        = db.Field(db.Index())
     roles           = db.Field()
-    first_name      = db.Field()
-    last_name       = db.Field()
+    display_name    = db.Field()
     email           = db.Field()
     hashed_password = db.Field()
     api_tokens      = db.Field(db.Index(multi=True), default=lambda: [])

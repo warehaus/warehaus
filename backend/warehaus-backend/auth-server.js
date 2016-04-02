@@ -140,8 +140,7 @@ var first_user = function() {
             username: 'admin',
             hashed_password: hashed_password,
             roles: ['admin', 'user'],
-            first_name: 'Local',
-            last_name: 'Admin',
+            display_name: 'Admin',
         };
     });
 };

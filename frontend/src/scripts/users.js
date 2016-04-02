@@ -10,7 +10,7 @@ angular.module('warehaus.users').factory('users', function($rootScope, $http) {
     };
 
     var annotate_user = function(user) {
-        user.display_name = user.first_name + ' ' + user.last_name;
+        user.display_name = user.display_name;
         user.email = user.email || '';
         var avatar_base_url = 'https://gravatar.com/avatar/' + md5(user.email) + '?d=mm';
         user.avatar_32 = avatar_base_url + '&s=70';

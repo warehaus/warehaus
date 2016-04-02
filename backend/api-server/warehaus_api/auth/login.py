@@ -9,9 +9,8 @@ def _get_test_user(username, user_roles):
     user = User.get_by_username(username)
     if user is None:
         user = User(username=username, roles=user_roles)
-        user.first_name = username
-        user.last_name  = username
-        user.email      = '{}@example.com'.format(username)
+        user.display_name = username
+        user.email = '{}@example.com'.format(username)
         user.save()
     return user
 
@@ -31,9 +30,9 @@ def _validate_ldap_user(username, password):
     user = User.get_by_username(username)
     if user is None:
         user = User(username=username, roles=[roles.User])
-    user.first_name = user_details.get('attribute_first_name', None)
-    user.last_name  = user_details.get('attribute_last_name', None)
-    user.email      = user_details.get('attribute_email', None)
+    user.display_name = ' '.join([user_details.get('attribute_first_name', ''),
+                                  user_details.get('attribute_last_name', '')]).strip()
+    user.email = user_details.get('attribute_email', None)
     user.save()
     return user
 

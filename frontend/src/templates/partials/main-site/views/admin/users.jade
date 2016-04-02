@@ -20,10 +20,8 @@ mixin user_field(name)
 
 mixin user_fields
   form
-    +user_field('First Name')
-      | {{ users.byUserId[selected_user_id].first_name }}
-    +user_field('Last Name')
-      | {{ users.byUserId[selected_user_id].last_name }}
+    +user_field('Display Name')
+      | {{ users.byUserId[selected_user_id].display_name }}
     +user_field('Email')
       | {{ users.byUserId[selected_user_id].email }}
     +user_field('Roles')

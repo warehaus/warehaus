@@ -12,8 +12,7 @@ from .roles import roles
 SAFE_FIELDS = (
     'id',
     'username',
-    'first_name',
-    'last_name',
+    'display_name',
     'email',
     'api_tokens',
 )
