@@ -40,6 +40,13 @@ def get_object_action(func):
 def get_type_action(func):
     return getattr(func, TYPE_ACTION_ATTR, None)
 
+def ensure_unique_slug(parent_id, slug):
+    '''Makes sure the `slug` is unique as a child of `parent_obj`. If
+    `slug` is not unique, we abort with `httplib.CONFLICT`.
+    '''
+    if any(Object.query.filter(dict(parent_id=parent_id, slug=slug))):
+        flask_abort(httplib.CONFLICT, 'Slug "{}" already in use in "{}"'.format(slug, parent_id))
+
 class TypeClass(object):
     TYPE_VENDOR = None
     TYPE_NAME = None
@@ -50,8 +57,23 @@ class TypeClass(object):
         not override this method normally.'''
         return '{}-{}'.format(cls.TYPE_VENDOR, cls.TYPE_NAME)
 
-    def display_name(self):
-        return self.type_key()
+    @classmethod
+    def display_name(cls):
+        return cls.type_key()
+
+    @classmethod
+    def create_type_object(cls, parent_id, slug, display_name=None):
+        display_name = display_name if display_name is not None else cls.display_name()
+        ensure_unique_slug(parent_id, slug)
+        type_object = Object(
+            type_id      = None, # Type objects have no type
+            parent_id    = parent_id,
+            slug         = slug,
+            type_key     = cls.type_key(),
+            display_name = display_name,
+        )
+        type_object.save()
+        return type_object
 
     #----------------------------------------------------------------#
     # Actions supported on all objects and type-objects              #

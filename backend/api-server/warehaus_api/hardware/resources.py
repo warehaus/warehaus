@@ -1,4 +1,5 @@
 import httplib
+from uuid import uuid4
 from logging import getLogger
 from flask import request
 from flask import abort as flask_abort
@@ -54,7 +55,9 @@ def _get_type_object(obj):
     have a type object or the type object is not found, `None` is returned.
     '''
     if obj is None:
+        logger.debug('  _get_type_object(obj=None)')
         return None
+    logger.debug('  _get_type_object(obj.id={!r}, obj.type_id={!r})'.format(obj.id, obj.type_id))
     if obj.type_id is None:
         return None
     return Object.query.get(obj.type_id)
@@ -65,7 +68,8 @@ def _get_object_child(parent, child_slug):
     the request with `INTERNAL_SERVER_ERROR`.
     '''
     parent_id = None if parent is None else parent.id
-    possible_objs = tuple(Object.query.filter(dict(slug=child_slug, parent_id=parent_id)))
+    logger.debug('  _get_object_child(parent_id={!r}, child_slug={!r})'.format(parent_id, child_slug))
+    possible_objs = tuple(Object.query.filter(lambda obj: (obj['slug'] == child_slug) & (obj['parent_id'] == parent_id)))
     if len(possible_objs) == 0:
         return None
     if len(possible_objs) == 1:
@@ -154,18 +158,13 @@ class ObjectTreeRoot(Resource):
     create_lab_parser.add_argument('slug', required=True)
     create_lab_parser.add_argument('display_name', required=True)
 
-    def _create_lab_type_object(self):
-        lab_type = Object(
-            parent_id = None,
-            type_id   = None,
-            slug      = None,
-            type_key  = Lab.type_key(),
-        )
-        lab_type.save()
+    def _create_lab_type_object(self, slug):
+        unique_lab_type_slug = str(uuid4())
+        lab_type = Lab.create_type_object(parent_id=None, slug=unique_lab_type_slug)
         return lab_type['id']
 
     def _create_lab(self, slug, display_name):
-        lab_type_id = self._create_lab_type_object()
+        lab_type_id = self._create_lab_type_object(slug)
         lab = Object(
             parent_id    = None,
             type_id      = lab_type_id,
@@ -178,10 +177,6 @@ class ObjectTreeRoot(Resource):
     def post(self):
         require_admin()
         args = self.create_lab_parser.parse_args()
-        if any(Object.query.filter(lambda row: ((row['slug'] == args['slug']) &
-                                                (row['parent_id'] == None) &
-                                                (row['type_id'] != None)))):
-            flask_abort(httplib.CONFLICT, 'A lab with slug={!r} already exists'.format(args['slug']))
         lab = self._create_lab(args['slug'], args['display_name'])
         return serialize_object(lab), httplib.CREATED
 

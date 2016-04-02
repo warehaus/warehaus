@@ -12,14 +12,15 @@ from .models import Object
 from .type_class import TypeClass
 from .type_class import type_action
 from .type_class import object_action
+from .type_class import ensure_unique_slug
 from .labs import get_lab_from_type_object
-from .labs import ensure_unique_slug
 
 class Cluster(TypeClass):
     TYPE_VENDOR = 'builtin'
     TYPE_NAME = 'cluster'
 
-    def display_name(self):
+    @classmethod
+    def display_name(cls):
         return 'Cluster'
 
     create_cluster_parser = RequestParser()

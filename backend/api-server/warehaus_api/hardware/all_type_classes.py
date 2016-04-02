@@ -1,7 +1,4 @@
 from .type_class import TypeClass
-from .labs import Lab
-from .servers import Server
-from .clusters import Cluster
 
 class TypeClassesRegistry(object):
     def __init__(self):
@@ -27,6 +24,11 @@ class TypeClassesRegistry(object):
         raise KeyError('No such type with key {!r}'.format(item))
 
 all_type_classes = TypeClassesRegistry()
+
+from .labs import Lab
+from .servers import Server
+from .clusters import Cluster
+
 all_type_classes.register_type(Lab())
 all_type_classes.register_type(Server())
 all_type_classes.register_type(Cluster())

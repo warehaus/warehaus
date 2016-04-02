@@ -22,7 +22,8 @@ class Server(TypeClass):
     TYPE_VENDOR = 'builtin'
     TYPE_NAME = 'server'
 
-    def display_name(self):
+    @classmethod
+    def display_name(cls):
         return 'Server'
 
     @type_action('GET', 'agent.py')
