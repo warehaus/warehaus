@@ -34,9 +34,6 @@
         white-space: nowrap;
         margin: 0;
         padding: 0;
-        border-width: 0 0 $warehaus-page-top-nav-border-size 0;
-        border-style: solid;
-        border-color: $warehaus-page-top-nav-border-color;
 
         a {
           outline: 0;
@@ -52,6 +49,8 @@
       }
 
       li.active {
+        border-style: solid;
+        border-color: $warehaus-page-top-nav-border-color;
         border-width: $warehaus-page-top-nav-border-size $warehaus-page-top-nav-border-size 0 $warehaus-page-top-nav-border-size;
         border-top-left-radius: $border-radius-base;
         border-top-right-radius: $border-radius-base;
