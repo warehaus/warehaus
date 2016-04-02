@@ -16,7 +16,8 @@ roles = Bunch(
 )
 
 def _check_roles(*role_names):
-    if set(role_names) - set(current_identity.roles):
+    role_names = tuple(role_names)
+    if current_identity.role not in role_names:
         flask_abort(httplib.FORBIDDEN)
 
 @jwt_required()
@@ -24,11 +25,12 @@ def _check_jwt_roles(*role_names):
     _check_roles(*role_names)
 
 def _require_roles(*role_names):
+    role_names = tuple(role_names)
     if attempt_auth_token_login():
         _check_roles(*role_names)
     else:
         try:
-            _check_jwt_roles()
+            _check_jwt_roles(*role_names)
         except JWTError as error:
             logger.exception(str(error))
             flask_abort(httplib.UNAUTHORIZED, str(error))
@@ -37,7 +39,7 @@ def require_admin():
     _require_roles(roles.Admin)
 
 def require_user():
-    _require_roles(roles.User)
+    _require_roles(*roles.values())
 
 def admin_required(func):
     @wraps(func)

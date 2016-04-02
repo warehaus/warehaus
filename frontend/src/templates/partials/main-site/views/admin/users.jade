@@ -24,8 +24,8 @@ mixin user_fields
       | {{ users.byUserId[selected_user_id].display_name }}
     +user_field('Email')
       | {{ users.byUserId[selected_user_id].email }}
-    +user_field('Roles')
-      | {{ users.byUserId[selected_user_id].roles | join:", " | titlecase }}
+    +user_field('Role')
+      | {{ users.byUserId[selected_user_id].role | titlecase }}
 
 mixin user_details
   .panel.panel-default(ng-if='selected_user_id')

@@ -2,7 +2,7 @@ from .. import db
 
 class User(db.Model):
     username        = db.Field(db.Index())
-    roles           = db.Field()
+    role            = db.Field()
     display_name    = db.Field()
     email           = db.Field()
     hashed_password = db.Field()

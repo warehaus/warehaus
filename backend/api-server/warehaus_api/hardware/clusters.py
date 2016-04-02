@@ -66,8 +66,8 @@ class Cluster(TypeClass):
         require_user()
         if 'ownerships' not in cluster:
             return None, httplib.NO_CONTENT
-        if roles.Admin not in current_identity.roles and all(ownership['owner_id'] != current_identity.id
-                                                             for ownership in cluster.ownerships):
+        if current_identity.role != roles.Admin and all(ownership['owner_id'] != current_identity.id
+                                                        for ownership in cluster.ownerships):
             flask_abort(httplib.FORBIDDEN, 'You cannot remove ownerships of other users')
         cluster.ownerships = []
         cluster.save()

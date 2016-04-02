@@ -18,13 +18,13 @@ SAFE_FIELDS = (
 )
 
 def cleaned_user(user):
-    if roles.Admin in current_identity.roles:
+    if current_identity.role == roles.Admin:
         return user
     return {field_name: user[field_name] for field_name in SAFE_FIELDS}
 
 def cleaned_current_user():
     user = cleaned_user(current_identity.as_dict())
-    user['roles'] = current_identity.roles
+    user['role'] = current_identity.role
     return user
 
 def get_user(user_id):
@@ -71,7 +71,7 @@ class UserTokens(Resource):
     @user_required
     def post(self, user_id):
         user = get_user(user_id)
-        if (current_identity.id != user_id) and (roles.Admin not in current_identity.roles):
+        if (current_identity.id != user_id) and (current_identity.role != roles.Admin):
             flask_abort(httplib.FORBIDDEN)
         api_token = os.urandom(20).encode('hex')
         user.api_tokens.append(api_token)
@@ -81,7 +81,7 @@ class UserTokens(Resource):
     @user_required
     def delete(self, user_id):
         user = get_user(user_id)
-        if (current_identity.id != user_id) and (roles.Admin not in current_identity.roles):
+        if (current_identity.id != user_id) and (current_identity.role != roles.Admin):
             flask_abort(httplib.FORBIDDEN)
         user.api_tokens = []
         user.save()

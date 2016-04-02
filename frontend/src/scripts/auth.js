@@ -25,7 +25,7 @@ angular.module('warehaus.auth').factory('curUser', function($rootScope, $http, $
             self[attr] = new_user[attr];
         }
         update_user_fields();
-        self.is_admin = self.roles.indexOf('admin') != -1;
+        self.is_admin = (self.role == 'admin');
         self.is_authenticated = true;
         $log.info('Authorized current user');
         $rootScope.$broadcast('warehaus.auth.user_authorized');

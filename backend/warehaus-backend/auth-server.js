@@ -140,7 +140,7 @@ var first_user = function() {
         return {
             username: 'admin',
             hashed_password: hashed_password,
-            roles: ['admin', 'user'],
+            role: 'admin',
             display_name: 'Admin',
         };
     });

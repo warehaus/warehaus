@@ -5,10 +5,10 @@ from .ldap_server import LdapServer
 from .ldap_server import LdapError
 from ..auth.models import User
 
-def _get_test_user(username, user_roles):
+def _get_test_user(username, user_role):
     user = User.get_by_username(username)
     if user is None:
-        user = User(username=username, roles=user_roles)
+        user = User(username=username, role=user_role)
         user.display_name = username
         user.email = '{}@example.com'.format(username)
         user.save()
@@ -16,9 +16,9 @@ def _get_test_user(username, user_roles):
 
 def _validate_test_user(username, password):
     if (username == password == 'admin'):
-        return _get_test_user(username, [roles.User, roles.Admin])
+        return _get_test_user(username, roles.Admin)
     if (username == password == 'user'):
-        return _get_test_user(username, [roles.User])
+        return _get_test_user(username, roles.User)
     raise ValueError('Invalid username or password')
 
 def _validate_ldap_user(username, password):
@@ -29,7 +29,7 @@ def _validate_ldap_user(username, password):
         raise ValueError(str(error))
     user = User.get_by_username(username)
     if user is None:
-        user = User(username=username, roles=[roles.User])
+        user = User(username=username, role=roles.User)
     user.display_name = ' '.join([user_details.get('attribute_first_name', ''),
                                   user_details.get('attribute_last_name', '')]).strip()
     user.email = user_details.get('attribute_email', None)
