@@ -61,19 +61,53 @@ class TypeClass(object):
     def display_name(cls):
         return cls.type_key()
 
-    @classmethod
-    def create_type_object(cls, parent_id, slug, display_name=None):
-        display_name = display_name if display_name is not None else cls.display_name()
+    def create_type_object(self, parent_id, slug, display_name=None):
+        display_name = display_name if display_name is not None else self.display_name()
         ensure_unique_slug(parent_id, slug)
         type_object = Object(
             type_id      = None, # Type objects have no type
             parent_id    = parent_id,
             slug         = slug,
-            type_key     = cls.type_key(),
+            type_key     = self.type_key(),
             display_name = display_name,
         )
         type_object.save()
+        self.ensure_subtypes(type_object)
         return type_object
+
+    #----------------------------------------------------------------#
+    # Automatic sub-type creation                                    #
+    #----------------------------------------------------------------#
+
+    def subtypes(self):
+        '''A type-class can define sub-type-classes.
+        A sub-type-class is a type-class that is automatically created for
+        instances of the type-class. These sub-types are required for the
+        type-object's normal operation and can later on be controlled and
+        queried by users.
+
+        For example, a `Server` object might need a `Disk` sub-object.
+        Such a sub-type holds objects which relate to objects of type
+        `Server` and the `Server` objects can't exist without their `Disk`
+        sub-objects. A user might query the sub-types directly or even
+        define user-defined attributes to add more information by users.
+
+        Defining a sub-type-class would ensure the sub-types are
+        automatically created when the type-object is being created. The
+        type-objects can be accessed as child objects of the type object.
+
+        This method should return a dict of the format
+
+            {slug -> TypeClass instance}
+
+        where `slug` will be the `slug` of the new sub type-object.
+        '''
+        return {}
+
+    def ensure_subtypes(self, type_object):
+        '''Creates type-class instances as defined in `sub_type_classes`.'''
+        for slug, typeclass in self.subtypes().iteritems():
+            typeclass.create_type_object(parent_id=type_object.id, slug=slug)
 
     #----------------------------------------------------------------#
     # Actions supported on all objects and type-objects              #

@@ -160,7 +160,7 @@ class ObjectTreeRoot(Resource):
 
     def _create_lab_type_object(self, slug):
         unique_lab_type_slug = str(uuid4())
-        lab_type = Lab.create_type_object(parent_id=None, slug=unique_lab_type_slug)
+        lab_type = Lab().create_type_object(parent_id=None, slug=unique_lab_type_slug)
         return lab_type['id']
 
     def _create_lab(self, slug, display_name):
