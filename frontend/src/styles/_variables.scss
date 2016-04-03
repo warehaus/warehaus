@@ -73,8 +73,8 @@ $warehaus-page-layout-nav-font-size:          floor(0.875 * $font-size-base);
 $warehaus-page-layout-nav-heading-color:      #aaa;
 $warehaus-page-layout-nav-active-color:       #f3f3f3;
 $warehaus-page-layout-nav-spacing-horizontal: floor($font-size-base / 2);
-$warehaus-page-layout-nav-section-items:      floor(0.5 * $font-size-base);
-$warehaus-page-layout-nav-section-spacing:    floor(2.75 * $warehaus-page-layout-nav-section-items);
+$warehaus-page-layout-nav-section-items:      floor(0.4 * $font-size-base);
+$warehaus-page-layout-nav-section-spacing:    floor(1.5 * $font-size-base);
 
 $warehaus-dropdown-menu-heading-color:      #aaa;
 $warehaus-dropdown-menu-heading-padding:    3px 20px; // Bootstrap value
