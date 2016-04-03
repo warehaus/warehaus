@@ -25,10 +25,18 @@ class TypeClassesRegistry(object):
 
 all_type_classes = TypeClassesRegistry()
 
+# XXX register automatically with a metaclass
+
 from .labs import Lab
 from .servers import Server
+from .servers import PciDevice
+from .servers import NetworkInterface
+from .servers import Disk
 from .clusters import Cluster
 
 all_type_classes.register_type(Lab())
 all_type_classes.register_type(Server())
+all_type_classes.register_type(PciDevice())
+all_type_classes.register_type(NetworkInterface())
+all_type_classes.register_type(Disk())
 all_type_classes.register_type(Cluster())

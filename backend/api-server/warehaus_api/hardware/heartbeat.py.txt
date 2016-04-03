@@ -44,9 +44,9 @@ def collect_pci_info():
             pci_devices.append(mo.groupdict())
     return pci_devices
 
-def collect_block_dev_info():
+def collect_disk_info():
     lsblk = run('lsblk --bytes --nodeps --output-all --pairs')
-    block_devices = []
+    disks = []
     for line in lsblk.splitlines():
         fields = {}
         for mo in re.finditer(r'(?P<key>[^=]+)="(?P<value>[^"]*)"', line):
@@ -57,8 +57,8 @@ def collect_block_dev_info():
             except ValueError:
                 pass
             fields[key] = value
-        block_devices.append(fields)
-    return block_devices
+        disks.append(fields)
+    return disks
 
 def collect_cpu_info():
     cpus_info = open('/proc/cpuinfo').read()
@@ -99,12 +99,12 @@ def collect_fs_info():
     )}
 
 info_collectors = dict(
-    net           = collect_net_info,
-    pci_devices   = collect_pci_info,
-    block_devices = collect_block_dev_info,
-    cpu           = collect_cpu_info,
-    mem           = collect_mem_info,
-    fs            = collect_fs_info,
+    net         = collect_net_info,
+    pci_devices = collect_pci_info,
+    disks       = collect_disk_info,
+    cpu         = collect_cpu_info,
+    mem         = collect_mem_info,
+    fs          = collect_fs_info,
 )
 
 def collect_info():

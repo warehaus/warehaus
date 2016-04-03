@@ -1,6 +1,7 @@
 import httplib
 import pkg_resources
 import rethinkdb as r
+from logging import getLogger
 from urlparse import urljoin
 from slugify import slugify
 from flask import request
@@ -15,8 +16,37 @@ from .type_class import object_action
 from .models import Object
 from .labs import get_lab_from_type_object
 
+logger = getLogger(__name__)
+
 class ServerError(Exception):
     pass
+
+class PciDevice(TypeClass):
+    SLUG = 'pci-device'
+    TYPE_VENDOR = 'builtin'
+    TYPE_NAME = 'server-' + SLUG
+
+    @classmethod
+    def display_name(cls):
+        return dict(singular='PCI Device', plural='PCI Devices')
+
+class NetworkInterface(TypeClass):
+    SLUG = 'network-interface'
+    TYPE_VENDOR = 'builtin'
+    TYPE_NAME = 'server-' + SLUG
+
+    @classmethod
+    def display_name(cls):
+        return dict(singular='Network Interface', plural='Network Interfaces')
+
+class Disk(TypeClass):
+    SLUG = 'disk'
+    TYPE_VENDOR = 'builtin'
+    TYPE_NAME = 'server-' + SLUG
+
+    @classmethod
+    def display_name(cls):
+        return dict(singular='Disk', plural='Disks')
 
 class Server(TypeClass):
     TYPE_VENDOR = 'builtin'
@@ -25,6 +55,9 @@ class Server(TypeClass):
     @classmethod
     def display_name(cls):
         return 'Server'
+
+    def subtypes(self):
+        return {typeclass.SLUG: typeclass() for typeclass in (PciDevice, NetworkInterface, Disk)}
 
     @type_action('GET', 'agent.py')
     def get_agent_code(self, typeobj):
@@ -56,14 +89,46 @@ class Server(TypeClass):
             return server
         flask_abort(httplib.CONFLICT, 'Found more than one server with slug={!r} and lab_id={!r}'.format(slug, lab.id))
 
+    def _sync_sub_objects(self, server, subtype, last_updated):
+        '''Query for all subobjects with type `subtype` of the `server`.
+        The `last_updated` is a `dict` of `slug -> fields`. If `slug`
+        doesn't exist, it's created with the desired `fields`. If it
+        exists, the current object is updated. If a subobject exists but
+        not found in `last_updated` it's removed from the `server`.
+        '''
+        existing = {subobj.slug: subobj for subobj in Object.query.filter(dict(parent_id=server.id, type_id=subtype.id))}
+        for slug, expected_fields in last_updated.iteritems():
+            if slug in existing:
+                subobj = existing[slug]
+                subobj.update(**expected_fields)
+                subobj.save()
+            else:
+                subobj = Object(parent_id=server.id, type_id=subtype.id, slug=slug)
+                subobj.update(**expected_fields)
+                subobj.save()
+        for slug_to_delete in (set(existing) - set(last_updated)):
+            existing[slug_to_delete].delete()
+
+    def _update_sub_objects(self, server, typeobj, hw_info):
+        self._sync_sub_objects(server, typeobj.get_object_child(PciDevice.SLUG),
+                               {('pci-' + pcidev['address']): pcidev for pcidev in hw_info.get('pci_devices', [])})
+        self._sync_sub_objects(server, typeobj.get_object_child(NetworkInterface.SLUG),
+                               {('net-' + net['dev']): net for net in hw_info.get('net', [])})
+        self._sync_sub_objects(server, typeobj.get_object_child(Disk.SLUG),
+                               {('disk-' + disk['name']): disk for disk in hw_info.get('disks', [])})
+
     @type_action('POST', 'heartbeat')
     def heartbeat_call(self, typeobj):
         display_name = request.json['hostname']
+        logger.info('Processing heartbeat from {!r}'.format(request.headers.getlist("X-Forwarded-For")[0] if request.headers.getlist("X-Forwarded-For") else request.remote_addr))
         hw_info = request.json['hw_info']
         slug = slugify(display_name)
         server = self._get_server(typeobj, slug)
         server.display_name = display_name
         server.errors = request.json.get('errors', [])
+        # Update/keep hw_info in the server object. We always keep
+        # a copy of the last keepalive even after creating sub-objects
+        # from it.
         if 'id' in server:
             server.hw_info = r.literal(hw_info)
         else:
@@ -71,6 +136,7 @@ class Server(TypeClass):
         server.last_seen = now()
         server.status = 'success' # XXX calculate this with a background job based on server.last_seen
         server.save()
+        self._update_sub_objects(server, typeobj, hw_info)
         return 'ok'
 
     set_cluster_pareser = RequestParser()

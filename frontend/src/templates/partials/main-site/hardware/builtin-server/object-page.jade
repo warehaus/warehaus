@@ -38,11 +38,11 @@ mixin server_info_resources
           | Filesystem
 
 mixin server_info_net
-  .panel.panel-default(ng-if='server.hw_info.net')
+  .panel.panel-default(ng-if='network_interfaces | isNotEmpty')
     .panel-heading
       | Network
     table.table.hw-info-table
-      tr(ng-repeat='net in server.hw_info.net | orderBy: "dev"')
+      tr(ng-repeat='net in network_interfaces | orderBy: "dev"')
         td.hw-info-icon
           i.icon-share
         td.hw-info-content
@@ -54,29 +54,33 @@ mixin server_info_net
             | {{ ipv4 }}
           div(ng-repeat='ipv6 in net.inet6' style={color: '#bbb'})
             | {{ ipv6 }}
+        td
+          object-attributes(obj-id='net.id')
 
 mixin server_info_block_devices
-  .panel.panel-default(ng-if='server.hw_info.block_devices')
+  .panel.panel-default(ng-if='disks | isNotEmpty')
     .panel-heading
       | Block Devices
     table.table.hw-info-table
-      tr(ng-repeat='blockdev in server.hw_info.block_devices')
+      tr(ng-repeat='disk in disks | orderBy:"name"')
         td.hw-info-icon
-          i.fa.fa-database(ng-if='blockdev.type == "disk"')
-          i.icon-disc(ng-if='blockdev.type == "rom"')
+          i.fa.fa-database(ng-if='disk.type == "disk"')
+          i.icon-disc(ng-if='disk.type == "rom"')
         td.hw-info-content
           span.label.label-primary
-            | /dev/{{ blockdev.name }}
+            | /dev/{{ disk.name }}
           br
           span(style={color: '#bbb'})
-            | {{ blockdev.model }} ({{ blockdev.size | numeraljs:'capacity' }})
+            | {{ disk.model }} ({{ disk.size | numeraljs:'capacity' }})
+        td
+          object-attributes(obj-id='disk.id')
 
 mixin server_info_pci_devices
-  .panel.panel-default(ng-if='server.hw_info.pci_devices')
+  .panel.panel-default(ng-if='pci_devices | isNotEmpty')
     .panel-heading
       | PCI Devices
     table.table.hw-info-table
-      tr(ng-repeat='pcidev in server.hw_info.pci_devices')
+      tr(ng-repeat='pcidev in pci_devices | orderBy:"address"')
         td.hw-info-icon
           i.fa.fa-sitemap
         td.hw-info-content
@@ -87,6 +91,8 @@ mixin server_info_pci_devices
           br
           span(style={color: '#bbb'})
             | {{ pcidev.type }}, {{ pcidev.vendor }}
+        td
+          object-attributes(obj-id='pcidev.id')
 
 mixin server_info
   +server_info_resources

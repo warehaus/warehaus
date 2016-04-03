@@ -1,19 +1,27 @@
+script(type='text/ng-template' id='builtin/type-tree.html')
+  li.heading(ng-if='showHeading')
+    | Hardware Types
+  li(ng-repeat-start='(type_obj_id, type_obj) in typeObjects | orderBy:"display_name.plural"' ui-sref-active='active')
+    a(ui-sref='.hardware-type({typeObjId: type_obj_id})')
+      object-type-title(type-id='type_obj_id')
+  ul(ng-repeat-end
+     ng-if='dbObjects.byParentId[type_obj_id] | isNotEmpty'
+     ng-include='"builtin/type-tree.html"'
+     ng-init='typeObjects=dbObjects.byParentId[type_obj_id]; showHeading=false;')
+
 mixin menu
   ul
     li.heading
-      | Overview
+      | Lab Actions
     li(ui-sref-active='active')
       a(ui-sref='.overview')
         | Overview
-    li.heading
-      | Hardware Types
-    li(ng-repeat='(type_obj_id, type_obj) in dbObjects.byParentId[allLabs.byId[lab_id].type_id] | orderBy:"display_name.plural"' ui-sref-active='active')
-      a(ui-sref='.hardware-type({typeSlug: type_obj.slug})')
-        object-type-title(type-id='type_obj_id')
     li(ui-sref-active='active')
       a(ui-sref='.new-hardware-type')
-        i.fa.fa-fw.fa-plus-circle
-        i New Hardware Type
+        | New Hardware Type
+  ul(ng-include='"builtin/type-tree.html"'
+     ng-init='typeObjects=dbObjects.byParentId[allLabs.byId[lab_id].type_id]; showHeading=true;')
+  ul
     li.heading
       | Other Actions
     li(ui-sref-active='active')

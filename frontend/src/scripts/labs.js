@@ -63,17 +63,19 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(labsViewProvi
                             return $stateParams.objSlug;
                         }],
                         objId: ['$stateParams', 'dbObjects', 'labId', function($stateParams, dbObjects, labId) {
-                            var lab = dbObjects.byId[labId];
-                            if (angular.isUndefined(lab)) {
-                                return undefined;
-                            }
-                            for (var obj_id in dbObjects.byParentId[lab.id]) {
-                                var obj = dbObjects.byId[obj_id];
-                                if (angular.isDefined(obj) && (obj.slug == $stateParams.objSlug)) {
-                                    return obj_id;
+                            return dbObjects.whenReady.then(function() {
+                                var lab = dbObjects.byId[labId];
+                                if (angular.isUndefined(lab)) {
+                                    return undefined;
                                 }
-                            }
-                            return undefined;
+                                for (var obj_id in dbObjects.byParentId[lab.id]) {
+                                    var obj = dbObjects.byId[obj_id];
+                                    if (angular.isDefined(obj) && (obj.slug == $stateParams.objSlug)) {
+                                        return obj_id;
+                                    }
+                                }
+                                return undefined;
+                            });
                         }],
                         $title: ['dbObjects', 'objId', function(dbObjects, objId) {
                             return dbObjects.byId[objId].display_name;
@@ -117,11 +119,15 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(labsViewProvi
                 },
                 {
                     name: 'hardware-type',
-                    url: '/hardware-type/:typeSlug',
+                    url: '/hardware-type/:typeObjId',
                     templateUrl: labsView('manage/hardware-type.html'),
                     controller: 'HardwareTypeController',
                     resolve: {
-                        typeObjId: typeObjIdResolver,
+                        typeObjId: ['$stateParams', 'dbObjects', function($stateParams, dbObjects) {
+                            return dbObjects.whenReady.then(function() {
+                                return $stateParams.typeObjId;
+                            });
+                        }],
                         $title: ['$filter', 'dbObjects', 'typeObjId', function($filter, dbObjects, typeObjId) {
                             return $filter('titlecase')(dbObjects.byId[typeObjId].display_name.plural);
                         }]
@@ -408,7 +414,7 @@ angular.module('warehaus.labs').controller('NewHardwareTypeController', function
         $scope.working = true;
         $scope.error = undefined;
         allLabs.create_type_object($scope.lab_id, $scope.new_type).then(function(res) {
-            $state.go('^.hardware-type', {typeSlug: res.data.slug});
+            $state.go('^.hardware-type', {typeObjId: res.data.id});
         }, function(res) {
             $scope.working = false;
             $scope.error = res.data;

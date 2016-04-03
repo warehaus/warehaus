@@ -233,9 +233,17 @@ angular.module('warehaus.models').directive('objectAttributes', function($http, 
     var link = function(scope, elem, attrs) {
         scope.dbObjects = dbObjects;
 
+        var attrs_url = function(obj) {
+            var path = 'attrs';
+            while (angular.isDefined(obj)) {
+                path = obj.slug + '/' + path;
+                obj = dbObjects.byId[obj.parent_id];
+            }
+            return '/api/v1/labs/' + path;
+        };
+
         scope.set_attribute = function(attr_slug, new_value) {
             var obj = dbObjects.byId[scope.objId];
-            var lab = dbObjects.byId[obj.parent_id];
             if (angular.isUndefined(obj)) {
                 return;
             }
@@ -243,7 +251,7 @@ angular.module('warehaus.models').directive('objectAttributes', function($http, 
                 slug: attr_slug,
                 value: new_value
             };
-            return $http.put('/api/v1/labs/' + lab.slug + '/' + obj.slug + '/attrs', data);
+            return $http.put(attrs_url(obj), data);
         };
 
         scope.edit_text_attribute = function(attr_slug) {

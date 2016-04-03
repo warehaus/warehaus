@@ -37,6 +37,33 @@ angular.module('warehaus.hardware.server').controller('ServerPageController', fu
     var update = function() {
         return dbObjects.whenReady.then(function() {
             $scope.server = dbObjects.byId[$scope.obj_id];
+
+            $scope.pci_devices = [];
+            $scope.network_interfaces = [];
+            $scope.disks = []
+
+            angular.forEach(dbObjects.byParentId[$scope.obj_id], function(subobj) {
+                if (angular.isUndefined(subobj)) {
+                    return;
+                }
+                var subobj_type = dbObjects.byId[subobj.type_id];
+                if (angular.isUndefined(subobj_type)) {
+                    return;
+                }
+                switch (subobj_type.slug) {
+                case 'pci-device':
+                    $scope.pci_devices.push(subobj);
+                    break;
+                case 'network-interface':
+                    $scope.network_interfaces.push(subobj);
+                    break;
+                case 'disk':
+                    $scope.disks.push(subobj);
+                    break;
+                default:
+                    break;
+                }
+            });
         });
     };
 
