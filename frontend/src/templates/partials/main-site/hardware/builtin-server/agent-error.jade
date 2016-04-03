@@ -1,0 +1,21 @@
+.modal-header
+  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='close()')
+    span(aria-hidden="true") &times;
+  h4.modal-title
+    | Agent Error in
+    | &#32;
+    | {{ error.info | titlecase }}
+
+.modal-body
+  h4
+    | Agent Error:
+  pre
+    | {{ error.error }}
+  h4
+    | Agent Traceback:
+  pre
+    | {{ error.traceback }}
+
+.modal-footer
+  button.btn.btn-default(type='button' ng-click='close()')
+    | Close This Window

@@ -131,12 +131,26 @@ mixin cluster
               i.fa.fa-fw.fa-plus-circle
               | Add To Cluster
 
+mixin agent_errors
+  ul(ng-if='server.errors | isNotEmpty')
+    li.heading
+      | Errors
+    li.text-link(ng-repeat='error in server.errors' ng-click='show_agent_error(error)')
+      span.text-danger
+        strong
+          | Agent error in
+          | &#32;
+          | {{ error.info }}
+        div
+          | Click for more information...
+
 mixin navigation
   ul
     li.heading
       | Overview
     +server_status
     +cluster
+  +agent_errors
   object-attributes(obj-id='obj_id' show-heading='true')
 
 mixin content

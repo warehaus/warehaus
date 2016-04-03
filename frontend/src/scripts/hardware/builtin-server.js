@@ -107,6 +107,19 @@ angular.module('warehaus.hardware.server').controller('ServerPageController', fu
             return $http.put(uri, {cluster_id: null});
         });
     };
+
+    $scope.show_agent_error = function(error) {
+        $uibModal.open({
+            templateUrl: serverView('agent-error.html'),
+            controller: 'AgentErrorController',
+            size: 'lg',
+            resolve: {
+                error: function() {
+                    return error;
+                }
+            }
+        });
+    };
 });
 
 angular.module('warehaus.hardware.server').controller('ClusterSelectionController', function($scope, $uibModalInstance, dbObjects, labId, typeObjId, server_id, hwClusterTypeKey) {
@@ -125,6 +138,14 @@ angular.module('warehaus.hardware.server').controller('ClusterSelectionControlle
     };
 
     $scope.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
+    };
+});
+
+angular.module('warehaus.hardware.server').controller('AgentErrorController', function($scope, $uibModalInstance, error) {
+    $scope.error = error;
+
+    $scope.close = function() {
         $uibModalInstance.dismiss('cancel');
     };
 });
