@@ -45,7 +45,7 @@ def collect_pci_info():
     return pci_devices
 
 def collect_disk_info():
-    lsblk = run('lsblk --bytes --nodeps --output-all --pairs')
+    lsblk = run('lsblk --bytes --nodeps --pairs')
     disks = []
     for line in lsblk.splitlines():
         fields = {}
