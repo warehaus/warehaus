@@ -54,7 +54,7 @@ mixin server_info_net
             | {{ ipv4 }}
           div(ng-repeat='ipv6 in net.inet6' style={color: '#bbb'})
             | {{ ipv6 }}
-        td
+        td.hw-info-attributes
           object-attributes(obj-id='net.id')
 
 mixin server_info_block_devices
@@ -72,7 +72,7 @@ mixin server_info_block_devices
           br
           span(style={color: '#bbb'})
             | {{ disk.model }} ({{ disk.size | numeraljs:'capacity' }})
-        td
+        td.hw-info-attributes
           object-attributes(obj-id='disk.id')
 
 mixin server_info_pci_devices
@@ -91,7 +91,7 @@ mixin server_info_pci_devices
           br
           span(style={color: '#bbb'})
             | {{ pcidev.type }}, {{ pcidev.vendor }}
-        td
+        td.hw-info-attributes
           object-attributes(obj-id='pcidev.id')
 
 mixin server_info

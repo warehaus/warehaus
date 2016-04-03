@@ -3,10 +3,11 @@ mixin bool_attr
     .main
       | {{ attr.display_name }}
     .extra.link.text-right
-      i.x12.text-unknown.fa.fa-toggle-off(ng-if='!dbObjects.byId[objId].attrs[attr.slug]'
-                                          ng-click='set_attribute(attr.slug, true)')
-      i.x12.text-success.fa.fa-toggle-on(ng-if='dbObjects.byId[objId].attrs[attr.slug]'
-                                         ng-click='set_attribute(attr.slug, false)')
+      | &nbsp;
+      i.x1.text-unknown.fa.fa-toggle-off(ng-if='!dbObjects.byId[objId].attrs[attr.slug]'
+                                         ng-click='set_attribute(attr.slug, true)')
+      i.x1.text-success.fa.fa-toggle-on(ng-if='dbObjects.byId[objId].attrs[attr.slug]'
+                                        ng-click='set_attribute(attr.slug, false)')
 
 mixin text_attr_value
   | {{ attr.display_name }}
@@ -20,7 +21,7 @@ mixin attr_with_menu
     .main
       +text_attr_value
     .extra.text-right.dropdown
-      a.link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' style={padding: '0 .25rem;'})
+      a.text-link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' style={padding: '0 .25rem;'})
         i.icon-options-vertical
       ul.dropdown-menu.pull-right(style={'font-size': '.875rem'})
         block

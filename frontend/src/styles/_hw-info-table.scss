@@ -14,15 +14,31 @@
 
         &.hw-info-content {
           padding: 10px 0;
-          vertical-align: middle;
+          vertical-align: top;
           line-height: 1.4rem;
           width: 100%;
         }
 
-        &.hw-info-switches {
-          padding: 10px 15px;
+        &.hw-info-attributes {
           text-align: right;
           vertical-align: top;
+          font-size: (0.875 * $font-size-base);
+
+          ul {
+            list-style: none;
+
+            li {
+              display: block;
+              white-space: nowrap;
+              text-align: left;
+              vertical-align: middle;
+              margin: (0.75 * $font-size-base) 0 0 0;
+
+              &:first-child {
+                margin: 0;
+              }
+            }
+          }
         }
       }
     }
