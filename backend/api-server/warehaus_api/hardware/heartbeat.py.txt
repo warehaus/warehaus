@@ -12,7 +12,7 @@ from collections import defaultdict
 def run(cmdline, expected_status=0):
     status, output = getstatusoutput(cmdline)
     if status != expected_status:
-        raise RuntimeError('Error while running {!r}: {}'.format(cmdline, output))
+        raise RuntimeError('Error while running {0!r}: {1}'.format(cmdline, output))
     return output
 
 def collect_net_info():

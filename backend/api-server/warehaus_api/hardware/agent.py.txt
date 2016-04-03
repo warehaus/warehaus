@@ -23,14 +23,14 @@ def log_to_console():
     root.addHandler(ch)
 
 def get_heartbeat_code():
-    logger.debug('Downloading heartbeat code from {}'.format(env['WAREHAUS_HEARTBEAT_CODE_URL']))
+    logger.debug('Downloading heartbeat code from {0}'.format(env['WAREHAUS_HEARTBEAT_CODE_URL']))
     heartbeat_code = urlopen(env['WAREHAUS_HEARTBEAT_CODE_URL']).read()
     heartbeat_md5 = md5(heartbeat_code).hexdigest()
-    logger.debug('Received heartbeat code with MD5={}'.format(heartbeat_md5))
+    logger.debug('Received heartbeat code with MD5={0}'.format(heartbeat_md5))
     return heartbeat_code
 
 def run_once():
-    logger.info('Running once: env={!r}'.format(env))
+    logger.info('Running once: env={0!r}'.format(env))
     heartbeat_code = get_heartbeat_code()
     logger.info('Starting to run heartbeat code')
     exec heartbeat_code in dict(env)
@@ -46,7 +46,7 @@ def main():
         except Exception as error:
             logger.exception('Error in main loop')
         else:
-            logger.info('Done running, sleeping for {} seconds'.format(env['WAREHAUS_INTERVAL']))
+            logger.info('Done running, sleeping for {0} seconds'.format(env['WAREHAUS_INTERVAL']))
         time.sleep(max(env['WAREHAUS_INTERVAL'], 1))
 
 if __name__ == '__main__':
