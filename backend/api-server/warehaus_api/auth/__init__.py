@@ -20,7 +20,10 @@ def authenticate(username, password):
 
 def identify(payload):
     logger.debug('Got payload: {!r}'.format(payload))
-    return User.query.get(payload.get('identity', None))
+    jwt_subject = payload.get('sub', None)
+    if jwt_subject is None:
+        return None
+    return User.query.get(jwt_subject)
 
 def init_auth(app):
     app.config['JWT_AUTH_URL_RULE'] = '/api/v1/auth/login'

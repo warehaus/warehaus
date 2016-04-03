@@ -175,7 +175,7 @@ app.post('/auth/login/local', function(req, res, next) {
             return res.status(401).json(info);
         }
 
-        var token = jwt.sign({identity: user.id}, app.get('jwt_secret'), {
+        var token = jwt.sign({sub: user.id}, app.get('jwt_secret'), {
             expiresIn: '7d',
             notBefore: 0,
         });
