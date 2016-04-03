@@ -8,6 +8,8 @@ from flask_restful.reqparse import RequestParser
 from ..auth.roles import require_user
 from ..auth.roles import require_admin
 from .models import Object
+from .models import get_type_object
+from .models import get_object_child
 from .type_class import get_object_action
 from .type_class import get_type_action
 from .all_type_classes import all_type_classes
@@ -50,32 +52,6 @@ def _object_path_parts(obj_path):
         flask_abort(httplib.NOT_FOUND, 'Path {!r} is too short'.format(obj_path))
     return path_parts[:-1], path_parts[-1]
 
-def _get_type_object(obj):
-    '''Finds and returns the type object of `obj`. If `obj` doesn't
-    have a type object or the type object is not found, `None` is returned.
-    '''
-    if obj is None:
-        logger.debug('  _get_type_object(obj=None)')
-        return None
-    logger.debug('  _get_type_object(obj.id={!r}, obj.type_id={!r})'.format(obj.id, obj.type_id))
-    if obj.type_id is None:
-        return None
-    return Object.query.get(obj.type_id)
-
-def _get_object_child(parent, child_slug):
-    '''Finds the child of `parent` named `child_slug`. If no child is found
-    `None` is returned. If more than one child is found this function fails
-    the request with `INTERNAL_SERVER_ERROR`.
-    '''
-    parent_id = None if parent is None else parent.id
-    logger.debug('  _get_object_child(parent_id={!r}, child_slug={!r})'.format(parent_id, child_slug))
-    possible_objs = tuple(Object.query.filter(lambda obj: (obj['slug'] == child_slug) & (obj['parent_id'] == parent_id)))
-    if len(possible_objs) == 0:
-        return None
-    if len(possible_objs) == 1:
-        return possible_objs[0]
-    flask_abort(httplib.INTERNAL_SERVER_ERROR, 'Got multiple results for slug={!r} parent_id={!r}'.format(child_slug, parent_id))
-
 def get_object_by_path(obj_path):
     '''Finds an object by walking the object hierarchy. For example,
     a valid path can be:
@@ -103,9 +79,9 @@ def get_object_by_path(obj_path):
     path_parts, action = _object_path_parts(obj_path)
     for part in path_parts:
         if part == '~':
-            cur_obj = _get_type_object(cur_obj)
+            cur_obj = get_type_object(cur_obj)
         else:
-            cur_obj = _get_object_child(cur_obj, part)
+            cur_obj = get_object_child(cur_obj, part)
         if cur_obj is None:
             flask_abort(httplib.NOT_FOUND, 'Could not find an object for {!r}'.format(part))
     # cur_obj must not be None. We must enter the for loop at least once
