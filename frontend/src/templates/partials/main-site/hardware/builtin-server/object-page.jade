@@ -69,9 +69,10 @@ mixin server_info_block_devices
         td.hw-info-content
           span.label.label-primary
             | /dev/{{ disk.name }}
-          br
-          span(style={color: '#bbb'})
+          div(style={color: '#bbb'})
             | {{ disk.model }} ({{ disk.size | numeraljs:'capacity' }})
+          div(style={color: '#ccc'} ng-if='disk.mountpoint')
+            | Mounted to {{ disk.mountpoint }}
         td.hw-info-attributes
           object-attributes(obj-id='disk.id')
 
