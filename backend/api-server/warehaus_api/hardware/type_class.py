@@ -174,7 +174,7 @@ class TypeClass(object):
         if 'slug' not in updated_attr:
             flask_abort(httplib.BAD_REQUEST, 'Attribute must have a "slug" property')
         if 'attrs' not in typeobj or not any(attr['slug'] == updated_attr['slug'] for attr in typeobj.attrs):
-            flask_abort(httplib.CONFLICT, 'No such attribute {!r}'.format(attr['slug']))
+            flask_abort(httplib.CONFLICT, 'No such attribute {!r}'.format(updated_attr['slug']))
         typeobj.attrs = [updated_attr if attr['slug'] == updated_attr['slug'] else attr
                          for attr in typeobj.attrs]
         typeobj.save()
