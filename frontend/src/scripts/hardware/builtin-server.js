@@ -34,12 +34,23 @@ angular.module('warehaus.hardware.server').controller('ServerListController', fu
 });
 
 angular.module('warehaus.hardware.server').controller('ServerPageController', function($scope, $http, $uibModal, dbObjects, serverView) {
-    var lab = dbObjects.byId[$scope.lab_id];
+    var update = function() {
+        return dbObjects.whenReady.then(function() {
+            $scope.server = dbObjects.byId[$scope.obj_id];
+        });
+    };
 
-    var server_uri = function() {
-        var lab = dbObjects.byId[$scope.lab_id];
-        var server = dbObjects.byId[$scope.obj_id];
-        return '/api/v1/labs/' + lab.slug + '/' + server.slug + '/';
+    update();
+    $scope.$on('warehaus.models.objects_reloaded', update);
+    $scope.$on('warehaus.models.object_changed', update);
+    $scope.$on('warehaus.models.object_deleted', update);
+
+    var server_uri = function(action) {
+        return dbObjects.whenReady.then(function() {
+            var lab = dbObjects.byId[$scope.lab_id];
+            var server = dbObjects.byId[$scope.obj_id];
+            return '/api/v1/labs/' + lab.slug + '/' + server.slug + '/' + (action ? action : '');
+        });
     };
 
     $scope.add_to_cluster = function() {
@@ -58,12 +69,16 @@ angular.module('warehaus.hardware.server').controller('ServerPageController', fu
                 }
             }
         }).result.then(function(cluster_id) {
-            $http.put(server_uri($scope.obj_id) + 'cluster', {cluster_id: cluster_id});
+            return server_uri('cluster').then(function(uri) {
+                return $http.put(uri, {cluster_id: cluster_id});
+            });
         });
     };
 
     $scope.remove_from_cluster = function() {
-        $http.put(server_uri() + 'cluster', {cluster_id: null});
+        return server_uri('cluster').then(function(uri) {
+            return $http.put(uri, {cluster_id: null});
+        });
     };
 });
 

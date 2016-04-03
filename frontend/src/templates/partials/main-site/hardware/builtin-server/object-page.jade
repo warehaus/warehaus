@@ -17,32 +17,32 @@ mixin page_header
         span
 
 mixin server_info_resources
-  .panel.panel-default(ng-if='dbObjects.byId[obj_id].hw_info')
+  .panel.panel-default(ng-if='server.hw_info')
     .panel-heading
       | Resources
     table.table.text-center
       tr
         td(style={width: '33%'})
           h1
-            | {{ dbObjects.byId[obj_id].hw_info.cpu[0]['cpu MHz'] / 1024 | number:2 }}
+            | {{ server.hw_info.cpu[0]['cpu MHz'] / 1024 | number:2 }}
             | &#32;
             | GHz
           | CPU
         td(style={width: '33%'})
           h1
-            | {{ dbObjects.byId[obj_id].hw_info.mem.MemTotal | numeraljs:'capacity' }}
+            | {{ server.hw_info.mem.MemTotal | numeraljs:'capacity' }}
           | RAM
         td(style={width: '33%'})
           h1
-            | {{ dbObjects.byId[obj_id].hw_info.fs['/'].total_bytes | numeraljs:'capacity' }}
+            | {{ server.hw_info.fs['/'].total_bytes | numeraljs:'capacity' }}
           | Filesystem
 
 mixin server_info_net
-  .panel.panel-default(ng-if='dbObjects.byId[obj_id].hw_info.net')
+  .panel.panel-default(ng-if='server.hw_info.net')
     .panel-heading
       | Network
     table.table.hw-info-table
-      tr(ng-repeat='net in dbObjects.byId[obj_id].hw_info.net | orderBy: "dev"')
+      tr(ng-repeat='net in server.hw_info.net | orderBy: "dev"')
         td.hw-info-icon
           i.icon-share
         td.hw-info-content
@@ -54,15 +54,13 @@ mixin server_info_net
             | {{ ipv4 }}
           div(ng-repeat='ipv6 in net.inet6' style={color: '#bbb'})
             | {{ ipv6 }}
-        td.hw-info-switches
-          //i.x2.text-success.fa.fa-toggle-on
 
 mixin server_info_block_devices
-  .panel.panel-default(ng-if='dbObjects.byId[obj_id].hw_info.block_devices')
+  .panel.panel-default(ng-if='server.hw_info.block_devices')
     .panel-heading
       | Block Devices
     table.table.hw-info-table
-      tr(ng-repeat='blockdev in dbObjects.byId[obj_id].hw_info.block_devices')
+      tr(ng-repeat='blockdev in server.hw_info.block_devices')
         td.hw-info-icon
           i.fa.fa-database(ng-if='blockdev.type == "disk"')
           i.icon-disc(ng-if='blockdev.type == "rom"')
@@ -74,11 +72,11 @@ mixin server_info_block_devices
             | {{ blockdev.model }} ({{ blockdev.size | numeraljs:'capacity' }})
 
 mixin server_info_pci_devices
-  .panel.panel-default(ng-if='dbObjects.byId[obj_id].hw_info.pci_devices')
+  .panel.panel-default(ng-if='server.hw_info.pci_devices')
     .panel-heading
       | PCI Devices
     table.table.hw-info-table
-      tr(ng-repeat='pcidev in dbObjects.byId[obj_id].hw_info.pci_devices')
+      tr(ng-repeat='pcidev in server.hw_info.pci_devices')
         td.hw-info-icon
           i.fa.fa-sitemap
         td.hw-info-content
@@ -99,11 +97,11 @@ mixin server_info
 mixin server_status
   li
     span
-      .status-dot.status-dot-3x(class='status-dot-{{ dbObjects.byId[obj_id].status }}')
+      .status-dot.status-dot-3x(class='status-dot-{{ server.status }}')
       | &#32;
-      | {{ (dbObjects.byId[obj_id].status == 'success') ? 'Online' : 'Offline' }}
-      div.opacity05(ng-if='dbObjects.byId[obj_id].status != "success"')
-        | Last seen {{ moment(dbObjects.byId[obj_id].last_seen).fromNow() }}
+      | {{ (server.status == 'success') ? 'Online' : 'Offline' }}
+      div.opacity05(ng-if='server.status != "success"')
+        | Last seen {{ moment(server.last_seen).fromNow() }}
 
 mixin cluster
   li
