@@ -28,29 +28,29 @@ mixin attr_with_menu
 mixin text_attr
   +attr_with_menu
     li
-      a.link(ng-click='edit_text_attribute(attr.slug)')
+      a.text-link(ng-click='edit_text_attribute(attr.slug)')
         i.fa.fa-fw.fa-pencil
         | Edit Attribute
     li.divider
     li
-      a.link(ng-click='delete_attribute(attr.slug)')
+      a.text-link(ng-click='delete_attribute(attr.slug)')
         i.fa.fa-fw.fa-trash-o
         | Clear Value
 
 mixin select_attr
   +attr_with_menu
     li(ng-repeat='option in attr.select_options')
-      a.link(ng-click='set_attribute(attr.slug, option)')
+      a.text-link(ng-click='set_attribute(attr.slug, option)')
         i.fa.fa-fw(ng-class='{"fa-check": dbObjects.byId[objId].attrs[attr.slug] == option}')
         | {{ option }}
     li.divider
     li
-      a.link(ng-click='delete_attribute(attr.slug)')
+      a.text-link(ng-click='delete_attribute(attr.slug)')
         i.fa.fa-fw.fa-trash-o
         | Clear Value
 
 ul
-  li.heading(ng-if='dbObjects.byId[dbObjects.byId[objId].type_id].attrs | isNotEmpty')
+  li.heading(ng-if='showHeading && (dbObjects.byId[dbObjects.byId[objId].type_id].attrs | isNotEmpty)')
     | Attributes
   li(ng-repeat='attr in dbObjects.byId[dbObjects.byId[objId].type_id].attrs'
      ng-switch='attr.type')

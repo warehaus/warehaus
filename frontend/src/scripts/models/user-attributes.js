@@ -150,7 +150,8 @@ angular.module('warehaus.models').directive('objectAttributes', function($http, 
         replace: true,
         link: link,
         scope: {
-            objId: '='
+            objId: '=',
+            showHeading: '='
         }
     };
 });
