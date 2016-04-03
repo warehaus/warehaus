@@ -24,29 +24,30 @@ mild {
   font-weight: $warehaus-font-weight-normal;
 }
 
-.x08  { font-size: .8rem;  }
-.x09  { font-size: .9rem;  }
-.x1   { font-size: 1rem;   }
-.x12  { font-size: 1.2rem; }
-.x15  { font-size: 1.5rem; }
-.x175 { font-size: 1.75rem; }
-.x2   { font-size: 2rem;   }
-.x25  { font-size: 2.5rem; }
-.x3   { font-size: 3rem;   }
-.x35  { font-size: 3.5rem; }
-.x4   { font-size: 4rem;   }
-.x45  { font-size: 4.5rem; }
-.x5   { font-size: 5rem;   }
-.x55  { font-size: 5.5rem; }
-.x6   { font-size: 6rem;   }
-.x65  { font-size: 6.5rem; }
-.x7   { font-size: 7rem;   }
-.x75  { font-size: 7.5rem; }
-.x8   { font-size: 8rem;   }
-.x85  { font-size: 8.5rem; }
-.x9   { font-size: 9rem;   }
-.x95  { font-size: 9.5rem; }
-.x10  { font-size: 10rem;  }
+.x08  { font-size: floor(0.8  * $font-size-base); }
+.x09  { font-size: floor(0.9  * $font-size-base); }
+.x1   { font-size: floor(1    * $font-size-base); }
+.x11  { font-size: floor(1.1  * $font-size-base); }
+.x12  { font-size: floor(1.2  * $font-size-base); }
+.x15  { font-size: floor(1.5  * $font-size-base); }
+.x175 { font-size: floor(1.75 * $font-size-base); }
+.x2   { font-size: floor(2    * $font-size-base); }
+.x25  { font-size: floor(2.5  * $font-size-base); }
+.x3   { font-size: floor(3    * $font-size-base); }
+.x35  { font-size: floor(3.5  * $font-size-base); }
+.x4   { font-size: floor(4    * $font-size-base); }
+.x45  { font-size: floor(4.5  * $font-size-base); }
+.x5   { font-size: floor(5    * $font-size-base); }
+.x55  { font-size: floor(5.5  * $font-size-base); }
+.x6   { font-size: floor(6    * $font-size-base); }
+.x65  { font-size: floor(6.5  * $font-size-base); }
+.x7   { font-size: floor(7    * $font-size-base); }
+.x75  { font-size: floor(7.5  * $font-size-base); }
+.x8   { font-size: floor(8    * $font-size-base); }
+.x85  { font-size: floor(8.5  * $font-size-base); }
+.x9   { font-size: floor(9    * $font-size-base); }
+.x95  { font-size: floor(9.5  * $font-size-base); }
+.x10  { font-size: floor(10   * $font-size-base); }
 
 .lh15  { line-height: 1.5rem; }
 .lh175 { line-height: 1.75rem; }
