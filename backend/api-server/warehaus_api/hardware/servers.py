@@ -44,12 +44,16 @@ class Server(TypeClass):
 
     def _get_server(self, typeobj, slug):
         lab = get_lab_from_type_object(typeobj)
-        servers = tuple(Object.query.filter(dict(slug=slug, parent_id=lab.id, type_id=typeobj.id)))
+        servers = tuple(Object.query.filter(dict(slug=slug, parent_id=lab.id)))
         if len(servers) == 0:
             server = Object(slug=slug, parent_id=lab.id, type_id=typeobj.id)
             return server
         if len(servers) == 1:
-            return servers[0]
+            server = servers[0]
+            if server.type_id != typeobj.id:
+                flask_abort(httplib.INTERNAL_SERVER_ERROR, 'Found server for heartbeat with slug={!r} parent_id={!r} but type_id={!r} (expected type_id={!r})'.format(
+                    server.slug, server.parent_id, server.type_id, typeobj.id))
+            return server
         flask_abort(httplib.CONFLICT, 'Found more than one server with slug={!r} and lab_id={!r}'.format(slug, lab.id))
 
     @type_action('POST', 'heartbeat')
