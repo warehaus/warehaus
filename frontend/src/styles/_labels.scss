@@ -1,0 +1,66 @@
+// Copied from Bootstrap, this label class works better with our font family and sizes
+
+.lbl {
+  display: inline;
+  padding: .2em .5em .3em;
+  font-size: 75%;
+  font-weight: $warehaus-font-weight-thin;
+  line-height: 1;
+  color: $lbl-color;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25em;
+  position: relative;
+  top: -0.1em; // about 1 line-height
+
+  // [converter] extracted a& to a.lbl
+
+  // Empty lbls collapse automatically (not available in IE8)
+  &:empty {
+    display: none;
+  }
+
+  // Quick fix for lbls in buttons
+  .btn & {
+    position: relative;
+    top: -1px;
+  }
+}
+
+// Add hover effects, but only for links
+a.lbl {
+  &:hover,
+  &:focus {
+    color: $lbl-link-hover-color;
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+
+// Colors
+// Contextual variations (linked lbls get darker on :hover)
+
+.lbl-default {
+  @include label-variant($lbl-default-bg);
+}
+
+.lbl-primary {
+  @include label-variant($lbl-primary-bg);
+}
+
+.lbl-success {
+  @include label-variant($lbl-success-bg);
+}
+
+.lbl-info {
+  @include label-variant($lbl-info-bg);
+}
+
+.lbl-warning {
+  @include label-variant($lbl-warning-bg);
+}
+
+.lbl-danger {
+  @include label-variant($lbl-danger-bg);
+}

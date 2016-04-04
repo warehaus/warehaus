@@ -18,7 +18,7 @@ $gray:                   lighten($gray-base, 33.5%);
 $gray-light:             lighten($gray-base, 46.7%);
 $gray-lighter:           lighten($gray-base, 93.5%);
 
-$brand-primary:           #53687d;
+$brand-primary:           #0e6dc1;
 $brand-success:           #5cb85c;
 $brand-info:              #5bc0de;
 $brand-warning:           #f0ad4e;
@@ -96,3 +96,12 @@ $warehaus-status-dot-color-info:            $brand-info;
 $warehaus-status-dot-color-warning:         $brand-warning;
 $warehaus-status-dot-color-danger:          $brand-danger;
 $warehaus-status-dot-color-unknown:         white;
+
+$lbl-default-bg:            $gray-light;
+$lbl-primary-bg:            $brand-primary;
+$lbl-success-bg:            $brand-success;
+$lbl-info-bg:               $brand-info;
+$lbl-warning-bg:            $brand-warning;
+$lbl-danger-bg:             $brand-danger;
+$lbl-color:                 #fff;
+$lbl-link-hover-color:      #fff;

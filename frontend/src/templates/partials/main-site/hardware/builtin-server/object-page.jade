@@ -46,7 +46,7 @@ mixin server_info_net
         td.hw-info-icon
           i.icon-share
         td.hw-info-content
-          span.label.label-primary
+          span.lbl.lbl-primary
             | {{ net.dev }}
           | &#32;
           | {{ net.mac }}
@@ -67,7 +67,7 @@ mixin server_info_block_devices
           i.fa.fa-database(ng-if='disk.type == "disk"')
           i.icon-disc(ng-if='disk.type == "rom"')
         td.hw-info-content
-          span.label.label-primary
+          span.lbl.lbl-primary
             | /dev/{{ disk.name }}
           div(style={color: '#bbb'})
             | {{ disk.model }} ({{ disk.size | numeraljs:'capacity' }})
@@ -85,7 +85,7 @@ mixin server_info_pci_devices
         td.hw-info-icon
           i.fa.fa-sitemap
         td.hw-info-content
-          span.label.label-primary
+          span.lbl.lbl-primary
             | {{ pcidev.address }}
           | &#32;
           | {{ pcidev.name }}
