@@ -54,6 +54,10 @@ mixin server_info_net
             | {{ ipv4 }}
           div(ng-repeat='ipv6 in net.inet6' style={color: '#bbb'})
             | {{ ipv6 }}
+          div(ng-if='net.provider.provider == "aws"' style={color: '#bbb'})
+            span.lbl.lbl-success aws
+            | &#32;
+            | {{ net.provider['local-ipv4s'] }}
         td.hw-info-attributes
           object-attributes(obj-id='net.id')
 
@@ -132,6 +136,23 @@ mixin cluster
               i.fa.fa-fw.fa-plus-circle
               | Add To Cluster
 
+mixin provider_info
+  ul(ng-if='server.agent_info.provider_info.provider == "aws"')
+    li.heading
+      | Provider: AWS
+    li
+      span
+        div AMI ID
+        .gray {{ server.agent_info.provider_info['ami-id'] }}
+    li
+      span
+        div Availability Zone
+        .gray {{ server.agent_info.provider_info.placement['availability-zone'] }}
+    li
+      span
+        div Public IPv4
+        .gray {{ server.agent_info.provider_info['public-ipv4'] }}
+
 mixin agent_errors
   ul(ng-if='server.errors | isNotEmpty')
     li.heading
@@ -151,6 +172,7 @@ mixin navigation
       | Overview
     +server_status
     +cluster
+  +provider_info
   +agent_errors
   object-attributes(obj-id='obj_id' show-heading='true')
 

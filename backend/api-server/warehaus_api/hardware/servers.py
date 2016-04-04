@@ -3,6 +3,7 @@ import pkg_resources
 import rethinkdb as r
 from logging import getLogger
 from urlparse import urljoin
+from functools import partial
 from slugify import slugify
 from flask import request
 from flask import Response
@@ -89,32 +90,52 @@ class Server(TypeClass):
             return server
         flask_abort(httplib.CONFLICT, 'Found more than one server with slug={!r} and lab_id={!r}'.format(slug, lab.id))
 
-    def _sync_sub_objects(self, server, subtype, last_updated):
+    def _get_pci_provider_info(self, agent_info, pci_device):
+        pass
+
+    def _get_net_provider_info(self, agent_info, net_if):
+        if agent_info['provider_info']['provider'] == 'aws':
+            info = agent_info['provider_info'].get('network', {}).get('interfaces', {}).get('macs', {}).get(net_if['mac'], None)
+            if info is not None:
+                info['provider'] = 'aws'
+                return info
+
+    def _get_disk_provider_info(self, agent_info, disk):
+        pass
+
+    def _sync_sub_objects(self, server, subtype, get_provider_info_func, last_update):
         '''Query for all subobjects with type `subtype` of the `server`.
-        The `last_updated` is a `dict` of `slug -> fields`. If `slug`
+        The `last_update` is a `dict` of `slug -> fields`. If `slug`
         doesn't exist, it's created with the desired `fields`. If it
         exists, the current object is updated. If a subobject exists but
-        not found in `last_updated` it's removed from the `server`.
+        not found in `last_update` it's removed from the `server`.
         '''
         existing = {subobj.slug: subobj for subobj in Object.query.filter(dict(parent_id=server.id, type_id=subtype.id))}
-        for slug, expected_fields in last_updated.iteritems():
+        for slug, expected_fields in last_update.iteritems():
             if slug in existing:
                 subobj = existing[slug]
                 subobj.update(**expected_fields)
-                subobj.save()
             else:
                 subobj = Object(parent_id=server.id, type_id=subtype.id, slug=slug)
                 subobj.update(**expected_fields)
-                subobj.save()
-        for slug_to_delete in (set(existing) - set(last_updated)):
+            provider_info = get_provider_info_func(subobj)
+            if 'id' in subobj:
+                subobj.provider = r.literal(provider_info)
+            else:
+                subobj.provider = provider_info
+            subobj.save()
+        for slug_to_delete in (set(existing) - set(last_update)):
             existing[slug_to_delete].delete()
 
     def _update_sub_objects(self, server, typeobj, agent_info):
         self._sync_sub_objects(server, typeobj.get_object_child(PciDevice.SLUG),
+                               partial(self._get_pci_provider_info, agent_info),
                                {('pci-' + pcidev['address']): pcidev for pcidev in agent_info.get('hw_pci_devices', [])})
         self._sync_sub_objects(server, typeobj.get_object_child(NetworkInterface.SLUG),
+                               partial(self._get_net_provider_info, agent_info),
                                {('net-' + net['dev']): net for net in agent_info.get('hw_net', [])})
         self._sync_sub_objects(server, typeobj.get_object_child(Disk.SLUG),
+                               partial(self._get_disk_provider_info, agent_info),
                                {('disk-' + disk['name']): disk for disk in agent_info.get('hw_disks', [])})
 
     @type_action('POST', 'heartbeat')
