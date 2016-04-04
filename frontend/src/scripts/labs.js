@@ -365,7 +365,7 @@ angular.module('warehaus.labs').controller('BrowseTypeController', function($sco
 
 });
 
-angular.module('warehaus.labs').controller('ObjectPageController', function($scope, $state, dbObjects, selectedLab, labId, typeObjId, objId, viewPath) {
+angular.module('warehaus.labs').controller('ObjectPageController', function($scope, $http, $state, $uibModal, dbObjects, selectedLab, labId, typeObjId, objId, viewPath) {
     selectedLab.set(labId); // Required when we land directly in an object's page
 
     $scope.lab_id = labId;
@@ -390,6 +390,47 @@ angular.module('warehaus.labs').controller('ObjectPageController', function($sco
     $scope.$on('warehaus.models.objects_reloaded', reload_object);
     $scope.$on('warehaus.models.object_changed', reload_object_conditionally);
     $scope.$on('warehaus.models.object_deleted', reload_object_conditionally);
+
+    var object_uri = function() {
+        var lab = dbObjects.byId[$scope.lab_id];
+        var obj = dbObjects.byId[$scope.obj_id];
+        return '/api/v1/labs/' + lab.slug + '/' + obj.slug + '/';
+    };
+
+    $scope.show_config_json = function() {
+        $uibModal.open({
+            templateUrl: viewPath('main-site/hardware/show-config-json.html'),
+            controller: 'ShowConfigJsonController',
+            size: 'lg',
+            resolve: {
+                labId: function() {
+                    return $scope.lab_id;
+                },
+                typeObjId: function() {
+                    return $scope.type_obj_id;
+                },
+                objId: function() {
+                    return $scope.obj_id;
+                },
+                configJson: function() {
+                    return $http.get(object_uri() + 'config.json').then(function(res) {
+                        return res.data;
+                    });
+                }
+            }
+        });
+    };
+});
+
+angular.module('warehaus.labs').controller('ShowConfigJsonController', function($scope, $uibModalInstance, labId, typeObjId, objId, configJson) {
+    $scope.lab_id = labId;
+    $scope.type_obj_id = typeObjId;
+    $scope.obj_id = objId;
+    $scope.config_json = configJson;
+
+    $scope.close = function() {
+        $uibModalInstance.dismiss('cancel');
+    };
 });
 
 angular.module('warehaus.labs').controller('ManageLabOverview', function($scope) {

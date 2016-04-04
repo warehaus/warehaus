@@ -15,6 +15,10 @@ from .type_class import TypeClass
 from .type_class import type_action
 from .type_class import object_action
 from .models import Object
+from .models import get_user_attributes
+from .models import get_object_children
+from .models import get_object_child
+from .models import get_type_object
 from .labs import get_lab_from_type_object
 
 logger = getLogger(__name__)
@@ -170,3 +174,39 @@ class Server(TypeClass):
         server.cluster_id = args['cluster_id']
         server.save()
         return server.as_dict(), httplib.OK
+
+    @object_action('GET', 'config.json')
+    def server_config(self, server):
+        require_user()
+        return server_config(server)
+
+def server_config(server):
+    typeobj = get_type_object(server)
+    net_if_type = get_object_child(typeobj, NetworkInterface.SLUG)
+    pci_dev_type = get_object_child(typeobj, PciDevice.SLUG)
+    disk_type = get_object_child(typeobj, Disk.SLUG)
+    hw = dict(
+        cpu  = server['agent_info']['hw_cpu'],
+        mem  = server['agent_info']['hw_mem'],
+        fs   = server['agent_info']['hw_fs'],
+        net  = [],
+        pci  = [],
+        disk = [],
+    )
+    for childobj in get_object_children(server):
+        if childobj.type_id == net_if_type.id:
+            hw['net'].append(childobj.as_dict())
+        elif childobj.type_id == pci_dev_type.id:
+            hw['pci'].append(childobj.as_dict())
+        elif childobj.type_id == disk_type.id:
+            hw['disk'].append(childobj.as_dict())
+    config = dict(
+        id           = server['id'],
+        type_id      = server['type_id'],
+        slug         = server['slug'],
+        display_name = server['display_name'],
+        user_attrs   = get_user_attributes(server),
+        provider     = server['agent_info']['provider_info'],
+        hw           = hw,
+    )
+    return config

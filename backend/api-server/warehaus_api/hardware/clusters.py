@@ -9,11 +9,13 @@ from ..auth.roles import roles
 from ..auth.models import User
 from ..db.times import now
 from .models import Object
+from .models import get_user_attributes
 from .type_class import TypeClass
 from .type_class import type_action
 from .type_class import object_action
 from .type_class import ensure_unique_slug
 from .labs import get_lab_from_type_object
+from .servers import server_config
 
 class Cluster(TypeClass):
     TYPE_VENDOR = 'builtin'
@@ -78,7 +80,7 @@ class Cluster(TypeClass):
     def cluster_config(self, cluster):
         require_user()
         lab = Object.query.get(cluster.parent_id)
-        servers = tuple(server.as_dict() for server in Object.query.filter(
+        servers = tuple(server_config(server) for server in Object.query.filter(
             dict(parent_id=lab.id, cluster_id=cluster.id)))
         ownerships = tuple(dict(owner_id    = ownership['owner_id'],
                                 obtained_at = ownership['obtained_at'],
@@ -88,12 +90,14 @@ class Cluster(TypeClass):
             id           = cluster['id'],
             slug         = cluster['slug'],
             display_name = cluster['display_name'],
+            user_attrs   = get_user_attributes(cluster),
             servers      = servers,
             ownerships   = ownerships,
             lab = dict(
                 id           = lab['id'],
                 slug         = lab['slug'],
                 display_name = lab['display_name'],
+                user_attrs   = get_user_attributes(lab),
             ),
         )
         return config

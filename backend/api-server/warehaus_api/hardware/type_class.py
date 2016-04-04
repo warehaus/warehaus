@@ -6,6 +6,8 @@ from flask import abort as flask_abort
 from ..auth.roles import require_user
 from ..auth.roles import require_admin
 from .models import Object
+from .models import get_objects_of_type
+from .models import get_object_children
 
 logger = getLogger(__name__)
 
@@ -131,13 +133,13 @@ class TypeClass(object):
     def get_objects_of_type(self, typeobj):
         '''Returns all objects of this type object.'''
         require_user()
-        return dict(objects=list(obj.as_dict() for obj in Object.query.filter(dict(type_id=typeobj.id))))
+        return dict(objects=list(obj.as_dict() for obj in get_objects_of_type(typeobj)))
 
     @type_action('GET', 'children')
     def get_type_children(self, typeobj):
         '''Get all type-objects which are children of this type-object.'''
         require_user()
-        return dict(children=list(child.as_dict() for child in Object.query.filter(dict(parent_id=typeobj.id))))
+        return dict(children=list(child.as_dict() for child in get_object_children(typeobj)))
 
     @type_action('DELETE', '')
     def delete_type(self, typeobj):

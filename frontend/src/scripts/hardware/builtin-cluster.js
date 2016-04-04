@@ -172,30 +172,6 @@ angular.module('warehaus.hardware.cluster').controller('ClusterPageController', 
         $http.delete(cluster_uri() + 'owner');
     };
 
-    $scope.show_config_json = function() {
-        $uibModal.open({
-            templateUrl: clusterView('show-config-json.html'),
-            controller: 'ShowClusterConfigJsonController',
-            size: 'lg',
-            resolve: {
-                labId: function() {
-                    return $scope.lab_id;
-                },
-                typeObjId: function() {
-                    return $scope.type_obj_id;
-                },
-                objId: function() {
-                    return $scope.obj_id;
-                },
-                configJson: function() {
-                    return $http.get(cluster_uri() + 'config.json').then(function(res) {
-                        return res.data;
-                    });
-                }
-            }
-        });
-    };
-
     $scope.delete_cluster = function() {
         $uibModal.open({
             templateUrl: clusterView('delete.html'),
@@ -239,17 +215,6 @@ angular.module('warehaus.hardware.cluster').controller('DeleteClusterController'
     };
 
     $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
-    };
-});
-
-angular.module('warehaus.hardware.cluster').controller('ShowClusterConfigJsonController', function($scope, $uibModalInstance, labId, typeObjId, objId, configJson) {
-    $scope.lab_id = labId;
-    $scope.type_obj_id = typeObjId;
-    $scope.obj_id = objId;
-    $scope.config_json = configJson;
-
-    $scope.close = function() {
         $uibModalInstance.dismiss('cancel');
     };
 });

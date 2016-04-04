@@ -48,3 +48,24 @@ def get_object_child(parent, child_slug):
     if len(possible_objs) == 1:
         return possible_objs[0]
     flask_abort(httplib.INTERNAL_SERVER_ERROR, 'Got multiple results for slug={!r} parent_id={!r}'.format(child_slug, parent_id))
+
+def get_objects_of_type(typeobj):
+    '''Returns all objects of type `typeobj`.'''
+    return Object.query.filter(dict(type_id=typeobj.id))
+
+def get_object_children(obj):
+    '''Returns an iterator for all children of an object.'''
+    return Object.query.filter(dict(parent_id=obj.id))
+
+def get_user_attributes(obj):
+    '''Gets user attributes defined in the type object of `obj` and
+    returns all attributes with the value as defined in `obj` or with
+    `None` to indicate no value.
+    '''
+    typeobj = get_type_object(obj)
+    if typeobj is None:
+        return {}
+    if 'attrs' not in typeobj:
+        return {}
+    return {attr['slug']: (None if 'attrs' not in obj else obj.attrs.get(attr['slug'], None))
+            for attr in typeobj.attrs}
