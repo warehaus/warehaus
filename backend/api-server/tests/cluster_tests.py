@@ -58,7 +58,7 @@ class ClusterTests(WarehausApiTestBase):
             for i in range(NUM_SERVERS):
                 hostname = 'srvr{}'.format(i)
                 self.post(urljoin(server_type, 'heartbeat'),
-                          dict(hostname=hostname, hw_info={}),
+                          dict(hostname=hostname, info={}),
                           expected_status=httplib.OK)
             self.assertEqual(len(self.get(urljoin(server_type, 'objects'))['objects']), NUM_SERVERS)
             cluster = self.post(cluster_type, dict(display_name='Some Cluster'))
