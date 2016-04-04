@@ -2,22 +2,22 @@ mixin page_header
   .page-top-nav
     .page-top-nav-row
       .page-top-nav-row-cell(style={padding: '0 .5rem 0 0'})
-        user-avatar(id='user.id' size='42px')
+        user-avatar(id='curUser.id' size='42px')
       .page-top-nav-row-cell
         .x12
           strong
-            user-display-name(id='user.id')
+            user-display-name(id='curUser.id')
         div
-          user-email(id='user.id')
+          user-email(id='curUser.id')
     .page-top-nav-links
       ul
-        li(ui-sref-active='active')
-          a.link(ui-sref='.profile')
-            | Profile
-        li(ui-sref-active='active')
-          a.link(ui-sref='.api-tokens')
-            | API Tokens
         li.padding
 
 +page_header
-ui-view
+.page-layout
+  .page-layout-content-no-nav
+    .row
+      .col-sm-6
+        user-profile(user-id='curUser.id')
+      .col-sm-6
+        user-api-tokens(user-id='curUser.id')

@@ -1,0 +1,70 @@
+mixin content
+  .panel.panel-default
+    .panel-heading
+      | Profile
+    .panel-body
+      form.form-horizontal
+        .form-group(ng-if='curUser.is_admin')
+          label.control-label.col-md-5.col-lg-4 Role
+          .col-md-7.col-lg-8
+            p.form-control-static
+              i.fa.fa-user(ng-if='users.byUserId[userId].role == "user"')
+              i.fa.fa-shield(ng-if='users.byUserId[userId].role == "admin"')
+              i.fa.fa-code(ng-if='users.byUserId[userId].role == "bot"')
+              | &#32;
+              | {{ users.byUserId[userId].role | titlecase }}
+              | &nbsp;
+              a.link(ng-click='change_role()' style={'font-style': 'italic', 'white-space': 'nowrap'}
+                     ng-if='userId != curUser.id')
+                | (change role)
+        .form-group
+          label.control-label.col-md-5.col-lg-4 Username
+          .col-md-7.col-lg-8
+            p.form-control-static
+              | {{ users.byUserId[userId].username }}
+            div
+              a.link(ng-click='change_username()' style={'font-style': 'italic', 'white-space': 'nowrap'})
+                | (replace username)
+        .form-group(ng-if='["admin", "user"].indexOf(users.byUserId[userId].role) != -1')
+          label.control-label.col-md-5.col-lg-4 Password
+          .col-md-7.col-lg-8
+            p.form-control-static(ng-if='users.byUserId[userId].has_password')
+              | &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
+            div(ng-if='users.byUserId[userId].has_password')
+              a.link(ng-click='change_password()' style={'font-style': 'italic', 'white-space': 'nowrap'})
+                | (change password)
+            p.form-control-static(ng-if='!users.byUserId[userId].has_password')
+              a.link(ng-click='change_password()' style={'font-style': 'italic', 'white-space': 'nowrap'})
+                | (set a password)
+        .form-group
+          label.control-label.col-md-5.col-lg-4 Display Name
+          .col-md-7.col-lg-8
+            p.form-control-static
+              span(ng-if='users.byUserId[userId].display_name')
+                | {{ users.byUserId[userId].display_name }}
+              span(ng-if='!users.byUserId[userId].display_name')
+                i.gray none
+            div
+              a.link(ng-click='edit_display_name()' style={'font-style': 'italic', 'white-space': 'nowrap'})
+                | (edit)
+        .form-group(ng-if='["admin", "user"].indexOf(users.byUserId[userId].role) != -1')
+          label.control-label.col-md-5.col-lg-4 Email
+          .col-md-7.col-lg-8
+            p.form-control-static
+              span(ng-if='users.byUserId[userId].email')
+                | {{ users.byUserId[userId].email }}
+              span(ng-if='!users.byUserId[userId].email')
+                i.gray none
+            div
+              a.link(ng-click='edit_email()' style={'font-style': 'italic', 'white-space': 'nowrap'})
+                | (edit)
+    ul.list-group
+      li.list-group-item.small.gray
+        i.fa.fa-info-circle
+        | &#32;
+        | Set your profile picture through
+        | &#32;
+        a(href='http://gravatar.com' target='_gravatar')
+          | Gravatar
+
++content

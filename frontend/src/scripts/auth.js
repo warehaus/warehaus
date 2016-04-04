@@ -43,7 +43,7 @@ angular.module('warehaus.auth').factory('curUser', function($rootScope, $http, $
     };
 
     var load_current_user = function() {
-        $http.get('/api/v1/auth/self').then(function(res) {
+        $http.get('/api/auth/self').then(function(res) {
             update(res.data);
         });
     };
@@ -75,7 +75,7 @@ angular.module('warehaus.auth').controller('LoginController', function($scope, $
     $scope.login = function() {
         $scope.working = true;
         $scope.error = undefined;
-        $http.post('/auth/login/local', $scope.input).then(function(res) {
+        $http.post('/api/auth/login/local', $scope.input).then(function(res) {
             localStorage.setItem('id_token', res.data.access_token);
             $log.info('Successfully logged-in');
             warehausState.refresh();

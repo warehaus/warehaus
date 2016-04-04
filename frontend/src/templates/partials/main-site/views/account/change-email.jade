@@ -1,0 +1,34 @@
+mixin modal_header
+  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+    span(aria-hidden="true") &times;
+  h4.modal-title
+    | Change Email
+
+mixin modal_body
+  .alert.alert-warning
+    | Warehaus doesn't verify emails, please make sure to enter a correct email address
+  .form-group(ng-init='updated_user.email = users.byUserId[userId].email')
+    label.control-label
+      | Email Address
+    input.form-control(type='email' ng-model='updated_user.email' placeholder='you@company.com' required='')
+  .alert.alert-danger(ng-if='error')
+    strong
+      i.fa.fa-warning
+      | &#32;
+      | Oh no
+    p
+      | {{ error }}
+
+mixin modal_footer
+  button.btn.btn-link(type='button' ng-click='cancel()')
+    | Cancel
+  button.btn.btn-primary(type='submit' ng-click='save()' ng-disabled='changeEmail.$invalid || working')
+    | Save Changes
+
+form(name='changeEmail' role='form' ng-submit='save()')
+  .modal-header
+    +modal_header
+  .modal-body
+    +modal_body
+  .modal-footer
+    +modal_footer

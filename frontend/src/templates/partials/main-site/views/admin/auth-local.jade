@@ -7,12 +7,12 @@ p.
   users in large deployments you may want to consider connecting to an LDAP server
   or use Google login.
 p
-  | Currently there {{ (users.all.length == 1) ? 'is' : 'are' }}
+  | Currently there {{ (users.count == 1) ? 'is' : 'are' }}
   | &#32;
   mild
-    | {{ users.all.length }}
+    | {{ users.count }}
   | &#32;
-  | {{ (users.all.length == 1) ? 'user' : 'users' }} in this backend.
+  | {{ (users.count == 1) ? 'user' : 'users' }} in this backend.
 
 p
   button.btn.btn-primary(type='button' ng-click='createNewUser()')

@@ -27,7 +27,7 @@ angular.module('warehaus.state').factory('warehausState', function($rootScope, $
     };
 
     self.refresh = function() {
-        return $http.get('/api/v1/auth/self').then(auth_callback, auth_callback);
+        return $http.get('/api/auth/self').then(auth_callback, auth_callback);
     };
 
     self.refresh();

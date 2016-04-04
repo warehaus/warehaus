@@ -144,7 +144,7 @@ angular.module('warehaus.admin').controller('CreateNewUserController', function(
 
     $scope.save = function() {
         $scope.working = true;
-        $http.post('/api/v1/auth/users', $scope.user).then($uibModalInstance.close, creation_failed);
+        $http.post('/api/auth/users', $scope.user).then($uibModalInstance.close, creation_failed);
     };
 
     $scope.cancel = function() {

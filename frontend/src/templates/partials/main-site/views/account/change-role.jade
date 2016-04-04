@@ -1,0 +1,29 @@
+mixin modal_header
+  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+    span(aria-hidden="true") &times;
+  h4.modal-title
+    | Change Role
+
+mixin modal_body
+  user-role-selection(role-var='updated_user.role' ng-init='updated_user.role = users.byUserId[userId].role')
+  .alert.alert-danger(ng-if='error')
+    strong
+      i.fa.fa-warning
+      | &#32;
+      | Oh no
+    p
+      | {{ error }}
+
+mixin modal_footer
+  button.btn.btn-link(type='button' ng-click='cancel()')
+    | Cancel
+  button.btn.btn-primary(type='submit' ng-click='save()' ng-disabled='changeUsername.$invalid || working')
+    | Save Changes
+
+form(name='changeUsername' role='form' ng-submit='save()')
+  .modal-header
+    +modal_header
+  .modal-body
+    +modal_body
+  .modal-footer
+    +modal_footer

@@ -10,10 +10,6 @@ from .logs import log_to_console
 from .base_app import create_base_app
 from .settings.models import get_settings
 from .auth import init_auth
-from .auth.resources import CurrentUser
-from .auth.resources import AllUsers
-from .auth.resources import SingleUser
-from .auth.resources import UserTokens
 from .settings.resources import LDAP
 from .hardware.resources import RawObjects
 from .hardware.resources import RawObject
@@ -41,11 +37,6 @@ def app_routes(app):
     app.config['BUNDLE_ERRORS'] = True
     # Settings resources
     api.add_resource(LDAP,  '/api/v1/settings/ldap', methods=['GET', 'POST'])
-    # Auth resources
-    api.add_resource(CurrentUser, '/api/v1/auth/self',                       methods=['GET'])
-    api.add_resource(AllUsers,    '/api/v1/auth/users',                      methods=['GET', 'POST'])
-    api.add_resource(SingleUser,  '/api/v1/auth/users/<user_id>',            methods=['GET', 'PUT', 'DELETE'])
-    api.add_resource(UserTokens,  '/api/v1/auth/users/<user_id>/api-tokens', methods=['POST', 'DELETE'])
     # Hardware resources
     api.add_resource(RawObjects,  '/api/v1/hardware/objects',          methods=['GET'])
     api.add_resource(RawObject,   '/api/v1/hardware/objects/<obj_id>', methods=['GET'])

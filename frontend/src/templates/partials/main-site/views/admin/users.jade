@@ -1,63 +1,24 @@
-mixin token_row
-  code
-    | {{ api_token }}
-
-mixin api_tokens
-  .panel.panel-default
-    ul.list-group
-      li.list-group-item(ng-repeat='api_token in users.byUserId[selected_user_id].api_tokens')
-        +token_row
-      button.list-group-item(type='button' ng-if='curUser.is_admin' ng-click='users.new_api_token(selected_user_id)' style={'color': '#888', 'outline': '0'})
-        i.fa.fa-plus
-        | &nbsp;
-        | Create New Token
-
-mixin user_field(name)
-  .form-group
-    label.control-label= name
-    p.form-control-static
-      block
-
-mixin user_fields
-  form
-    +user_field('Display Name')
-      | {{ users.byUserId[selected_user_id].display_name }}
-    +user_field('Email')
-      span(ng-if='users.byUserId[selected_user_id].email')
-        | {{ users.byUserId[selected_user_id].email }}
-      i.opacity06(ng-if='!users.byUserId[selected_user_id].email')
-        | (no email)
-    +user_field('Role')
-      i.fa.fa-fw.fa-user(ng-if='users.byUserId[selected_user_id].role == "user"')
-      i.fa.fa-fw.fa-shield(ng-if='users.byUserId[selected_user_id].role == "admin"')
-      i.fa.fa-fw.fa-code(ng-if='users.byUserId[selected_user_id].role == "bot"')
-      | &#32;
-      | {{ users.byUserId[selected_user_id].role | titlecase }}
-
-mixin user_details
-  .panel.panel-default(ng-if='selected_user_id')
-    .panel-body
-      .row
-        .col-md-4
-          +user_fields
-        .col-md-8
-          label.control-label
-            | API Tokens
-          +api_tokens
-
 mixin user_list
   ul
-    li(ng-repeat='user in users.all | orderBy:"display_name"' ui-sref-active='active')
+    li(ng-repeat='(userId, user) in users.byUserId | orderBy:"username"' ui-sref-active='active')
       a(ui-sref='.({id: "{{ user.id }}"})')
         user-avatar(id='user.id' size='1.5rem')
         | &nbsp;
-        user-display-name(id='user.id')
+        user-username(id='user.id')
 
 mixin content
   .page-layout
     .page-layout-nav
       +user_list
     .page-layout-content
-      +user_details
+      .row(ng-if='selected_user_id')
+        .col-sm-6
+          user-profile(user-id='selected_user_id')
+        .col-sm-6
+          user-api-tokens(user-id='selected_user_id')
+      .gray(ng-if='!selected_user_id')
+        i.fa.fa-arrow-left
+        | &#32;
+        | Select a user
 
 +content

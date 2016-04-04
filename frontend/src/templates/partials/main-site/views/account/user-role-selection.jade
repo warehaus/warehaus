@@ -1,0 +1,28 @@
+ul.list-group
+  li.list-group-item
+    .radio
+      label
+        input(type='radio' ng-model='roleVar' value='user' required='')
+        i.fa.fa-fw.fa-user
+        | Regular User
+        p.help-block
+          | Regular users can login into Warehaus, interact with hardware and other users
+          | and can receive notifications. They can't enter this administration area, create new
+          | labs or change permissions.
+  li.list-group-item
+    .radio
+      label
+        input(type='radio' ng-model='roleVar' value='admin' required='')
+        i.fa.fa-fw.fa-shield
+        | Administrator
+        p.help-block
+          | Administrators can do anything they want.
+  li.list-group-item
+    .radio
+      label
+        input(type='radio' ng-model='roleVar' value='bot' required='')
+        i.fa.fa-fw.fa-code
+        | Bot User
+        p.help-block
+          | Bot users can only invoke API calls which are permitted to regular users.
+          | Therefore they can't log into the site and can't receive notifications.

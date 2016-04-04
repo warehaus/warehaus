@@ -1,0 +1,47 @@
+mixin modal_header
+  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+    span(aria-hidden="true") &times;
+  h4.modal-title
+    | Replace Username
+
+mixin modal_body
+  .alert.alert-warning
+    p
+      strong
+        i.fa.fa-warning
+        | &#32;
+        | Careful
+    p
+      | Replacing your username changes how users see you on the site, and
+      | requires using the new username in API calls.
+  .alert.alert-info
+    p
+      i.fa.fa-info-circle
+      | &#32;
+      | Things inside Warehaus such as ownerships, comments and history are
+      | not affected by changing your username.
+  .form-group(ng-init='updated_user.username = users.byUserId[userId].username')
+    label.control-label
+      | New Username
+    input.form-control(type='text' ng-model='updated_user.username' placeholder='New Username' required='')
+  .alert.alert-danger(ng-if='error')
+    strong
+      i.fa.fa-warning
+      | &#32;
+      | Oh no
+    p
+      | {{ error }}
+
+mixin modal_footer
+  button.btn.btn-link(type='button' ng-click='cancel()')
+    | Cancel
+  button.btn.btn-primary(type='submit' ng-click='save()' ng-disabled='changeUsername.$invalid || working')
+    | Save Changes
+
+form(name='changeUsername' role='form' ng-submit='save()')
+  .modal-header
+    +modal_header
+  .modal-body
+    +modal_body
+  .modal-footer
+    +modal_footer

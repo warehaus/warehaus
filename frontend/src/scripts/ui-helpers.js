@@ -10,7 +10,8 @@ angular.module('warehaus.ui_helpers', [
     'angular-spinkit',
     'ngSanitize',
     'slugifier',
-    'ngNumeraljs'
+    'ngNumeraljs',
+    'ngPassword'
 ]);
 
 angular.module('warehaus.ui_helpers').config(function($numeraljsConfigProvider) {

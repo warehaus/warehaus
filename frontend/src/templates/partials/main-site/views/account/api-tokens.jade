@@ -1,19 +1,29 @@
 mixin token_row
-  code
-    | {{ api_token }}
+  .ellipsis
+    code
+      | {{ api_token }}
 
 mixin api_tokens
   ul.list-group
-    li.list-group-item(ng-repeat='api_token in user.api_tokens')
+    li.list-group-item(ng-repeat='api_token in apiTokens')
       +token_row
-    button.list-group-item(type='button' ng-click='users.new_api_token(user.id)' style={'color': '#888'})
+    button.list-group-item(type='button' ng-click='create_new_token()' style={'color': '#888'})
       i.fa.fa-plus
       | &nbsp;
       | Create New Token
 
 mixin content
-  .page-layout
-    .page-layout-content-no-nav
-      +api_tokens
+  .panel.panel-default
+    .panel-heading
+      | API Tokens
+    .panel-body
+      | API tokens allow for authentication without using a password. Put
+      | the token in an
+      | &#32;
+      code
+        | Authentication-Token
+      | &#32;
+      | HTTP header.
+    +api_tokens
 
 +content

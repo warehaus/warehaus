@@ -2,11 +2,18 @@
 
 angular.module('warehaus.users', []);
 
-angular.module('warehaus.users').factory('users', function($rootScope, $http) {
+angular.module('warehaus.users').factory('users', function($rootScope, $http, $q, $log) {
+    var ready_promise = $q.defer();
+
     var self = {
         ready: false,
-        all: [],
+        whenReady: ready_promise.promise,
+        count: 0,
         byUserId: {}
+    };
+
+    var update_user_count = function() {
+        self.count = Object.keys(self.byUserId).length;
     };
 
     var annotate_user = function(user) {
@@ -18,25 +25,44 @@ angular.module('warehaus.users').factory('users', function($rootScope, $http) {
     };
 
     var refresh = function() {
-        return $http.get('/api/v1/auth/users').then(function(res) {
-            self.all = res.data.objects;
-            for (var i = 0; i < self.all.length; ++i) {
-                var user = self.all[i];
+        return $http.get('/api/auth/users').then(function(res) {
+            for (var i = 0; i < res.data.objects.length; ++i) {
+                var user = res.data.objects[i];
                 annotate_user(user);
                 self.byUserId[user.id] = user;
             }
+            update_user_count();
             self.ready = true;
+            ready_promise.resolve();
             $rootScope.$broadcast('warehaus.users.inventory_changed');
         });
     };
 
-    self.new_api_token = function(user_id) {
-        $http.post('/api/v1/auth/users/' + user_id + '/api-tokens').then(refresh);
+    self.update_user = function(user_id, update) {
+        return $http.put('/api/auth/users/' + user_id, update);
+    };
+
+    var user_changed = function(notification) {
+        $log.debug('Fetching changed user:', notification.id);
+        return $http.get('/api/auth/users/' + notification.id).then(function(res) {
+            var user = res.data;
+            annotate_user(user);
+            self.byUserId[user.id] = user;
+            update_user_count();
+            $rootScope.$broadcast('warehaus.users.user_changed', notification.id);
+        });
+    };
+
+    var user_deleted = function(notification) {
+        $log.debug('Discarding deleted user:', notification.id);
+        delete self.byUserId[notification.id];
+        update_user_count();
+        $rootScope.$broadcast('warehaus.users.user_deleted', notification.id);
     };
 
     $rootScope.$on('warehaus.models.new_socket_available', function(event, socket) {
-        socket.on('object_changed:user', refresh);
-        socket.on('object_deleted:user', refresh);
+        socket.on('object_changed:user', user_changed);
+        socket.on('object_deleted:user', user_deleted);
         refresh();
     });
 

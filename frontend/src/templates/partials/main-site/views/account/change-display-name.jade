@@ -1,0 +1,40 @@
+mixin modal_header
+  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+    span(aria-hidden="true") &times;
+  h4.modal-title
+    | Change Display Name
+
+mixin modal_body
+  .alert.alert-info
+    p
+      | Your display name should normally be your first and last name,
+      | but you may change it to whatever your'd like.
+    hr
+    p
+      | Keep in mind that in some cases your username is displayed in
+      | Warehaus rather than your display name.
+  .form-group(ng-init='updated_user.display_name = users.byUserId[userId].display_name')
+    label.control-label
+      | Display Name
+    input.form-control(type='text' ng-model='updated_user.display_name' placeholder='Display Name' required='')
+  .alert.alert-danger(ng-if='error')
+    strong
+      i.fa.fa-warning
+      | &#32;
+      | Oh no
+    p
+      | {{ error }}
+
+mixin modal_footer
+  button.btn.btn-link(type='button' ng-click='cancel()')
+    | Cancel
+  button.btn.btn-primary(type='submit' ng-click='save()' ng-disabled='changeDisplayName.$invalid || working')
+    | Save Changes
+
+form(name='changeDisplayName' role='form' ng-submit='save()')
+  .modal-header
+    +modal_header
+  .modal-body
+    +modal_body
+  .modal-footer
+    +modal_footer
