@@ -29,10 +29,7 @@
 
     .big-message {
       padding: 1rem;
-      border-width: 1px;
-      border-style: solid;
-      border-color: darken($warehaus-bg-color, 10%);
-      border-radius: $border-radius-base;
+      border-width: 0;
     }
   }
 }

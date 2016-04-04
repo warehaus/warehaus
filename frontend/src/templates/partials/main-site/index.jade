@@ -24,7 +24,7 @@ mixin navbar
                 a(ui-sref='account')
                   i.icon-user(style={'padding-right': '.5rem'})
                   | Account
-              li
+              li(ng-if='curUser.is_admin')
                 a(ui-sref='admin')
                   i.icon-settings(style={'padding-right': '.5rem'})
                   | Administration

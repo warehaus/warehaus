@@ -24,11 +24,12 @@ mixin forbidden_message
     p.text-center.x2
       | It looks like you're lost
     .row
-      .col-sm-6
+      .col-sm-offset-3.col-sm-6
         h4
           button.btn.btn-lg.btn-block.btn-success(type='button' ui-sref='labs')
             | Yes, take me somewhere safe
-      .col-sm-6
+    .row
+      .col-sm-offset-3.col-sm-6
         h4
           button.btn.btn-lg.btn-block.btn-default(type='button' ui-sref='labs')
             | No, I should be here
@@ -36,10 +37,10 @@ mixin forbidden_message
 mixin non_admin_message
   .page-top-nav(ng-if='!curUser.is_admin')
     .page-top-nav-row
-      .page-top-nav-row-cell.x3
-        i.icon-close
+      .page-top-nav-row-cell.x25
+        i.fa.fa-fw.fa-frown-o
       .page-top-nav-row-cell
-        .x12
+        .x15
           strong
             | Oh no
     .page-top-nav-links
