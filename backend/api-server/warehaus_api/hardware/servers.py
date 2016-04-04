@@ -109,34 +109,34 @@ class Server(TypeClass):
         for slug_to_delete in (set(existing) - set(last_updated)):
             existing[slug_to_delete].delete()
 
-    def _update_sub_objects(self, server, typeobj, hw_info):
+    def _update_sub_objects(self, server, typeobj, agent_info):
         self._sync_sub_objects(server, typeobj.get_object_child(PciDevice.SLUG),
-                               {('pci-' + pcidev['address']): pcidev for pcidev in hw_info.get('pci_devices', [])})
+                               {('pci-' + pcidev['address']): pcidev for pcidev in agent_info.get('hw_pci_devices', [])})
         self._sync_sub_objects(server, typeobj.get_object_child(NetworkInterface.SLUG),
-                               {('net-' + net['dev']): net for net in hw_info.get('net', [])})
+                               {('net-' + net['dev']): net for net in agent_info.get('hw_net', [])})
         self._sync_sub_objects(server, typeobj.get_object_child(Disk.SLUG),
-                               {('disk-' + disk['name']): disk for disk in hw_info.get('disks', [])})
+                               {('disk-' + disk['name']): disk for disk in agent_info.get('hw_disks', [])})
 
     @type_action('POST', 'heartbeat')
     def heartbeat_call(self, typeobj):
         display_name = request.json['hostname']
         logger.info('Processing heartbeat from {!r}'.format(request.headers.getlist("X-Forwarded-For")[0] if request.headers.getlist("X-Forwarded-For") else request.remote_addr))
-        hw_info = request.json['hw_info']
+        agent_info = request.json['info']
         slug = slugify(display_name)
         server = self._get_server(typeobj, slug)
         server.display_name = display_name
         server.errors = request.json.get('errors', [])
-        # Update/keep hw_info in the server object. We always keep
+        # Update/keep agent_info in the server object. We always keep
         # a copy of the last keepalive even after creating sub-objects
         # from it.
         if 'id' in server:
-            server.hw_info = r.literal(hw_info)
+            server.agent_info = r.literal(agent_info)
         else:
-            server.hw_info = hw_info
+            server.agent_info = agent_info
         server.last_seen = now()
         server.status = 'success' # XXX calculate this with a background job based on server.last_seen
         server.save()
-        self._update_sub_objects(server, typeobj, hw_info)
+        self._update_sub_objects(server, typeobj, agent_info)
         return 'ok'
 
     set_cluster_pareser = RequestParser()

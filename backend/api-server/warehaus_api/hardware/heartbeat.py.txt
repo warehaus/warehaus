@@ -15,7 +15,7 @@ def run(cmdline, expected_status=0):
         raise RuntimeError('Error while running {0!r}: {1}'.format(cmdline, output))
     return output
 
-def collect_net_info():
+def collect_hw_net_info():
     net_info = defaultdict(dict)
     for iface in run('ip --oneline link').splitlines():
         mo = re.match(r'^\d:\s+(?P<iface_name>\w+):.*link/(?P<iface_type>\w+)\s+(?P<iface_addr>[\w:]+).*$', iface)
@@ -35,7 +35,7 @@ def collect_net_info():
             net_info[iface_name].setdefault('inet6', []).append(iface_info[1])
     return [dict(dev=dev, **fields) for dev, fields in net_info.iteritems()]
 
-def collect_pci_info():
+def collect_hw_pci_info():
     lspci = run('lspci -mm')
     pci_devices = []
     for line in lspci.splitlines():
@@ -44,7 +44,7 @@ def collect_pci_info():
             pci_devices.append(mo.groupdict())
     return pci_devices
 
-def collect_disk_info():
+def collect_hw_disk_info():
     lsblk = run('lsblk --bytes --nodeps --pairs')
     disks = []
     for line in lsblk.splitlines():
@@ -60,7 +60,7 @@ def collect_disk_info():
         disks.append(fields)
     return disks
 
-def collect_cpu_info():
+def collect_hw_cpu_info():
     cpus_info = open('/proc/cpuinfo').read()
     return [dict(map(lambda x: x.strip(), line.split(':', 1)) for line in cpu_info.splitlines() if line.strip()) for cpu_info in cpus_info.split('\n\n') if cpu_info.strip()]
 
@@ -73,7 +73,7 @@ MEM_KEYS = (
     'SwapCached',
 )
 
-def collect_mem_info():
+def collect_hw_mem_info():
     mem_info = {}
     for line in open('/proc/meminfo').read().splitlines():
         key, value = map(lambda x: x.strip(), line.split(':', 1))
@@ -87,7 +87,7 @@ def collect_mem_info():
         mem_info[key] = value
     return mem_info
 
-def collect_fs_info():
+def collect_hw_fs_info():
     df = run('df --block-size=1 /')
     lines = df.splitlines()[1:]
     fields = df.splitlines()[1].split()
@@ -99,25 +99,25 @@ def collect_fs_info():
     )}
 
 info_collectors = dict(
-    net         = collect_net_info,
-    pci_devices = collect_pci_info,
-    disks       = collect_disk_info,
-    cpu         = collect_cpu_info,
-    mem         = collect_mem_info,
-    fs          = collect_fs_info,
+    hw_net         = collect_hw_net_info,
+    hw_pci_devices = collect_hw_pci_info,
+    hw_disks       = collect_hw_disk_info,
+    hw_cpu         = collect_hw_cpu_info,
+    hw_mem         = collect_hw_mem_info,
+    hw_fs          = collect_hw_fs_info,
 )
 
 def collect_info():
     info = dict(
         hostname = open('/proc/sys/kernel/hostname').read().strip(),
-        hw_info  = {},
+        info     = {},
         errors   = [],
     )
     for key, collect_func in info_collectors.iteritems():
         try:
-            info['hw_info'][key] = collect_func()
+            info['info'][key] = collect_func()
         except Exception as error:
-            info['hw_info'][key] = None
+            info['info'][key] = None
             info['errors'].append(dict(info=key, error=str(error), traceback=format_exc()))
     return info
 
@@ -126,4 +126,13 @@ def send(data):
     response = urlopen(request).read()
 
 info = collect_info()
-send(info)
+
+# If WAREHAUS_HEARTBEAT_POST_URL is defined we're running from inside the agent
+# so send the result back. If not just print the collected info for debugging
+# since we're probably running from command-line.
+
+if globals().get('WAREHAUS_HEARTBEAT_POST_URL'):
+    send(info)
+else:
+    import pprint
+    pprint.pprint(info)

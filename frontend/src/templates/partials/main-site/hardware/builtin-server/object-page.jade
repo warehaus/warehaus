@@ -17,24 +17,24 @@ mixin page_header
         span
 
 mixin server_info_resources
-  .panel.panel-default(ng-if='server.hw_info')
+  .panel.panel-default(ng-if='server.agent_info')
     .panel-heading
       | Resources
     table.table.text-center
       tr
         td(style={width: '33%'})
           h1
-            | {{ server.hw_info.cpu[0]['cpu MHz'] / 1024 | number:2 }}
+            | {{ server.agent_info.hw_cpu[0]['cpu MHz'] / 1024 | number:2 }}
             | &#32;
             | GHz
           | CPU
         td(style={width: '33%'})
           h1
-            | {{ server.hw_info.mem.MemTotal | numeraljs:'capacity' }}
+            | {{ server.agent_info.hw_mem.MemTotal | numeraljs:'capacity' }}
           | RAM
         td(style={width: '33%'})
           h1
-            | {{ server.hw_info.fs['/'].total_bytes | numeraljs:'capacity' }}
+            | {{ server.agent_info.hw_fs['/'].total_bytes | numeraljs:'capacity' }}
           | Filesystem
 
 mixin server_info_net
