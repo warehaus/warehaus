@@ -164,7 +164,6 @@ def collect_info():
         try:
             info['info'][key] = collect_func()
         except Exception as error:
-            info['info'][key] = None
             info['errors'].append(dict(info=key, error=str(error), traceback=format_exc()))
     return info
 
