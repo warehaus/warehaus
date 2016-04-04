@@ -2,18 +2,29 @@ import os
 import re
 import sys
 import json
+import socket
+from logging import getLogger
 from urllib2 import Request
 from urllib2 import urlopen
+from urllib2 import HTTPError
 from urlparse import urljoin
 from commands import getstatusoutput
 from traceback import format_exc
 from collections import defaultdict
+
+logger = getLogger(__name__)
+
+socket.setdefaulttimeout(0.5)
 
 def run(cmdline, expected_status=0):
     status, output = getstatusoutput(cmdline)
     if status != expected_status:
         raise RuntimeError('Error while running {0!r}: {1}'.format(cmdline, output))
     return output
+
+#--------------------------------------------------------------------#
+# Hardware information collectors                                    #
+#--------------------------------------------------------------------#
 
 def collect_hw_net_info():
     net_info = defaultdict(dict)
@@ -98,6 +109,41 @@ def collect_hw_fs_info():
         available_bytes = int(fields[3]),
     )}
 
+#--------------------------------------------------------------------#
+# AWS information collector                                          #
+#--------------------------------------------------------------------#
+
+AWS_METADATA_IP = '169.254.169.254'
+
+def _is_aws_instance():
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((AWS_METADATA_IP, 80))
+    except socket.timeout:
+        return False
+    return True
+
+def _crawl_aws_metadata(url):
+    logger.debug('Fetching ' + url)
+    data = urlopen(url).read()
+    logger.debug('  Received ' + repr(data))
+    if not url.endswith('/'):
+        return data
+    result = {}
+    for child in data.splitlines():
+        try:
+            result[child.rstrip('/')] = _crawl_aws_metadata(url + child)
+        except HTTPError, http_error:
+            result[child.rstrip('/')] = None
+    return result
+
+def collect_provider_info():
+    if not _is_aws_instance():
+        return dict(provider='unknown')
+    result = _crawl_aws_metadata('http://{0}/latest/meta-data/'.format(AWS_METADATA_IP))
+    result['provider'] = 'aws'
+    return result
+
 info_collectors = dict(
     hw_net         = collect_hw_net_info,
     hw_pci_devices = collect_hw_pci_info,
@@ -105,6 +151,7 @@ info_collectors = dict(
     hw_cpu         = collect_hw_cpu_info,
     hw_mem         = collect_hw_mem_info,
     hw_fs          = collect_hw_fs_info,
+    provider_info  = collect_provider_info,
 )
 
 def collect_info():
