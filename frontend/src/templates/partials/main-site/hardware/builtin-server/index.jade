@@ -101,12 +101,12 @@ mixin side_menu
     li.heading
       | Filter
     li(ui-sref-active='active')
-      a(ui-sref='.({tab: "all"})')
+      a.text-link(ui-sref='.({tab: "all"})')
         | All
         | &#32;
         object-type-title(type-id='type_obj_id')
     li
-      a
+      span
         i.fa.fa-tag
         i
           | &#32;

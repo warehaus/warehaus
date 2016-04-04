@@ -61,11 +61,11 @@ mixin servers
           | if you don't need it anymore.
 
 mixin owners
-  a(ng-repeat='ownership in dbObjects.byId[obj_id].ownerships')
+  span(ng-repeat='ownership in dbObjects.byId[obj_id].ownerships')
     user-avatar(id='ownership.owner_id' size='1.5rem')
     | &nbsp;
     user-display-name(id='ownership.owner_id')
-  a(ng-if='dbObjects.byId[obj_id].ownerships | isEmpty' style={'font-style': 'italic'})
+  span(ng-if='dbObjects.byId[obj_id].ownerships | isEmpty' style={'font-style': 'italic'})
     i.fa.fa-fw.fa-meh-o
     | Nobody
 

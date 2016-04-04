@@ -40,10 +40,12 @@
           margin: 0;
           display: block;
           padding: (2 * $warehaus-page-top-nav-spacing) (3 * $warehaus-page-top-nav-spacing);
+          color: $text-color;
 
           &:hover,
           &:focus {
             text-decoration: none;
+            color: $text-color;
           }
         }
       }
