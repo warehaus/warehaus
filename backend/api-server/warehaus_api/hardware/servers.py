@@ -194,12 +194,14 @@ def server_config(server):
         disk = [],
     )
     for childobj in get_object_children(server):
+        childobj_data = childobj.as_dict()
+        childobj_data['user_attrs'] = get_user_attributes(childobj)
         if childobj.type_id == net_if_type.id:
-            hw['net'].append(childobj.as_dict())
+            hw['net'].append(childobj_data)
         elif childobj.type_id == pci_dev_type.id:
-            hw['pci'].append(childobj.as_dict())
+            hw['pci'].append(childobj_data)
         elif childobj.type_id == disk_type.id:
-            hw['disk'].append(childobj.as_dict())
+            hw['disk'].append(childobj_data)
     config = dict(
         id           = server['id'],
         type_id      = server['type_id'],
