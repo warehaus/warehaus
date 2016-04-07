@@ -14,15 +14,15 @@ class ServerTests(WarehausApiTestBase):
         with self.temp_lab() as lab:
             server_type_path = self.create_type_object(lab, type_key='builtin-server', slug='srvr',
                                                        name_singular='Server', name_plural='Servers')
-            servers_before = self.get(urljoin(server_type_path, 'objects'))
+            servers_before = self.api_server.get(urljoin(server_type_path, 'objects'))
             self.assertEqual(len(servers_before['objects']), 0)
-            agent_response = requests.get(urljoin(self.app_url(server_type_path), 'agent.py'))
+            agent_response = requests.get(urljoin(self.api_server.app_url(server_type_path), 'agent.py'))
             agent_response.raise_for_status()
-            requests.get(urljoin(self.app_url(server_type_path), 'heartbeat.py')).raise_for_status()
+            requests.get(urljoin(self.api_server.app_url(server_type_path), 'heartbeat.py')).raise_for_status()
             with deleted_tempfile(agent_response.text) as agent_file:
                 with terminated(Popen(['/usr/bin/python', '-'], stdin=agent_file)):
                     for _ in range(10):
-                        servers_after = self.get(urljoin(server_type_path, 'objects'))
+                        servers_after = self.api_server.get(urljoin(server_type_path, 'objects'))
                         if len(servers_after['objects']) > 0:
                             break
                         time.sleep(0.1)

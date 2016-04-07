@@ -6,61 +6,37 @@ import unittest
 import requests
 from logging import getLogger
 from urlparse import urljoin
+from subprocess import Popen
 from multiprocessing import Process
 from contextlib import closing
 
 logger = getLogger(__name__)
 
-class RestfulTestBase(unittest.TestCase):
-    @staticmethod
-    def _free_port():
-        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-            sock.bind(('127.0.0.1', 0))
-            return sock.getsockname()[1]
-
-    @staticmethod
-    def _wait_for_socket(port):
-        for i in range(10):
-            with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-                try:
-                    sock.connect(('127.0.0.1', port))
-                except socket.error:
-                    pass
-                else:
-                    return
-            time.sleep(0.1)
-        raise RuntimeError('Timed out waiting for server')
-
-    def create_app(self):
-        raise NotImplementedError()
-
-    def setUp(self):
-        self._test_server_url = os.environ.get('TEST_SERVER_URL', None)
-        self._app_proc = None
-        if not self._test_server_url:
-            port = self._free_port()
-            self._app = self.create_app()
-            self._app_proc = Process(target=self._app.run, kwargs=dict(host='127.0.0.1', port=port))
-            self._app_proc.start()
-            self._wait_for_socket(port)
-            self._test_server_url = 'http://127.0.0.1:{}'.format(port)
-
-    def tearDown(self):
-        if self._app_proc is not None:
-            self._app_proc.terminate()
-            self._app_proc.join()
-            self._app_proc = None
+class APIServer(object):
+    def __init__(self, url):
+        super(APIServer, self).__init__()
+        self._url = url
+        self._jwt_token = None
 
     def app_url(self, path=None):
         if path is None:
-            return self._test_server_url
-        return urljoin(self._test_server_url, path)
+            return self._url
+        return urljoin(self._url, path)
+
+    def jwt_token(self, jwt_token):
+        self._jwt_token = jwt_token
+
+    def auth_headers(self):
+        return {'Authorization': 'JWT {}'.format(self._jwt_token)}
 
     def _call(self, method, path, expected_status=httplib.OK, *args, **kwargs):
+        headers = kwargs.pop('headers', {})
+        if self._jwt_token:
+            headers.update(self.auth_headers())
         url = self.app_url(path)
-        response = method(url, *args, **kwargs)
-        self.assertEqual(response.status_code, expected_status, 'URL: {}, EXPECTED: {}, GOT: {}, DATA: {}'.format(
-            url, expected_status, response.status_code, response.text))
+        response = method(url, headers=headers, *args, **kwargs)
+        assert response.status_code == expected_status, 'URL: {}, EXPECTED: {}, GOT: {}, DATA: {}'.format(
+            url, expected_status, response.status_code, response.text)
         return None if response.status_code == httplib.NO_CONTENT else response.json()
 
     def get(self, path, expected_status=httplib.OK):
@@ -87,29 +63,65 @@ class RestfulTestBase(unittest.TestCase):
         logger.info('DELETE {}'.format(path))
         return result
 
-class AuthorizedRestfulTestBase(RestfulTestBase):
-    LOGIN_PATH = '/api/v1/auth/login'
-    ADMIN_CREDENTIALS = dict(username='admin', password='admin')
-    USER_CREDENTIALS = dict(username='user', password='user')
+class RestfulTestBase(unittest.TestCase):
+    @staticmethod
+    def _free_port():
+        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+            sock.bind(('127.0.0.1', 0))
+            return sock.getsockname()[1]
 
-    def __init__(self, *args, **kwargs):
-        super(AuthorizedRestfulTestBase, self).__init__(*args, **kwargs)
-        self._jwt_token = None
+    @staticmethod
+    def _wait_for_socket(port, name):
+        for i in range(100):
+            with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
+                try:
+                    sock.connect(('127.0.0.1', port))
+                except socket.error:
+                    pass
+                else:
+                    return
+            time.sleep(0.1)
+        raise RuntimeError('Timed out waiting for server at {} ({})'.format(port, name))
+
+    def create_app(self):
+        raise NotImplementedError()
+
+    def _init_auth_server(self):
+        self._auth_server_proc = None
+        self._auth_port = self._free_port()
+        env = dict(os.environ)
+        env['HTTP_PORT'] = str(self._auth_port)
+        self._auth_server_proc = Popen(['/usr/local/bin/warehaus-auth-server'], env=env, shell=False)
+        self._wait_for_socket(self._auth_port, 'auth')
+        self._auth_server_url = 'http://127.0.0.1:{}'.format(self._auth_port)
+        self.auth_server = APIServer(self._auth_server_url)
+
+    def _teardown_auth_server(self):
+        if self._auth_server_proc is not None:
+            self._auth_server_proc.terminate()
+            self._auth_server_proc.wait()
+            self._auth_server_proc = None
+
+    def _init_api_server(self):
+        self._test_server_url = os.environ.get('TEST_SERVER_URL', None)
+        self._app_proc = None
+        if not self._test_server_url:
+            port = self._free_port()
+            self._app = self.create_app()
+            self._app_proc = Process(target=self._app.run, kwargs=dict(host='127.0.0.1', port=port))
+            self._app_proc.start()
+            self._wait_for_socket(port, 'app')
+            self._test_server_url = 'http://127.0.0.1:{}'.format(port)
+        self.api_server = APIServer(self._test_server_url)
+
+    def _teardown_api_server(self):
+        if self._app_proc is not None:
+            self._app_proc.terminate()
+            self._app_proc.join()
+            self._app_proc = None
 
     def setUp(self):
-        super(AuthorizedRestfulTestBase, self).setUp()
-        if self._jwt_token is None:
-            # Login with both ADMIN_CREDENTIALS and USER_CREDENTIALS to ensure
-            # both of those users exist.
-            self.post(self.LOGIN_PATH, self.USER_CREDENTIALS, expected_status=httplib.OK)
-            login_res = self.post(self.LOGIN_PATH, self.ADMIN_CREDENTIALS, expected_status=httplib.OK)
-            self._jwt_token = login_res['access_token']
-
-    def auth_headers(self):
-        return {'Authorization': 'JWT {}'.format(self._jwt_token)}
-
-    def _call(self, *args, **kwargs):
-        headers = kwargs.pop('headers', {})
-        if self._jwt_token:
-            headers.update(self.auth_headers())
-        return super(AuthorizedRestfulTestBase, self)._call(headers=headers, *args, **kwargs)
+        self.addCleanup(self._teardown_api_server)
+        self._init_api_server()
+        self.addCleanup(self._teardown_auth_server)
+        self._init_auth_server()

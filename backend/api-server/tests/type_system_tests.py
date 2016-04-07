@@ -4,7 +4,7 @@ from .warehaus_test_base import WarehausApiTestBase
 class TypeSystemTests(WarehausApiTestBase):
     def test_type_classes_api(self):
         '''Gets the supported type classes.'''
-        self.get('/api/v1/hardware/types')
+        self.api_server.get('/api/v1/hardware/types')
 
     def test_create_delete_lab(self):
         '''Create and delete some labs.'''
@@ -35,12 +35,12 @@ class TypeSystemTests(WarehausApiTestBase):
                                         name_singular = type_name,
                                         name_plural   = type_name + 's')
                 for type_name in type_names)
-            types = tuple(self.get(type_url) for type_url in type_urls)
-            children = self.get('/api/v1/labs/{}/~/children'.format(lab['slug']))['children']
+            types = tuple(self.api_server.get(type_url) for type_url in type_urls)
+            children = self.api_server.get('/api/v1/labs/{}/~/children'.format(lab['slug']))['children']
             self.assertEqual(set(typeobj['id'] for typeobj in types),
                              set(child['id'] for child in children))
             for type_name in type_names:
-                self.delete('/api/v1/labs/{}/~/{}/'.format(lab['slug'], type_name.lower()))
+                self.api_server.delete('/api/v1/labs/{}/~/{}/'.format(lab['slug'], type_name.lower()))
 
     def test_type_objects_with_same_slug(self):
         '''Try to create two type objects with the same slug:
