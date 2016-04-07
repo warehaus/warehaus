@@ -116,6 +116,17 @@ passport.deserializeUser(function(id, done) {
     });
 });
 
+var configure_passport = function() {
+    configure_local_strategy();
+    configure_jwt_strategy();
+};
+
+app.use(passport.initialize());
+
+/*-------------------------------------------------------------------*/
+/* Local strategy                                                    */
+/*-------------------------------------------------------------------*/
+
 var LocalStrategy = require('passport-local');
 
 var configure_local_strategy = function() {
@@ -158,6 +169,28 @@ var configure_local_strategy = function() {
     ));
 };
 
+app.post('/api/auth/login/local', function(req, res, next) {
+    passport.authenticate('local', function(err, user, info) {
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            return res.status(HttpStatus.UNAUTHORIZED).json(info);
+        }
+        var token = jwt.sign({sub: user.id}, app.get('jwt_secret'), {
+            expiresIn: '7d',
+            notBefore: 0,
+        });
+        return res.json({
+            access_token: token,
+        });
+    })(req, res, next);
+});
+
+/*-------------------------------------------------------------------*/
+/* JWT strategy                                                      */
+/*-------------------------------------------------------------------*/
+
 var JwtStrategy = require('passport-jwt').Strategy;
 var ExtractJwt = require('passport-jwt').ExtractJwt;
 
@@ -183,13 +216,6 @@ var configure_jwt_strategy = function() {
         });
     }));
 };
-
-var configure_passport = function() {
-    configure_local_strategy();
-    configure_jwt_strategy();
-};
-
-app.use(passport.initialize());
 
 /*-------------------------------------------------------------------*/
 /* First user                                                        */
@@ -270,25 +296,6 @@ var is_username_taken = function(username) {
         return (users.length > 0);
     });
 };
-
-// Login with username+password, returns a JWT
-app.post('/api/auth/login/local', function(req, res, next) {
-    passport.authenticate('local', function(err, user, info) {
-        if (err) {
-            return next(err);
-        }
-        if (!user) {
-            return res.status(HttpStatus.UNAUTHORIZED).json(info);
-        }
-        var token = jwt.sign({sub: user.id}, app.get('jwt_secret'), {
-            expiresIn: '7d',
-            notBefore: 0,
-        });
-        return res.json({
-            access_token: token,
-        });
-    })(req, res, next);
-});
 
 // Returns who is the current user
 app.get('/api/auth/self', passport.authenticate('jwt'), function(req, res) {
