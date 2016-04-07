@@ -333,7 +333,7 @@ app.post('/api/auth/users', passport.authenticate('jwt'), require_admin, functio
             return;
         }
         User.create(new_user).then(function(created_user) {
-            res.json(created_user);
+            res.status(HttpStatus.CREATED).json(cleaned_user(created_user));
         });
     }).catch(err => {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: err });
