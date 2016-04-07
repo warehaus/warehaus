@@ -179,9 +179,7 @@ app.post('/api/auth/login/local', function(req, res, next) {
             expiresIn: '7d',
             notBefore: 0
         });
-        return res.json({
-            access_token: token,
-        });
+        return res.json({ access_token: token });
     })(req, res, next);
 });
 
