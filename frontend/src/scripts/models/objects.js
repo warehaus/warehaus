@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('warehaus.models').factory('dbObjects', function($rootScope, $http, $log, $q) {
+angular.module('warehaus.models').factory('dbObjects', function($rootScope, $http, $log, $q, getObjectNotifications) {
     var ready_promise = $q.defer();
 
     var self = {
@@ -31,7 +31,7 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
         }
     };
 
-    var load_all = function() {
+    var load_all_objects = function() {
         return $http.get('/api/v1/hardware/objects').then(function(res) {
             reset_self();
             angular.forEach(res.data.objects, insert_one);
@@ -72,11 +72,7 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
 
     reset_self();
 
-    $rootScope.$on('warehaus.models.new_socket_available', function(event, socket) {
-        socket.on('object_changed:object', object_changed);
-        socket.on('object_deleted:object', object_deleted);
-        load_all();
-    });
+    getObjectNotifications('object', load_all_objects, object_changed, object_deleted);
 
     return self;
 });

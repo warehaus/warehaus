@@ -2,7 +2,7 @@
 
 angular.module('warehaus.users', []);
 
-angular.module('warehaus.users').factory('users', function($rootScope, $http, $q, $log) {
+angular.module('warehaus.users').factory('users', function($rootScope, $http, $q, $log, getObjectNotifications) {
     var ready_promise = $q.defer();
 
     var self = {
@@ -24,7 +24,7 @@ angular.module('warehaus.users').factory('users', function($rootScope, $http, $q
         user.avatar_96 = avatar_base_url + '&s=192';
     };
 
-    var refresh = function() {
+    var load_all_users = function() {
         return $http.get('/api/auth/users').then(function(res) {
             for (var i = 0; i < res.data.objects.length; ++i) {
                 var user = res.data.objects[i];
@@ -60,11 +60,7 @@ angular.module('warehaus.users').factory('users', function($rootScope, $http, $q
         $rootScope.$broadcast('warehaus.users.user_deleted', notification.id);
     };
 
-    $rootScope.$on('warehaus.models.new_socket_available', function(event, socket) {
-        socket.on('object_changed:user', user_changed);
-        socket.on('object_deleted:user', user_deleted);
-        refresh();
-    });
+    getObjectNotifications('user', load_all_users, user_changed, user_deleted);
 
     return self;
 });
