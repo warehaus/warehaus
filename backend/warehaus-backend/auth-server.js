@@ -35,7 +35,10 @@ var set_secrets = function(settings) {
 };
 
 var read_secret_keys = function() {
-    return read_settings().then(set_secrets);
+    return read_settings().then(set_secrets).catch(err => {
+        logger.error('Could not read settings from the database');
+        throw err;
+    });
 };
 
 /*-------------------------------------------------------------------*/
@@ -242,9 +245,8 @@ var ensure_admin_user = function() {
         }
         logger.debug(`There are ${user_count} users in the database`);
     }).catch(err => {
-        logger.error('Could not read users from database:');
-        logger.error(err);
-        process.exit(1);
+        logger.error('Could not read users from database');
+        throw err;
     });
 };
 
@@ -511,7 +513,7 @@ var start_server = function() {
 };
 
 var error_handler = function(err) {
-    logger.error('error: ' + err);
+    logger.error(err);
     process.exit(1);
 };
 
