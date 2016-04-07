@@ -10,7 +10,6 @@ from .logs import log_to_console
 from .base_app import create_base_app
 from .settings.models import get_settings
 from .auth import init_auth
-from .settings.resources import LDAP
 from .hardware.resources import RawObjects
 from .hardware.resources import RawObject
 from .hardware.resources import TypeClasses
@@ -35,8 +34,6 @@ def init_api(app):
 def app_routes(app):
     api = init_api(app)
     app.config['BUNDLE_ERRORS'] = True
-    # Settings resources
-    api.add_resource(LDAP,  '/api/v1/settings/ldap', methods=['GET', 'POST'])
     # Hardware resources
     api.add_resource(RawObjects,  '/api/v1/hardware/objects',          methods=['GET'])
     api.add_resource(RawObject,   '/api/v1/hardware/objects/<obj_id>', methods=['GET'])
