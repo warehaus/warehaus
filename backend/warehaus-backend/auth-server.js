@@ -396,6 +396,10 @@ app.put('/api/auth/users/:userId', passport.authenticate('jwt'), function(req, r
             logger.debug('  no need to update password');
             return updated_fields;
         }
+        if (!req.body.password.new_password) {
+            logger.debug('  no new password given');
+            throw { status: HttpStatus.BAD_REQUEST, message: 'No new password given' };
+        }
         return check_password_if_user_has_one().then(is_cur_password_ok => {
             if (!is_cur_password_ok) {
                 throw { status: HttpStatus.FORBIDDEN, message: 'Current password is incorrect' };
