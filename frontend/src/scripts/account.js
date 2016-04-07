@@ -21,7 +21,7 @@ angular.module('warehaus.account').provider('accountUrlPaths', function(accountV
         views: {
             '': {
                 templateUrl: accountView('index.html'),
-                controller: 'AccountController',
+                controller: 'AccountController'
             },
             'nav': {
                 template: '<a ui-sref="labs"><i class="fa fa-angle-left"> </i> Back</a>'

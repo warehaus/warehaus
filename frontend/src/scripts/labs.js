@@ -26,7 +26,7 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(labsViewProvi
         }
         for (var type_obj_id in dbObjects.byParentId[lab.type_id]) {
             var type_obj = dbObjects.byId[type_obj_id];
-            if (angular.isDefined(type_obj) && (type_obj.slug == $stateParams.typeSlug)) {
+            if (angular.isDefined(type_obj) && (type_obj.slug === $stateParams.typeSlug)) {
                 return type_obj_id;
             }
         }

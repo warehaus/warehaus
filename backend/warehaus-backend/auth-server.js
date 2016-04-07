@@ -177,7 +177,7 @@ app.post('/api/auth/login/local', function(req, res, next) {
         }
         var token = jwt.sign({sub: user.id}, app.get('jwt_secret'), {
             expiresIn: '7d',
-            notBefore: 0,
+            notBefore: 0
         });
         return res.json({
             access_token: token,
@@ -228,7 +228,7 @@ var first_user = function() {
             username: FIRST_USER_USERNAME,
             hashed_password: hashed_password,
             role: ROLES.admin,
-            display_name: 'Admin',
+            display_name: 'Admin'
         };
     });
 };
@@ -280,7 +280,7 @@ var require_admin = function(req, res, next) {
     } else if (req.user.role !== ROLES.admin) {
         res.status(HttpStatus.FORBIDDEN).json({ message: 'This API is for admins only' });
     } else {
-        next();
+        return next();
     }
 };
 
@@ -317,7 +317,7 @@ app.post('/api/auth/users', passport.authenticate('jwt'), require_admin, functio
         username     : req.body.username,
         display_name : req.body.display_name,
         role         : req.body.role,
-        email        : req.body.email,
+        email        : req.body.email
     };
     if (!new_user.username || !new_user.display_name || !new_user.role) {
         res.status(HttpStatus.BAD_REQUEST).json({ message: 'One of these fields is missing: username, display_name, role' });
