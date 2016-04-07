@@ -70,7 +70,7 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(labsViewProvi
                                 }
                                 for (var obj_id in dbObjects.byParentId[lab.id]) {
                                     var obj = dbObjects.byId[obj_id];
-                                    if (angular.isDefined(obj) && (obj.slug == $stateParams.objSlug)) {
+                                    if (angular.isDefined(obj) && (obj.slug === $stateParams.objSlug)) {
                                         return obj_id;
                                     }
                                 }
