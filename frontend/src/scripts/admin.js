@@ -135,11 +135,7 @@ angular.module('warehaus.admin').controller('CreateNewUserController', function(
 
     var creation_failed = function(res) {
         $scope.working = false;
-        if (angular.isDefined(res.data.message)) {
-            $scope.error = res.data.message;
-        } else {
-            $scope.error = res.data;
-        }
+        $scope.error = res.data.message || res.data;
     };
 
     $scope.save = function() {

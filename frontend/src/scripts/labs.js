@@ -291,11 +291,7 @@ angular.module('warehaus.labs').controller('CreateLabController', function($scop
             $uibModalInstance.close(res.data);
         }, function(res) {
             $scope.working = false;
-            if (angular.isDefined(res.data.message)) {
-                $scope.error = res.data.message;
-            } else {
-                $scope.error = res.data;
-            }
+            $scope.error = res.data.message || res.data;
         });
     };
 
