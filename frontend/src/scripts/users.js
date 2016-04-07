@@ -65,61 +65,52 @@ angular.module('warehaus.users').factory('users', function($rootScope, $http, $q
     return self;
 });
 
-angular.module('warehaus.users').directive('userAvatar', function(users) {
+angular.module('warehaus.users').service('simpleUserDirective', function(users) {
     var link = function(scope, elem, attrs) {
         scope.users = users;
     };
 
-    return {
-        restrict: 'AE',
+    return function(options) {
+        return {
+            restrict: 'AE',
+            template: options.template,
+            link: link,
+            scope: options.scope
+        };
+    };
+});
+
+angular.module('warehaus.users').directive('userAvatar', function(simpleUserDirective) {
+    return simpleUserDirective({
         template: '<img class="img-circle profile-picture" ng-src="{{ users.byUserId[id].avatar_32 }}" ng-style="{width: size, height: size}">',
-        link: link,
         scope: {
             'id': '=',
             'size': '@'
         }
-    };
+    });
 });
 
-angular.module('warehaus.users').directive('userUsername', function(users) {
-    var link = function(scope, elem, attrs) {
-        scope.users = users;
-    };
-
-    return {
-        restrict: 'AE',
+angular.module('warehaus.users').directive('userUsername', function(simpleUserDirective) {
+    return simpleUserDirective({
         template: '{{ users.byUserId[id].username }} ',
-        link: link,
         scope: {
             'id': '='
         }
-    };
+    });
 });
 
-angular.module('warehaus.users').directive('userDisplayName', function(users) {
-    var link = function(scope, elem, attrs) {
-        scope.users = users;
-    };
-
+angular.module('warehaus.users').directive('userDisplayName', function(simpleUserDirective) {
     return {
-        restrict: 'AE',
         template: '{{ users.byUserId[id].display_name }} ',
-        link: link,
         scope: {
             'id': '='
         }
     };
 });
 
-angular.module('warehaus.users').directive('userEmail', function(users) {
-    var link = function(scope, elem, attrs) {
-        scope.users = users;
-    };
-
+angular.module('warehaus.users').directive('userEmail', function(simpleUserDirective) {
     return {
-        restrict: 'AE',
         template: '{{ users.byUserId[id].email }} ',
-        link: link,
         scope: {
             'id': '='
         }
