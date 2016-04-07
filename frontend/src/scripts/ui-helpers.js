@@ -73,20 +73,6 @@ angular.module('warehaus.ui_helpers').directive('focusMe', function($timeout) {
     };
 });
 
-angular.module('warehaus.ui_helpers').directive('blurMe', function($timeout) {
-    var link = function(scope, element, attrs) {
-        scope.$watch(attrs.blurMe, function(value) {
-            if (value) {
-                element[0].blur();
-            }
-        });
-    };
-
-    return {
-        link: link
-    };
-});
-
 angular.module('warehaus.ui_helpers').filter('titlecase', function() {
     return function(s) {
         s = ( s === undefined || s === null ) ? '' : s;
