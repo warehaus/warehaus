@@ -21,7 +21,7 @@ angular.module('warehaus.admin').provider('adminUrlRoutes', function(adminViewPr
         views: {
             '': {
                 templateUrl: adminView('index.html'),
-                controller: 'AdminController',
+                controller: 'AdminController'
             },
             'nav': {
                 template: '<a ui-sref="labs"><i class="fa fa-angle-left"> </i> Back</a>'

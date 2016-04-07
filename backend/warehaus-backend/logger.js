@@ -5,9 +5,9 @@ var logger = new (winston.Logger)({
         new (winston.transports.Console)({
             prettyPrint: true,
             colorize: true,
-            timestamp: true,
-        }),
-    ],
+            timestamp: true
+        })
+    ]
 });
 
 module.exports = logger;

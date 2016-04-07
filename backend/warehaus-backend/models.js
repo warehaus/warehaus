@@ -13,5 +13,5 @@ var Settings = store.defineResource('settings');
 module.exports = {
     store: store,
     User: User,
-    Settings: Settings,
+    Settings: Settings
 };

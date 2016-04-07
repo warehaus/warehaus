@@ -23,8 +23,8 @@ angular.module('warehaus.hardware.server').controller('ServerListController', fu
     $scope.tab = $stateParams.tab;
 
     var base_url = $location.protocol() + '://' + $location.host();
-    if ((($location.protocol() == 'http') && ($location.port() != 80)) ||
-        (($location.protocol() == 'https') && ($location.port() != 443))) {
+    if ((($location.protocol() === 'http') && ($location.port() !== 80)) ||
+        (($location.protocol() === 'https') && ($location.port() !== 443))) {
         base_url += ':' + $location.port();
     }
     var lab = dbObjects.byId[$scope.lab_id];

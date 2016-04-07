@@ -142,13 +142,13 @@ angular.module('warehaus.account').directive('userApiTokens', function($http, us
         };
 
         scope.$on('warehaus.users.user_changed', function(event, user_id) {
-            if (user_id == scope.userId) {
+            if (user_id === scope.userId) {
                 reload_tokens();
             }
         });
 
         scope.$on('warehaus.users.user_deleted', function(event, user_id) {
-            if (user_id == scope.userId) {
+            if (user_id === scope.userId) {
                 scope.apiTokens = [];
             }
         });

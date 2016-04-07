@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('warehaus.models').service('socketIoManager', function($rootScope, $log, socketFactory) {
-    var socket = undefined;
+    var socket;
 
     $rootScope.$on('warehaus.auth.user_authorized', function() {
         if (angular.isDefined(socket)) {

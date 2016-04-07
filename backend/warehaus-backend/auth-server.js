@@ -89,11 +89,11 @@ const ROLES = {
     admin   : 'admin',
     user    : 'user',
     bot     : 'bot',
-    deleted : 'deleted',
+    deleted : 'deleted'
 };
 
 var is_role_valid = function(role) {
-    return Object.keys(ROLES).indexOf(role) != -1;
+    return Object.keys(ROLES).indexOf(role) !== -1;
 };
 
 var is_role_allowed_to_login = function(role) {
@@ -140,18 +140,16 @@ var configure_local_strategy = function() {
                     return;
                 }
                 if (users.length > 1) {
-                    var err = `Found more than one user with username=${username}`;
-                    logger.error(`${err}: ${users}`);
-                    done(null, false, { message: err });
-                    return;
+                    var multiple_users_err = `Found more than one user with username=${username}`;
+                    logger.error(`${multiple_users_err}: ${users}`);
+                    return done(null, false, { message: multiple_users_err });
                 }
                 var user = users[0];
                 logger.warn('Got user', user);
                 if (!is_role_allowed_to_login(user.role)) {
-                    var err = `Users with role "${user.role}" are not allowed to login with a password`;
-                    logger.error(err);
-                    done(null, false, { message: err });
-                    return;
+                    var role_err = `Users with role "${user.role}" are not allowed to login with a password`;
+                    logger.error(role_err);
+                    return done(null, false, { message: role_err });
                 }
                 if (user.hashed_password) {
                     check_password(password, user.hashed_password).then(function(is_password_ok) {
@@ -265,21 +263,21 @@ var cleaned_user = function(user) {
         username     : user.username,
         has_password : Boolean(user.hashed_password),
         display_name : user.display_name,
-        email        : user.email,
+        email        : user.email
     };
 };
 
 app.param('userId', function(req, res, next, userId) {
     User.find(userId).then(user => {
         req.inputUser = user;
-        next();
+        return next();
     }).catch(next);
 });
 
 var require_admin = function(req, res, next) {
     if (!req.user) {
         res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Unauthorized' });
-    } else if (req.user.role != ROLES.admin) {
+    } else if (req.user.role !== ROLES.admin) {
         res.status(HttpStatus.FORBIDDEN).json({ message: 'This API is for admins only' });
     } else {
         next();
@@ -360,7 +358,7 @@ app.delete('/api/auth/users/:userId', passport.authenticate('jwt'), require_admi
 
 // Alter user data; only works for current user, or all users if admin
 app.put('/api/auth/users/:userId', passport.authenticate('jwt'), function(req, res) {
-    if ((req.inputUser.id != req.user.id) && (req.user.role != ROLES.admin)) {
+    if ((req.inputUser.id !== req.user.id) && (req.user.role !== ROLES.admin)) {
         res.status(HttpStatus.FORBIDDEN).json({ message: "You're not allowed to update this user" });
         return;
     }
@@ -433,7 +431,7 @@ app.put('/api/auth/users/:userId', passport.authenticate('jwt'), function(req, r
     var update_role = function(updated_fields) {
         if (!req.body.role) {
             logger.debug('  no need to update role');
-        } else if (req.user.role != 'admin') {
+        } else if (req.user.role !== ROLES.admin) {
             logger.debug('  no permission to update role');
             throw { status: HttpStatus.FORBIDDEN, message: "You can't update your own role" };
         } else if (!is_role_valid(req.body.role)) {

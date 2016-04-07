@@ -165,7 +165,7 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(labsViewProvi
         views: {
             '': {
                 templateUrl: labsView('index.html'),
-                controller: 'AllLabsController',
+                controller: 'AllLabsController'
             },
             'nav': {
                 template: '<labs-selector/>'
@@ -262,7 +262,7 @@ angular.module('warehaus.labs').controller('AllLabsController', function($scope,
     $scope.$on('warehaus.labs_inventory_changed', refresh);
 
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-        if (toState.name == 'labs') {
+        if (toState.name === 'labs') {
             refresh();
         }
     });
@@ -331,7 +331,7 @@ angular.module('warehaus.labs').controller('LabPageController', function($scope,
     $scope.$on('warehaus.labs_inventory_changed', refresh);
 
     $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-        if (toState.name == 'labs.lab-page') {
+        if (toState.name === 'labs.lab-page') {
             refresh();
         }
     });
@@ -382,7 +382,7 @@ angular.module('warehaus.labs').controller('ObjectPageController', function($sco
     };
 
     var reload_object_conditionally = function(event, obj_id) {
-        if ($scope.obj_id == obj_id) {
+        if ($scope.obj_id === obj_id) {
             reload_object();
         }
     };

@@ -27,7 +27,7 @@ angular.module('warehaus.hardware.cluster').factory('clustersToServers', functio
             self.servers_of_cluster[cluster_id] = [];
         }
         if (angular.isDefined(self.cluster_of_server[server_id])) {
-            if (self.cluster_of_server[server_id] == cluster_id) {
+            if (self.cluster_of_server[server_id] === cluster_id) {
                 return;
             } else {
                 remove_server_from_cluster(server_id);
@@ -42,7 +42,7 @@ angular.module('warehaus.hardware.cluster').factory('clustersToServers', functio
         if (self.cluster_of_server[server_id]) {
             var cluster_id = self.cluster_of_server[server_id];
             var index = self.servers_of_cluster[cluster_id].indexOf(server_id);
-            if (index != -1) {
+            if (index !== -1) {
                 self.servers_of_cluster[cluster_id].splice(index, 1);
             }
         }
@@ -76,7 +76,7 @@ angular.module('warehaus.hardware.cluster').factory('clustersToServers', functio
         }
         angular.forEach(dbObjects.byTypeId, function(objects, type_id) {
             var type = dbObjects.byId[type_id];
-            if (angular.isDefined(type) && (type.type_key == hwServerTypeKey)) {
+            if (angular.isDefined(type) && (type.type_key === hwServerTypeKey)) {
                 angular.forEach(objects, function(obj) {
                     update_server(obj);
                 });
@@ -90,8 +90,8 @@ angular.module('warehaus.hardware.cluster').factory('clustersToServers', functio
 
     var call_if_typeclass = function(obj, type_key, callback) {
         var type_obj = dbObjects.byId[obj.type_id];
-        if (obj && type_obj && (type_obj.type_key == type_key)) {
-            callback(obj);
+        if (obj && type_obj && (type_obj.type_key === type_key)) {
+            return callback(obj);
         }
     };
 

@@ -164,7 +164,7 @@ class ObjectTreeNode(Resource):
     def _find_type_class(self, type_key):
         try:
             return all_type_classes[type_key]
-        except LookupError, error:
+        except LookupError as error:
             flask_abort(httplib.INTERNAL_SERVER_ERROR, error)
 
     def _find_and_invoke_from_type_class(self, type_class, get_action, obj, action_name):

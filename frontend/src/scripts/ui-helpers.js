@@ -34,7 +34,7 @@ angular.module('warehaus.ui_helpers').provider('urlRegister', function($urlRoute
         if (state.autoRedirectToChild) {
             if (state.children) {
                 state.children.forEach(function(child_state) {
-                    if (child_state.name == state.autoRedirectToChild) {
+                    if (child_state.name === state.autoRedirectToChild) {
                         $urlRouterProvider.when(cur_url, cur_url + child_state.url);
                     }
                 });
@@ -102,11 +102,11 @@ var _is_empty = function(o) {
     }
 
     if (Array.isArray(o)) {
-        return o.length == 0;
+        return o.length === 0;
     }
 
     if (typeof o === 'object') {
-        return Object.getOwnPropertyNames(o).length == 0;
+        return Object.getOwnPropertyNames(o).length === 0;
     }
 
     return o;

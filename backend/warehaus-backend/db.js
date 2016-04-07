@@ -5,7 +5,7 @@ var db_config = function() {
         host: process.env.RETHINKDB_PORT_28015_TCP_ADDR || '127.0.0.1',
         port: process.env.RETHINKDB_PORT_28015_TCP_PORT || 28015,
         db: process.env.RETHINKDB_DB || 'warehaus',
-        authKey: process.env.RETHINKDB_AUTH,
+        authKey: process.env.RETHINKDB_AUTH
     };
 };
 
@@ -21,5 +21,5 @@ var connect_to_db = function(success_func) {
 module.exports = {
     conn: undefined,
     config: db_config,
-    connect: connect_to_db,
+    connect: connect_to_db
 };
