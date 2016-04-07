@@ -41,17 +41,3 @@ def require_admin():
 
 def require_user():
     _require_roles(*roles.values())
-
-def admin_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        require_admin()
-        return func(*args, **kwargs)
-    return wrapper
-
-def user_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        require_user()
-        return func(*args, **kwargs)
-    return wrapper

@@ -6,8 +6,6 @@ from flask import current_app
 from flask_jwt import JWT
 from .models import User
 from .roles import roles
-from .roles import user_required
-from .roles import admin_required
 
 logger = getLogger(__name__)
 
