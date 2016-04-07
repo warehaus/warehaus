@@ -4,7 +4,15 @@ angular.module('warehaus.models').directive('typeAttributes', function($http, $u
     var link = function(scope, elem, attrs) {
         scope.dbObjects = dbObjects;
 
-        var edit_attribute_modal = function(attr) {
+        var start_working = function() {
+            scope.working = true;
+        };
+
+        var stop_working = function() {
+            scope.working = false;
+        };
+
+        var edit_attribute_modal = function(http_method, attr) {
             return $uibModal.open({
                 templateUrl: viewPath('main-site/hardware/objects/type-attribute-modal.html'),
                 controller: 'EditTypeAttributeController',
@@ -16,6 +24,9 @@ angular.module('warehaus.models').directive('typeAttributes', function($http, $u
                         return angular.copy(attr);
                     }
                 }
+            }).result.then(function(changed_attr) {
+                start_working();
+                http_method(attrs_url(), {attr: changed_attr}).then(stop_working);
             });
         };
 
@@ -28,26 +39,12 @@ angular.module('warehaus.models').directive('typeAttributes', function($http, $u
             return '/api/v1/labs/' + lab.slug + '/~/' + path_to_type_obj + 'attrs';
         };
 
-        var start_working = function() {
-            scope.working = true;
-        };
-
-        var stop_working = function() {
-            scope.working = false;
-        };
-
         scope.new_attribute = function() {
-            edit_attribute_modal().result.then(function(new_attr) {
-                start_working();
-                $http.post(attrs_url(), {attr: new_attr}).then(stop_working);
-            });
+            edit_attribute_modal($http.post);
         };
 
         scope.edit_attribute = function(attr) {
-            edit_attribute_modal(attr).result.then(function(changed_attr) {
-                start_working();
-                $http.put(attrs_url(), {attr: changed_attr}).then(stop_working);
-            });
+            edit_attribute_modal($http.put, attr);
         };
 
         scope.delete_attribute = function(attr_slug) {
