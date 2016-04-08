@@ -106,20 +106,14 @@ angular.module('warehaus.account').directive('userProfile', function($uibModal, 
     };
 });
 
-angular.module('warehaus.account').controller('UpdateUserController', function($scope, $uibModalInstance, users, userId) {
+angular.module('warehaus.account').controller('UpdateUserController', function($scope, $controller, $uibModalInstance, users, userId) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
+
     $scope.userId = userId;
     $scope.updated_user = {};
 
-    $scope.save = function() {
-        $scope.working = true;
-        users.update_user(userId, $scope.updated_user).then($uibModalInstance.close, function(res) {
-            $scope.working = false;
-            $scope.error = res.data.message || res.data;
-        });
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
+    $scope.do_work = function() {
+        return users.update_user(userId, $scope.updated_user);
     };
 });
 

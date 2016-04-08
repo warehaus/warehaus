@@ -17,13 +17,7 @@ mixin modal_body
     label.control-label
       | Display Name
     input.form-control(type='text' ng-model='updated_user.display_name' placeholder='Display Name' required='')
-  .alert.alert-danger(ng-if='error')
-    strong
-      i.fa.fa-warning
-      | &#32;
-      | Oh no
-    p
-      | {{ error }}
+  wh-error-box(error='error')
 
 mixin modal_footer
   button.btn.btn-link(type='button' ng-click='cancel()')

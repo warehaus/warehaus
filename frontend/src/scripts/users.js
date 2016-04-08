@@ -100,21 +100,21 @@ angular.module('warehaus.users').directive('userUsername', function(simpleUserDi
 });
 
 angular.module('warehaus.users').directive('userDisplayName', function(simpleUserDirective) {
-    return {
+    return simpleUserDirective({
         template: '{{ users.byUserId[id].display_name }} ',
         scope: {
             'id': '='
         }
-    };
+    });
 });
 
 angular.module('warehaus.users').directive('userEmail', function(simpleUserDirective) {
-    return {
+    return simpleUserDirective({
         template: '{{ users.byUserId[id].email }} ',
         scope: {
             'id': '='
         }
-    };
+    });
 });
 
 angular.module('warehaus.users').run(function($rootScope, users) {

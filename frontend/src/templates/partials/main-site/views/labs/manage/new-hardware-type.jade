@@ -29,13 +29,7 @@ form(name='newHardwareType' role='form' ng-submit='save()')
     samp
       | {{ new_type.slug }}
 
-  .alert.alert-danger(ng-if='error')
-    strong
-      i.fa.fa-frown-o
-      | &nbsp;
-      | Oh no
-    br
-    | {{ error.message }}
+  wh-error-box(error='error')
 
-  button.btn.btn-success(type='button' ng-click='create()' ng-disabled='newHardwareType.$invalid || working' ng-if='new_type.slug')
+  button.btn.btn-success(type='submit' ng-click='save()' ng-disabled='newHardwareType.$invalid || working' ng-if='new_type.slug')
     | Create Hardware Type

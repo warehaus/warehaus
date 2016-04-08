@@ -20,11 +20,10 @@ form(name='createLab' role='form' ng-submit='save()')
         | This lab's API name will be:&nbsp;
         samp
           | {{ lab.slug }}
-    .alert.alert-danger(ng-if='error')
-      | {{ error }}
+    wh-error-box(error='error')
 
   .modal-footer
     button.btn.btn-default(type='button' ng-click='cancel()')
       | Cancel
-    button.btn.btn-success(type='button' ng-click='save()' ng-disabled='createLab.$invalid || working')
+    button.btn.btn-success(type='submit' ng-click='save()' ng-disabled='createLab.$invalid || working')
       | Create Lab

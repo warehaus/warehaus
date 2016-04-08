@@ -15,7 +15,7 @@ mixin alerts
     | You can always undo this operation by renaming back to the original name.
 
 mixin form
-  form(role='form' ng-submit='ok()' ng-init='result.display_name = allLabs.byId[lab_id].display_name')
+  form(name='renameLab' role='form' ng-submit='save()' ng-init='result.display_name = allLabs.byId[lab_id].display_name')
     .form-group
       label.control-label
         | New Lab Name
@@ -30,11 +30,10 @@ mixin form
         | This lab's API name will be:&nbsp;
         samp
           | {{ result.slug }}
-    .alert.alert-danger(ng-if='error')
-      | {{ error }}
+    wh-error-box(error='error')
 
 mixin buttons
-  button.btn.btn-primary(type='button' ng-click='ok()')
+  button.btn.btn-primary(type='submit' ng-click='save()' ng-disabled='renameLab.$invalid || working')
     | Save Changes
 
 +alerts

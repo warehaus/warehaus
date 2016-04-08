@@ -22,11 +22,12 @@ angular.module('warehaus.models').directive('typeAttributes', function($http, $u
                     },
                     typeAttr: function() {
                         return angular.copy(attr);
-                    }
+                    },
+                    httpMethod: function() {
+                        return http_method;
+                    },
+                    attrUrl: attrs_url
                 }
-            }).result.then(function(changed_attr) {
-                start_working();
-                http_method(attrs_url(), {attr: changed_attr}).then(stop_working);
             });
         };
 
@@ -69,17 +70,14 @@ angular.module('warehaus.models').directive('typeAttributes', function($http, $u
     };
 });
 
-angular.module('warehaus.labs').controller('EditTypeAttributeController', function($scope, $uibModalInstance, dbObjects, typeObjId, typeAttr) {
+angular.module('warehaus.labs').controller('EditTypeAttributeController', function($scope, $controller, $uibModalInstance, dbObjects, typeObjId, typeAttr, attrUrl, httpMethod) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
     $scope.type_obj_id = typeObjId;
     $scope.action = angular.isDefined(typeAttr) ? 'Edit' : 'New';
     $scope.type_attr = typeAttr || {};
 
-    $scope.ok = function() {
-        $uibModalInstance.close($scope.type_attr);
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
+    $scope.do_work = function() {
+        return httpMethod(attrUrl, {attr: $scope.type_attr});
     };
 });
 
@@ -153,16 +151,13 @@ angular.module('warehaus.models').directive('objectAttributes', function($http, 
     };
 });
 
-angular.module('warehaus.models').controller('EditAttributeValueController', function($scope, $uibModalInstance, objId, attrSlug, curValue) {
+angular.module('warehaus.models').controller('EditAttributeValueController', function($scope, $controller, $uibModalInstance, $q, objId, attrSlug, curValue) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
     $scope.obj_id = objId;
     $scope.attr_slug = attrSlug;
     $scope.input = { value: curValue };
 
-    $scope.ok = function() {
-        $uibModalInstance.close($scope.input.value);
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
+    $scope.do_work = function() {
+        return $q.resolve($scope.input.value);
     };
 });

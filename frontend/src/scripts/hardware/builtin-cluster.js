@@ -137,19 +137,16 @@ angular.module('warehaus.hardware.cluster').controller('ClusterListController', 
     };
 });
 
-angular.module('warehaus.hardware.cluster').controller('CreateClusterController', function($scope, $uibModalInstance, $http, dbObjects, labId, typeObjId) {
+angular.module('warehaus.hardware.cluster').controller('CreateClusterController', function($scope, $controller, $uibModalInstance, $http, dbObjects, labId, typeObjId) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
+
     $scope.lab_id = labId;
     $scope.type_obj_id = typeObjId;
     $scope.cluster = {};
 
-    $scope.create = function() {
-        $scope.working = true;
+    $scope.do_work = function() {
         var type_obj_url = '/api/v1/labs/' + dbObjects.byId[$scope.lab_id].slug + '/~/' + dbObjects.byId[$scope.type_obj_id].slug + '/';
-        $http.post(type_obj_url, $scope.cluster).then($uibModalInstance.close);
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
+        return $http.post(type_obj_url, $scope.cluster);
     };
 });
 
@@ -193,12 +190,13 @@ angular.module('warehaus.hardware.cluster').controller('ClusterPageController', 
     };
 });
 
-angular.module('warehaus.hardware.cluster').controller('DeleteClusterController', function($scope, $uibModalInstance, $http, $q, dbObjects, labId, typeObjId, objId) {
+angular.module('warehaus.hardware.cluster').controller('DeleteClusterController', function($scope, $controller, $uibModalInstance, $http, $q, dbObjects, labId, typeObjId, objId) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
     $scope.lab_id = labId;
     $scope.type_obj_id = typeObjId;
     $scope.obj_id = objId;
 
-    $scope.ok = function() {
+    $scope.do_work = function() {
         var cluster = dbObjects.byId[$scope.obj_id];
         var lab = dbObjects.byId[$scope.lab_id];
         var unassign_promises = [];
@@ -209,12 +207,8 @@ angular.module('warehaus.hardware.cluster').controller('DeleteClusterController'
                 unassign_promises.push($http.put('/api/v1/labs/' + lab.slug + '/' + server.slug + '/cluster', {cluster_id: null}));
             }
         }
-        $q.all(unassign_promises).then(function() {
-            $http.delete('/api/v1/labs/' + lab.slug + '/' + cluster.slug + '/').then($uibModalInstance.close);
+        return $q.all(unassign_promises).then(function() {
+            $http.delete('/api/v1/labs/' + lab.slug + '/' + cluster.slug + '/');
         });
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
     };
 });

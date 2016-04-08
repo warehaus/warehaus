@@ -122,7 +122,8 @@ angular.module('warehaus.hardware.server').controller('ServerPageController', fu
     };
 });
 
-angular.module('warehaus.hardware.server').controller('ClusterSelectionController', function($scope, $uibModalInstance, dbObjects, labId, typeObjId, server_id, hwClusterTypeKey) {
+angular.module('warehaus.hardware.server').controller('ClusterSelectionController', function($scope, $controller, $uibModalInstance, $q, dbObjects, labId, typeObjId, server_id, hwClusterTypeKey) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
     $scope.lab_id = labId;
     $scope.server_id = server_id;
     $scope.hwClusterTypeKey = hwClusterTypeKey;
@@ -133,19 +134,12 @@ angular.module('warehaus.hardware.server').controller('ClusterSelectionControlle
         $scope.selected_cluster = cluster_id;
     };
 
-    $scope.ok = function() {
-        $uibModalInstance.close($scope.selected_cluster);
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
+    $scope.do_work = function() {
+        return $q.resolve($scope.selected_cluster);
     };
 });
 
-angular.module('warehaus.hardware.server').controller('AgentErrorController', function($scope, $uibModalInstance, error) {
+angular.module('warehaus.hardware.server').controller('AgentErrorController', function($scope, $controller, $uibModalInstance, error) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
     $scope.error = error;
-
-    $scope.close = function() {
-        $uibModalInstance.dismiss('cancel');
-    };
 });

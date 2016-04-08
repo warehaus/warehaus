@@ -27,16 +27,12 @@ mixin form_email
       | Email
     input.form-control(type='email' ng-model='user.email' placeholder='Email Address' required='')
 
-mixin form_error
-  .alert.alert-danger(ng-if='error')
-    | {{ error }}
-
 mixin modal_body
   +form_type
   +form_username
   +form_display_name
   +form_email
-  +form_error
+  wh-error-box(error='error')
 
 mixin modal_footer
   button.btn.btn-default(type='button' ng-click='cancel()')

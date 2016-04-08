@@ -120,3 +120,31 @@ angular.module('warehaus.ui_helpers').directive('preventDefault', function() {
         link: link
     };
 });
+
+angular.module('warehaus.ui_helpers').controller('ModalBase', function($scope, $uibModalInstance) {
+    $scope.do_work = function() {
+        // Inheriting controllers should return a promise here
+    };
+
+    var failure = function(res) {
+        $scope.working = false;
+        $scope.error = res.data.message || res.data || res;
+    };
+
+    $scope.save = function() {
+        $scope.working = true;
+        return $scope.do_work().then($uibModalInstance.close, failure);
+    };
+
+    $scope.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
+    };
+});
+
+angular.module('warehaus.ui_helpers').directive('whErrorBox', function() {
+    return {
+        restrict: 'E',
+        template: '<div class="alert alert-danger" ng-if="error"><strong><i class="fa fa-warning"> </i> Oh no</strong><p>{{ error }}</p></div>',
+        scope: true
+    };
+});

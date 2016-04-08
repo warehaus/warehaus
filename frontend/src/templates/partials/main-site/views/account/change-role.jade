@@ -6,13 +6,7 @@ mixin modal_header
 
 mixin modal_body
   user-role-selection(role-var='updated_user.role' ng-init='updated_user.role = users.byUserId[userId].role')
-  .alert.alert-danger(ng-if='error')
-    strong
-      i.fa.fa-warning
-      | &#32;
-      | Oh no
-    p
-      | {{ error }}
+  wh-error-box(error='error')
 
 mixin modal_footer
   button.btn.btn-link(type='button' ng-click='cancel()')

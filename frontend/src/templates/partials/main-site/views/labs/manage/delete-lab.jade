@@ -14,6 +14,7 @@ mixin content
       |  This action cannot be undone.
   p
     | Are you sure you want to continue?
+  wh-error-box(error='error')
 
 mixin buttons
   button.btn.btn-danger(type='button' ng-click='sure1 = true' ng-disabled='sure1')

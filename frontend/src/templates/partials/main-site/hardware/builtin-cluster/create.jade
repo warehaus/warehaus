@@ -1,4 +1,4 @@
-form(role='form' name='newCluster' ng-submit='create()')
+form(role='form' name='newCluster' ng-submit='save()')
   .modal-header
     button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
       span(aria-hidden="true") &times;
@@ -20,9 +20,10 @@ form(role='form' name='newCluster' ng-submit='create()')
         | This cluster's API name will be:&nbsp;
         samp
           | {{ cluster.slug }}
+    wh-error-box(error='error')
 
   .modal-footer
     button.btn.btn-default(type='button' ng-click='cancel()')
       | Cancel
-    button.btn.btn-success(type='submit' ng-click='create()' ng-disabled='newCluster.$invalid || working')
+    button.btn.btn-success(type='submit' ng-click='save()' ng-disabled='newCluster.$invalid || working')
       | Create Cluster

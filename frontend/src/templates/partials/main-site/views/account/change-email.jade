@@ -11,13 +11,7 @@ mixin modal_body
     label.control-label
       | Email Address
     input.form-control(type='email' ng-model='updated_user.email' placeholder='you@company.com' required='')
-  .alert.alert-danger(ng-if='error')
-    strong
-      i.fa.fa-warning
-      | &#32;
-      | Oh no
-    p
-      | {{ error }}
+  wh-error-box(error='error')
 
 mixin modal_footer
   button.btn.btn-link(type='button' ng-click='cancel()')

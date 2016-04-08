@@ -282,21 +282,14 @@ angular.module('warehaus.labs').service('createLab', function($uibModal, viewPat
     };
 });
 
-angular.module('warehaus.labs').controller('CreateLabController', function($scope, $state, $uibModalInstance, allLabs) {
+angular.module('warehaus.labs').controller('CreateLabController', function($scope, $state, $controller, $uibModalInstance, allLabs) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
     $scope.lab = {};
 
-    $scope.save = function() {
-        $scope.working = true;
-        allLabs.create($scope.lab).then(function(res) {
-            $uibModalInstance.close(res.data);
-        }, function(res) {
-            $scope.working = false;
-            $scope.error = res.data.message || res.data;
+    $scope.do_work = function() {
+        return allLabs.create($scope.lab).then(function(res) {
+            return res.data;
         });
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
     };
 });
 
@@ -418,15 +411,12 @@ angular.module('warehaus.labs').controller('ObjectPageController', function($sco
     };
 });
 
-angular.module('warehaus.labs').controller('ShowConfigJsonController', function($scope, $uibModalInstance, labId, typeObjId, objId, configJson) {
+angular.module('warehaus.labs').controller('ShowConfigJsonController', function($scope, $controller, $uibModalInstance, labId, typeObjId, objId, configJson) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
     $scope.lab_id = labId;
     $scope.type_obj_id = typeObjId;
     $scope.obj_id = objId;
     $scope.config_json = configJson;
-
-    $scope.close = function() {
-        $uibModalInstance.dismiss('cancel');
-    };
 });
 
 angular.module('warehaus.labs').controller('ManageLabOverview', function($scope) {
@@ -447,14 +437,14 @@ angular.module('warehaus.labs').controller('NewHardwareTypeController', function
         $scope.new_type.display_name.plural = type_class.display_name.toLowerCase() + 's';
     };
 
-    $scope.create = function() {
+    $scope.save = function() {
         $scope.working = true;
         $scope.error = undefined;
         allLabs.create_type_object($scope.lab_id, $scope.new_type).then(function(res) {
             $state.go('^.hardware-type', {typeObjId: res.data.id});
         }, function(res) {
             $scope.working = false;
-            $scope.error = res.data;
+            $scope.error = res.data.message || res.data;
         });
     };
 });
@@ -479,7 +469,7 @@ angular.module('warehaus.labs').controller('RenameLabController', function($scop
         allLabs.rename($scope.lab_id, $scope.result).then(function() {
             $state.go('labs');
         }, function(res) {
-            $scope.error = res.data.message;
+            $scope.error = res.data.message || res.data;
         });
     };
 });
@@ -488,6 +478,8 @@ angular.module('warehaus.labs').controller('DeleteLabController', function($scop
     $scope.ok = function() {
         allLabs.delete($scope.lab_id).then(function() {
             $state.go('labs');
+        }, function(res) {
+            $scope.error = res.data.message || res.data;
         });
     };
 });

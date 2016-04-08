@@ -130,21 +130,12 @@ angular.module('warehaus.admin').service('createNewUser', function($uibModal, ad
     };
 });
 
-angular.module('warehaus.admin').controller('CreateNewUserController', function($scope, $http, $uibModalInstance) {
+angular.module('warehaus.admin').controller('CreateNewUserController', function($scope, $controller, $http, $uibModalInstance) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
     $scope.user = {};
 
-    var creation_failed = function(res) {
-        $scope.working = false;
-        $scope.error = res.data.message || res.data;
-    };
-
-    $scope.save = function() {
-        $scope.working = true;
-        $http.post('/api/auth/users', $scope.user).then($uibModalInstance.close, creation_failed);
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
+    $scope.do_work = function() {
+        return $http.post('/api/auth/users', $scope.user);
     };
 });
 

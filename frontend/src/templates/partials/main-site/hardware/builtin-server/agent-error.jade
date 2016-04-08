@@ -1,5 +1,5 @@
 .modal-header
-  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='close()')
+  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
     span(aria-hidden="true") &times;
   h4.modal-title
     | Agent Error in
@@ -17,5 +17,5 @@
     | {{ error.traceback }}
 
 .modal-footer
-  button.btn.btn-default(type='button' ng-click='close()')
+  button.btn.btn-default(type='button' ng-click='cancel()')
     | Close This Window

@@ -75,15 +75,16 @@ mixin modal_body
   .modal-body
     +param_name
     +param_data_type
+    wh-error-box(error='error')
 
 mixin modal_footer
   .modal-footer
     button.btn.btn-link(type='button' ng-click='cancel()')
       | Cancel
-    button.btn.btn-primary(type='button' ng-click='ok()' ng-disabled='newAttrForm.$invalid')
+    button.btn.btn-primary(type='submit' ng-click='save()' ng-disabled='newAttrForm.$invalid || working')
       | Save Changes
 
-form(name='newAttrForm')
+form(name='newAttrForm' ng-submit='save()')
   +modal_header
   +modal_body
   +modal_footer
