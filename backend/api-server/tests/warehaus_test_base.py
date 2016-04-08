@@ -11,7 +11,7 @@ USER_CREDENTIALS = dict(username='user', password='user')
 
 class WarehausApiTestBase(RestfulTestBase):
     def create_app(self):
-        return create_app(TESTING=True)
+        return create_app()
 
     def login(self):
         login_res = self.auth_server.post('/api/auth/login/local', ADMIN_CREDENTIALS, expected_status=httplib.OK)
