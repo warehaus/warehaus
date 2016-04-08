@@ -1,0 +1,46 @@
+mixin modal_header
+  .modal-header
+    button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+      span(aria-hidden="true") &times;
+    h4.modal-title
+      | Delete
+      | &#32;
+      object-type-title(type-id='type_obj_id' sample='1')
+      | &#32;
+      | Attribute
+
+mixin modal_body
+  .modal-body
+    .alert.alert-danger
+      strong
+        i.fa.fa-fw.fa-warning
+        | Careful
+      div
+        | You're about to delete the
+        | &#32;
+        strong(style={'text-decoration': 'underline'})
+          | {{ type_attr.display_name }}
+        | &#32;
+        | attribute from
+        | &#32;
+        strong
+          | all objects of type
+          | &#32;
+          object-type-title(type-id='type_obj_id' sample='1')
+    p
+      | Once you delete this attribute it will be immediately removed from all
+      | objects of this types and its values will be deleted.
+    p
+      | This cannot be undone.
+
+mixin modal_footer
+  .modal-footer
+    button.btn.btn-link(type='button' ng-click='cancel()')
+      | Cancel
+    button.btn.btn-danger(type='submit' ng-click='save()')
+      | Delete Attribute
+
+form(ng-submit='save()')
+  +modal_header
+  +modal_body
+  +modal_footer

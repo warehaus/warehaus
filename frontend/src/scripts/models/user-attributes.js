@@ -1,67 +1,10 @@
 'use strict';
 
-angular.module('warehaus.models').directive('typeAttributes', function($http, $uibModal, viewPath, dbObjects) {
-    var link = function(scope, elem, attrs) {
-        scope.dbObjects = dbObjects;
-
-        var start_working = function() {
-            scope.working = true;
-        };
-
-        var stop_working = function() {
-            scope.working = false;
-        };
-
-        var edit_attribute_modal = function(http_method, attr) {
-            return $uibModal.open({
-                templateUrl: viewPath('main-site/hardware/objects/type-attribute-modal.html'),
-                controller: 'EditTypeAttributeController',
-                resolve: {
-                    typeObjId: function() {
-                        return scope.typeObjId;
-                    },
-                    typeAttr: function() {
-                        return angular.copy(attr);
-                    },
-                    httpMethod: function() {
-                        return http_method;
-                    },
-                    attrUrl: attrs_url
-                }
-            });
-        };
-
-        var attrs_url = function() {
-            var lab = dbObjects.byId[scope.labId];
-            var path_to_type_obj = '';
-            for (var cur = dbObjects.byId[scope.typeObjId]; cur.slug && cur.parent_id; cur = dbObjects.byId[cur.parent_id]) {
-                path_to_type_obj = cur.slug + '/' + path_to_type_obj;
-            }
-            return '/api/v1/labs/' + lab.slug + '/~/' + path_to_type_obj + 'attrs';
-        };
-
-        scope.new_attribute = function() {
-            edit_attribute_modal($http.post);
-        };
-
-        scope.edit_attribute = function(attr) {
-            edit_attribute_modal($http.put, attr);
-        };
-
-        scope.delete_attribute = function(attr_slug) {
-            start_working();
-            var config = {
-                headers: { 'Content-Type': 'application/json' },
-                data: { slug: attr_slug }
-            };
-            $http.delete(attrs_url(), config).then(stop_working);
-        };
-    };
-
+angular.module('warehaus.models').directive('typeAttributes', function(viewPath) {
     return {
         restrict: 'E',
         templateUrl: viewPath('main-site/hardware/objects/type-attributes.html'),
-        link: link,
+        controller: 'TypeAttributesController',
         scope: {
             title: '@',
             labId: '=',
@@ -70,7 +13,77 @@ angular.module('warehaus.models').directive('typeAttributes', function($http, $u
     };
 });
 
-angular.module('warehaus.labs').controller('EditTypeAttributeController', function($scope, $controller, $uibModalInstance, dbObjects, typeObjId, typeAttr, attrUrl, httpMethod) {
+angular.module('warehaus.labs').controller('TypeAttributesController', function($scope, $http, $uibModal, viewPath, dbObjects) {
+    $scope.dbObjects = dbObjects;
+
+    var start_working = function() {
+        $scope.working = true;
+    };
+
+    var stop_working = function() {
+        $scope.working = false;
+    };
+
+    var attrs_url = function() {
+        var lab = dbObjects.byId[$scope.labId];
+        var path_to_type_obj = '';
+        for (var cur = dbObjects.byId[$scope.typeObjId]; cur.slug && cur.parent_id; cur = dbObjects.byId[cur.parent_id]) {
+            path_to_type_obj = cur.slug + '/' + path_to_type_obj;
+        }
+        return '/api/v1/labs/' + lab.slug + '/~/' + path_to_type_obj + 'attrs';
+    };
+
+    var edit_attribute_modal = function(http_method, attr) {
+        return $uibModal.open({
+            templateUrl: viewPath('main-site/hardware/objects/type-attribute-modal.html'),
+            controller: 'EditTypeAttributeController',
+            resolve: {
+                typeObjId: function() {
+                    return $scope.typeObjId;
+                },
+                typeAttr: function() {
+                    return angular.copy(attr);
+                },
+                httpMethod: function() {
+                    return http_method;
+                },
+                attrUrl: attrs_url
+            }
+        });
+    };
+
+    $scope.new_attribute = function() {
+        return edit_attribute_modal($http.post);
+    };
+
+    $scope.edit_attribute = function(attr) {
+        return edit_attribute_modal($http.put, attr);
+    };
+
+    $scope.delete_attribute = function(attr) {
+        return $uibModal.open({
+            templateUrl: viewPath('main-site/hardware/objects/delete-type-attribute.html'),
+            controller: 'DeleteTypeAttributeController',
+            resolve: {
+                typeObjId: function() {
+                    return $scope.typeObjId;
+                },
+                typeAttr: function() {
+                    return attr;
+                }
+            }
+        }).result.then(function() {
+            start_working();
+            var config = {
+                headers: { 'Content-Type': 'application/json' },
+                data: { slug: attr.slug }
+            };
+            $http.delete(attrs_url(), config).then(stop_working);
+        });
+    };
+});
+
+angular.module('warehaus.labs').controller('EditTypeAttributeController', function($scope, $controller, $uibModalInstance, typeObjId, typeAttr, attrUrl, httpMethod) {
     $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
     $scope.type_obj_id = typeObjId;
     $scope.action = angular.isDefined(typeAttr) ? 'Edit' : 'New';
@@ -78,6 +91,16 @@ angular.module('warehaus.labs').controller('EditTypeAttributeController', functi
 
     $scope.do_work = function() {
         return httpMethod(attrUrl, {attr: $scope.type_attr});
+    };
+});
+
+angular.module('warehaus.labs').controller('DeleteTypeAttributeController', function($scope, $controller, $uibModalInstance, $q, typeObjId, typeAttr) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
+    $scope.type_obj_id = typeObjId;
+    $scope.type_attr = typeAttr;
+
+    $scope.do_work = function() {
+        return $q.resolve();
     };
 });
 
