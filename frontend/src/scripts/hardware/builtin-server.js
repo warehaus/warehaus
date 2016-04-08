@@ -16,21 +16,16 @@ angular.module('warehaus.hardware.server').provider('serverView', function(viewP
     };
 });
 
-angular.module('warehaus.hardware.server').controller('ServerListController', function($scope, $location, $stateParams, dbObjects) {
+angular.module('warehaus.hardware.server').controller('ServerListController', function($scope, $stateParams, dbObjects, siteUrl) {
     if (!$stateParams.tab) {
         $stateParams.tab = 'all';
     }
     $scope.tab = $stateParams.tab;
 
-    var base_url = $location.protocol() + '://' + $location.host();
-    if ((($location.protocol() === 'http') && ($location.port() !== 80)) ||
-        (($location.protocol() === 'https') && ($location.port() !== 443))) {
-        base_url += ':' + $location.port();
-    }
     var lab = dbObjects.byId[$scope.lab_id];
     var type_obj = dbObjects.byId[$scope.type_obj_id];
 
-    $scope.agent_url = base_url + '/api/v1/labs/' + lab.slug + '/~/' + type_obj.slug + '/agent.py';
+    $scope.agent_url = siteUrl('/api/v1/labs/' + lab.slug + '/~/' + type_obj.slug + '/agent.py');
 });
 
 angular.module('warehaus.hardware.server').controller('ServerPageController', function($scope, $http, $uibModal, dbObjects, serverView) {

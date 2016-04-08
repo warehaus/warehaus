@@ -35,6 +35,17 @@ angular.module('warehaus.state').factory('warehausState', function($rootScope, $
     return self;
 });
 
+angular.module('warehaus.state').service('siteUrl', function($location) {
+    return function(path) {
+        var base_url = $location.protocol() + '://' + $location.host();
+        if ((($location.protocol() === 'http') && ($location.port() !== 80)) ||
+            (($location.protocol() === 'https') && ($location.port() !== 443))) {
+            base_url += ':' + $location.port();
+        }
+        return base_url + path;
+    };
+});
+
 angular.module('warehaus.state').run(function($rootScope, warehausState) {
     $rootScope.warehausState = warehausState;
 });
