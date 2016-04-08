@@ -133,14 +133,12 @@ app.use(passport.initialize());
 var LocalStrategy = require('passport-local');
 
 var configure_local_strategy = function() {
-    passport.use(new LocalStrategy(
+    passport.unuse('local');
+    passport.use('local', new LocalStrategy(
         function(username, password, done) {
-            User.findAll({
-                where: { username: { '===': username } }
-            }).then(function(users) {
+            var search_local_user = function(users) {
                 if (users.length === 0) {
-                    done(null, false, { message: 'Incorrect username or password' });
-                    return;
+                    return done(null, false, { message: 'Incorrect username or password' });
                 }
                 if (users.length > 1) {
                     var multiple_users_err = `Found more than one user with username=${username}`;
@@ -157,15 +155,17 @@ var configure_local_strategy = function() {
                 if (user.hashed_password) {
                     check_password(password, user.hashed_password).then(function(is_password_ok) {
                         if (is_password_ok) {
-                            done(null, user);
-                        } else {
-                            done(null, false, { message: 'Incorrect username or password' });
+                            return done(null, user);
                         }
+                        done(null, false, { message: 'Incorrect username or password' });
                     }, done);
                 } else {
                     done(null, false, { message: "You can't login because your account doesn't have a password, please ask your admin to create a password for you" });
                 }
-            }, done).catch(done);
+            };
+            return User.findAll({
+                where: { username: { '===': username } }
+            }).then(search_local_user, done).catch(done);
         }
     ));
 };
@@ -198,7 +198,8 @@ var configure_jwt_strategy = function() {
     opts.jwtFromRequest = ExtractJwt.fromAuthHeader();
     opts.secretOrKey = app.get('jwt_secret');
 
-    passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
+    passport.unuse('jwt');
+    passport.use('jwt', new JwtStrategy(opts, function(jwt_payload, done) {
         if (!jwt_payload.sub) {
             return done(null, false, { message: 'JWT token is invalid because it is missing the sub claim' });
         }
