@@ -1,26 +1,33 @@
-mixin login_box
-  .panel.panel-default.panel-login(ng-controller='LoginController')
-    .panel-body.text-center
-      img(src='/static/img/logo-wide.png')
-      .alert.alert-warning(ng-if='error')
-        | {{ error }}
-      form(role='form' name='loginForm' method='post' ng-submit='login()')
-        .form-group
-          input.input-lg.form-control(type='text' name='username' ng-model='input.username'
-                                      placeholder='Username' required='' ng-disabled='working' focus-me='!working'
-                                      autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
-        .form-group
-          input.input-lg.form-control(type='password' name='password' ng-model='input.password'
-                                      placeholder='Password' required='' ng-disabled='working'
-                                      autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
-        .form-group
-          button.btn.btn-block.btn-lg.btn-primary(type='submit' ng-if='!working')
-            | Sign In
-          a.btn.btn-block.btn-lg(ng-if='working')
-            three-bounce-spinner.login-spinner
+mixin logo
+  .text-center
+    img.logo(src='/static/img/logo-wide.png')
 
-.container-fluid.login-container
-  .row
-    .col-lg-offset-4.col-lg-4.col-md-offset-3.col-md-6.col-sm-offset-2.col-sm-8
-      +login_box
+mixin login_form
+  form(role='form' name='loginForm' method='post' ng-submit='login()')
+    .alert.alert-warning.text-center(ng-if='error')
+      | {{ error }}
+    .form-group
+      input.input-lg.form-control(type='text' name='username' ng-model='input.username'
+                                  placeholder='Username' required='' ng-disabled='working' focus-me='!working'
+                                  autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
+    .form-group
+      input.input-lg.form-control(type='password' name='password' ng-model='input.password'
+                                  placeholder='Password' required='' ng-disabled='working'
+                                  autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false')
+    .form-group
+      button.btn.btn-block.btn-lg.btn-primary(type='submit' ng-if='!working')
+        | Sign In
+      a.btn.btn-block.btn-lg(ng-if='working')
+        three-bounce-spinner.login-spinner
+
+mixin login_box
+  .panel.panel-default.panel-login(ng-if='login_methods')
+    .panel-body
+      +logo
+      +login_form
+  three-bounce-spinner(ng-if='!login_methods')
+
+.login-background(ng-controller='LoginController')
+  .login-boundaries
+    +login_box
   div(ng-include="'/inline/auth/footer.html'")

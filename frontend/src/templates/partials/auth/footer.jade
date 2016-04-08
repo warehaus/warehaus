@@ -2,11 +2,12 @@ mixin divider
   span(style='opacity:0.25;')
     | &nbsp;&nbsp;|&nbsp;&nbsp;
 
-.text-center
+mixin copyright
   | &copy; 2015-{{ moment().year() }}
   a(href='https://github.com/warehaus/warehaus/graphs/contributors' target='_warehaus_gh_contributors')
     | &nbsp;Warehaus contributors
-  +divider
+
+mixin links
   a(href='http://www.warehaus.io/docs/license', target='_warehaus_license')
     | License
   +divider
@@ -15,3 +16,14 @@ mixin divider
   +divider
   a(href='https://github.com/warehaus/warehaus', target='_warehaus_gh_repo')
     | GitHub page
+
+.text-center
+  .visible-xs
+    div
+      +copyright
+    div
+      +links
+  .hidden-xs
+    +copyright
+    +divider
+    +links

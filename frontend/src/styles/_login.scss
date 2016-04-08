@@ -1,19 +1,32 @@
-.login-container {
+.login-background {
   background-color: $navbar-warehaus-bg;
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   bottom: 0;
+  text-align: center;
+
+  img.logo {
+    width: 220px;
+    height: 45px;
+    margin: $warehaus-login-box-img-margin;
+  }
+
+  .login-boundaries {
+    display: inline-block;
+    width: 100%;
+
+    @media (min-width: $screen-sm-min) {
+      width: $warehaus-login-box-width;
+      max-width: $warehaus-login-box-width;
+    }
+  }
 
   .panel-login {
-    border-radius: $warehaus-standalone-box-radius;
-    margin: $warehaus-standalone-box-padding;
-
-    img {
-      max-width: 60%;
-      margin: 2rem 0;
-    }
+    border-radius: $warehaus-login-box-radius;
+    margin: $warehaus-login-box-margin;
+    padding: $warehaus-login-box-padding;
   }
  
   .login-spinner {
