@@ -1,21 +1,3 @@
-mixin page_header
-  .page-top-nav
-    .page-top-nav-row
-      .page-top-nav-row-cell.x3
-        i.icon-chemistry
-      .page-top-nav-row-cell
-        .x12
-          a(ui-sref='^.^')
-            lab-name(id='lab_id')
-          i.fa.fa-fw.fa-angle-right
-          a(ui-sref='^')
-            object-type-title(type-id='type_obj_id')
-          i.fa.fa-fw.fa-angle-right
-          strong
-            object-name(id='obj_id')
-      .page-top-nav-row-cell.text-right
-        span
-
 mixin server_info_resources
   .panel.panel-default(ng-if='server.agent_info')
     .panel-heading
@@ -191,5 +173,5 @@ mixin content
       +server_info
 
 div(ng-controller='ServerPageController')
-  +page_header
+  .page-top-nav
   +content

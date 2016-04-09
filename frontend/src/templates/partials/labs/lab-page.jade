@@ -1,17 +1,5 @@
-mixin page_header
-  .page-top-nav
-    .page-top-nav-links
-      ul
-        li(ng-repeat='(type_obj_id, type_obj) in dbObjects.byParentId[allLabs.byId[lab_id].type_id] | orderBy:"type_obj.display_name.plural"' ui-sref-active='active')
-          a.link(ui-sref='.browse-type({typeSlug: type_obj.slug})')
-            object-type-title(type-id='type_obj.id')
-        li.padding
-        li(ng-if='curUser.is_admin' ui-sref-active='active')
-          a.link(ui-sref='.manage')
-            i.icon-settings
-
 mixin lab_empty
-  .big-message
+  .big-message(ng-if='dbObjects.byParentId[allLabs.byId[lab_id].type_id] | isEmpty')
     h3.text-center
       i.icon-clock.x6(ng-if='!curUser.is_admin')
       i.icon-ghost.x6(ng-if='curUser.is_admin')
@@ -25,11 +13,39 @@ mixin lab_empty
       button.btn.btn-lg.btn-success(type='button' ui-sref='.manage')
         | Configure This Lab
 
+mixin lab_types
+  .panel.panel-default
+    .panel-heading
+      | Hardware Types
+    ul.list-group
+      a.list-group-item(ng-repeat='(type_obj_id, type_obj) in dbObjects.byParentId[allLabs.byId[lab_id].type_id] | orderBy:"type_obj.display_name.plural"'
+                        ui-sref='.browse-type({typeSlug: type_obj.slug})')
+        object-type-title(type-id='type_obj.id')
+
+mixin lab_activity
+  .panel.panel-default
+    .panel-heading
+      | Recent Activity
+    .panel-body
+      i Coming soon
+
+mixin lab_page
+  h2
+    | Hey {{ curUser.display_name || curUser.username }}
+  .row
+    .col-md-8.col-sm-6
+      +lab_types
+    .col-md-4.col-sm-6
+      +lab_activity
+
 mixin content
   ui-view
-    .page-layout(ng-if='dbObjects.byParentId[allLabs.byId[lab_id].type_id] | isEmpty')
+    .page-layout
       .page-layout-content-no-nav
         +lab_empty
+    .page-layout(ng-if='dbObjects.byParentId[allLabs.byId[lab_id].type_id] | isNotEmpty')
+      .page-layout-content-no-nav
+        +lab_page
 
-+page_header
+.page-top-nav
 +content

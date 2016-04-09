@@ -16,22 +16,55 @@ angular.module('warehaus.labs').provider('labsView', function(viewPath) {
     };
 });
 
+angular.module('warehaus.labs').service('labIdResolver', function(allLabs) {
+    return function(labSlug) {
+        return allLabs.whenReady.then(function() {
+            if (!allLabs.bySlug[labSlug]) {
+                return undefined;
+            }
+            return allLabs.bySlug[labSlug].id;
+        });
+    };
+});
+
+angular.module('warehaus.labs').service('typeObjIdResolver', function(dbObjects) {
+    return function(labId, typeSlug) {
+        return dbObjects.whenReady.then(function() {
+            var lab = dbObjects.byId[labId];
+            if (angular.isUndefined(lab)) {
+                return undefined;
+            }
+            for (var type_obj_id in dbObjects.byParentId[lab.type_id]) {
+                var type_obj = dbObjects.byId[type_obj_id];
+                if (angular.isDefined(type_obj) && (type_obj.slug === typeSlug)) {
+                    return type_obj_id;
+                }
+            }
+            return undefined;
+        });
+    };
+});
+
+angular.module('warehaus.labs').service('objIdResolver', function(dbObjects) {
+    return function(labId, objSlug) {
+        return dbObjects.whenReady.then(function() {
+            var lab = dbObjects.byId[labId];
+            if (angular.isUndefined(lab)) {
+                return undefined;
+            }
+            for (var obj_id in dbObjects.byParentId[lab.id]) {
+                var obj = dbObjects.byId[obj_id];
+                if (angular.isDefined(obj) && (obj.slug === objSlug)) {
+                    return obj_id;
+                }
+            }
+            return undefined;
+        });
+    };
+});
+
 angular.module('warehaus.labs').provider('labsUrlRoutes', function(labsViewProvider) {
     var labsView = labsViewProvider.$get();
-
-    var typeObjIdResolver = ['$stateParams', 'dbObjects', 'labId', function($stateParams, dbObjects, labId) {
-        var lab = dbObjects.byId[labId];
-        if (angular.isUndefined(lab)) {
-            return undefined;
-        }
-        for (var type_obj_id in dbObjects.byParentId[lab.type_id]) {
-            var type_obj = dbObjects.byId[type_obj_id];
-            if (angular.isDefined(type_obj) && (type_obj.slug === $stateParams.typeSlug)) {
-                return type_obj_id;
-            }
-        }
-        return undefined;
-    }];
 
     var lab_page_children = [
         {
@@ -43,7 +76,9 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(labsViewProvi
                 typeSlug: ['$stateParams', function($stateParams) {
                     return $stateParams.typeSlug;
                 }],
-                typeObjId: typeObjIdResolver,
+                typeObjId: ['labId', 'typeSlug', 'typeObjIdResolver', function(labId, typeSlug, typeObjIdResolver) {
+                    return typeObjIdResolver(labId, typeSlug);
+                }],
                 $title: ['$filter', 'dbObjects', 'typeObjId', function($filter, dbObjects, typeObjId) {
                     return $filter('titlecase')(dbObjects.byId[typeObjId].display_name.plural);
                 }]
@@ -62,20 +97,8 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(labsViewProvi
                         objSlug: ['$stateParams', function($stateParams) {
                             return $stateParams.objSlug;
                         }],
-                        objId: ['$stateParams', 'dbObjects', 'labId', function($stateParams, dbObjects, labId) {
-                            return dbObjects.whenReady.then(function() {
-                                var lab = dbObjects.byId[labId];
-                                if (angular.isUndefined(lab)) {
-                                    return undefined;
-                                }
-                                for (var obj_id in dbObjects.byParentId[lab.id]) {
-                                    var obj = dbObjects.byId[obj_id];
-                                    if (angular.isDefined(obj) && (obj.slug === $stateParams.objSlug)) {
-                                        return obj_id;
-                                    }
-                                }
-                                return undefined;
-                            });
+                        objId: ['labId', 'objSlug', 'objIdResolver', function(labId, objSlug, objIdResolver) {
+                            return objIdResolver(labId, objSlug);
                         }],
                         $title: ['dbObjects', 'objId', function(dbObjects, objId) {
                             return dbObjects.byId[objId].display_name;
@@ -167,8 +190,8 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(labsViewProvi
                 templateUrl: labsView('index.html'),
                 controller: 'AllLabsController'
             },
-            'nav': {
-                template: '<labs-selector/>'
+            'top-navigation': {
+                template: '<labs-navigation/>'
             }
         },
         resolve: {
@@ -186,13 +209,8 @@ angular.module('warehaus.labs').provider('labsUrlRoutes', function(labsViewProvi
                     labSlug: ['$stateParams', function($stateParams) {
                         return $stateParams.labSlug;
                     }],
-                    labId: ['$stateParams', 'allLabs', function($stateParams, allLabs) {
-                        return allLabs.whenReady.then(function() {
-                            if (!allLabs.bySlug[$stateParams.labSlug]) {
-                                return undefined;
-                            }
-                            return allLabs.bySlug[$stateParams.labSlug].id;
-                        });
+                    labId: ['$stateParams', 'labIdResolver', function($stateParams, labIdResolver) {
+                        return labIdResolver($stateParams.labSlug);
                     }],
                     $title: ['allLabs', 'labId', function(allLabs, labId) {
                         return allLabs.byId[labId].display_name;
@@ -222,18 +240,45 @@ angular.module('warehaus.labs').service('selectedLab', function($log) {
     };
 });
 
-angular.module('warehaus.labs').directive('labsSelector', function(viewPath, selectedLab, createLab) {
-    var link = function(scope, elem, attrs) {
-        scope.selectedLab = selectedLab;
-        scope.createLab = createLab;
-    };
-
+angular.module('warehaus.labs').directive('labsNavigation', function(viewPath) {
     return {
         restrict: 'E',
-        link: link,
-        templateUrl: viewPath('labs/lab-selector.html'),
+        templateUrl: viewPath('labs/navigation.html'),
+        controller: 'LabsNavigationController',
         scope: true
     };
+});
+
+angular.module('warehaus.labs').controller('LabsNavigationController', function($scope, $state, selectedLab, createLab, labIdResolver, objIdResolver, typeObjIdResolver) {
+    $scope.selectedLab = selectedLab;
+    $scope.createLab = createLab;
+
+    var load_state_info = function(toParams) {
+        $scope.typeSlug = toParams.typeSlug;
+        $scope.objSlug = toParams.objSlug;
+
+        if (toParams.labSlug) {
+            labIdResolver(toParams.labSlug).then(function(labId) {
+                $scope.labId = labId;
+                if (toParams.typeSlug) {
+                    typeObjIdResolver(labId, toParams.typeSlug).then(function(typeId) {
+                        $scope.typeId = typeId;
+                    });
+                }
+                if (toParams.objSlug) {
+                    objIdResolver(labId, toParams.objSlug).then(function(objId) {
+                        $scope.objId = objId;
+                    });
+                }
+            });
+        }
+    };
+
+    load_state_info($state.params);
+
+    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+        load_state_info(toParams);
+    });
 });
 
 angular.module('warehaus.labs').controller('AllLabsController', function($scope, $log, $state, selectedLab, allLabs, createLab) {

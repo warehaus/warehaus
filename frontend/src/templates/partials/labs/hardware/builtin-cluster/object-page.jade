@@ -1,37 +1,3 @@
-mixin actions
-  .dropdown(ng-if='curUser.is_admin || (dbObjects.byId[obj_id].ownerships | isEmpty) || (dbObjects.byId[obj_id].ownerships[0].owner_id == curUser.id)')
-    button.btn.btn-default.dropdown-toggle(type='button' id='dropdown-menu-{{ obj_id }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
-      | Actions
-      i.fa.fa-fw.fa-angle-down
-    ul.dropdown-menu.pull-right(aria-labelledby='dropdown-menu-{{ obj_id }}')
-      li.text-left(ng-if='dbObjects.byId[obj_id].ownerships | isEmpty')
-        a.link(ng-click='take_ownership()')
-          | Take Ownership
-      li.text-left(ng-if='dbObjects.byId[obj_id].ownerships | isNotEmpty')
-        a.link(ng-click='release_ownership()')
-          | Release Ownership
-      li.divider
-      li.text-left
-        a.link(ng-click='delete_cluster()')
-          | Delete This
-          | &#32;
-          object-type-title(type-id='type_obj_id' sample='1')
-
-mixin page_header
-  .page-top-nav
-    .page-top-nav-row
-      .page-top-nav-row-cell.x3
-        i.icon-chemistry
-      .page-top-nav-row-cell
-        .x12
-          a(ui-sref='^')
-            lab-name(id='lab_id')
-          i.fa.fa-fw.fa-angle-right
-          strong
-            object-name(id='obj_id')
-      .page-top-nav-row-cell.text-right
-        +actions
-
 mixin servers
   .panel.panel-default
     .panel-heading
@@ -75,6 +41,12 @@ mixin navigation
       | Owners
     li
       +owners
+    li(ng-if='dbObjects.byId[obj_id].ownerships | isEmpty')
+      a.link(ng-click='take_ownership()')
+        | Take Ownership
+    li.text-left(ng-if='(dbObjects.byId[obj_id].ownerships | isNotEmpty) && ((dbObjects.byId[obj_id].ownerships[0].owner_id == curUser.id) || curUser.is_admin)')
+      a.link(ng-click='release_ownership()')
+        | Release Ownership
     li.heading
       | Downloads
     li
@@ -82,6 +54,14 @@ mixin navigation
         i.fa.fa-fw.fa-code
         | config.json
   object-attributes(obj-id='obj_id' show-heading='true')
+  ul
+    li.heading
+      | Other Actions
+    li
+      a.link(ng-click='delete_cluster()')
+        | Delete This
+        | &#32;
+        object-type-title(type-id='type_obj_id' sample='1')
 
 mixin content
   .page-layout
@@ -91,5 +71,5 @@ mixin content
       +servers
 
 div(ng-controller='ClusterPageController')
-  +page_header
+  .page-top-nav
   +content
