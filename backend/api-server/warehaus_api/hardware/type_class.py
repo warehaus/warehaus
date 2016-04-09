@@ -161,7 +161,7 @@ class TypeClass(object):
         new_attr = request.json['attr']
         if 'attrs' in typeobj:
             if any(attr['slug'] == new_attr['slug'] for attr in typeobj.attrs):
-                flask_abort(httplib.CONFLICT, 'Attribute slug {!r} already exists'.format(new_attr['slug']))
+                flask_abort(httplib.CONFLICT, "There's already an attribute with slug '{}'".format(new_attr['slug']))
             typeobj.attrs.append(new_attr)
         else:
             typeobj.attrs = [new_attr]
@@ -172,13 +172,15 @@ class TypeClass(object):
     def update_attribute(self, typeobj):
         '''Update an attribute's definition.'''
         require_admin()
-        updated_attr = request.json['attr']
+        attr_slug = request.json['slug']
+        updated_attr = request.json['updated_attr']
         if 'slug' not in updated_attr:
-            flask_abort(httplib.BAD_REQUEST, 'Attribute must have a "slug" property')
-        if 'attrs' not in typeobj or not any(attr['slug'] == updated_attr['slug'] for attr in typeobj.attrs):
-            flask_abort(httplib.CONFLICT, 'No such attribute {!r}'.format(updated_attr['slug']))
-        typeobj.attrs = [updated_attr if attr['slug'] == updated_attr['slug'] else attr
-                         for attr in typeobj.attrs]
+            flask_abort(httplib.BAD_REQUEST, 'Updated attribute must have a "slug" property')
+        if 'attrs' not in typeobj or not any(attr['slug'] == attr_slug for attr in typeobj.attrs):
+            flask_abort(httplib.NOT_FOUND, 'No such attribute {!r}'.format(updated_attr['slug']))
+        if (attr_slug != updated_attr['slug']) and any(attr['slug'] == updated_attr['slug'] for attr in typeobj.attrs):
+            flask_abort(httplib.CONFLICT, "There's already an attribute with slug '{}'".format(updated_attr['slug']))
+        typeobj.attrs = [updated_attr if attr['slug'] == attr_slug else attr for attr in typeobj.attrs]
         typeobj.save()
         return typeobj.as_dict()
 

@@ -33,7 +33,7 @@ angular.module('warehaus.labs').controller('TypeAttributesController', function(
         return '/api/v1/labs/' + lab.slug + '/~/' + path_to_type_obj + 'attrs';
     };
 
-    var edit_attribute_modal = function(http_method, attr) {
+    var edit_attribute_modal = function(attr, save_func) {
         return $uibModal.open({
             templateUrl: viewPath('labs/hardware/objects/type-attribute-modal.html'),
             controller: 'EditTypeAttributeController',
@@ -44,20 +44,23 @@ angular.module('warehaus.labs').controller('TypeAttributesController', function(
                 typeAttr: function() {
                     return angular.copy(attr);
                 },
-                httpMethod: function() {
-                    return http_method;
-                },
-                attrUrl: attrs_url
+                saveFunc: function() {
+                    return save_func;
+                }
             }
         });
     };
 
     $scope.new_attribute = function() {
-        return edit_attribute_modal($http.post);
+        return edit_attribute_modal({}, function(new_attr) {
+            return $http.post(attrs_url(), { attr: new_attr });
+        });
     };
 
     $scope.edit_attribute = function(attr) {
-        return edit_attribute_modal($http.put, attr);
+        return edit_attribute_modal(attr, function(updated_attr) {
+            return $http.put(attrs_url(), { slug: attr.slug, updated_attr: updated_attr });
+        });
     };
 
     $scope.delete_attribute = function(attr) {
@@ -83,14 +86,14 @@ angular.module('warehaus.labs').controller('TypeAttributesController', function(
     };
 });
 
-angular.module('warehaus.labs').controller('EditTypeAttributeController', function($scope, $controller, $uibModalInstance, typeObjId, typeAttr, attrUrl, httpMethod) {
+angular.module('warehaus.labs').controller('EditTypeAttributeController', function($scope, $controller, $uibModalInstance, typeObjId, typeAttr, saveFunc) {
     $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
     $scope.type_obj_id = typeObjId;
     $scope.action = angular.isDefined(typeAttr) ? 'Edit' : 'New';
     $scope.type_attr = typeAttr || {};
 
     $scope.do_work = function() {
-        return httpMethod(attrUrl, {attr: $scope.type_attr});
+        return saveFunc($scope.type_attr);
     };
 });
 
