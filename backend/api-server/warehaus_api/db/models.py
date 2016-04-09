@@ -45,7 +45,7 @@ class ModelType(type):
                 raise TypeError("Model subclasses should not provide a '{}' attribute of their own".format(forbidden))
         if 'id' in attrs:
             raise TypeError("An 'id' is automatically created in {} classes, please don't create one manually".format(name))
-        attrs['_table_name'] = name.lower()
+        attrs['_table_name'] = attrs.get('TABLE_NAME', name.lower())
         attrs['_table'] = r.table(attrs['_table_name'])
         attrs['_fields'] = {'id': Field(field_name='id')}
         for attr, obj in tuple(attrs.iteritems()):
