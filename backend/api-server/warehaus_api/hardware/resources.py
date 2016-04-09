@@ -127,8 +127,11 @@ class ObjectTreeRoot(Resource):
         "null" so labs are the only objects with no parent.
         '''
         require_user()
-        return dict(labs=list(serialize_object(lab) for lab in Object.query.filter(
-            lambda row: (row['parent_id'] == None) & (row['type_id'] != None))))
+        return dict(labs=list(serialize_object(lab) for lab in self._all_labs()))
+
+    def _all_labs(self):
+        return Object.query.filter(
+            lambda row: (row['parent_id'] == None) & (row['type_id'] != None))
 
     create_lab_parser = RequestParser()
     create_lab_parser.add_argument('slug', required=True)
@@ -140,6 +143,8 @@ class ObjectTreeRoot(Resource):
         return lab_type['id']
 
     def _create_lab(self, slug, display_name):
+        if any(lab['slug'] == slug for lab in self._all_labs()):
+            flask_abort(httplib.CONFLICT, "There's already a lab with this name")
         lab_type_id = self._create_lab_type_object(slug)
         lab = Object(
             parent_id    = None,
