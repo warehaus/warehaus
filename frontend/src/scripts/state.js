@@ -2,10 +2,11 @@
 
 angular.module('warehaus.state', []);
 
-angular.module('warehaus.state').factory('warehausState', function($rootScope, $http, $timeout) {
+angular.module('warehaus.state').factory('warehausState', function($rootScope, $http, $timeout, $state) {
     var self = {};
 
     var update_state = function(loaded, is_authenticated) {
+        self.was_loaded = self.loaded;
         self.loaded = loaded;
         self.is_authenticated = is_authenticated;
         $rootScope.$broadcast('warehaus.state.update', self);
@@ -15,9 +16,15 @@ angular.module('warehaus.state').factory('warehausState', function($rootScope, $
         switch (res.status) {
         case 200:
             update_state(true, true);
+            if (self.was_loaded) {
+                $state.go('labs');
+            }
             break;
         case 401:
             update_state(true, false);
+            if (!$state.current.preventAutomaticLogin) {
+                $state.go('auth.login');
+            }
             break;
         default:
             update_state(false, false);

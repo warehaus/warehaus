@@ -62,8 +62,9 @@ mixin head
 mixin body
   .ng-cloak(style={'opacity': '0.5'} ng-if='!warehausState.loaded')
     three-bounce-spinner
-  .ng-cloak(ng-if='warehausState.loaded && !warehausState.is_authenticated' ng-include="'/inline/auth/login.html'")
-  .ng-cloak(ng-if='warehausState.loaded && warehausState.is_authenticated' ng-include="'/inline/main-site/index.html'")
+  .ng-cloak(ng-if='warehausState.loaded')
+    div(ng-if='warehausState.is_authenticated' ng-include='"/inline/navbar.html"')
+    ui-view
 
 doctype html
 html(lang='en' ng-app='warehaus' ng-strict-di='')

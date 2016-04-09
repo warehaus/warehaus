@@ -5,7 +5,68 @@ angular.module('warehaus.auth', [
     'angular-jwt'
 ]);
 
-angular.module('warehaus.auth').factory('curUser', function($rootScope, $http, $log, warehausState, users) {
+angular.module('warehaus.auth').provider('authUrlRoutes', function(viewPath) {
+    var auth_url_routes = {
+        name: 'auth',
+        url: '/auth',
+        autoRedirectToChild: 'login',
+        preventAutomaticLogin: true,
+        views: {
+            '': {
+                template: '<ui-view/>'
+            }
+        },
+        children: [
+            {
+                name: 'login',
+                url: '/login',
+                preventAutomaticLogin: true,
+                templateUrl: viewPath('auth/login.html'),
+                controller: 'LoginController'
+            }
+        ]
+    };
+
+    return {
+        $get: function() {
+            return auth_url_routes;
+        }
+    };
+});
+
+angular.module('warehaus.admin').config(function(urlRegisterProvider, authUrlRoutesProvider) {
+    urlRegisterProvider.$get()(authUrlRoutesProvider.$get());
+});
+
+angular.module('warehaus.auth').constant('authTokenVar', 'warehausAuthToken');
+
+angular.module('warehaus.auth').service('authToken', function($log, authTokenVar, warehausState) {
+    var self = {};
+
+    self.set = function(new_token) {
+        localStorage.setItem(authTokenVar, new_token);
+        $log.info('Got new authentication token');
+        warehausState.refresh();
+    };
+
+    self.discard = function() {
+        localStorage.removeItem(authTokenVar);
+        $log.info('Discarded authentication token');
+        warehausState.refresh();
+    };
+
+    return self;
+});
+
+angular.module('warehaus.auth').config(function($httpProvider, jwtInterceptorProvider, authTokenVar) {
+    jwtInterceptorProvider.authPrefix = 'JWT ';
+    jwtInterceptorProvider.tokenGetter = function() {
+        return localStorage.getItem(authTokenVar);
+    };
+    $httpProvider.interceptors.push('jwtInterceptor');
+});
+
+angular.module('warehaus.auth').factory('curUser', function($rootScope, $http, $state, $log, authToken, users) {
     var self = {
         is_admin: undefined,
         is_authenticated: false
@@ -38,8 +99,8 @@ angular.module('warehaus.auth').factory('curUser', function($rootScope, $http, $
     };
 
     self.logout = function() {
-        localStorage.removeItem('id_token');
-        warehausState.refresh();
+        authToken.discard();
+        $state.go('auth.login');
     };
 
     var load_current_user = function() {
@@ -61,7 +122,7 @@ angular.module('warehaus.auth').factory('curUser', function($rootScope, $http, $
     return self;
 });
 
-angular.module('warehaus.auth').controller('LoginController', function($scope, $http, $log, warehausState) {
+angular.module('warehaus.auth').controller('LoginController', function($scope, $http, $log, authToken) {
     $scope.input = {};
     $scope.error = undefined;
     $scope.working = false;
@@ -76,24 +137,13 @@ angular.module('warehaus.auth').controller('LoginController', function($scope, $
         $scope.working = true;
         $scope.error = undefined;
         $http.post('/api/auth/login/local', $scope.input).then(function(res) {
-            localStorage.setItem('id_token', res.data.access_token);
-            $log.info('Successfully logged-in');
-            warehausState.refresh();
+            authToken.set(res.data.access_token);
         }, function(res) {
             $scope.working = false;
             $scope.error = res.data.message;
             $log.info('Could not log-in:', $scope.error);
         });
     };
-});
-
-angular.module('warehaus.auth').config(function($httpProvider, jwtInterceptorProvider) {
-    jwtInterceptorProvider.authPrefix = 'JWT ';
-    jwtInterceptorProvider.tokenGetter = function() {
-        return localStorage.getItem('id_token');
-    };
-
-    $httpProvider.interceptors.push('jwtInterceptor');
 });
 
 angular.module('warehaus.auth').run(function($rootScope, curUser) {
