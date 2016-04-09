@@ -1,13 +1,12 @@
 mixin navigation
   ul
+    li.heading
+      | Authentication
     li(ui-sref-active='active')
-      a(ui-sref='.local')
-        | Local Users
-    li(ui-sref-active='active')
-      a(ui-sref='.google')
+      a(ui-sref='.google-login')
         | Google Login
     li(ui-sref-active='active')
-      a(ui-sref='.ldap')
+      a(ui-sref='.ldap-login')
         | LDAP Login
 
 mixin content

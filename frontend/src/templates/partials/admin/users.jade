@@ -1,5 +1,7 @@
 mixin user_list
   ul
+    li.heading
+      | Users
     li(ng-repeat='(userId, user) in users.byUserId | orderBy:"username"' ui-sref-active='active')
       a(ui-sref='.({id: "{{ user.id }}"})')
         user-avatar(id='user.id' size='1.5rem')
@@ -10,6 +12,12 @@ mixin content
   .page-layout
     .page-layout-nav
       +user_list
+      ul
+        li.heading
+          | Actions
+        li
+          a.link(ng-click='createNewUser()')
+            | Create a New User
     .page-layout-content
       .row(ng-if='selected_user_id')
         .col-sm-6

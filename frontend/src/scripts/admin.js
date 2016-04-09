@@ -46,33 +46,22 @@ angular.module('warehaus.admin').provider('adminUrlRoutes', function(adminViewPr
                 }
             },
             {
-                name: 'auth',
-                url: '/auth',
-                templateUrl: adminView('auth.html'),
-                controller: 'AuthenticationAdminController',
-                autoRedirectToChild: 'local',
+                name: 'integrations',
+                url: '/integrations',
+                templateUrl: adminView('integrations.html'),
+                controller: function() { },
+                autoRedirectToChild: 'google-login',
                 resolve: {
                     $title: function() {
-                        return 'Authentication';
+                        return 'Integrations';
                     }
                 },
                 children: [
                     {
-                        name: 'local',
-                        url: '/local',
-                        templateUrl: adminView('auth-local.html'),
-                        controller: 'LocalAuthBackendController',
-                        resolve: {
-                            $title: function() {
-                                return 'Local';
-                            }
-                        }
-                    },
-                    {
-                        name: 'google',
-                        url: '/google',
-                        templateUrl: adminView('auth-google.html'),
-                        controller: 'GoogleAuthBackendController',
+                        name: 'google-login',
+                        url: '/google-login',
+                        templateUrl: adminView('google-login.html'),
+                        controller: 'GoogleLoginAdminController',
                         resolve: {
                             $title: function() {
                                 return 'Google';
@@ -80,10 +69,10 @@ angular.module('warehaus.admin').provider('adminUrlRoutes', function(adminViewPr
                         }
                     },
                     {
-                        name: 'ldap',
-                        url: '/ldap',
-                        templateUrl: adminView('auth-ldap.html'),
-                        controller: 'LDAPAuthBackendController',
+                        name: 'ldap-login',
+                        url: '/ldap-login',
+                        templateUrl: adminView('ldap-login.html'),
+                        controller: 'LDAPLoginAdminController',
                         resolve: {
                             $title: function() {
                                 return 'LDAP';
@@ -114,8 +103,9 @@ angular.module('warehaus.admin').controller('AdminController', function($scope, 
     });
 });
 
-angular.module('warehaus.admin').controller('UsersAdminController', function($scope, $stateParams) {
+angular.module('warehaus.admin').controller('UsersAdminController', function($scope, $stateParams, createNewUser) {
     $scope.selected_user_id = $stateParams.id;
+    $scope.createNewUser = createNewUser;
 });
 
 angular.module('warehaus.admin').controller('AuthenticationAdminController', function($scope) {
@@ -144,7 +134,7 @@ angular.module('warehaus.admin').controller('LocalAuthBackendController', functi
     $scope.createNewUser = createNewUser;
 });
 
-angular.module('warehaus.admin').controller('GoogleAuthBackendController', function($scope, $http, siteUrl) {
+angular.module('warehaus.admin').controller('GoogleLoginAdminController', function($scope, $http, siteUrl) {
     var SETTINGS_URL = '/api/auth/login/google/settings';
     $scope.working = true;
 
@@ -169,7 +159,7 @@ angular.module('warehaus.admin').controller('GoogleAuthBackendController', funct
     };
 });
 
-angular.module('warehaus.admin').controller('LDAPAuthBackendController', function($scope, $http) {
+angular.module('warehaus.admin').controller('LDAPLoginAdminController', function($scope, $http) {
     $scope.working = true;
 
     var _update_from_res = function(res) {
@@ -179,7 +169,7 @@ angular.module('warehaus.admin').controller('LDAPAuthBackendController', functio
         };
     };
 
-    $http.get('/api/v1/settings/ldap').then(_update_from_res);
+    //$http.get('/api/v1/settings/ldap').then(_update_from_res);
 
     $scope.save_settings = function() {
         $scope.working = true;
