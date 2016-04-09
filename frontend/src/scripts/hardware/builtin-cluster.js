@@ -10,7 +10,7 @@ angular.module('warehaus.hardware.cluster').provider('clusterView', function(vie
     return {
         $get: function() {
             return function(viewName) {
-                return viewPath('main-site/hardware/' + hwClusterTypeKey + '/' + viewName);
+                return viewPath('labs/hardware/' + hwClusterTypeKey + '/' + viewName);
             };
         }
     };

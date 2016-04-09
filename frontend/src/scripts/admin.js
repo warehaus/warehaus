@@ -6,7 +6,7 @@ angular.module('warehaus.admin').provider('adminView', function(viewPath) {
     return {
         $get: function() {
             return function(uri) {
-                return viewPath('main-site/views/admin/' + uri);
+                return viewPath('admin/' + uri);
             };
         }
     };

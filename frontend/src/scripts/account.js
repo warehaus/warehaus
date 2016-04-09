@@ -6,7 +6,7 @@ angular.module('warehaus.account').provider('accountView', function(viewPath) {
     return {
         $get: function() {
             return function(path) {
-                return viewPath('main-site/views/account/' + path);
+                return viewPath('account/' + path);
             };
         }
     };

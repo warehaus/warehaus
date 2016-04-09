@@ -3,7 +3,7 @@
 angular.module('warehaus.models').directive('typeAttributes', function(viewPath) {
     return {
         restrict: 'E',
-        templateUrl: viewPath('main-site/hardware/objects/type-attributes.html'),
+        templateUrl: viewPath('labs/hardware/objects/type-attributes.html'),
         controller: 'TypeAttributesController',
         scope: {
             title: '@',
@@ -35,7 +35,7 @@ angular.module('warehaus.labs').controller('TypeAttributesController', function(
 
     var edit_attribute_modal = function(http_method, attr) {
         return $uibModal.open({
-            templateUrl: viewPath('main-site/hardware/objects/type-attribute-modal.html'),
+            templateUrl: viewPath('labs/hardware/objects/type-attribute-modal.html'),
             controller: 'EditTypeAttributeController',
             resolve: {
                 typeObjId: function() {
@@ -62,7 +62,7 @@ angular.module('warehaus.labs').controller('TypeAttributesController', function(
 
     $scope.delete_attribute = function(attr) {
         return $uibModal.open({
-            templateUrl: viewPath('main-site/hardware/objects/delete-type-attribute.html'),
+            templateUrl: viewPath('labs/hardware/objects/delete-type-attribute.html'),
             controller: 'DeleteTypeAttributeController',
             resolve: {
                 typeObjId: function() {
@@ -136,7 +136,7 @@ angular.module('warehaus.models').directive('objectAttributes', function($http, 
                 return;
             }
             $uibModal.open({
-                templateUrl: viewPath('main-site/hardware/objects/edit-attribute.html'),
+                templateUrl: viewPath('labs/hardware/objects/edit-attribute.html'),
                 controller: 'EditAttributeValueController',
                 resolve: {
                     objId: function() {
@@ -164,7 +164,7 @@ angular.module('warehaus.models').directive('objectAttributes', function($http, 
 
     return {
         restrict: 'E',
-        templateUrl: viewPath('main-site/hardware/objects/object-attributes.html'),
+        templateUrl: viewPath('labs/hardware/objects/object-attributes.html'),
         replace: true,
         link: link,
         scope: {

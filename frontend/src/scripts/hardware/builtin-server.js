@@ -10,7 +10,7 @@ angular.module('warehaus.hardware.server').provider('serverView', function(viewP
     return {
         $get: function() {
             return function(viewName) {
-                return viewPath('main-site/hardware/' + hwServerTypeKey + '/' + viewName);
+                return viewPath('labs/hardware/' + hwServerTypeKey + '/' + viewName);
             };
         }
     };

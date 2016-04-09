@@ -10,7 +10,7 @@ angular.module('warehaus.labs').provider('labsView', function(viewPath) {
     return {
         $get: function() {
             return function(path) {
-                return viewPath('main-site/views/labs/' + path);
+                return viewPath('labs/' + path);
             };
         }
     };
@@ -231,7 +231,7 @@ angular.module('warehaus.labs').directive('labsSelector', function(viewPath, sel
     return {
         restrict: 'E',
         link: link,
-        templateUrl: viewPath('main-site/views/labs/lab-selector.html'),
+        templateUrl: viewPath('labs/lab-selector.html'),
         scope: true
     };
 });
@@ -271,7 +271,7 @@ angular.module('warehaus.labs').controller('AllLabsController', function($scope,
 angular.module('warehaus.labs').service('createLab', function($uibModal, viewPath, selectedLab) {
     return function() {
         $uibModal.open({
-            templateUrl: viewPath('main-site/views/labs/create-lab.html'),
+            templateUrl: viewPath('labs/create-lab.html'),
             controller: 'CreateLabController'
         }).result.then(function(new_lab) {
             // Set selectedLab and wait for the new lab to be refreshed from
@@ -328,7 +328,7 @@ angular.module('warehaus.labs').controller('LabPageController', function($scope,
 
 angular.module('warehaus.labs').controller('BrowseTypeController', function($scope, $state, dbObjects, typeObjId, allLabs, viewPath) {
     $scope.type_obj_id = typeObjId;
-    $scope.type_template_path = viewPath('main-site/hardware/' + dbObjects.byId[$scope.type_obj_id].type_key + '/index.html');
+    $scope.type_template_path = viewPath('labs/hardware/' + dbObjects.byId[$scope.type_obj_id].type_key + '/index.html');
 
     var refresh = function() {
         $scope.objects = undefined;
@@ -361,7 +361,7 @@ angular.module('warehaus.labs').controller('ObjectPageController', function($sco
     $scope.type_obj_id = typeObjId;
     $scope.obj_id = objId;
 
-    $scope.object_template_path = viewPath('main-site/hardware/' + dbObjects.byId[typeObjId].type_key + '/object-page.html');
+    $scope.object_template_path = viewPath('labs/hardware/' + dbObjects.byId[typeObjId].type_key + '/object-page.html');
 
     var reload_object = function() {
         $scope.object = dbObjects.byId[$scope.obj_id];
@@ -388,7 +388,7 @@ angular.module('warehaus.labs').controller('ObjectPageController', function($sco
 
     $scope.show_config_json = function() {
         $uibModal.open({
-            templateUrl: viewPath('main-site/hardware/show-config-json.html'),
+            templateUrl: viewPath('labs/hardware/show-config-json.html'),
             controller: 'ShowConfigJsonController',
             size: 'lg',
             resolve: {
