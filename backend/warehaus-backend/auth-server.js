@@ -185,8 +185,8 @@ var configure_local_strategy = function() {
     ));
 };
 
-app.post('/api/auth/login/local', function(req, res, next) {
-    passport.authenticate('local', function(err, user, info) {
+var make_jwt_for_authenticated_user = function(req, res, next) {
+    return function(err, user, info) {
         if (err) {
             return next(err);
         }
@@ -198,7 +198,11 @@ app.post('/api/auth/login/local', function(req, res, next) {
             notBefore: 0
         });
         return res.json({ access_token: token });
-    })(req, res, next);
+    };
+};
+
+app.post('/api/auth/login/local', function(req, res, next) {
+    passport.authenticate('local', make_jwt_for_authenticated_user(req, res, next))(req, res, next);
 });
 
 /*-------------------------------------------------------------------*/
