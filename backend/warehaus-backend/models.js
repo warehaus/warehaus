@@ -8,10 +8,12 @@ var store = new jsData.DS();
 store.registerAdapter('rethinkdb', adapter, { default: true });
 
 var User = store.defineResource('user');
+var GoogleUser = store.defineResource('user_google');
 var Settings = store.defineResource('settings');
 
 module.exports = {
     store: store,
     User: User,
+    GoogleUser: GoogleUser,
     Settings: Settings
 };

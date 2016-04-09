@@ -25,3 +25,7 @@ class User(db.Model):
         if len(docs) != 1:
             raise RuntimeError('Found more than one user with api_token={!r}'.format(api_token))
         return docs[0]
+
+class GoogleUser(db.Model):
+    TABLE_NAME = 'user_google'
+    _allow_additional_items = True

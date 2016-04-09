@@ -9,6 +9,7 @@ def make_key():
 class Settings(db.Model):
     jwt_secret    = db.Field(default=make_key)
     password_salt = db.Field(default=make_key)
+    auth          = db.Field()
 
 SETTINGS_ID = 1 # Allow only one Settings row
 
