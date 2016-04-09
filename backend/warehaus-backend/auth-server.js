@@ -232,26 +232,45 @@ var is_google_strategy_configured = function(settings) {
 };
 
 var google_callback = function(accessToken, refreshToken, profile, done) {
-    var create_google_user = function() {
+    var choose_username = function() {
+        // Try to extract the username from the Google email. If it's
+        // available, create the local user with that name. Otherwise
+        // use the Google ID
+        var possible_username = profile.emails[0].value.split('@')[0];
+        return is_username_taken(possible_username).then(is_taken => {
+            return is_taken ? profile.id : possible_username;
+        });
+    };
+
+    var create_new_local_user = function(username) {
         logger.debug(`Creating new local user for Google user ${profile.id}`);
         return User.create({
-            username: profile.id,
+            username: username,
             display_name: profile.displayName,
             email: profile.emails[0].value,
             role: ROLES.user
-        }).then(local_user => {
-            logger.debug(`Creating Google user for local user ${local_user.id}`);
-            return GoogleUser.create({
-                id: profile.id,
-                access_token: accessToken,
-                refresh_token: refreshToken,
-                profile: profile,
-                local_user_id: local_user.id
-            }).then(google_user => {
-                logger.debug(`Created Google user ${google_user.id} for local user ${local_user.id}`);
-                done(null, local_user);
-            }, done);
+        });
+    };
+
+    var create_new_google_user = function(local_user) {
+        logger.debug(`Creating Google user for local user ${local_user.id}`);
+        return GoogleUser.create({
+            id: profile.id,
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            profile: profile,
+            local_user_id: local_user.id
+        }).then(google_user => {
+            logger.debug(`Created Google user ${google_user.id} for local user ${local_user.id}`);
+            return local_user
         }, done);
+    };
+
+    var create_google_user = function() {
+        return choose_username()
+            .then(create_new_local_user, done)
+            .then(create_new_google_user, done)
+            .then(local_user => { done(null, local_user); }, done);
     };
 
     var got_google_user = function(google_user) {
