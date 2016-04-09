@@ -9,7 +9,7 @@ var db_config = function() {
     };
 };
 
-var connect_to_db = function(success_func) {
+var connect_to_db = function() {
     return r.connect(db_config()).then(db_conn => {
         module.exports.conn = db_conn;
     }).error(err => {

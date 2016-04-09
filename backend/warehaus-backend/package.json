@@ -4,7 +4,8 @@
   "license": "AGPL-3.0",
   "bin": {
     "warehaus-notify-server": "./notify-server.js",
-    "warehaus-auth-server": "./auth-server.js"
+    "warehaus-auth-server": "./auth-server.js",
+    "warehaus-monitor-servers": "./monitor-servers.js"
   },
   "dependencies": {
     "bcryptjs": "^2.3.0",
@@ -15,6 +16,7 @@
     "js-data-rethinkdb": "^2.2.0",
     "jsonwebtoken": "^5.7.0",
     "morgan": "^1.7.0",
+    "node-schedule": "^1.1.0",
     "passport": "^0.3.2",
     "passport-google-oauth20": "^1.0.0",
     "passport-jwt": "^2.0.0",
