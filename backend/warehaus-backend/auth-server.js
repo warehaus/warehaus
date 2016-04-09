@@ -310,7 +310,8 @@ app.post('/api/auth/login/google/settings', passport.authenticate('jwt'), requir
         is_enabled    : req.body.google_settings.is_enabled,
         client_id     : req.body.google_settings.client_id,
         client_secret : req.body.google_settings.client_secret,
-        redirect_uri  : req.body.google_settings.redirect_uri
+        redirect_uri  : req.body.google_settings.redirect_uri,
+        hosted_domain : req.body.google_settings.hosted_domain
     };
     return Settings.update(SETTINGS_ID, { auth: { google: google_settings } }).then(updated_settings => {
         configure_google_strategy(updated_settings);
@@ -318,7 +319,15 @@ app.post('/api/auth/login/google/settings', passport.authenticate('jwt'), requir
     }, failureResponse).catch(failureResponse);
 });
 
-app.get('/api/auth/login/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+app.get('/api/auth/login/google', function(req, res, next) {
+    read_settings().then(settings => {
+        var options = { scope: ['profile', 'email'] };
+        if (settings.auth.google.hosted_domain) {
+            options['hd'] = settings.auth.google.hosted_domain;
+        }
+        return passport.authenticate('google', options)(res, res, next);
+    }, failureResponse);
+});
 
 app.get('/api/auth/login/google/callback', function(req, res, next) {
     passport.authenticate('google', make_jwt_for_authenticated_user(req, res, next))(req, res, next);

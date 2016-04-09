@@ -154,6 +154,14 @@ mixin form_google_tokens
     label
       | Google Client Secret
     input.form-control(type='text' ng-model='google_settings.client_secret' placeholder='Google Client Secret' required='' ng-disabled='working')
+  .form-group(ng-if='google_settings.is_enabled')
+    label
+      | Hosted Domain
+      | &#32;
+      i (optional)
+    input.form-control(type='text' ng-model='google_settings.hosted_domain' placeholder='Hosted Domain' ng-disabled='working')
+    p.help-block
+      | Putting a domain here would only allow users with emails from that domain to login
 
 mixin form_buttons
   button.btn.btn-success(type='submit' ng-click='save()' ng-disabled='googleLogin.$invalid || working')
