@@ -1,6 +1,171 @@
-h4
-  | Google Login
+mixin title
+  h4
+    | Google Login
+  wh-error-box(error='error')
 
-i.fa.fa-fw.fa-wrench
-| &#32;
-| Under Construction
+mixin form_enabled
+  .checkbox
+    label
+      input(type='checkbox' ng-model='google_settings.is_enabled' ng-disabled='working')
+      | Enable Google Login
+      p.help-block
+        | This would display a
+        | &#32;
+        mild
+          | Sign-in with Google
+        | &#32;
+        | button on the login page
+
+mixin redirect_uri_warning
+  .alert.alert-warning(ng-if='google_settings.is_enabled && google_settings.redirect_uri && (google_settings.redirect_uri != detected_redirect_uri)')
+    strong
+      i.fa.fa-warning
+      | &#32;
+      | Redirect URI Incorrect
+    p
+      | It looks like the redirect URI you're surfing from is different from a previous URI
+      | you used when first configuring Google login.
+    p
+      | it's recommended that you login to Google's developers console and update the redirect
+      | URI for Warehaus.
+    p
+      | &nbsp;
+    ul
+      li
+        | Saved redirect URI (old):
+        | &#32;
+        samp {{ google_settings.redirect_uri }}
+      li
+        | Required redirect URI (new):
+        | &#32;
+        samp {{ detected_redirect_uri }}
+    p
+      | &nbsp;
+    p
+      | Once you've updated your settings with Google, click
+      | &#32;
+      mild
+        | Save Settings
+      | &#32;
+      | below to update the settings in Warehaus
+
+mixin how_to_get_tokens
+  .alert.alert-info(ng-if='google_settings.is_enabled')
+    a.link(ng-click='show_token_instructions = !show_token_instructions')
+      strong
+        i.fa.fa-fw.fa-caret-right(ng-if='!show_token_instructions')
+        i.fa.fa-fw.fa-caret-down(ng-if='show_token_instructions')
+        | Getting Google Client ID and Secret
+    ol(ng-if='show_token_instructions')
+      li
+        | Go to
+        | &#32;
+        a(href='https://console.developers.google.com/' target='_google_console')
+          | https://console.developers.google.com/
+          i.fa.fa-fw.fa-external-link
+      li
+        | Create a new project
+        ol
+          li
+            | If you don't have project yet you'll be asked to create a project
+          li
+            | If you already have one or more projects, choose
+            | &#32;
+            mild
+              | Create a project...
+            | &#32;
+            | from the menu on the top-right
+          li
+            | Fill-in the name:
+            | &#32;
+            mild
+              samp Warehaus
+      li
+        | Enable Google+ API
+        ol
+          li
+            | Select the project and nagivate to the
+            | &#32;
+            mild Credentials
+            | &#32;
+            | section on the left
+          li
+            | Search for
+            | &#32;
+            mild
+              samp Google+ API
+          li
+            | Select and enable the
+            | &#32;
+            mild
+              samp Google+ API
+      li
+        | Create client ID and secret
+        ol
+          li
+            | Select the project and nagivate to the
+            | &#32;
+            mild Credentials
+            | &#32;
+            | section on the left
+          li
+            | Click
+            | &#32;
+            mild Create credentials
+            | &#32;
+            | and choose
+            | &#32;
+            mild OAuth client ID
+          li
+            | Fill in the form:
+            ol
+              li
+                | Application type:
+                | &#32;
+                mild
+                  samp Web application
+              li
+                | Name:
+                | &#32;
+                mild
+                  samp Warehaus
+              li
+                | Authorized redirect URIs:
+                | &#32;
+                mild
+                  samp {{ detected_redirect_uri }}
+      li
+        | Copy
+        | &#32;
+        mild Client ID
+        | &#32;
+        | and
+        | &#32;
+        mild Client secret
+        | &#32;
+        | to the boxes below
+
+mixin form_google_tokens
+  .form-group(ng-if='google_settings.is_enabled')
+    label
+      | Google Client ID
+    input.form-control(type='text' ng-model='google_settings.client_id' placeholder='Google Client ID' required='' ng-disabled='working')
+  .form-group(ng-if='google_settings.is_enabled')
+    label
+      | Google Client Secret
+    input.form-control(type='text' ng-model='google_settings.client_secret' placeholder='Google Client Secret' required='' ng-disabled='working')
+
+mixin form_buttons
+  button.btn.btn-success(type='submit' ng-click='save()' ng-disabled='googleLogin.$invalid || working')
+    | Save Settings
+
+mixin form
+  form(name='googleLogin' ng-submit='save()')
+    +form_enabled
+    +redirect_uri_warning
+    +how_to_get_tokens
+    +form_google_tokens
+    +form_buttons
+
++title
++form

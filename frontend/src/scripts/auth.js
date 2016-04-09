@@ -23,6 +23,13 @@ angular.module('warehaus.auth').provider('authUrlRoutes', function(viewPath) {
                 preventAutomaticLogin: true,
                 templateUrl: viewPath('auth/login.html'),
                 controller: 'LoginController'
+            },
+            {
+                name: 'google-callback',
+                url: '/google-callback?code',
+                preventAutomaticLogin: true,
+                template: '<three-bounce-spinner/>',
+                controller: 'GoogleLoginCallbackController'
             }
         ]
     };
@@ -127,6 +134,10 @@ angular.module('warehaus.auth').controller('LoginController', function($scope, $
     $scope.error = undefined;
     $scope.working = false;
 
+    $http.get('/api/auth/login').then(function(res) {
+        $scope.login_methods = res.data;
+    });
+
     $scope.$on('warehaus.state.update', function(new_state) {
         if (!new_state.is_authenticated) {
             $scope.working = false;
@@ -144,6 +155,14 @@ angular.module('warehaus.auth').controller('LoginController', function($scope, $
             $log.info('Could not log-in:', $scope.error);
         });
     };
+});
+
+angular.module('warehaus.auth').controller('GoogleLoginCallbackController', function($scope, $http, $stateParams, $log, authToken) {
+    $http.get('/api/auth/login/google/callback', { params: { code: $stateParams.code } }).then(function(res) {
+        authToken.set(res.data.access_token);
+    }, function(res) {
+        $log.error('Could not log-in:', res);
+    });
 });
 
 angular.module('warehaus.auth').run(function($rootScope, curUser) {

@@ -144,7 +144,29 @@ angular.module('warehaus.admin').controller('LocalAuthBackendController', functi
     $scope.createNewUser = createNewUser;
 });
 
-angular.module('warehaus.admin').controller('GoogleAuthBackendController', function($scope) {
+angular.module('warehaus.admin').controller('GoogleAuthBackendController', function($scope, $http, siteUrl) {
+    var SETTINGS_URL = '/api/auth/login/google/settings';
+    $scope.working = true;
+
+    var update = function(res) {
+        $scope.google_settings = res.data.google_settings;
+        $scope.working = false;
+    };
+
+    var update_error = function(res) {
+        $scope.working = false;
+        $scope.error = res.data.message || res.data;
+    };
+
+    $http.get(SETTINGS_URL).then(update, update_error);
+
+    $scope.detected_redirect_uri = siteUrl('/ui/auth/google-callback');
+
+    $scope.save = function() {
+        $scope.working = true;
+        $scope.google_settings.redirect_uri = $scope.detected_redirect_uri;
+        return $http.post(SETTINGS_URL, { google_settings: $scope.google_settings }).then(update, update_error);
+    };
 });
 
 angular.module('warehaus.admin').controller('LDAPAuthBackendController', function($scope, $http) {

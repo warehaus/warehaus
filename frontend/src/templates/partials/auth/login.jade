@@ -20,10 +20,20 @@ mixin login_form
       a.btn.btn-block.btn-lg(ng-if='working')
         three-bounce-spinner.login-spinner
 
+mixin google_button
+  .form-group(ng-if='login_methods.google')
+    a.btn.btn-lg.btn-block.btn-social.btn-google(href='/api/auth/login/google')
+      span.fa.fa-google
+      | Sign in with Google
+  .horizontal-separator(ng-if='login_methods.google')
+    .line
+    .text &nbsp;OR&nbsp;
+
 mixin login_box
   .panel.panel-default.panel-login(ng-if='login_methods')
     .panel-body
       +logo
+      +google_button
       +login_form
   three-bounce-spinner(ng-if='!login_methods')
 

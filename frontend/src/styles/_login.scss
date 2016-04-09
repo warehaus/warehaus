@@ -27,6 +27,31 @@
     border-radius: $warehaus-login-box-radius;
     margin: $warehaus-login-box-margin;
     padding: $warehaus-login-box-padding;
+
+    .horizontal-separator {
+      margin: $warehaus-login-box-margin;
+      text-align: center;
+
+      .line {
+        border-bottom: 1px solid #bbb;
+        margin: 0 0 (-$line-height-computed / 2) 0;
+      }
+
+      .text {
+        display: inline;
+        color: #bbb;
+        background-color: white;
+      }
+    }
+
+    a.btn.btn-lg.btn-block.btn-social.btn-google {
+      color: white;
+
+      &:hover,
+      &:active {
+        color: white;
+      }
+    }
   }
  
   .login-spinner {
