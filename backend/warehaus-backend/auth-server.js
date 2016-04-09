@@ -32,6 +32,7 @@ var read_settings = function() {
 var set_secrets = function(settings) {
     app.set('jwt_secret', settings.jwt_secret);
     app.set('password_salt', settings.password_salt);
+    return settings;
 };
 
 var read_secret_keys = function() {
@@ -119,9 +120,9 @@ passport.deserializeUser(function(id, done) {
     });
 });
 
-var configure_passport = function() {
-    configure_local_strategy();
-    configure_jwt_strategy();
+var configure_passport = function(settings) {
+    configure_local_strategy(settings);
+    configure_jwt_strategy(settings);
 };
 
 app.use(passport.initialize());
@@ -519,7 +520,7 @@ var error_handler = function(err) {
 };
 
 read_secret_keys()
-    .then(ensure_admin_user)
     .then(configure_passport)
+    .then(ensure_admin_user)
     .then(start_server)
     .catch(error_handler);
