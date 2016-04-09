@@ -127,6 +127,20 @@ var configure_passport = function(settings) {
 
 app.use(passport.initialize());
 
+var failureResponse = function(err) {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: err });
+};
+
+var require_admin = function(req, res, next) {
+    if (!req.user) {
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Unauthorized' });
+    } else if (req.user.role !== ROLES.admin) {
+        res.status(HttpStatus.FORBIDDEN).json({ message: 'This API is for admins only' });
+    } else {
+        return next();
+    }
+};
+
 /*-------------------------------------------------------------------*/
 /* Local strategy                                                    */
 /*-------------------------------------------------------------------*/
@@ -205,11 +219,7 @@ var configure_jwt_strategy = function() {
             return done(null, false, { message: 'JWT token is invalid because it is missing the sub claim' });
         }
         User.find(jwt_payload.sub).then(function(user) {
-            if (user) {
-                done(null, user);
-            } else {
-                done(null, false);
-            }
+            done(null, user);
         }).catch(err => {
             logger.error('Received a valid JWT but could not find the user in the database:');
             logger.error(err);
@@ -276,16 +286,6 @@ app.param('userId', function(req, res, next, userId) {
     }).catch(next);
 });
 
-var require_admin = function(req, res, next) {
-    if (!req.user) {
-        res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Unauthorized' });
-    } else if (req.user.role !== ROLES.admin) {
-        res.status(HttpStatus.FORBIDDEN).json({ message: 'This API is for admins only' });
-    } else {
-        return next();
-    }
-};
-
 var is_username_taken = function(username) {
     if (!username) {
         return Promise.resolve(true);
@@ -337,9 +337,7 @@ app.post('/api/auth/users', passport.authenticate('jwt'), require_admin, functio
         User.create(new_user).then(function(created_user) {
             res.status(HttpStatus.CREATED).json(cleaned_user(created_user));
         });
-    }).catch(err => {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: err });
-    });
+    }).catch(failureResponse);
 });
 
 // Get single user
