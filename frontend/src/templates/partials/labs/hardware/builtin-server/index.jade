@@ -10,12 +10,15 @@ mixin no_servers
       | &#32;
       | Yet
     p.text-center.x12(ng-if='!curUser.is_admin')
-      | Please wait you administrator is adding new 
-      object-type-name(lab-id='lab_id' type-key='type_key')
+      | Please wait while your administrator is adding new
+      | &#32;
+      object-type-name(type-id='type_obj_id')
     p.text-center.x12(ng-if='curUser.is_admin')
-      | You need to install Warehaus's agent on your 
-      object-type-name(lab-id='lab_id' type-key='type_key')
-      |  to see them here
+      | You need to install the Warehaus agent on your
+      | &#32;
+      object-type-name(type-id='type_obj_id')
+      | &#32;
+      | to see them here
     p.text-center.x2(ng-if='curUser.is_admin')
       button.btn.btn-lg.btn-success(type='button' ui-sref='.({tab: "adding-servers"})')
         | Start Adding
