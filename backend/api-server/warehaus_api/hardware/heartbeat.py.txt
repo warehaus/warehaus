@@ -100,8 +100,8 @@ def collect_hw_mem_info():
 
 def collect_hw_fs_info():
     df = run('df --block-size=1 /')
-    lines = df.splitlines()[1:]
-    fields = df.splitlines()[1].split()
+    data = '\n'.join(df.splitlines()[1:])
+    fields = data.split()
     return {'/': dict(
         dev             = fields[0],
         total_bytes     = int(fields[1]),
