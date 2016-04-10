@@ -28,7 +28,7 @@ angular.module('warehaus.auth').provider('authUrlRoutes', function(viewPath) {
                 name: 'google-callback',
                 url: '/google-callback?code',
                 preventAutomaticLogin: true,
-                template: '<three-bounce-spinner/>',
+                templateUrl: viewPath('auth/google-login-callback.html'),
                 controller: 'GoogleLoginCallbackController'
             }
         ]
@@ -161,7 +161,8 @@ angular.module('warehaus.auth').controller('GoogleLoginCallbackController', func
     $http.get('/api/auth/login/google/callback', { params: { code: $stateParams.code } }).then(function(res) {
         authToken.set(res.data.access_token);
     }, function(res) {
-        $log.error('Could not log-in:', res);
+        $scope.error = res.data.message || res.data;
+        $log.error('Could not log-in:', $scope.error);
     });
 });
 

@@ -1,0 +1,15 @@
+three-bounce-spinner(ng-if='!error')
+
+.container.ng-cloak(ng-if='error')
+  h1
+    | &nbsp;
+  .row
+    .col-sm-offset-1.col-sm-10.col-md-offset-3.col-md-6
+      .alert.alert-danger
+        p
+          strong
+            i.fa.fa-warning
+            | &#32;
+            | There was a problem logging in
+        p(ng-bind-html='error')
+
