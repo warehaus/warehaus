@@ -119,7 +119,7 @@ def _is_aws_instance():
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((AWS_METADATA_IP, 80))
-    except socket.timeout:
+    except (socket.timeout, socket.error):
         return False
     return True
 
