@@ -13,7 +13,7 @@ var dirs = {
     index:     'src/templates/index.jade',
     partials:  'src/templates/partials',
     resources: 'resources',
-    dest:      '../dist/static'
+    dest:      '../static'
 };
 
 gulp.task('scripts', function() {

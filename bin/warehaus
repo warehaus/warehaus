@@ -40,7 +40,7 @@ if os.system('/usr/local/bin/warehaus-init-db') != 0:
     print >>sys.stderr, 'error: Could not initialize database'
     raise SystemExit(1)
 
-supervisor_cmdline = ['/usr/bin/supervisord', '-c', '/opt/warehaus/dist/etc/supervisor-warehaus.conf']
+supervisor_cmdline = ['/usr/bin/supervisord', '-c', '/opt/warehaus/etc/supervisor-warehaus.conf']
 os.execve(supervisor_cmdline[0], supervisor_cmdline, os.environ)
 
 SUPERVISOR_EXEC_ERROR = 'error: Could not run ' + ' '.join(supervisor_cmdline)

@@ -1,5 +1,4 @@
 SRC_DIR := $(shell pwd)
-DIST_DIR := $(shell pwd)/dist
 DOCKER_IMAGE := warehaus/warehaus
 EGG_BUILDER_IMAGE := python:2.7
 NODE_BUILDER_IMAGE := node:5.4
@@ -7,7 +6,7 @@ FRONTEND_BUILDER_IMAGE := warehaus/frontend-builder:v7
 DOCKER_RUN_CMDLINE := docker run -ti --rm
 LOCAL_LOGS := ~/.warehaus/logs
 
-build: build-backend build-frontend
+build: build-frontend
 
 build-frontend:
 	@echo "Building frontend..."
@@ -15,23 +14,6 @@ build-frontend:
 		--volume $(SRC_DIR):/build \
 		$(FRONTEND_BUILDER_IMAGE) \
 		/bin/sh -c "cd /build/frontend && bower install --allow-root && gulp build"
-
-clean-pkg:
-	@echo "Deleting packages in $(DIST_DIR)/pkg:"
-	@rm -rvf $(DIST_DIR)/pkg/*
-	@echo
-
-build-backend: clean-pkg
-	@echo "Building API egg..."
-	@$(DOCKER_RUN_CMDLINE) \
-		--volume $(SRC_DIR):/opt \
-		$(EGG_BUILDER_IMAGE) \
-		/bin/sh -c "cd /opt/backend/api-server && python setup.py bdist_egg --exclude-source-files --dist-dir /opt/dist/pkg"
-	@echo "Building notify server..."
-	@$(DOCKER_RUN_CMDLINE) \
-		--volume $(SRC_DIR):/opt \
-		$(NODE_BUILDER_IMAGE) \
-		/bin/sh -c "cd /opt/dist/pkg && npm pack /opt/backend/warehaus-backend"
 
 docker-image: build
 	@echo "Building Docker image..."
@@ -42,7 +24,7 @@ run: docker-image
 	@mkdir -p $(LOCAL_LOGS)
 	@$(DOCKER_RUN_CMDLINE) \
 		--link rethinkdb \
-		--port 80:80 \
+		--publish 80:80 \
 		--volume $(LOCAL_LOGS):/var/log/warehaus \
 		$(DOCKER_IMAGE):latest
 
