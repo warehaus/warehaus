@@ -9,11 +9,12 @@ from ..auth.roles import roles
 from ..auth.models import User
 from ..db.times import now
 from .models import Object
+from .models import create_object
 from .models import get_user_attributes
+from .models import ensure_unique_slug
 from .type_class import TypeClass
 from .type_class import type_action
 from .type_class import object_action
-from .type_class import ensure_unique_slug
 from .labs import get_lab_from_type_object
 from .servers import server_config
 
@@ -34,8 +35,8 @@ class Cluster(TypeClass):
         lab = get_lab_from_type_object(typeobj)
         args = self.create_cluster_parser.parse_args()
         slug = slugify(args['display_name'])
-        ensure_unique_slug(lab.id, slug)
-        cluster = Object(slug=slug, display_name=args['display_name'], parent_id=lab.id, type_id=typeobj.id)
+        ensure_unique_slug(lab, slug)
+        cluster = create_object(slug=slug, display_name=args['display_name'], parent=lab, type=typeobj)
         cluster.save()
         return cluster.as_dict(), httplib.CREATED
 
@@ -79,7 +80,7 @@ class Cluster(TypeClass):
     @object_action('GET', 'config.json')
     def cluster_config(self, cluster):
         require_user()
-        lab = Object.query.get(cluster.parent_id)
+        lab = cluster.get_parent_object()
         servers = tuple(server_config(server) for server in Object.query.filter(
             dict(parent_id=lab.id, cluster_id=cluster.id)))
         ownerships = tuple(dict(owner_id    = ownership['owner_id'],

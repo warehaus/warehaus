@@ -27,7 +27,7 @@ angular.module('warehaus.labs').controller('TypeAttributesController', function(
     var attrs_url = function() {
         var lab = dbObjects.byId[$scope.labId];
         var path_to_type_obj = '';
-        for (var cur = dbObjects.byId[$scope.typeObjId]; cur.slug && cur.parent_id; cur = dbObjects.byId[cur.parent_id]) {
+        for (var cur = dbObjects.byId[$scope.typeObjId]; cur.slug && dbObjects.hasParent(cur); cur = dbObjects.byId[cur.parent_id]) {
             path_to_type_obj = cur.slug + '/' + path_to_type_obj;
         }
         return '/api/v1/labs/' + lab.slug + '/~/' + path_to_type_obj + 'attrs';
@@ -115,7 +115,7 @@ angular.module('warehaus.models').directive('objectAttributes', function($http, 
             var path = 'attrs';
             while (angular.isDefined(obj)) {
                 path = obj.slug + '/' + path;
-                obj = dbObjects.byId[obj.parent_id];
+                obj = dbObjects.hasParent(obj) ? dbObjects.byId[obj.parent_id] : undefined;
             }
             return '/api/v1/labs/' + path;
         };
@@ -134,7 +134,6 @@ angular.module('warehaus.models').directive('objectAttributes', function($http, 
 
         scope.edit_text_attribute = function(attr_slug) {
             var obj = dbObjects.byId[scope.objId];
-            var lab = dbObjects.byId[obj.parent_id];
             if (angular.isUndefined(obj)) {
                 return;
             }

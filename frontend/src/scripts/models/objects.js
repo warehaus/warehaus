@@ -8,6 +8,14 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
         whenReady: ready_promise.promise
     };
 
+    self.hasType = function(obj) {
+        return obj.type_id != 'NO_TYPE';
+    };
+
+    self.hasParent = function(obj) {
+        return obj.parent_id != 'ROOT';
+    };
+
     var reset_self = function() {
         self.byId = {};
         self.byParentId = {};
@@ -17,7 +25,7 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
     var insert_one = function(obj) {
         $log.debug('Inserting object:', obj);
         self.byId[obj.id] = obj;
-        if (obj.parent_id) {
+        if (self.hasParent(obj)) {
             if (angular.isUndefined(self.byParentId[obj.parent_id])) {
                 self.byParentId[obj.parent_id] = {};
             }
@@ -55,12 +63,12 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
         if (angular.isUndefined(obj)) {
             return;
         }
-        if (obj.parent_id) {
+        if (self.hasParent(obj)) {
             if (angular.isDefined(self.byParentId[obj.parent_id])) {
                 delete self.byParentId[obj.parent_id][obj.id];
             }
         }
-        if (obj.type_id) {
+        if (self.hasType(obj)) {
             if (angular.isDefined(self.byTypeId[obj.type_id])) {
                 delete self.byTypeId[obj.type_id][obj.id];
             }

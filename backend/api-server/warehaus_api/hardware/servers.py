@@ -15,6 +15,7 @@ from .type_class import TypeClass
 from .type_class import type_action
 from .type_class import object_action
 from .models import Object
+from .models import create_object
 from .models import get_user_attributes
 from .models import get_object_children
 from .models import get_object_child
@@ -82,9 +83,9 @@ class Server(TypeClass):
 
     def _get_server(self, typeobj, slug):
         lab = get_lab_from_type_object(typeobj)
-        servers = tuple(Object.query.filter(dict(slug=slug, parent_id=lab.id)))
+        servers = tuple(lab.get_children_with_slug(slug))
         if len(servers) == 0:
-            server = Object(slug=slug, parent_id=lab.id, type_id=typeobj.id)
+            server = create_object(slug=slug, parent=lab, type=typeobj)
             return server
         if len(servers) == 1:
             server = servers[0]
@@ -114,13 +115,13 @@ class Server(TypeClass):
         exists, the current object is updated. If a subobject exists but
         not found in `last_update` it's removed from the `server`.
         '''
-        existing = {subobj.slug: subobj for subobj in Object.query.filter(dict(parent_id=server.id, type_id=subtype.id))}
+        existing = {subobj.slug: subobj for subobj in server.get_children_with_subtype(subtype)}
         for slug, expected_fields in last_update.iteritems():
             if slug in existing:
                 subobj = existing[slug]
                 subobj.update(**expected_fields)
             else:
-                subobj = Object(parent_id=server.id, type_id=subtype.id, slug=slug)
+                subobj = create_object(parent=server, type=subtype, slug=slug)
                 subobj.update(**expected_fields)
             provider_info = get_provider_info_func(subobj)
             if 'id' in subobj:

@@ -89,9 +89,11 @@ angular.module('warehaus.hardware.cluster').factory('clustersToServers', functio
     refresh();
 
     var call_if_typeclass = function(obj, type_key, callback) {
-        var type_obj = dbObjects.byId[obj.type_id];
-        if (obj && type_obj && (type_obj.type_key === type_key)) {
-            return callback(obj);
+        if (dbObjects.hasType(obj)) {
+            var type_obj = dbObjects.byId[obj.type_id];
+            if (obj && type_obj && (type_obj.type_key === type_key)) {
+                return callback(obj);
+            }
         }
     };
 

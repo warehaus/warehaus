@@ -15,7 +15,7 @@ angular.module('warehaus.models').factory('allLabs', function($http, $rootScope,
     };
 
     var is_lab = function(obj) {
-        return obj && (obj.parent_id === null) && (obj.type_id !== null);
+        return obj && !dbObjects.hasParent(obj) && dbObjects.hasType(obj);
     };
 
     var add_lab = function(lab) {

@@ -6,8 +6,10 @@ from flask import abort as flask_abort
 from ..auth.roles import require_user
 from ..auth.roles import require_admin
 from .models import Object
+from .models import create_object
 from .models import get_objects_of_type
 from .models import get_object_children
+from .models import ensure_unique_slug
 
 logger = getLogger(__name__)
 
@@ -42,13 +44,6 @@ def get_object_action(func):
 def get_type_action(func):
     return getattr(func, TYPE_ACTION_ATTR, None)
 
-def ensure_unique_slug(parent_id, slug):
-    '''Makes sure the `slug` is unique as a child of `parent_obj`. If
-    `slug` is not unique, we abort with `httplib.CONFLICT`.
-    '''
-    if any(Object.query.filter(dict(parent_id=parent_id, slug=slug))):
-        flask_abort(httplib.CONFLICT, 'Slug "{}" already in use in "{}"'.format(slug, parent_id))
-
 class TypeClass(object):
     TYPE_VENDOR = None
     TYPE_NAME = None
@@ -63,12 +58,12 @@ class TypeClass(object):
     def display_name(cls):
         return cls.type_key()
 
-    def create_type_object(self, parent_id, slug, display_name=None):
+    def create_type_object(self, parent, slug, display_name=None):
         display_name = display_name if display_name is not None else self.display_name()
-        ensure_unique_slug(parent_id, slug)
-        type_object = Object(
-            type_id      = None, # Type objects have no type
-            parent_id    = parent_id,
+        ensure_unique_slug(parent, slug)
+        type_object = create_object(
+            type         = None, # Type objects have no type
+            parent       = parent,
             slug         = slug,
             type_key     = self.type_key(),
             display_name = display_name,
@@ -109,7 +104,7 @@ class TypeClass(object):
     def ensure_subtypes(self, type_object):
         '''Creates type-class instances as defined in `sub_type_classes`.'''
         for slug, typeclass in self.subtypes().iteritems():
-            typeclass.create_type_object(parent_id=type_object.id, slug=slug)
+            typeclass.create_type_object(parent=type_object, slug=slug)
 
     #----------------------------------------------------------------#
     # Actions supported on all objects and type-objects              #

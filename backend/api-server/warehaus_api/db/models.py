@@ -84,7 +84,7 @@ class Model(object):
 
     def save(self, force_insert=False):
         if not force_insert and ('id' in self._data):
-            result = self._table.update(self._data).run(db.conn)
+            result = self._table.get(self._data['id']).update(self._data).run(db.conn)
             if (result['replaced'] + result['unchanged']) != 1:
                 raise RethinkDBError('Expected 1 replacement or unchanged, instead: {!r}'.format(result))
         else:

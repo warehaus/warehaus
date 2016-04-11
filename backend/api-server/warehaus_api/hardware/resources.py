@@ -8,8 +8,11 @@ from flask_restful.reqparse import RequestParser
 from ..auth.roles import require_user
 from ..auth.roles import require_admin
 from .models import Object
+from .models import create_object
+from .models import get_object_by_id
 from .models import get_type_object
 from .models import get_object_child
+from .models import get_object_children
 from .type_class import get_object_action
 from .type_class import get_type_action
 from .all_type_classes import all_type_classes
@@ -20,12 +23,6 @@ logger = getLogger(__name__)
 #----------------------------------------------------------#
 # Object lookup                                            #
 #----------------------------------------------------------#
-
-def get_object_by_id(obj_id):
-    obj = Object.query.get(obj_id)
-    if obj is None:
-        flask_abort(httplib.NOT_FOUND, 'Could not find object with id={!r}'.format(obj_id))
-    return obj
 
 def _object_path_parts(obj_path):
     '''Splits the object path `obj_path` into path and action.
@@ -41,11 +38,11 @@ def _object_path_parts(obj_path):
     >>> _object_path_parts('')
     Traceback (most recent call last):
     ...
-    werkzeug.exceptions.NotFound: 404: Not Found
+    NotFound: 404: Not Found
     >>> _object_path_parts('a')
     Traceback (most recent call last):
     ...
-    werkzeug.exceptions.NotFound: 404: Not Found
+    NotFound: 404: Not Found
     '''
     path_parts = obj_path.split('/')
     if len(path_parts) <= 1:
@@ -130,8 +127,7 @@ class ObjectTreeRoot(Resource):
         return dict(labs=list(serialize_object(lab) for lab in self._all_labs()))
 
     def _all_labs(self):
-        return Object.query.filter(
-            lambda row: (row['parent_id'] == None) & (row['type_id'] != None))
+        return (obj for obj in get_object_children(None) if obj.has_type())
 
     create_lab_parser = RequestParser()
     create_lab_parser.add_argument('slug', required=True)
@@ -139,16 +135,16 @@ class ObjectTreeRoot(Resource):
 
     def _create_lab_type_object(self, slug):
         unique_lab_type_slug = str(uuid4())
-        lab_type = Lab().create_type_object(parent_id=None, slug=unique_lab_type_slug)
-        return lab_type['id']
+        lab_type = Lab().create_type_object(parent=None, slug=unique_lab_type_slug)
+        return lab_type
 
     def _create_lab(self, slug, display_name):
         if any(lab['slug'] == slug for lab in self._all_labs()):
             flask_abort(httplib.CONFLICT, "There's already a lab with this name")
-        lab_type_id = self._create_lab_type_object(slug)
-        lab = Object(
-            parent_id    = None,
-            type_id      = lab_type_id,
+        lab_type_obj = self._create_lab_type_object(slug)
+        lab = create_object(
+            parent       = None,
+            type         = lab_type_obj,
             slug         = slug,
             display_name = display_name,
         )
@@ -190,15 +186,15 @@ class ObjectTreeNode(Resource):
         return self._find_and_invoke_from_type_class(type_class, get_type_action, type_obj, action_name)
 
     def invoke_object_action(self, obj, action_name):
-        type_obj = get_object_by_id(obj.type_id)
+        type_obj = obj.get_type_object()
         type_class = self._find_type_class(type_obj.type_key)
         return self._find_and_invoke_from_type_class(type_class, get_object_action, obj, action_name)
 
     def invoke_action(self, path):
         obj, action_name = get_object_by_path(path)
-        if obj['type_id'] is None:
-            return self.invoke_type_action(obj, action_name)
-        return self.invoke_object_action(obj, action_name)
+        if obj.has_type():
+            return self.invoke_object_action(obj, action_name)
+        return self.invoke_type_action(obj, action_name)
 
     get    = invoke_action
     post   = invoke_action
