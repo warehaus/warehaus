@@ -1,9 +1,8 @@
+import os
 import time
 import requests
 from urlparse import urljoin
-from subprocess import Popen
-from .proc_utils import terminated
-from .proc_utils import deleted_tempfile
+from subprocess import Popen, PIPE
 from .warehaus_test_base import WarehausApiTestBase
 
 class ServerTests(WarehausApiTestBase):
@@ -16,15 +15,23 @@ class ServerTests(WarehausApiTestBase):
                                                        name_singular='Server', name_plural='Servers')
             servers_before = self.api_server.get(urljoin(server_type_path, 'objects'))
             self.assertEqual(len(servers_before['objects']), 0)
-            agent_response = requests.get(urljoin(self.api_server.app_url(server_type_path), 'agent.py'))
-            agent_response.raise_for_status()
-            requests.get(urljoin(self.api_server.app_url(server_type_path), 'heartbeat.py')).raise_for_status()
-            with deleted_tempfile(agent_response.text) as agent_file:
-                with terminated(Popen(['/usr/bin/python', '-'], stdin=agent_file)):
-                    for _ in range(10):
-                        servers_after = self.api_server.get(urljoin(server_type_path, 'objects'))
-                        if len(servers_after['objects']) > 0:
-                            break
-                        time.sleep(0.1)
-                    else:
-                        self.fail('Timed out waiting for server to be created')
+            agent_code = self.get_agent_code(server_type_path)
+            self.run_agent(agent_code)
+            servers_after = self.api_server.get(urljoin(server_type_path, 'objects'))
+            self.assertEqual(len(servers_after['objects']), 1)
+
+    def get_agent_code(self, server_type_path):
+        agent_response = requests.get(urljoin(self.api_server.app_url(server_type_path), 'agent.py'))
+        agent_response.raise_for_status()
+        heartbeat_response = requests.get(urljoin(self.api_server.app_url(server_type_path), 'heartbeat.py'))
+        heartbeat_response.raise_for_status()
+        return agent_response.text
+
+    def run_agent(self, agent_code):
+        env = dict(os.environ)
+        env['WAREHAUS_AGENT_LOGGING'] = 'STDOUT'
+        agent_proc = Popen(['/usr/bin/python', '-', 'once'], stdin=PIPE, stdout=PIPE, stderr=PIPE, env=env)
+        stdout, stderr = agent_proc.communicate(agent_code)
+        agent_exit_code = agent_proc.wait()
+        if agent_exit_code != 0:
+            self.fail('Agent crashed\n\nstdout: {}\n\nstderr: {}'.format(stdout, stderr))

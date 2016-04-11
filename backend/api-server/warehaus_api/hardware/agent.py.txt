@@ -70,17 +70,20 @@ def agent_main():
 # SysV commands                                                      #
 #--------------------------------------------------------------------#
 
-def log_to_syslog():
+def start_logging():
     root = logging.getLogger()
     root.setLevel(logging.DEBUG)
-    ch = logging.handlers.SysLogHandler(address='/dev/log')
+    if os.environ.get('WAREHAUS_AGENT_LOGGING', None) == 'STDOUT':
+        ch = logging.StreamHandler(sys.stdout)
+    else:
+        ch = logging.handlers.SysLogHandler(address='/dev/log')
     ch.setLevel(logging.DEBUG)
     formatter = logging.Formatter('[%(asctime)s] %(levelname)5s: %(message)s')
     ch.setFormatter(formatter)
     root.addHandler(ch)
 
 def usage():
-    print >>sys.stderr, 'error: Usage: {0} [start|stop|status]'.format(sys.argv[0])
+    print >>sys.stderr, 'error: Usage: {0} [start|stop|status|once]'.format(sys.argv[0])
     raise SystemExit(1)
 
 def get_agent_pid():
@@ -117,7 +120,7 @@ def stop_agent():
         raise SystemExit(1)
 
 def main():
-    log_to_syslog()
+    start_logging()
     if (len(sys.argv) != 2):
         usage()
     if sys.argv[1] == 'start':
@@ -132,6 +135,10 @@ def main():
             print >>sys.stderr, 'status: Warehaus agent is RUNNING'
         else:
             print >>sys.stderr, 'status: Warehaus agent is NOT RUNNING'
+    elif sys.argv[1] == 'once':
+        run_once()
+    else:
+        usage()
 
 if __name__ == '__main__':
     try:
