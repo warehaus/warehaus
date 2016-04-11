@@ -99,7 +99,7 @@ class Server(TypeClass):
         pass
 
     def _get_net_provider_info(self, agent_info, net_if):
-        if agent_info['provider_info']['provider'] == 'aws':
+        if agent_info.get('provider_info', {}).get('provider', None) == 'aws':
             info = agent_info['provider_info'].get('network', {}).get('interfaces', {}).get('macs', {}).get(net_if['mac'], None)
             if info is not None:
                 info['provider'] = 'aws'
