@@ -1,5 +1,5 @@
 mixin current_lab_name
-  strong
+  mild
     lab-name(id='selectedLab.lab_id')
 
 mixin current_lab_link
@@ -49,15 +49,15 @@ span(ng-if='"labs.lab-page.manage" | includedByState')
 span(ng-if='"labs.lab-page.browse-type" | isState')
   +current_lab_link
   +angle
-  strong
+  mild
     object-type-title(type-id='typeId')
 
 span(ng-if='"labs.lab-page.browse-type.object-page" | isState')
   +current_lab_link
   +angle
   a.link(ui-sref='labs.lab-page.browse-type({labSlug: dbObjects.byId[selectedLab.lab_id].slug, typeSlug: typeSlug})')
-    strong
+    mild
       object-type-title(type-id='typeId')
   +angle
-  strong
+  mild
     object-name(id='objId')
