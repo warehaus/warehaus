@@ -105,8 +105,18 @@ def is_agent_running():
     return is_process_running(agent_pid)
 
 def start_agent():
-    if os.fork() == 0:
-        agent_main()
+    child_pid = os.fork()
+    if child_pid > 0:
+        os._exit(0)
+    os.setsid()
+    for fd in os.listdir('/proc/self/fd'):
+        try:
+            os.close(int(fd))
+        except (ValueError, OSError):
+            pass
+    if os.fork() > 0:
+        os._exit(0)
+    agent_main()
 
 def stop_agent():
     agent_pid = get_agent_pid()
