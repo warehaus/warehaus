@@ -93,13 +93,16 @@ def get_agent_pid():
         logger.debug('Skipping PID file: {0}'.format(error))
         return None
 
+def is_process_running(pid):
+    return os.path.exists('/proc/{0}'.format(pid))
+
 def is_agent_running():
     if not os.path.exists(PID_FILE):
         return False
     agent_pid = get_agent_pid()
     if agent_pid is None:
         return False
-    return os.path.exists('/proc/{0}'.format(agent_pid))
+    return is_process_running(agent_pid)
 
 def start_agent():
     if os.fork() == 0:
@@ -107,7 +110,7 @@ def start_agent():
 
 def stop_agent():
     agent_pid = get_agent_pid()
-    if agent_pid is None:
+    if agent_pid is None or not is_process_running(agent_pid):
         print >>sys.stderr, 'error: Warehaus agent is NOT running'
     else:
         print >>sys.stderr, 'Stopping Warehaus agent...'
