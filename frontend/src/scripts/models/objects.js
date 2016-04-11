@@ -23,7 +23,7 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
     };
 
     var insert_one = function(obj) {
-        $log.debug('Inserting object:', obj);
+        //$log.debug('Inserting object:', obj);
         self.byId[obj.id] = obj;
         if (self.hasParent(obj)) {
             if (angular.isUndefined(self.byParentId[obj.parent_id])) {
@@ -50,7 +50,7 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
     };
 
     var object_changed = function(notification) {
-        $log.debug('Fetching changed object:', notification.id);
+        //$log.debug('Fetching changed object:', notification.id);
         return $http.get('/api/v1/hardware/objects/' + notification.id).then(function(res) {
             insert_one(res.data);
             $rootScope.$broadcast('warehaus.models.object_changed', notification.id);
@@ -58,7 +58,7 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
     };
 
     var object_deleted = function(notification) {
-        $log.debug('Discarding deleted object:', notification.id);
+        //$log.debug('Discarding deleted object:', notification.id);
         var obj = self.byId[notification.id];
         if (angular.isUndefined(obj)) {
             return;

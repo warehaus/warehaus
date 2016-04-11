@@ -44,7 +44,7 @@ mixin server_list
   +no_servers
   .panel.panel-default(ng-if='objects | isNotEmpty')
     ul.list-group
-      a.list-group-item(ng-repeat='server in objects | orderBy:"display_name"'
+      a.list-group-item(ng-repeat='server in objects | orderObjectBy:"display_name"'
                         ui-sref='.object-page({objSlug: "{{ server.slug }}"})')
         +server_row
 
@@ -108,6 +108,8 @@ mixin side_menu
         | All
         | &#32;
         object-type-title(type-id='type_obj_id')
+        span.pull-right.badge
+          | {{ objects | count }}
     li
       span
         i.fa.fa-tag

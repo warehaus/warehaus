@@ -9,6 +9,7 @@ angular.module('warehaus.ui_helpers', [
     'angular.filter',
     'angular-spinkit',
     'ngSanitize',
+    'ngOrderObjectBy',
     'slugifier',
     'ngNumeraljs',
     'ngPassword'
@@ -146,5 +147,21 @@ angular.module('warehaus.ui_helpers').directive('whErrorBox', function() {
         restrict: 'E',
         template: '<div class="alert alert-danger" ng-if="error"><strong><i class="fa fa-warning"> </i> Oh no</strong><p>{{ error }}</p></div>',
         scope: true
+    };
+});
+
+angular.module('warehaus.ui_helpers').filter('count', function() {
+    return function(o) {
+        if (o === undefined || o === null) {
+            return 0;
+        }
+
+        if (Array.isArray(o)) {
+            return o.length;
+        }
+
+        if (typeof o === 'object') {
+            return Object.getOwnPropertyNames(o).length;
+        }
     };
 });

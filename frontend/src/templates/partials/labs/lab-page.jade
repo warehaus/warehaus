@@ -21,6 +21,10 @@ mixin lab_types
       a.list-group-item(ng-repeat='(type_obj_id, type_obj) in dbObjects.byParentId[allLabs.byId[lab_id].type_id] | orderBy:"type_obj.display_name.plural"'
                         ui-sref='.browse-type({typeSlug: type_obj.slug})')
         object-type-title(type-id='type_obj.id')
+        .pull-right
+          span.badge
+            | {{ dbObjects.byTypeId[type_obj_id] | count }}
+          i.fa.fa-fw.fa-angle-right
 
 mixin lab_activity
   .panel.panel-default

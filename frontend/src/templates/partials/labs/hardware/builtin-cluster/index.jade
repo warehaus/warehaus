@@ -41,7 +41,7 @@ mixin cluster_row
 mixin cluster_list
   .panel.panel-default
     ul.list-group
-      a.link.list-group-item(ng-repeat='cluster in objects | orderBy:"display_name"'
+      a.link.list-group-item(ng-repeat='cluster in objects | orderObjectBy:"display_name"'
                              ui-sref='.object-page({objSlug: "{{ cluster.slug }}"})')
         +cluster_row
 
