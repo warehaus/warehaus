@@ -399,6 +399,19 @@ angular.module('warehaus.labs').controller('BrowseTypeController', function($sco
 
 });
 
+angular.module('warehaus.labs').controller('CreateObjectController', function($scope, $controller, $uibModalInstance, $http, dbObjects, labId, typeObjId) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
+
+    $scope.lab_id = labId;
+    $scope.type_obj_id = typeObjId;
+    $scope.object = {};
+
+    $scope.do_work = function() {
+        var type_obj_url = '/api/v1/labs/' + dbObjects.byId[$scope.lab_id].slug + '/~/' + dbObjects.byId[$scope.type_obj_id].slug + '/';
+        return $http.post(type_obj_url, $scope.object);
+    };
+});
+
 angular.module('warehaus.labs').controller('ObjectPageController', function($scope, $http, $state, $uibModal, dbObjects, selectedLab, labId, typeObjId, objId, viewPath) {
     selectedLab.set(labId); // Required when we land directly in an object's page
 

@@ -33,6 +33,7 @@ from .servers import PciDevice
 from .servers import NetworkInterface
 from .servers import Disk
 from .clusters import Cluster
+from .generic_object import GenericObject
 
 all_type_classes.register_type(Lab())
 all_type_classes.register_type(Server())
@@ -40,3 +41,4 @@ all_type_classes.register_type(PciDevice())
 all_type_classes.register_type(NetworkInterface())
 all_type_classes.register_type(Disk())
 all_type_classes.register_type(Cluster())
+all_type_classes.register_type(GenericObject())

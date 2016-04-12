@@ -171,7 +171,9 @@ angular.module('warehaus.models').directive('objectAttributes', function($http, 
         link: link,
         scope: {
             objId: '=',
-            showHeading: '='
+            showHeading: '=',
+            listClass: '@',
+            listItemClass: '@'
         }
     };
 });

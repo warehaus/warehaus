@@ -50,10 +50,11 @@ mixin select_attr
         i.fa.fa-fw.fa-trash-o
         | Clear Value
 
-ul
+ul(class='{{ listClass }}')
   li.heading(ng-if='showHeading && (dbObjects.byId[dbObjects.byId[objId].type_id].attrs | isNotEmpty)')
     | Attributes
   li(ng-repeat='attr in dbObjects.byId[dbObjects.byId[objId].type_id].attrs'
+     class='{{ listItemClass }}'
      ng-switch='attr.type')
     span(ng-switch-when='bool-toggle')
       +bool_attr

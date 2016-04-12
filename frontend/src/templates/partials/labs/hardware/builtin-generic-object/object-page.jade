@@ -1,0 +1,15 @@
+.page-top-nav
+.page-layout
+  .page-layout-nav
+    ul
+      li.heading
+        | Downloads
+      li
+        a(prevent-default target='_{{ obj_id }}_config.json' href='/api/v1/labs/{{ allLabs.byId[lab_id].slug }}/{{ dbObjects.byId[obj_id].slug }}/config.json' ng-click='show_config_json()')
+          i.fa.fa-fw.fa-code
+          | config.json
+  .page-layout-content
+    .panel.panel-default
+      .panel-heading
+        | {{ dbObjects.byId[obj_id].display_name }}
+      object-attributes(obj-id='obj_id' show-heading='false' list-class='list-group' list-item-class='list-group-item')

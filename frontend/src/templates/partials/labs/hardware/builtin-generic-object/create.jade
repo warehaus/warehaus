@@ -1,15 +1,19 @@
-form(role='form' name='newCluster' ng-submit='save()')
+form(role='form' name='newGenericObject' ng-submit='save()')
   .modal-header
     button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
       span(aria-hidden="true") &times;
     h4.modal-title
-      | Create Cluster
+      | Create
+      | &#32;
+      object-type-title(type-id='type_obj_id' sample='1')
 
   .modal-body
     .form-group
       label.control-label
-        | Cluster Name
-      input.form-control(type='text' placeholder='Cluster Display Name' ng-model='object.display_name' required='' focus-me='true' ng-disabled='working')
+        object-type-title(type-id='type_obj_id' sample='1')
+        | &#32;
+        | Name
+      input.form-control(type='text' placeholder='Name' ng-model='object.display_name' required='' focus-me='true' ng-disabled='working')
       slug(from='object.display_name' to='object.slug')
       input(type='hidden' ng-model='object.slug' required='')
     p(style={color: '#aaa'})
@@ -17,7 +21,7 @@ form(role='form' name='newCluster' ng-submit='save()')
       span(ng-if='!object.slug')
         | Please start typing...
       span(ng-if='object.slug')
-        | This cluster's API name will be:&nbsp;
+        | The API name will be:&nbsp;
         samp
           | {{ object.slug }}
     wh-error-box(error='error')
@@ -25,5 +29,7 @@ form(role='form' name='newCluster' ng-submit='save()')
   .modal-footer
     button.btn.btn-default(type='button' ng-click='cancel()')
       | Cancel
-    button.btn.btn-success(type='submit' ng-click='save()' ng-disabled='newCluster.$invalid || working')
-      | Create Cluster
+    button.btn.btn-success(type='submit' ng-click='save()' ng-disabled='newGenericObject.$invalid || working')
+      | Create
+      | &#32;
+      object-type-title(type-id='type_obj_id' sample='1')

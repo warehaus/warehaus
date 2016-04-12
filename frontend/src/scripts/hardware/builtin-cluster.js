@@ -126,7 +126,7 @@ angular.module('warehaus.hardware.cluster').controller('ClusterListController', 
     $scope.create_cluster = function() {
         $uibModal.open({
             templateUrl: clusterView('create.html'),
-            controller: 'CreateClusterController',
+            controller: 'CreateObjectController',
             resolve: {
                 labId: function() {
                     return $scope.lab_id;
@@ -136,19 +136,6 @@ angular.module('warehaus.hardware.cluster').controller('ClusterListController', 
                 }
             }
         });
-    };
-});
-
-angular.module('warehaus.hardware.cluster').controller('CreateClusterController', function($scope, $controller, $uibModalInstance, $http, dbObjects, labId, typeObjId) {
-    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
-
-    $scope.lab_id = labId;
-    $scope.type_obj_id = typeObjId;
-    $scope.cluster = {};
-
-    $scope.do_work = function() {
-        var type_obj_url = '/api/v1/labs/' + dbObjects.byId[$scope.lab_id].slug + '/~/' + dbObjects.byId[$scope.type_obj_id].slug + '/';
-        return $http.post(type_obj_url, $scope.cluster);
     };
 });
 
