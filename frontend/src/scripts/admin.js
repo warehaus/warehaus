@@ -24,7 +24,6 @@ angular.module('warehaus.admin').provider('adminUrlRoutes', function(adminViewPr
                 controller: 'AdminController'
             },
             'top-navigation': {
-                template: '<a ui-sref="labs"><i class="fa fa-angle-left"> </i> Back</a>'
             }
         },
         autoRedirectToChild: 'users',

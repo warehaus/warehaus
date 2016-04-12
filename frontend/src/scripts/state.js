@@ -17,7 +17,7 @@ angular.module('warehaus.state').factory('warehausState', function($rootScope, $
         case 200:
             update_state(true, true);
             if (self.was_loaded) {
-                $state.go('labs');
+                $state.go('home');
             }
             break;
         case 401:

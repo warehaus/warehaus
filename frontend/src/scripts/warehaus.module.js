@@ -7,6 +7,7 @@ angular.module('warehaus', [
     'warehaus.models',
     'warehaus.users',
     'warehaus.auth',
+    'warehaus.home',
     'warehaus.labs',
     'warehaus.account',
     'warehaus.admin'

@@ -65,6 +65,7 @@ mixin body
     three-bounce-spinner
   .ng-cloak(ng-if='warehausState.loaded')
     div(ng-if='warehausState.is_authenticated' ng-include='"/inline/navbar.html"')
+    div(ui-view='top-navigation')
     ui-view
 
 doctype html

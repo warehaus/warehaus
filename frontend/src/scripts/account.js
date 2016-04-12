@@ -24,7 +24,6 @@ angular.module('warehaus.account').provider('accountUrlPaths', function(accountV
                 controller: 'AccountController'
             },
             'top-navigation': {
-                template: '<a ui-sref="labs"><i class="fa fa-angle-left"> </i> Back</a>'
             }
         },
         resolve: {

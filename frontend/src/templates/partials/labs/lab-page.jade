@@ -34,8 +34,6 @@ mixin lab_activity
       i Coming soon
 
 mixin lab_page
-  h2
-    | Hey {{ curUser.display_name || curUser.username }}
   .row
     .col-md-8.col-sm-6
       +lab_types
@@ -51,5 +49,4 @@ mixin content
       .page-layout-content-no-nav
         +lab_page
 
-.page-top-nav
 +content

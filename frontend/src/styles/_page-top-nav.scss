@@ -66,3 +66,15 @@
     }
   }
 }
+
+.page-top-nav-ribbon {
+  @include container-fixed;
+  background-color: $warehaus-bg-color;
+  border-width: 0 0 $warehaus-page-top-nav-border-size 0;
+  border-style: solid;
+  border-color: $warehaus-page-top-nav-border-color;
+  margin: 0 0 (4 * $warehaus-page-top-nav-spacing) floor($font-size-base / 5);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1rem;
+}

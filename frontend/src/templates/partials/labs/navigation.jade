@@ -35,29 +35,35 @@ mixin labs_selector
         a.link(ng-click='createLab()')
           | Create a New Lab
 
-span(ng-if='"labs.lab-page" | isState')
-  span(ng-if='allLabs.ready && (allLabs.all.length == 1) && !curUser.is_admin')
-    +current_lab_name
-  span(ng-if='allLabs.ready && ((allLabs.all.length > 1) || (curUser.is_admin && (allLabs.all.length == 1)))')
-    +labs_selector
+mixin content
+  span(ng-if='"labs.lab-page" | isState')
+    span(ng-if='allLabs.ready && (allLabs.all.length == 1) && !curUser.is_admin')
+      +current_lab_name
+    span(ng-if='allLabs.ready && ((allLabs.all.length > 1) || (curUser.is_admin && (allLabs.all.length == 1)))')
+      +labs_selector
 
-span(ng-if='"labs.lab-page.manage" | includedByState')
-  +current_lab_link
-  +angle
-  | Manage
+  span(ng-if='"labs.lab-page.manage" | includedByState')
+    +current_lab_link
+    +angle
+    | Manage
 
-span(ng-if='"labs.lab-page.browse-type" | isState')
-  +current_lab_link
-  +angle
-  mild
-    object-type-title(type-id='typeId')
-
-span(ng-if='"labs.lab-page.browse-type.object-page" | isState')
-  +current_lab_link
-  +angle
-  a.link(ui-sref='labs.lab-page.browse-type({labSlug: dbObjects.byId[selectedLab.lab_id].slug, typeSlug: typeSlug})')
+  span(ng-if='"labs.lab-page.browse-type" | isState')
+    +current_lab_link
+    +angle
     mild
       object-type-title(type-id='typeId')
-  +angle
-  mild
-    object-name(id='objId')
+
+  span(ng-if='"labs.lab-page.browse-type.object-page" | isState')
+    +current_lab_link
+    +angle
+    a.link(ui-sref='labs.lab-page.browse-type({labSlug: dbObjects.byId[selectedLab.lab_id].slug, typeSlug: typeSlug})')
+      mild
+        object-type-title(type-id='typeId')
+    +angle
+    mild
+      object-name(id='objId')
+
+.page-top-nav
+.page-top-nav-ribbon(ng-if='"labs.lab-page" | includedByState')
+  .container
+    +content

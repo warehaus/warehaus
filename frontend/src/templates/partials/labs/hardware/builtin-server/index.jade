@@ -110,12 +110,6 @@ mixin side_menu
         object-type-title(type-id='type_obj_id')
         span.pull-right.badge
           | {{ objects | count }}
-    li
-      span
-        i.fa.fa-tag
-        i
-          | &#32;
-          | Coming soon: Tags
     li.heading(ng-if='curUser.is_admin')
       | Admin Stuff
     li(ng-if='curUser.is_admin' ui-sref-active='active')

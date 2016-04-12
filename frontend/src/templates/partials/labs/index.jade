@@ -16,13 +16,11 @@ mixin no_labs
     p.text-center.x12(ng-if='!curUser.is_admin')
       | Your administrator is now creating your first lab, it will show up as soon as it's ready
 
-.page-top-nav(ng-if='!allLabs.ready')
 .page-layout(ng-if='!allLabs.ready')
   .page-layout-content-no-nav(style={'opacity': '0.5'})
     .text-center
       three-bounce-spinner
 
-.page-top-nav(ng-if='allLabs.ready && (allLabs.all.length == 0)')
 .page-layout(ng-if='allLabs.ready && (allLabs.all.length == 0)')
   .page-layout-content-no-nav
     +no_labs

@@ -8,7 +8,7 @@
     li {
       white-space: nowrap;
       margin: 0;
-      padding: 0;
+      padding: 0 0 0 $warehaus-nav-link-active-border-size;
 
       &.heading {
         display: block;
@@ -22,9 +22,15 @@
       }
 
       &.active {
-        @include gradient-vertical($warehaus-page-layout-nav-active-color,
-                                   lighten($warehaus-page-layout-nav-active-color, 2%));
-        border-radius: $nav-pills-border-radius;
+        border-width: 0 0 0 $warehaus-nav-link-active-border-size;
+        border-style: solid;
+        border-color: $warehaus-nav-link-active-border-color;
+        font-weight: $warehaus-font-weight-mild;
+        color: #333;
+
+        > a {
+          margin: 0 0 0 (-$warehaus-nav-link-active-border-size);
+        }
       }
 
       a {
@@ -40,6 +46,7 @@
       }
 
       > a, > span {
+        color: gray;
         display: block;
         padding: $warehaus-page-layout-nav-section-items $warehaus-page-layout-nav-spacing-horizontal;
       }

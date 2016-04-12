@@ -48,14 +48,17 @@ $warehaus-login-box-radius:                 (0.75 * $font-size-base);
 $warehaus-login-box-img-margin:             (1.5 * $font-size-base) 0 (3 * $font-size-base) 0;
 $warehaus-login-box-width:                  450px;
 
-$navbar-warehaus-color:                     #333;
+$warehaus-nav-link-active-border-color:     orange;
+$warehaus-nav-link-active-border-size:      3px;
+
+$navbar-warehaus-color:                     #777;
 $navbar-warehaus-bg:                        $warehaus-nav-color;
 $navbar-warehaus-border:                    $warehaus-nav-color;
-$navbar-warehaus-link-color:                #777;
-$navbar-warehaus-link-hover-color:          #333;
+$navbar-warehaus-link-hover-color:          $navbar-warehaus-color;
 $navbar-warehaus-link-hover-bg:             transparent;
-$navbar-warehaus-link-active-color:         #555;
 $navbar-warehaus-link-active-bg:            transparent;
+$navbar-warehaus-link-active-border-color:  $warehaus-nav-link-active-border-color;
+$navbar-warehaus-link-active-border-size:   $warehaus-nav-link-active-border-size;
 $navbar-warehaus-link-disabled-color:       #ccc;
 $navbar-warehaus-link-disabled-bg:          transparent;
 $navbar-warehaus-brand-size:                28px;
