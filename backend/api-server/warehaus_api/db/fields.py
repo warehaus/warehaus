@@ -7,8 +7,6 @@ logger = getLogger(__name__)
 
 __all__ = [
     'Field',
-    'Index',
-    'IndexWith',
 ]
 
 class Requirement(object):
@@ -34,42 +32,6 @@ class Requirement(object):
 
     def before_app_start(self, table):
         pass
-
-class Index(Requirement):
-    def __init__(self, multi=False):
-        super(Index, self).__init__()
-        self.multi = multi
-
-    def _create_index(self, table):
-        logger.debug('Creating index {!r} on {!r}'.format(self.field_name, table))
-        table.index_create(self.field_name, multi=self.multi).run(db.conn)
-
-    def _wait_for_index(self, table):
-        table.index_wait(self.field_name).run(db.conn)
-
-    def post_table_create(self, table):
-        try:
-            self._create_index(table)
-        except ReqlOpFailedError as error:
-            logger.debug('While creating index: {}'.format(error))
-
-    def before_app_start(self, table):
-        logger.debug('Waiting for index {!r} on {!r}'.format(self.field_name, table))
-        self._wait_for_index(table)
-
-class IndexWith(Index):
-    def __init__(self, name, other_fields):
-        super(IndexWith, self).__init__()
-        self.name = name
-        self.other_fields = other_fields
-
-    def _create_index(self, table):
-        logger.debug('Creating index {!r} on {!r}'.format(self.name, table))
-        index_fields = [r.row[self.field_name]] + list(r.row[other_field] for other_field in self.other_fields)
-        table.index_create(self.name, index_fields).run(db.conn)
-
-    def _wait_for_index(self, table):
-        table.index_wait(self.name).run(db.conn)
 
 class _NO_DEFAULT(object):
     pass

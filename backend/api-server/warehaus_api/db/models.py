@@ -138,30 +138,3 @@ class Model(object):
 
     def as_dict(self):
         return deepcopy(self._data)
-
-def _create_db():
-    db_name = db.db or current_app.config['RETHINKDB_DB']
-    try:
-        logger.debug('Creating database: {}'.format(db_name))
-        r.db_create(db_name).run(db.conn)
-    except ReqlRuntimeError as error:
-        logger.debug('While running db_create: {}'.format(error))
-
-def _create_table(model):
-    for field in model._fields.itervalues():
-        field.pre_table_create()
-    try:
-        logger.debug('Creating table: {}'.format(model._table_name))
-        r.table_create(model._table_name).run(db.conn)
-    except ReqlOpFailedError as error:
-        logger.debug('While running table_create: {}'.format(error))
-    for field in model._fields.itervalues():
-        field.post_table_create(model._table)
-
-def ensure_models():
-    _create_db()
-    for model in Model.__subclasses__():
-        _create_table(model)
-    for model in Model.__subclasses__():
-        for field in model._fields.itervalues():
-            field.before_app_start(model._table)

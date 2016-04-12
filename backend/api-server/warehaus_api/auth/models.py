@@ -1,12 +1,12 @@
 from .. import db
 
 class User(db.Model):
-    username        = db.Field(db.Index())
+    username        = db.Field()
     role            = db.Field()
     display_name    = db.Field()
     email           = db.Field()
     hashed_password = db.Field()
-    api_tokens      = db.Field(db.Index(multi=True), default=lambda: [])
+    api_tokens      = db.Field(default=lambda: [])
 
     @classmethod
     def get_by_username(cls, username):
@@ -25,7 +25,3 @@ class User(db.Model):
         if len(docs) != 1:
             raise RuntimeError('Found more than one user with api_token={!r}'.format(api_token))
         return docs[0]
-
-class GoogleUser(db.Model):
-    TABLE_NAME = 'user_google'
-    _allow_additional_items = True

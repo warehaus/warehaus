@@ -3,11 +3,14 @@ import sys
 import json
 import httplib
 from datetime import datetime
+from flask import Flask
 from flask import jsonify
 from flask import make_response
 from flask_restful import Api
 from .logs import log_to_console
-from .base_app import create_base_app
+from .db import init_db
+from .settings import database_config
+from .settings import full_config
 from .settings.models import get_settings
 from .auth import init_auth
 from .hardware.resources import RawObjects
@@ -42,14 +45,16 @@ def app_routes(app):
     api.add_resource(ObjectTreeRoot, '/api/v1/labs',             methods=['GET', 'POST'])
     api.add_resource(ObjectTreeNode, '/api/v1/labs/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 
-def create_app(**config):
-    app = create_base_app()
-    app.config.update(**config)
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(database_config())
     with app.app_context():
+        init_db(app)
+        app.config.from_object(full_config())
         init_auth(app)
         app_routes(app)
     return app
 
-def create_app_with_console_logging(**config):
+def create_app_with_console_logging():
     log_to_console()
-    return create_app(**config)
+    return create_app()

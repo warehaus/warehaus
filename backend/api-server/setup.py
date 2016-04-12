@@ -38,7 +38,6 @@ setup(
 
     entry_points = {
         'console_scripts': [
-            'warehaus-init-db=warehaus_api.init_db:main',
             'warehaus-api-server=warehaus_api.api_server:main',
         ],
     },
