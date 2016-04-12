@@ -1,6 +1,6 @@
 $warehaus-font-weight-min:           200;
 $warehaus-font-weight-thin:          300;
-$warehaus-font-weight-normal:        normal;
+$warehaus-font-weight-normal:        400;
 $warehaus-font-weight-mild:          500;
 $warehaus-font-weight-strong:        600;
 $warehaus-bg-color:                  white;
@@ -40,7 +40,7 @@ $navbar-margin-bottom:    0;
 // Warehaus variables
 //------------------
 
-$lato-font-path:                           '/static/bower_components/lato-font/fonts';
+$lato-font-path:                            "/static/bower_components/lato-font/fonts";
 
 $warehaus-login-box-margin:                 (2 * $font-size-base) ($font-size-base);
 $warehaus-login-box-padding:                ($font-size-base) ($font-size-base);
