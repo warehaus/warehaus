@@ -9,6 +9,7 @@ from urlparse import urljoin
 from subprocess import Popen
 from multiprocessing import Process
 from contextlib import closing
+from commands import getstatusoutput
 
 logger = getLogger(__name__)
 
@@ -86,6 +87,11 @@ class RestfulTestBase(unittest.TestCase):
     def create_app(self):
         raise NotImplementedError()
 
+    def _init_db(self):
+        status, output = getstatusoutput('/usr/local/bin/warehaus-init-db')
+        if status != 0:
+            raise RuntimeError(output)
+
     def _init_auth_server(self):
         self._auth_server_proc = None
         self._auth_port = self._free_port()
@@ -121,6 +127,7 @@ class RestfulTestBase(unittest.TestCase):
             self._app_proc = None
 
     def setUp(self):
+        self._init_db()
         self.addCleanup(self._teardown_api_server)
         self._init_api_server()
         self.addCleanup(self._teardown_auth_server)
