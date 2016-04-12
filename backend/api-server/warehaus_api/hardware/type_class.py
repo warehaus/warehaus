@@ -47,6 +47,7 @@ def get_type_action(func):
 class TypeClass(object):
     TYPE_VENDOR = None
     TYPE_NAME = None
+    USER_CONTROLLABLE = False
 
     @classmethod
     def type_key(cls):
@@ -57,6 +58,10 @@ class TypeClass(object):
     @classmethod
     def display_name(cls):
         return cls.type_key()
+
+    @classmethod
+    def description(cls):
+        return ''
 
     def create_type_object(self, parent, slug, display_name=None):
         display_name = display_name if display_name is not None else self.display_name()

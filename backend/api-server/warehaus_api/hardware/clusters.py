@@ -21,10 +21,18 @@ from .servers import server_config
 class Cluster(TypeClass):
     TYPE_VENDOR = 'builtin'
     TYPE_NAME = 'cluster'
+    USER_CONTROLLABLE = True
 
     @classmethod
     def display_name(cls):
         return 'Cluster'
+
+    @classmethod
+    def description(cls):
+        return ('A cluster can gather multiple servers together. ' +
+                'This is useful to change ownership in bulk and ' +
+                'get the configuration of all servers in the ' +
+                'cluster with one API call.')
 
     create_cluster_parser = RequestParser()
     create_cluster_parser.add_argument('display_name', required=True)

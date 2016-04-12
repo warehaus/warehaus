@@ -57,10 +57,17 @@ class Disk(TypeClass):
 class Server(TypeClass):
     TYPE_VENDOR = 'builtin'
     TYPE_NAME = 'server'
+    USER_CONTROLLABLE = True
 
     @classmethod
     def display_name(cls):
         return 'Server'
+
+    @classmethod
+    def description(cls):
+        return ('A physical or virtual machine that will be monitored with an agent. ' +
+                'The agent in installed on the machine as a service and reports back ' +
+                'the status of the machine to Warehaus.')
 
     def subtypes(self):
         return {typeclass.SLUG: typeclass() for typeclass in (PciDevice, NetworkInterface, Disk)}

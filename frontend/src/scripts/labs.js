@@ -486,7 +486,7 @@ angular.module('warehaus.labs').controller('NewHardwareTypeController', function
         $scope.working = true;
         $scope.error = undefined;
         allLabs.create_type_object($scope.lab_id, $scope.new_type).then(function(res) {
-            $state.go('^.hardware-type', {typeObjId: res.data.id});
+            $state.go('^');
         }, function(res) {
             $scope.working = false;
             $scope.error = res.data.message || res.data;

@@ -97,8 +97,10 @@ class TypeClasses(Resource):
     def get(self):
         require_user()
         return dict(types=[dict(
-            type_key     = type_class.type_key(),
-            display_name = type_class.display_name(),
+            type_key          = type_class.type_key(),
+            display_name      = type_class.display_name(),
+            description       = type_class.description(),
+            user_controllable = type_class.USER_CONTROLLABLE,
         ) for type_class in all_type_classes])
 
 class RawObjects(Resource):

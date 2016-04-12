@@ -31,7 +31,7 @@ mixin type_information
             | {{ dbObjects.byId[type_obj_id].display_name.plural }}
 
 mixin delete_type
-  .panel.panel-default
+  .panel.panel-default(ng-if='dbTypeClasses.byTypeKey[dbObjects.byId[type_obj_id].type_key].user_controllable')
     .panel-heading
       | Delete This Type
     .panel-body

@@ -2,16 +2,20 @@ h4
   | New Hardware Type
 
 form(name='newHardwareType' role='form' ng-submit='save()')
-  .form-group
-    label.control-label
-      | Select Type Behavior
-    select.form-control(ng-change='selection_changed()' ng-model='new_type.type_key')
-      option(ng-repeat='(type_key, type) in dbTypeClasses.byTypeKey' ng-value='type_key' ng-if='type_key != "builtin-lab"')
-        | {{ type.display_name }}
-    slug(from='new_type.display_name.singular' to='new_type.slug')
-    input(type='hidden' ng-model='new_type.slug' required='')
+  ul.list-group
+    li.list-group-item(ng-repeat='(type_key, type) in dbTypeClasses.byTypeKey'
+                       ng-class='{"list-group-item-info": type_key == new_type.type_key}'
+                       ng-if='type.user_controllable')
+      .radio
+        label
+          input(type='radio' ng-change='selection_changed()' ng-model='new_type.type_key' ng-value='type_key')
+          | {{ type.display_name }}
+          p.help-block
+            | {{ type.description }}
 
   .form-group(ng-if='new_type.type_key')
+    slug(from='new_type.display_name.singular' to='new_type.slug')
+    input(type='hidden' ng-model='new_type.slug' required='')
     label.control-label
       | Make This Look Right
     p
