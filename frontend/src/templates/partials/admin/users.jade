@@ -1,5 +1,5 @@
 mixin user_list
-  ul
+  ul.page-layout-menu
     li.heading
       | Users
     li(ng-repeat='(userId, user) in users.byUserId | orderBy:"username"' ui-sref-active='active')
@@ -12,7 +12,7 @@ mixin content
   .page-layout
     .page-layout-nav
       +user_list
-      ul
+      ul.page-layout-menu
         li.heading
           | Actions
         li

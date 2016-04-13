@@ -36,7 +36,7 @@ mixin owners
     | Nobody
 
 mixin navigation
-  ul
+  ul.page-layout-menu
     li.heading
       | Owners
     li
@@ -53,8 +53,8 @@ mixin navigation
       a(prevent-default target='_{{ obj_id }}_config.json' href='/api/v1/labs/{{ allLabs.byId[lab_id].slug }}/{{ dbObjects.byId[obj_id].slug }}/config.json' ng-click='show_config_json()')
         i.fa.fa-fw.fa-code
         | config.json
-  object-attributes(obj-id='obj_id' show-heading='true')
-  ul
+  object-attributes(obj-id='obj_id' show-heading='true' list-class='page-layout-menu')
+  ul.page-layout-menu
     li.heading
       | Other Actions
     li

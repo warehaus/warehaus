@@ -4,13 +4,13 @@ script(type='text/ng-template' id='builtin/type-tree.html')
   li(ng-repeat-start='(type_obj_id, type_obj) in typeObjects | orderBy:"display_name.plural"' ui-sref-active='active')
     a(ui-sref='.hardware-type({typeObjId: type_obj_id})')
       object-type-title(type-id='type_obj_id')
-  ul(ng-repeat-end
+  ul.page-layout-menu(ng-repeat-end
      ng-if='dbObjects.byParentId[type_obj_id] | isNotEmpty'
      ng-include='"builtin/type-tree.html"'
      ng-init='typeObjects=dbObjects.byParentId[type_obj_id]; isRoot=false;')
 
 mixin menu
-  ul
+  ul.page-layout-menu
     li.heading
       | Lab Actions
     li(ui-sref-active='active')
@@ -19,9 +19,10 @@ mixin menu
     li(ui-sref-active='active')
       a(ui-sref='.new-hardware-type')
         | New Hardware Type
-  ul(ng-include='"builtin/type-tree.html"' ng-if='dbObjects.byParentId[allLabs.byId[lab_id].type_id] | isNotEmpty'
-     ng-init='typeObjects=dbObjects.byParentId[allLabs.byId[lab_id].type_id]; isRoot=true;')
-  ul
+  ul.page-layout-menu(ng-include='"builtin/type-tree.html"'
+                      ng-if='dbObjects.byParentId[allLabs.byId[lab_id].type_id] | isNotEmpty'
+                      ng-init='typeObjects=dbObjects.byParentId[allLabs.byId[lab_id].type_id]; isRoot=true;')
+  ul.page-layout-menu
     li.heading
       | Other Actions
     li(ui-sref-active='active')

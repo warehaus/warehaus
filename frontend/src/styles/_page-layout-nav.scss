@@ -1,11 +1,11 @@
 .page-layout-nav {
-  ul {
+  ul.page-layout-menu {
     list-style-type: none;
     margin: 0;
     padding: 0;
     width: 100%;
 
-    li {
+    > li {
       white-space: nowrap;
       margin: 0;
       padding: 0 0 0 $warehaus-nav-link-active-border-size;
@@ -53,21 +53,21 @@
         padding-top: 0;
       }
 
-      ul {
-        li {
+      ul.page-layout-menu {
+        > li {
           padding: 0 0 0 floor(0.75 * $font-size-base);
         }
       }
     }
 
-    ul {
-      li {
+    ul.page-layout-menu {
+      > li {
         padding: 0 0 0 floor(0.75 * $font-size-base);
       }
     }
   }
 
-  ul + ul {
-    padding: $warehaus-page-layout-nav-section-spacing 0 0 0;
+  ul.page-layout-menu + ul.page-layout-menu {
+    margin: $warehaus-page-layout-nav-section-spacing 0 0 0;
   }
 }

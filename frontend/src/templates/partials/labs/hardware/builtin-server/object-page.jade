@@ -123,7 +123,7 @@ mixin cluster
               | Add To Cluster
 
 mixin provider_info
-  ul(ng-if='server.agent_info.provider_info.provider == "aws"')
+  ul.page-layout-menu(ng-if='server.agent_info.provider_info.provider == "aws"')
     li.heading
       | Provider: AWS
     li
@@ -140,7 +140,7 @@ mixin provider_info
         .gray {{ server.agent_info.provider_info['public-ipv4'] }}
 
 mixin agent_errors
-  ul(ng-if='server.errors | isNotEmpty')
+  ul.page-layout-menu(ng-if='server.errors | isNotEmpty')
     li.heading
       | Errors
     li.text-link(ng-repeat='error in server.errors' ng-click='show_agent_error(error)')
@@ -153,21 +153,21 @@ mixin agent_errors
           | Click for more information...
 
 mixin navigation
-  ul
+  ul.page-layout-menu
     li.heading
       | Overview
     +server_status
     +cluster
   +provider_info
   +agent_errors
-  ul
+  ul.page-layout-menu
     li.heading
       | Downloads
     li
       a(prevent-default target='_{{ obj_id }}_config.json' href='/api/v1/labs/{{ allLabs.byId[lab_id].slug }}/{{ dbObjects.byId[obj_id].slug }}/config.json' ng-click='show_config_json()')
         i.fa.fa-fw.fa-code
         | config.json
-  object-attributes(obj-id='obj_id' show-heading='true')
+  object-attributes(obj-id='obj_id' show-heading='true' list-class='page-layout-menu')
 
 mixin content
   .page-layout

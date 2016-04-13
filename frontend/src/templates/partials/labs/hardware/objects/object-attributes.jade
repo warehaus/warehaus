@@ -23,19 +23,21 @@ mixin attr_with_menu
     .extra.text-right.dropdown
       a.text-link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' style={padding: '0 .25rem;'})
         i.icon-options-vertical
-      ul.dropdown-menu.pull-right(style={'font-size': '.875rem'})
+      ul.dropdown-menu.pull-right(style={'font-size': '1rem'})
         block
 
 mixin text_attr
   +attr_with_menu
     li
       a.text-link(ng-click='edit_text_attribute(attr.slug)')
-        i.fa.fa-fw.fa-pencil
+        i.fa.fa-pencil
+        | &nbsp;
         | Edit Attribute
     li.divider
     li
       a.text-link(ng-click='delete_attribute(attr.slug)')
-        i.fa.fa-fw.fa-trash-o
+        i.fa.fa-trash-o
+        | &nbsp;
         | Clear Value
 
 mixin select_attr
@@ -43,11 +45,13 @@ mixin select_attr
     li(ng-repeat='option in attr.select_options')
       a.text-link(ng-click='set_attribute(attr.slug, option)')
         i.fa.fa-fw(ng-class='{"fa-check": dbObjects.byId[objId].attrs[attr.slug] == option}')
+        | &#32;
         | {{ option }}
     li.divider
     li
       a.text-link(ng-click='delete_attribute(attr.slug)')
         i.fa.fa-fw.fa-trash-o
+        | &#32;
         | Clear Value
 
 ul(class='{{ listClass }}')
