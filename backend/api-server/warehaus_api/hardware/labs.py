@@ -65,7 +65,5 @@ def get_lab_from_type_object(typeobj):
     '''Finds the lab object that created `typeobj`, assuming `typeobj`
     was created by `Lab().create_type_object`.
     '''
-    possible_labs = tuple(Object.query.get_all(typeobj.parent_id, index='type_id'))
-    if len(possible_labs) != 1:
-        flask_abort(httplib.INTERNAL_SERVER_ERROR, 'Expected one lab for type_id={!r}, got: {!r}'.format(typeobj.id, possible_labs))
-    return possible_labs[0]
+    error = 'Found more than one lab for type_id={!r}'.format(typeobj.id)
+    return Object.query.get_exactly_one(typeobj.parent_id, index='type_id', error=error)

@@ -92,12 +92,8 @@ def get_object_child(parent, child_slug):
     '''
     parent_id = TREE_ROOT if parent is None else parent.id
     logger.debug('  get_object_child(parent_id={!r}, child_slug={!r})'.format(parent_id, child_slug))
-    possible_objs = tuple(Object.query.get_all([child_slug, parent_id], index='slug_parent'))
-    if len(possible_objs) == 0:
-        return None
-    if len(possible_objs) == 1:
-        return possible_objs[0]
-    flask_abort(httplib.INTERNAL_SERVER_ERROR, 'Got multiple results for slug={!r} parent_id={!r}'.format(child_slug, parent_id))
+    error = 'Got multiple results for slug={!r} parent_id={!r}'.format(child_slug, parent_id)
+    return Object.query.get_one_or_none([child_slug, parent_id], index='slug_parent', error=error)
 
 def get_objects_of_type(typeobj):
     '''Returns all objects of type `typeobj`.'''

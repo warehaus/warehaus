@@ -10,18 +10,8 @@ class User(db.Model):
 
     @classmethod
     def get_by_username(cls, username):
-        docs = tuple(cls.query.get_all(username, index='username'))
-        if not docs:
-            return None
-        if len(docs) != 1:
-            raise RuntimeError('Found more than one user with username={!r}'.format(username))
-        return docs[0]
+        return cls.query.get_one_or_none(username, index='username', error='Found more than one user with username={!r}'.format(username))
 
     @classmethod
     def get_by_api_token(cls, api_token):
-        docs = tuple(cls.query.get_all(api_token, index='api_tokens'))
-        if not docs:
-            return None
-        if len(docs) != 1:
-            raise RuntimeError('Found more than one user with api_token={!r}'.format(api_token))
-        return docs[0]
+        return cls.query.get_one_or_none(api_token, index='api_tokens', error='Found more than one user with api_token={!r}'.format(api_token))

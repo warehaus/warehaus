@@ -1,8 +1,10 @@
+import httplib
 import rethinkdb as r
 from copy import deepcopy
 from logging import getLogger
 from bunch import Bunch
 from flask import current_app
+from flask import abort as flask_abort
 from rethinkdb import ReqlRuntimeError
 from rethinkdb import ReqlOpFailedError
 from .db import db
@@ -29,6 +31,24 @@ class Query(object):
     def get_all(self, *args, **kwargs):
         docs = self.model_type._table.get_all(*args, **kwargs).run(db.conn)
         return (self.model_type(**doc) for doc in docs)
+
+    def get_one_or_none(self, *args, **kwargs):
+        error = kwargs.pop('error', None)
+        if error is None:
+            raise TypeError('This function must get an error parameter')
+        docs = tuple(self.get_all(*args, **kwargs))
+        if not docs:
+            return None
+        if len(docs) != 1:
+            flask_abort(httplib.INTERNAL_SERVER_ERROR, error)
+        return docs[0]
+
+    def get_exactly_one(self, *args, **kwargs):
+        error = kwargs.pop('error', None)
+        obj = self.get_one_or_none(error=error, *args, **kwargs)
+        if obj is None:
+            flask_abort(httplib.INTERNAL_SERVER_ERROR, error)
+        return obj
 
     def between(self, *args, **kwargs):
         docs = self.model_type._table.between(*args, **kwargs).run(db.conn)
