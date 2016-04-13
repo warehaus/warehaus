@@ -5,6 +5,7 @@ var models     = require('./models');
 var User       = models.User;
 var GoogleUser = models.GoogleUser;
 var Settings   = models.Settings;
+var Event      = models.Event;
 
 var express    = require('express');
 var HttpStatus = require('http-status-codes');
@@ -216,6 +217,22 @@ app.post('/api/auth/login/local', function(req, res, next) {
     passport.authenticate('local', make_jwt_for_authenticated_user(req, res, next))(req, res, next);
 });
 
+var create_new_user_event = function(new_user) {
+    if (is_role_allowed_to_login(new_user.role)) {
+        return Event.create({
+            timestamp: new Date(),
+            obj_id: null,
+            user_id: new_user.id,
+            interested_ids: [],
+            title: `**${new_user.display_name}** joined warehaus`,
+            content: ''
+        }).then(event => {
+            return new_user;
+        });
+    }
+    return Promise.resolve(new_user);
+};
+
 /*-------------------------------------------------------------------*/
 /* Google strategy                                                   */
 /*-------------------------------------------------------------------*/
@@ -270,6 +287,7 @@ var google_callback = function(accessToken, refreshToken, profile, done) {
         return choose_username()
             .then(create_new_local_user, done)
             .then(create_new_google_user, done)
+            .then(create_new_user_event, done)
             .then(local_user => { done(null, local_user); }, done);
     };
 
@@ -461,14 +479,14 @@ app.post('/api/auth/users', passport.authenticate('jwt'), require_admin, functio
         res.status(HttpStatus.BAD_REQUEST).json({ message: 'The role you specified for the new user is invalid' });
         return;
     }
-    is_username_taken(new_user.username).then(username_taken => {
+    return is_username_taken(new_user.username).then(username_taken => {
         if (username_taken) {
             res.status(HttpStatus.CONFLICT).json({ message: 'Username already in use' });
             return;
         }
-        User.create(new_user).then(function(created_user) {
-            res.status(HttpStatus.CREATED).json(cleaned_user(created_user));
-        });
+        return User.create(new_user);
+    }).then(create_new_user_event).then(function(new_user) {
+        res.status(HttpStatus.CREATED).json(cleaned_user(new_user));
     }).catch(failureResponse);
 });
 

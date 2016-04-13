@@ -10,10 +10,12 @@ store.registerAdapter('rethinkdb', adapter, { default: true });
 var User = store.defineResource('user');
 var GoogleUser = store.defineResource('user_google');
 var Settings = store.defineResource('settings');
+var Event = store.defineResource('event');
 
 module.exports = {
     store: store,
     User: User,
     GoogleUser: GoogleUser,
-    Settings: Settings
+    Settings: Settings,
+    Event: Event
 };
