@@ -36,17 +36,15 @@
       a {
         outline: 0;
         margin: 0;
-        color: $text-color;
+        color: lighten($text-color, 20%);
 
         &:hover,
         &:focus {
           text-decoration: none;
-          color: $text-color;
         }
       }
 
       > a, > span {
-        color: gray;
         display: block;
         padding: $warehaus-page-layout-nav-section-items $warehaus-page-layout-nav-spacing-horizontal;
       }

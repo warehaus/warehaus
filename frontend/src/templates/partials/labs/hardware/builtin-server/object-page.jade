@@ -107,7 +107,7 @@ mixin cluster
         i.fa.fa-server
         object-name(id='clustersToServers.cluster_of_server[obj_id]')
       span(ng-if='!clustersToServers.cluster_of_server[obj_id]')
-        i Not in cluster
+        i (not in cluster)
       .dropdown.pull-right
         a.text-link.dropdown-toggle(id='dropdown-menu-cluster-{{ obj_id }}' data-toggle='dropdown'
                                     aria-haspopup='true' aria-expanded='true')
