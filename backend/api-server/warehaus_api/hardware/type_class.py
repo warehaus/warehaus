@@ -3,8 +3,10 @@ import httplib
 from logging import getLogger
 from flask import request
 from flask import abort as flask_abort
+from flask_jwt import current_identity
 from ..auth.roles import require_user
 from ..auth.roles import require_admin
+from ..events.models import create_event
 from .models import Object
 from .models import create_object
 from .models import get_objects_of_type
@@ -194,9 +196,12 @@ class TypeClass(object):
             typeobj.save()
         return typeobj.as_dict()
 
-    def _check_typeobj_has_attr(self, typeobj, attr_slug):
-        if attr_slug not in typeobj.get('attrs', {}):
-            flask_abort(httplib.BAD_REQUEST, "Objects of type {!r} don't have the {!r} attribute".format(typeobj.display_name['singular'], attr_Slug))
+    def _get_typeobj_attr(self, typeobj, attr_slug):
+        if 'attrs' in typeobj:
+            for attr in typeobj.attrs:
+                if attr['slug'] == attr_slug:
+                    return attr
+        flask_abort(httplib.NOT_FOUND, "Objects of type {!r} don't have the {!r} attribute".format(typeobj.display_name['singular'], attr_slug))
 
     @object_action('PUT', 'attrs')
     def set_attr(self, obj):
@@ -206,7 +211,7 @@ class TypeClass(object):
         attr_value = request.json['value']
         lab = obj.get_parent_object()
         typeobj = obj.get_type_object()
-        self._check_typeobj_has_attr(typeobj, attr_slug)
+        attr_type = self._get_typeobj_attr(typeobj, attr_slug)
         if 'attrs' in obj:
             obj.attrs[attr_slug] = attr_value
         else:
@@ -216,7 +221,7 @@ class TypeClass(object):
             obj_id = obj.id,
             user_id = current_identity.id,
             interested_ids = [obj.id, lab.id],
-            title = 'Set the **{}** attribute of **{}**'.format(typeobj.attrs[attr_slug]['display_name'], obj.display_name),
+            title = 'Set the **{}** attribute of **{}**'.format(attr_type['display_name'], obj.display_name),
             content = attr_value,
         )
         return obj.as_dict()
@@ -227,7 +232,7 @@ class TypeClass(object):
         require_user()
         lab = obj.get_parent_object()
         typeobj = obj.get_type_object()
-        self._check_typeobj_has_attr(typeobj, attr_slug)
+        attr_type = self._get_typeobj_attr(typeobj, attr_slug)
         attr_slug = request.json['slug']
         if 'attrs' in obj and attr_slug in obj.attrs:
             del obj.attrs[attr_slug]
@@ -236,6 +241,6 @@ class TypeClass(object):
             obj_id = obj.id,
             user_id = current_identity.id,
             interested_ids = [obj.id, lab.id],
-            title = 'Removed the **{}** attribute from **{}**'.format(typeobj.attrs[attr_slug]['display_name'], obj.display_name),
+            title = 'Removed the **{}** attribute from **{}**'.format(attr_type['display_name'], obj.display_name),
         )
         return obj.as_dict()
