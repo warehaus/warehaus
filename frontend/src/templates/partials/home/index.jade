@@ -1,8 +1,18 @@
 mixin header
-  h4
-    | Hey {{ curUser.display_name }}
+  .text-center
+    h4
+      | Hey {{ curUser.display_name }}
+
+mixin content
+  p.text-center
+    i.fa.fa-fw.fa-wrench
+    | This page is still under construction, let's go the labs page for now
+  p.text-center
+    button.btn.btn-lg.btn-success(ui-sref='labs')
+      | Continue to Labs
 
 .page-top-nav
 .page-layout
   .page-layout-no-nav
     +header
+    +content
