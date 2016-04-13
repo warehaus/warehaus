@@ -20,6 +20,7 @@ def create_event(obj_id, user_id, interested_ids, title, content=''):
     event = Event(
         timestamp      = db.times.now(),
         obj_id         = obj_id,
+        user_id        = user_id,
         interested_ids = interested_ids,
         title          = title,
         content        = content,
