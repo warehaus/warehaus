@@ -10,7 +10,7 @@ const HTTP_PORT = process.env.HTTP_PORT || 5001;
 const DB_TABLES = ['object', 'user'];
 
 var send_notification = function(db_table, err, change) {
-    logger.debug(`Received notification: db_table=${db_table} err=${err} change:`, change);
+    logger.debug(`Received notification: db_table=${db_table} err=${err} change.old_val.id=${change.old_val.id} change.new_val.id=${change.new_val.id}:`);
     if (err) {
         return;
     }
