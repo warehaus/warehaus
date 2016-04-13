@@ -167,7 +167,7 @@ class Server(TypeClass):
         else:
             server.agent_info = agent_info
         server.last_seen = now()
-        server.status = 'success'
+        server.status = 'online'
         server.save()
         self._update_sub_objects(server, typeobj, agent_info)
         return 'ok'

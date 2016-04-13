@@ -89,11 +89,15 @@ mixin server_info
 
 mixin server_status
   li
-    span
-      .status-dot.status-dot-3x(class='status-dot-{{ server.status }}')
+    span(ng-if='server.status == "online"')
+      .status-dot.status-dot-success.status-dot-3x
       | &#32;
-      | {{ (server.status == 'success') ? 'Online' : 'Offline' }}
-      div.opacity05(ng-if='server.status != "success"')
+      | Online
+    span(ng-if='server.status == "offline"')
+      .status-dot.status-dot-unknown.status-dot-3x
+      | &#32;
+      | Offline
+      .opacity05
         | Last seen {{ moment(server.last_seen).fromNow() }}
 
 mixin cluster

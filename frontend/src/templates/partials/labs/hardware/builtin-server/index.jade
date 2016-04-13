@@ -29,7 +29,8 @@ mixin server_row
   table.details
     tr
       td.pad-right(style={'vertical-align': 'middle'})
-        .status-dot.status-dot-3x(class='status-dot-{{ server.status }}')
+        .status-dot.status-dot-success.status-dot-3x(ng-if='server.status == "online"')
+        .status-dot.status-dot-unknown.status-dot-3x(ng-if='server.status == "offline"')
       td.heading(style={'width': '100%', 'vertical-align': 'middle'})
         object-name.uppercase(id='server.id')
     tr(ng-if='clustersToServers.cluster_of_server[server.id]')

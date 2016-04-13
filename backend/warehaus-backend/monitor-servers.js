@@ -15,7 +15,7 @@ var filter_offline_servers = function(object) {
 
 var mark_offline_servers = function() {
     logger.info('Start offline servers check');
-    r.table('object').filter(filter_offline_servers).update({ status: 'unknown' }).run(db.conn, (err, result) => {
+    r.table('object').filter(filter_offline_servers).update({ status: 'offline' }).run(db.conn, (err, result) => {
         if (err) {
             logger.error('Error updating offline servers');
             logger.error(err);
