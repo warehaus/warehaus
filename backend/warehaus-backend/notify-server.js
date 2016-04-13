@@ -7,7 +7,7 @@ var logger = require('./logger');
 var db = require('./db');
 
 const HTTP_PORT = process.env.HTTP_PORT || 5001;
-const DB_TABLES = ['object', 'user'];
+const DB_TABLES = ['object', 'user', 'event'];
 
 var send_notification = function(db_table, err, change) {
     logger.debug(`Received notification: db_table=${db_table} err=${err} change.old_val.id=${change.old_val.id} change.new_val.id=${change.new_val.id}:`);

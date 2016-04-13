@@ -1,7 +1,9 @@
 import httplib
 from flask import abort as flask_abort
 from flask import request
+from flask_jwt import current_identity
 from ..auth.roles import require_admin
+from ..events.models import create_event
 from .type_class import TypeClass
 from .type_class import object_action
 from .models import ensure_unique_slug
@@ -18,6 +20,7 @@ class Lab(TypeClass):
 
     @object_action('POST', 'type-objects')
     def create_child_type_object(self, lab):
+        require_admin()
         slug = request.json['slug']
         # XXX switch to Marshmallow
         type_class = all_type_classes[request.json['type_key']]
@@ -33,15 +36,29 @@ class Lab(TypeClass):
         require_admin()
         slug = request.json['slug']
         ensure_unique_slug(lab.get_parent_object(), slug)
+        old_name = lab.display_name
         lab.display_name = request.json['display_name']
         lab.slug = slug
         lab.save()
+        create_event(
+            obj_id = lab.id,
+            user_id = current_identity.id,
+            interested_ids = [lab.id],
+            title = 'Renamed **{}** to **{}**'.format(old_name, lab.display_name),
+        )
         return lab, httplib.ACCEPTED
 
     @object_action('DELETE', '')
     def delete_lab(self, lab):
         require_admin()
+        lab_id = lab.id
         lab.delete()
+        create_event(
+            obj_id = lab_id,
+            user_id = current_identity.id,
+            interested_ids = [lab_id],
+            title = 'Deleted the **{}** lab'.format(lab.display_name),
+        )
         return None, httplib.NO_CONTENT
 
 def get_lab_from_type_object(typeobj):

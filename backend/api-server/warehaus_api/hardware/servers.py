@@ -9,14 +9,17 @@ from flask import request
 from flask import Response
 from flask import abort as flask_abort
 from flask_restful.reqparse import RequestParser
+from flask_jwt import current_identity
 from ..db.times import now
 from ..auth.roles import require_user
+from ..events.models import create_event
 from .type_class import TypeClass
 from .type_class import type_action
 from .type_class import object_action
 from .models import Object
 from .models import create_object
 from .models import get_user_attributes
+from .models import get_object_by_id
 from .models import get_object_children
 from .models import get_object_child
 from .models import get_type_object
@@ -93,13 +96,13 @@ class Server(TypeClass):
         servers = tuple(lab.get_children_with_slug(slug))
         if len(servers) == 0:
             server = create_object(slug=slug, parent=lab, type=typeobj)
-            return server
+            return server, lab
         if len(servers) == 1:
             server = servers[0]
             if server.type_id != typeobj.id:
                 flask_abort(httplib.INTERNAL_SERVER_ERROR, 'Found server for heartbeat with slug={!r} parent_id={!r} but type_id={!r} (expected type_id={!r})'.format(
                     server.slug, server.parent_id, server.type_id, typeobj.id))
-            return server
+            return server, lab
         flask_abort(httplib.CONFLICT, 'Found more than one server with slug={!r} and lab_id={!r}'.format(slug, lab.id))
 
     def _get_pci_provider_info(self, agent_info, pci_device):
@@ -156,20 +159,28 @@ class Server(TypeClass):
         logger.info('Processing heartbeat from {!r}'.format(request.headers.getlist("X-Forwarded-For")[0] if request.headers.getlist("X-Forwarded-For") else request.remote_addr))
         agent_info = request.json['info']
         slug = slugify(display_name)
-        server = self._get_server(typeobj, slug)
+        server, lab = self._get_server(typeobj, slug)
         server.display_name = display_name
         server.errors = request.json.get('errors', [])
         # Update/keep agent_info in the server object. We always keep
         # a copy of the last keepalive even after creating sub-objects
         # from it.
-        if 'id' in server:
-            server.agent_info = r.literal(agent_info)
-        else:
+        is_new = 'id' not in server
+        if is_new:
             server.agent_info = agent_info
+        else:
+            server.agent_info = r.literal(agent_info)
         server.last_seen = now()
         server.status = 'online'
         server.save()
         self._update_sub_objects(server, typeobj, agent_info)
+        if is_new:
+            create_event(
+                obj_id = server.id,
+                user_id = None,
+                interested_ids = [server.id, lab.id],
+                title = 'Created **{}** {}'.format(server.display_name, typeobj.display_name['singular']),
+            )
         return 'ok'
 
     set_cluster_pareser = RequestParser()
@@ -179,8 +190,25 @@ class Server(TypeClass):
     def set_cluster(self, server):
         require_user()
         args = self.set_cluster_pareser.parse_args()
+        lab = server.get_parent_object()
+        previous_cluster_id = server.cluster_id if 'cluster_id' in server else None
         server.cluster_id = args['cluster_id']
         server.save()
+        if previous_cluster_id is not None or server.cluster_id is not None:
+            if previous_cluster_id is not None:
+                previous_cluster = get_object_by_id(previous_cluster_id)
+            if server.cluster_id is not None:
+                cluster = get_object_by_id(server.cluster_id)
+            create_event(
+                obj_id = server.id,
+                user_id = current_identity.id,
+                interested_ids = [server.id, lab.id] + [some_id for some_id in (previous_cluster_id, server.cluster_id) if some_id is not None],
+                title = ('Added **{}** to **{}**'.format(server.display_name, cluster.display_name)
+                         if previous_cluster_id is None else
+                         'Removed **{}** from **{}**'.format(server.display_name, cluster.display_name)
+                         if server.cluster_id is None else
+                         'Moved **{}** from **{}** to **{}**'.format(server.display_name, previous_cluster.display_name)),
+            )
         return server.as_dict(), httplib.OK
 
     @object_action('GET', 'config.json')

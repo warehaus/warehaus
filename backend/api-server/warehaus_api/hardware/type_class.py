@@ -194,25 +194,48 @@ class TypeClass(object):
             typeobj.save()
         return typeobj.as_dict()
 
+    def _check_typeobj_has_attr(self, typeobj, attr_slug):
+        if attr_slug not in typeobj.get('attrs', {}):
+            flask_abort(httplib.BAD_REQUEST, "Objects of type {!r} don't have the {!r} attribute".format(typeobj.display_name['singular'], attr_Slug))
+
     @object_action('PUT', 'attrs')
     def set_attr(self, obj):
         '''Sets a user-attribute for an object.'''
         require_user()
         attr_slug = request.json['slug']
         attr_value = request.json['value']
+        lab = obj.get_parent_object()
+        typeobj = obj.get_type_object()
+        self._check_typeobj_has_attr(typeobj, attr_slug)
         if 'attrs' in obj:
             obj.attrs[attr_slug] = attr_value
         else:
             obj.attrs = {attr_slug: attr_value}
         obj.save()
+        create_event(
+            obj_id = obj.id,
+            user_id = current_identity.id,
+            interested_ids = [obj.id, lab.id],
+            title = 'Set the **{}** attribute of **{}**'.format(typeobj.attrs[attr_slug]['display_name'], obj.display_name),
+            content = attr_value,
+        )
         return obj.as_dict()
 
     @object_action('DELETE', 'attrs')
     def delete_attr(self, obj):
         '''Remove a user-defined attribute from an object.'''
         require_user()
+        lab = obj.get_parent_object()
+        typeobj = obj.get_type_object()
+        self._check_typeobj_has_attr(typeobj, attr_slug)
         attr_slug = request.json['slug']
         if 'attrs' in obj and attr_slug in obj.attrs:
             del obj.attrs[attr_slug]
             obj.save()
+        create_event(
+            obj_id = obj.id,
+            user_id = current_identity.id,
+            interested_ids = [obj.id, lab.id],
+            title = 'Removed the **{}** attribute from **{}**'.format(typeobj.attrs[attr_slug]['display_name'], obj.display_name),
+        )
         return obj.as_dict()

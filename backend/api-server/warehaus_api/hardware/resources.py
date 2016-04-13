@@ -5,8 +5,10 @@ from flask import request
 from flask import abort as flask_abort
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
+from flask_jwt import current_identity
 from ..auth.roles import require_user
 from ..auth.roles import require_admin
+from ..events.models import create_event
 from .models import Object
 from .models import create_object
 from .models import get_object_by_id
@@ -157,6 +159,12 @@ class ObjectTreeRoot(Resource):
         require_admin()
         args = self.create_lab_parser.parse_args()
         lab = self._create_lab(args['slug'], args['display_name'])
+        create_event(
+            obj_id = lab.id,
+            user_id = current_identity.id,
+            interested_ids = [lab.id],
+            title = 'Created the **{}** lab'.format(lab.display_name),
+        )
         return serialize_object(lab), httplib.CREATED
 
 class ObjectTreeNode(Resource):

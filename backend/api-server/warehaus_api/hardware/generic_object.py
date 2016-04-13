@@ -3,7 +3,9 @@ from slugify import slugify
 from flask import abort as flask_abort
 from flask import request
 from flask_restful.reqparse import RequestParser
+from flask_jwt import current_identity
 from ..auth.roles import require_user
+from ..events.models import create_event
 from .type_class import TypeClass
 from .type_class import type_action
 from .type_class import object_action
@@ -39,12 +41,26 @@ class GenericObject(TypeClass):
         ensure_unique_slug(lab, slug)
         generic_object = create_object(slug=slug, display_name=args['display_name'], parent=lab, type=typeobj)
         generic_object.save()
+        create_event(
+            obj_id = generic_object.id,
+            user_id = current_identity.id,
+            interested_ids = [generic_object.id, lab.id],
+            title = 'Created **{}** {}'.format(generic_object.display_name, typeobj.display_name['singular']),
+        )
         return generic_object.as_dict(), httplib.CREATED
 
     @object_action('DELETE', '')
     def delete_generic_object(self, generic_object):
         require_user()
+        lab = generic_object.get_parent_object()
+        generic_object_id = generic_object.id
         generic_object.delete()
+        create_event(
+            obj_id = generic_object_id,
+            user_id = current_identity.id,
+            interested_ids = [generic_object_id, lab.id],
+            title = 'Deleted **{}** {}'.format(generic_object.display_name, typeobj.display_name['singular']),
+        )
         return generic_object.as_dict(), httplib.NO_CONTENT
 
     @object_action('GET', 'config.json')

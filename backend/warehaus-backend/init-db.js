@@ -50,11 +50,25 @@ const objects_table = {
     ]
 };
 
+const events_table = {
+    name: 'event',
+    indexes: [
+        'timestamp',
+        'obj_id',
+        'user_id',
+        {
+            name: 'interested_ids',
+            multi: true
+        }
+    ]
+};
+
 r.init(db.config(), [
     settings_table,
     users_table,
     google_users_table,
-    objects_table
+    objects_table,
+    events_table
 ]).then(conn => {
     conn.close();
 }).catch(err => {
