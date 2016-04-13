@@ -46,24 +46,14 @@ def create_object(**kwargs):
         raise TypeError("You can't pass 'type_id' to create_object(). Please use 'type' argument only")
     if 'slug' not in kwargs:
         raise TypeError("New Objects must have a slug attribute")
-
-    parent = kwargs.pop('parent', None)
-    if parent is None:
-        parent_id = TREE_ROOT
-    elif isinstance(parent, Object):
-        parent_id = parent.id
-    else:
-        raise TypeError('parent argument must be an instance of Object')
-
-    typeobj = kwargs.pop('type', None)
-    if typeobj is None:
-        type_id = NO_TYPE
-    elif isinstance(typeobj, Object):
-        type_id = typeobj.id
-    else:
-        raise TypeError('type argument must be an instance of Object')
-
-    return Object(parent_id=parent_id, type_id=type_id, **kwargs)
+    def _get_id_from_arg(key, default):
+        arg = kwargs.pop(key, None)
+        if arg is None:
+            return default
+        if isinstance(arg, Object):
+            return arg.id
+        raise TypeError('{} argument must be an instance of Object'.format(arg))
+    return Object(parent_id=_get_id_from_arg('parent', TREE_ROOT), type_id=_get_id_from_arg('type', NO_TYPE), **kwargs)
 
 def get_object_by_id(obj_id):
     assert obj_id != TREE_ROOT
