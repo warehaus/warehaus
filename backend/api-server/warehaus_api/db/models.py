@@ -24,13 +24,20 @@ class Query(object):
             return None
         return self.model_type(**doc)
 
+    def _run_query_and_wrap_objects(self, query):
+        return (self.model_type(**doc) for doc in query.run(db.conn))
+
     def all(self):
-        docs = self.model_type._table.run(db.conn)
-        return (self.model_type(**doc) for doc in docs)
+        return self._run_query_and_wrap_objects(self.model_type._table)
 
     def get_all(self, *args, **kwargs):
-        docs = self.model_type._table.get_all(*args, **kwargs).run(db.conn)
-        return (self.model_type(**doc) for doc in docs)
+        return self._run_query_and_wrap_objects(self.model_type._table.get_all(*args, **kwargs))
+
+    def between(self, *args, **kwargs):
+        return self._run_query_and_wrap_objects(self.model_type._table.between(*args, **kwargs))
+
+    def filter(self, *args, **kwargs):
+        return self._run_query_and_wrap_objects(self.model_type._table.filter(*args, **kwargs))
 
     def get_one_or_none(self, *args, **kwargs):
         error = kwargs.pop('error', None)
@@ -49,14 +56,6 @@ class Query(object):
         if obj is None:
             flask_abort(httplib.INTERNAL_SERVER_ERROR, error)
         return obj
-
-    def between(self, *args, **kwargs):
-        docs = self.model_type._table.between(*args, **kwargs).run(db.conn)
-        return (self.model_type(**doc) for doc in docs)
-
-    def filter(self, *args, **kwargs):
-        docs = self.model_type._table.filter(*args, **kwargs).run(db.conn)
-        return (self.model_type(**doc) for doc in docs)
 
 class ModelType(type):
     def __new__(mcs, name, bases, attrs):
