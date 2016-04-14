@@ -8,6 +8,15 @@ LOCAL_LOGS := ~/.warehaus/logs
 
 build: build-frontend
 
+shell:
+	@$(DOCKER_RUN_CMDLINE) \
+		--link rethinkdb \
+		--volume $(SRC_DIR):/opt/warehaus \
+		--volume $(LOCAL_LOGS):/var/log/warehaus \
+		--publish 80:80 \
+		$(DOCKER_IMAGE):latest \
+		/bin/bash
+
 build-frontend:
 	@echo "Building frontend..."
 	@$(DOCKER_RUN_CMDLINE) \
