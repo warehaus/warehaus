@@ -1,4 +1,4 @@
-FROM warehaus/base-image:v12
+FROM warehaus/base-image:v13
 
 RUN mkdir -p /var/log/warehaus
 VOLUME /var/log/warehaus

@@ -2,7 +2,7 @@ SRC_DIR := $(shell pwd)
 DOCKER_IMAGE := warehaus/warehaus
 EGG_BUILDER_IMAGE := python:2.7
 NODE_BUILDER_IMAGE := node:5.4
-FRONTEND_BUILDER_IMAGE := warehaus/frontend-builder:v9
+FRONTEND_BUILDER_IMAGE := warehaus/frontend-builder:v10
 DOCKER_RUN_CMDLINE := docker run -ti --rm
 LOCAL_LOGS := ~/.warehaus/logs
 
