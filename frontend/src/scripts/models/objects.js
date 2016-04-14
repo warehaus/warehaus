@@ -51,10 +51,8 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
 
     var object_changed = function(notification) {
         //$log.debug('Fetching changed object:', notification.id);
-        return $http.get('/api/v1/hardware/objects/' + notification.id).then(function(res) {
-            insert_one(res.data);
-            $rootScope.$broadcast('warehaus.models.object_changed', notification.id);
-        });
+        insert_one(notification.object);
+        $rootScope.$broadcast('warehaus.models.object_changed', notification.object.id);
     };
 
     var object_deleted = function(notification) {
