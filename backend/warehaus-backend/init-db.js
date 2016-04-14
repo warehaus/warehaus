@@ -38,6 +38,7 @@ const objects_table = {
         'slug',
         'type_id',
         'parent_id',
+        'last_seen',
         {
             name: 'slug_parent',
             indexFunction: [r.row('slug'), r.row('parent_id')]
