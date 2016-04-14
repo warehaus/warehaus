@@ -219,8 +219,10 @@ app.post('/api/auth/login/local', function(req, res, next) {
 
 var create_new_user_event = function(new_user) {
     if (is_role_allowed_to_login(new_user.role)) {
+        var now = new Date();
         return Event.create({
-            created_at: new Date(),
+            created_at: now,
+            modified_at: now,
             obj_id: null,
             user_id: new_user.id,
             interested_ids: [],
@@ -261,7 +263,10 @@ var google_callback = function(accessToken, refreshToken, profile, done) {
 
     var create_new_local_user = function(username) {
         logger.debug(`Creating new local user for Google user ${profile.id}`);
+        var now = new Date();
         return User.create({
+            created_at: now,
+            modified_at: now,
             username: username,
             display_name: profile.displayName,
             email: profile.emails[0].value,
@@ -271,8 +276,11 @@ var google_callback = function(accessToken, refreshToken, profile, done) {
 
     var create_new_google_user = function(local_user) {
         logger.debug(`Creating Google user for local user ${local_user.id}`);
+        var now = new Date();
         return GoogleUser.create({
             id: profile.id,
+            created_at: now,
+            modified_at: now,
             access_token: accessToken,
             refresh_token: refreshToken,
             profile: profile,
@@ -331,7 +339,11 @@ app.post('/api/auth/login/google/settings', passport.authenticate('jwt'), requir
         redirect_uri  : req.body.google_settings.redirect_uri,
         hosted_domain : req.body.google_settings.hosted_domain
     };
-    return Settings.update(SETTINGS_ID, { auth: { google: google_settings } }).then(updated_settings => {
+    var settings_update = {
+        modified_at: new Date(),
+        auth: { google: google_settings }
+    };
+    return Settings.update(SETTINGS_ID, settings_update).then(updated_settings => {
         configure_google_strategy(updated_settings);
         res.json({ google_settings: updated_settings.auth.google });
     }, failureResponse).catch(failureResponse);
@@ -387,7 +399,10 @@ const FIRST_USER_PASSWORD = 'admin';
 
 var first_user = function() {
     return hash_password(FIRST_USER_PASSWORD).then(hashed_password => {
+        var now = new Date();
         return {
+            created_at: now,
+            modified_at: now,
             username: FIRST_USER_USERNAME,
             hashed_password: hashed_password,
             role: ROLES.admin,
@@ -465,7 +480,10 @@ app.get('/api/auth/users', passport.authenticate('jwt'), function(req, res, next
 
 // Create user
 app.post('/api/auth/users', passport.authenticate('jwt'), require_admin, function(req, res, next) {
+    var now = new Date();
     var new_user = {
+        created_at   : now,
+        modified_at  : now,
         username     : req.body.username,
         display_name : req.body.display_name,
         role         : req.body.role,
@@ -607,6 +625,7 @@ app.put('/api/auth/users/:userId', passport.authenticate('jwt'), function(req, r
         .then(update_email)
         .then(update_role)
         .then((updated_fields) => {
+            updated_fields.modified_at = new Date();
             return User.update(req.inputUser.id, updated_fields);
         })
         .then(updated_user => {

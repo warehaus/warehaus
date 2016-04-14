@@ -8,6 +8,7 @@ from flask import abort as flask_abort
 from rethinkdb import ReqlRuntimeError
 from rethinkdb import ReqlOpFailedError
 from .db import db
+from .times import now
 from .exceptions import RethinkDBError
 from .fields import Field
 
@@ -59,14 +60,18 @@ class Query(object):
 
 class ModelType(type):
     def __new__(mcs, name, bases, attrs):
-        for forbidden in ('_data', '_query', '_fields', '_table', '_table_name'):
+        for forbidden in ('_data', '_fields', '_table'):
             if forbidden in attrs:
                 raise TypeError("Model subclasses should not provide a '{}' attribute of their own".format(forbidden))
         if 'id' in attrs:
             raise TypeError("An 'id' is automatically created in {} classes, please don't create one manually".format(name))
-        attrs['_table_name'] = attrs.get('TABLE_NAME', name.lower())
-        attrs['_table'] = r.table(attrs['_table_name'])
-        attrs['_fields'] = {'id': Field(field_name='id')}
+        table_name = attrs.get('TABLE_NAME', name.lower())
+        attrs['_table'] = r.table(table_name)
+        attrs['_fields'] = {
+            'id'          : Field(field_name='id'),
+            'created_at'  : Field(field_name='created_at', default=now),
+            'modified_at' : Field(field_name='modified_at', default=now),
+        }
         for attr, obj in tuple(attrs.iteritems()):
             if isinstance(obj, Field):
                 del attrs[attr]
@@ -103,6 +108,7 @@ class Model(object):
 
     def save(self, force_insert=False):
         if not force_insert and ('id' in self._data):
+            self._data['modified_at'] = now()
             result = self._table.get(self._data['id']).update(self._data).run(db.conn)
             if (result['replaced'] + result['unchanged']) != 1:
                 raise RethinkDBError('Expected 1 replacement or unchanged, instead: {!r}'.format(result))

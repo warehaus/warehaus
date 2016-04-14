@@ -1,9 +1,10 @@
 from .. import db
 
 class Event(db.Model):
-    created_at = db.Field()
-    obj_id     = db.Field() # The object for which this event was created about
-    user_id    = db.Field() # The user who performed the action
+    obj_id  = db.Field() # The object for which this event was created about
+    user_id = db.Field() # The user who performed the action
+    title   = db.Field() # Event title
+    content = db.Field() # Event content
 
     # A list of IDs which are interested in this event. For example, when creating
     # a server we obviously want this event to be shows in the server page, but we
@@ -13,12 +14,8 @@ class Event(db.Model):
     # that event in the lab page although the server is already deleted.
     interested_ids = db.Field()
 
-    title   = db.Field() # Event title
-    content = db.Field() # Event content
-
 def create_event(obj_id, user_id, interested_ids, title, content=''):
     event = Event(
-        created_at     = db.times.now(),
         obj_id         = obj_id,
         user_id        = user_id,
         interested_ids = interested_ids,

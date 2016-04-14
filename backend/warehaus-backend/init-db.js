@@ -6,28 +6,35 @@ var db = require('./db');
 var r = require('rethinkdb');
 require('rethinkdb-init')(r);
 
+const globalIndexes = [
+    'created_at',
+    'modified_at'
+];
+
 const settings_table = {
-    name: 'settings'
+    name: 'settings',
+    indexes: globalIndexes
 };
 
 const users_table = {
     name: 'user',
-    indexes: [
+    indexes: globalIndexes.concat([
         'username',
         {
             name: 'api_tokens',
             multi: true
         }
-    ]
+    ])
 };
 
 const google_users_table = {
-    name: 'user_google'
+    name: 'user_google',
+    indexes: globalIndexes
 };
 
 const objects_table = {
     name: 'object',
-    indexes: [
+    indexes: globalIndexes.concat([
         'slug',
         'type_id',
         'parent_id',
@@ -47,20 +54,19 @@ const objects_table = {
             name: 'parent_type',
             indexFunction: [r.row('parent_id'), r.row('type_id')]
         }
-    ]
+    ])
 };
 
 const events_table = {
     name: 'event',
-    indexes: [
-        'created_at',
+    indexes: globalIndexes.concat([
         'obj_id',
         'user_id',
         {
             name: 'interested_ids',
             multi: true
         }
-    ]
+    ])
 };
 
 r.init(db.config(), [
