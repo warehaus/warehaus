@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from gevent.wsgi import WSGIServer
 from .app import create_app_with_console_logging
 
 def main():
@@ -11,7 +12,8 @@ def main():
                         help='Port to listen on')
     args = parser.parse_args()
     app = create_app_with_console_logging()
-    app.run(host=args.host, port=args.port, debug=args.debug)
+    http_server = WSGIServer((args.host, args.port), app)
+    http_server.serve_forever()
 
 if __name__ == '__main__':
     main()

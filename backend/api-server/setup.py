@@ -24,8 +24,10 @@ setup(
         'python-slugify == 1.1.4',
         'blinker == 1.4',
         'bunch == 1.0.1',
+        'gevent',
+        'gunicorn',
         'pytz',
-        'rethinkdb >= 2.2.0',
+        'rethinkdb',
         'setuptools',
     ],
 
