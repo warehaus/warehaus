@@ -220,7 +220,7 @@ app.post('/api/auth/login/local', function(req, res, next) {
 var create_new_user_event = function(new_user) {
     if (is_role_allowed_to_login(new_user.role)) {
         return Event.create({
-            timestamp: new Date(),
+            created_at: new Date(),
             obj_id: null,
             user_id: new_user.id,
             interested_ids: [],

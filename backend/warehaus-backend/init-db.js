@@ -53,7 +53,7 @@ const objects_table = {
 const events_table = {
     name: 'event',
     indexes: [
-        'timestamp',
+        'created_at',
         'obj_id',
         'user_id',
         {
