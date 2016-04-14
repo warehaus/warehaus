@@ -16,9 +16,10 @@ class ServerTests(WarehausApiTestBase):
             servers_before = self.api_server.get(urljoin(server_type_path, 'objects'))
             self.assertEqual(len(servers_before['objects']), 0)
             agent_code = self.get_agent_code(server_type_path)
-            self.run_agent(agent_code)
-            servers_after = self.api_server.get(urljoin(server_type_path, 'objects'))
-            self.assertEqual(len(servers_after['objects']), 1)
+            for _ in xrange(5):
+                self.run_agent(agent_code)
+                servers_after = self.api_server.get(urljoin(server_type_path, 'objects'))
+                self.assertEqual(len(servers_after['objects']), 1)
 
     def get_agent_code(self, server_type_path):
         agent_response = requests.get(urljoin(self.api_server.app_url(server_type_path), 'agent.py'))
