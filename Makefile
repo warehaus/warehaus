@@ -1,7 +1,5 @@
 SRC_DIR := $(shell pwd)
 DOCKER_IMAGE := warehaus/warehaus
-EGG_BUILDER_IMAGE := python:2.7
-NODE_BUILDER_IMAGE := node:5.4
 FRONTEND_BUILDER_IMAGE := warehaus/frontend-builder:v11
 DOCKER_RUN_CMDLINE := docker run -ti --rm
 LOCAL_LOGS := ~/.warehaus/logs
@@ -14,7 +12,7 @@ shell:
 		--volume $(SRC_DIR):/opt/warehaus \
 		--volume $(LOCAL_LOGS):/var/log/warehaus \
 		--publish 80:80 \
-		$(DOCKER_IMAGE):latest \
+		$(DOCKER_IMAGE):dev \
 		/bin/bash
 
 build-frontend:
@@ -26,7 +24,7 @@ build-frontend:
 
 docker-image: build
 	@echo "Building Docker image..."
-	@docker build -t $(DOCKER_IMAGE):latest .
+	@docker build -t $(DOCKER_IMAGE):dev .
 
 run: docker-image
 	@echo "Running..."
@@ -35,26 +33,25 @@ run: docker-image
 		--link rethinkdb \
 		--publish 80:80 \
 		--volume $(LOCAL_LOGS):/var/log/warehaus \
-		$(DOCKER_IMAGE):latest
+		$(DOCKER_IMAGE):dev
 
 test: docker-image
 	@echo "Running backend tests..."
 	@$(DOCKER_RUN_CMDLINE) \
 		--link rethinkdb \
 		--volume $(SRC_DIR):/opt/src \
-		$(DOCKER_IMAGE):latest \
+		$(DOCKER_IMAGE):dev \
 		bash -c "cd /opt/src/backend/api-server && python setup.py test"
 
-tagged-docker-image: docker-image
+push-docker-image: docker-image
+	@docker login -e="$(DOCKER_EMAIL)" -u="$(DOCKER_USERNAME)" -p="$(DOCKER_PASSWORD)";
 	@if [ ! -z "$(TRAVIS_TAG)" ]; then \
 		echo "Tagging image: $(DOCKER_IMAGE):$(TRAVIS_TAG)"; \
-		docker tag $(DOCKER_IMAGE):latest $(DOCKER_IMAGE):$(TRAVIS_TAG); \
+		docker tag $(DOCKER_IMAGE):dev $(DOCKER_IMAGE):$(TRAVIS_TAG); \
+		docker tag $(DOCKER_IMAGE):dev $(DOCKER_IMAGE):latest; \
+		@echo "Pushing image..."; \
+		@docker push $(DOCKER_IMAGE):$(TRAVIS_TAG); \
+		@docker push $(DOCKER_IMAGE):latest; \
+	else \
+		@docker push $(DOCKER_IMAGE):dev; \
 	fi
-
-push-docker-image: tagged-docker-image
-	@if [ ! -z "$(DOCKER_EMAIL)" ]; then \
-		echo "Logging in to Docker Hub"; \
-		docker login -e="$(DOCKER_EMAIL)" -u="$(DOCKER_USERNAME)" -p="$(DOCKER_PASSWORD)"; \
-	fi
-	@echo "Pushing image..."
-	@docker push $(DOCKER_IMAGE)
