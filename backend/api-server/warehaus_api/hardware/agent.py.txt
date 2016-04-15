@@ -5,7 +5,7 @@
 #
 
 ### BEGIN INIT INFO
-# Provides: atd at batch
+# Provides: warehaus-agent
 # Required-Start: $local_fs $network $syslog
 # Required-Stop: $local_fs $syslog
 # Default-Start: 2 3 4 5
