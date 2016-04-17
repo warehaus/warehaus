@@ -31,11 +31,6 @@ setup(
         'setuptools',
     ],
 
-    test_suite = 'tests.suite',
-    tests_require = [
-        'requests',
-    ],
-
     entry_points = {
         'console_scripts': [
             'warehaus-api-server=warehaus_api.api_server:main',

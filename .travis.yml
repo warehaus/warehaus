@@ -12,4 +12,4 @@ before_script:
   - docker run -d --name rethinkdb rethinkdb
 
 script:
-  - make test push-docker-image
+  - make docker-image test push-docker-image

@@ -1,5 +1,5 @@
 *.pyc
 *.pyo
-*.egg
 *.egg-info
 node_modules
+.cache
