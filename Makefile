@@ -64,11 +64,11 @@ push-docker-image: docker-image
 		echo "Tagging image: $(DOCKER_IMAGE):$(TRAVIS_TAG)"; \
 		docker tag $(DOCKER_IMAGE):dev $(DOCKER_IMAGE):$(TRAVIS_TAG); \
 		docker tag $(DOCKER_IMAGE):dev $(DOCKER_IMAGE):latest; \
-		@echo "Pushing image..."; \
-		@docker push $(DOCKER_IMAGE):$(TRAVIS_TAG); \
-		@docker push $(DOCKER_IMAGE):latest; \
+		echo "Pushing image..."; \
+		docker push $(DOCKER_IMAGE):$(TRAVIS_TAG); \
+		docker push $(DOCKER_IMAGE):latest; \
 	else \
-		@docker push $(DOCKER_IMAGE):dev; \
+		docker push $(DOCKER_IMAGE):dev; \
 	fi
 
 #---------------------------------------------------------------------
