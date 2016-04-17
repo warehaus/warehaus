@@ -72,7 +72,7 @@ class RestfulAPI(object):
 class Warehaus(object):
     def __init__(self):
         super(Warehaus, self).__init__()
-        self._docker = docker.Client(base_url='unix://var/run/docker.sock')
+        self._docker = docker.Client(base_url='unix://var/run/docker.sock', version='auto')
         self._container = None
         self.api = None
 
