@@ -60,7 +60,7 @@ class Query(object):
 
 class ModelType(type):
     def __new__(mcs, name, bases, attrs):
-        for forbidden in ('_data', '_fields', '_table_name'):
+        for forbidden in ('_data', '_dirty_data', '_fields', '_table_name'):
             if forbidden in attrs:
                 raise TypeError("Model subclasses should not provide a '{}' attribute of their own".format(forbidden))
         if 'id' in attrs:
@@ -91,6 +91,7 @@ class Model(object):
         for field_name, field in self._fields.iteritems():
             if field_name not in kwargs and field.has_default_value():
                 self._data[field_name] = field.default_value()
+        self._dirty_data = {}
 
     def _check_extraneous_fields(self, **kwargs):
         if self._allow_additional_items:
@@ -105,22 +106,34 @@ class Model(object):
         for field_name, new_value in kwargs.iteritems():
             self[field_name] = new_value
 
+    def _insert(self):
+        result = r.table(self._table_name).insert(self._data).run(db.conn)
+        if result['inserted'] != 1:
+            raise RethinkDBError('Expected 1 insertion, instead: {!r}'.format(result))
+        if 'id' not in self:
+            [self._data['id']] = result['generated_keys']
+
+    def _update(self):
+        self._dirty_data['modified_at'] = now()
+        result = r.table(self._table_name).get(self._data['id']).update(self._dirty_data).run(db.conn)
+        if (result['replaced'] + result['unchanged']) != 1:
+            raise RethinkDBError('Expected 1 replacement or unchanged, instead: {!r}'.format(result))
+        self._data.update(self._dirty_data)
+        self._dirty_data = {}
+
     def save(self, force_insert=False):
-        if not force_insert and ('id' in self._data):
-            self._data['modified_at'] = now()
-            result = r.table(self._table_name).get(self._data['id']).update(self._data).run(db.conn)
-            if (result['replaced'] + result['unchanged']) != 1:
-                raise RethinkDBError('Expected 1 replacement or unchanged, instead: {!r}'.format(result))
-        else:
-            result = r.table(self._table_name).insert(self._data).run(db.conn)
-            if result['inserted'] != 1:
-                raise RethinkDBError('Expected 1 insertion, instead: {!r}'.format(result))
-            if 'id' not in self:
-                [self._data['id']] = result['generated_keys']
+        if force_insert or ('id' not in self._data):
+            self._insert()
+        elif self._dirty_data:
+            # We only send updates when there's actual dirty data. A side effect is that
+            # some updates won't change 'modified_at', but the performance gain is more
+            # important in such cases.
+            self._update()
 
     def delete(self):
         if 'id' not in self._data or self._data['id'] is None:
             raise RethinkDBError('Attempt to delete a document not in the database')
+        assert not self._dirty_data, 'Trying to delete a dirty object'
         result = r.table(self._table_name).get(self._data['id']).delete().run(db.conn)
         if result['deleted'] != 1:
             raise RethinkDBError('Expected 1 deletion, instead: {!r}'.format(result))
@@ -140,15 +153,15 @@ class Model(object):
 
     def __setattr__(self, attr, value):
         if self._attr_allowed(attr):
+            if (attr in self._data) and (value == self._data[attr]):
+                return
             self._data[attr] = value
+            self._dirty_data[attr] = value
         else:
             return super(Model, self).__setattr__(attr, value)
 
     def __delattr__(self, attr):
-        if self._attr_allowed(attr):
-            del self._data[attr]
-        else:
-            return super(Model, self).__delattr__(attr)
+        raise NotImplementedError()
 
     def __contains__(self, attr):
         return attr in self._data
