@@ -20,7 +20,7 @@ class Query(object):
         self.model_type = model_type
 
     def get(self, *args, **kwargs):
-        doc = self.model_type._table.get(*args, **kwargs).run(db.conn)
+        doc = r.table(self.model_type._table_name).get(*args, **kwargs).run(db.conn)
         if doc is None:
             return None
         return self.model_type(**doc)
@@ -29,16 +29,16 @@ class Query(object):
         return (self.model_type(**doc) for doc in query.run(db.conn))
 
     def all(self):
-        return self._run_query_and_wrap_objects(self.model_type._table)
+        return self._run_query_and_wrap_objects(r.table(self.model_type._table_name))
 
     def get_all(self, *args, **kwargs):
-        return self._run_query_and_wrap_objects(self.model_type._table.get_all(*args, **kwargs))
+        return self._run_query_and_wrap_objects(r.table(self.model_type._table_name).get_all(*args, **kwargs))
 
     def between(self, *args, **kwargs):
-        return self._run_query_and_wrap_objects(self.model_type._table.between(*args, **kwargs))
+        return self._run_query_and_wrap_objects(r.table(self.model_type._table_name).between(*args, **kwargs))
 
     def filter(self, *args, **kwargs):
-        return self._run_query_and_wrap_objects(self.model_type._table.filter(*args, **kwargs))
+        return self._run_query_and_wrap_objects(r.table(self.model_type._table_name).filter(*args, **kwargs))
 
     def get_one_or_none(self, *args, **kwargs):
         error = kwargs.pop('error', None)
@@ -60,13 +60,12 @@ class Query(object):
 
 class ModelType(type):
     def __new__(mcs, name, bases, attrs):
-        for forbidden in ('_data', '_fields', '_table'):
+        for forbidden in ('_data', '_fields', '_table_name'):
             if forbidden in attrs:
                 raise TypeError("Model subclasses should not provide a '{}' attribute of their own".format(forbidden))
         if 'id' in attrs:
             raise TypeError("An 'id' is automatically created in {} classes, please don't create one manually".format(name))
-        table_name = attrs.get('TABLE_NAME', name.lower())
-        attrs['_table'] = r.table(table_name)
+        attrs['_table_name'] = attrs.get('TABLE_NAME', name.lower())
         attrs['_fields'] = {
             'id'          : Field(field_name='id'),
             'created_at'  : Field(field_name='created_at', default=now),
@@ -109,11 +108,11 @@ class Model(object):
     def save(self, force_insert=False):
         if not force_insert and ('id' in self._data):
             self._data['modified_at'] = now()
-            result = self._table.get(self._data['id']).update(self._data).run(db.conn)
+            result = r.table(self._table_name).get(self._data['id']).update(self._data).run(db.conn)
             if (result['replaced'] + result['unchanged']) != 1:
                 raise RethinkDBError('Expected 1 replacement or unchanged, instead: {!r}'.format(result))
         else:
-            result = self._table.insert(self._data).run(db.conn)
+            result = r.table(self._table_name).insert(self._data).run(db.conn)
             if result['inserted'] != 1:
                 raise RethinkDBError('Expected 1 insertion, instead: {!r}'.format(result))
             if 'id' not in self:
@@ -122,7 +121,7 @@ class Model(object):
     def delete(self):
         if 'id' not in self._data or self._data['id'] is None:
             raise RethinkDBError('Attempt to delete a document not in the database')
-        result = self._table.get(self._data['id']).delete().run(db.conn)
+        result = r.table(self._table_name).get(self._data['id']).delete().run(db.conn)
         if result['deleted'] != 1:
             raise RethinkDBError('Expected 1 deletion, instead: {!r}'.format(result))
         del self._data['id']
