@@ -1,3 +1,6 @@
+from gevent import monkey
+monkey.patch_all()
+
 from argparse import ArgumentParser
 from gevent.wsgi import WSGIServer
 from .app import create_app_with_console_logging
