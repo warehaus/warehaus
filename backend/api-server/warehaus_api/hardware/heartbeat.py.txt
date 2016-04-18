@@ -169,7 +169,7 @@ def collect_info():
 
 def send(data):
     request = Request(WAREHAUS_HEARTBEAT_POST_URL, json.dumps(data), {'Content-Type': 'application/json'})
-    response = urlopen(request).read()
+    response = urlopen(request, timeout=5).read()
 
 info = collect_info()
 

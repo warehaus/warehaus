@@ -39,7 +39,7 @@ env = dict(
 
 def get_heartbeat_code():
     logger.debug('Downloading heartbeat code from {0}'.format(env['WAREHAUS_HEARTBEAT_CODE_URL']))
-    heartbeat_code = urlopen(env['WAREHAUS_HEARTBEAT_CODE_URL']).read()
+    heartbeat_code = urlopen(env['WAREHAUS_HEARTBEAT_CODE_URL'], timeout=5).read()
     heartbeat_md5 = md5(heartbeat_code).hexdigest()
     logger.debug('Received heartbeat code with MD5={0}'.format(heartbeat_md5))
     return heartbeat_code
