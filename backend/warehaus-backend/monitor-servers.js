@@ -11,7 +11,7 @@ const HEARTBEAT_INTERVAL = 30; // seconds
 
 var mark_offline_servers = function() {
     logger.info('Start offline servers check');
-    r.table('object').between(r.now().sub(HEARTBEAT_INTERVAL * 2), r.now(), { index: 'last_seen' }).update({ status: 'offline' }).run(db.conn, (err, result) => {
+    r.table('object').between(0, r.now().sub(HEARTBEAT_INTERVAL * 2), { index: 'last_seen' }).update({ status: 'offline' }).run(db.conn, (err, result) => {
         if (err) {
             logger.error('Error updating offline servers');
             logger.error(err);
