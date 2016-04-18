@@ -22,21 +22,16 @@ mixin cluster_row
       td.pad-right
         .x15
           i.fa.fa-fw.fa-server
-      td.heading.nowrap
+      td.heading.nowrap(style={width: '100%'})
         object-name.uppercase(id='cluster.id')
-    tr
-      td
-      td
-        span.tagline.opacity08(ng-if='clustersToServers.servers_of_cluster[cluster.id] | isEmpty')
-          | This cluster is empty
         span(ng-if='clustersToServers.servers_of_cluster[cluster.id] | isNotEmpty')
-          span.lbl.lbl-success
+          | &#32;
+          span.small.badge
             object-count-with-type(type-id='dbObjects.byId[clustersToServers.servers_of_cluster[cluster.id][0]].type_id'
                                    count='{{ clustersToServers.servers_of_cluster[cluster.id].length }}')
-        span(ng-repeat='ownership in cluster.ownerships' style={'padding': '0 0 0 .5rem'})
-          user-avatar(id='ownership.owner_id' size='1.5rem')
+        span.small.opacity075(ng-repeat='ownership in cluster.ownerships')
           | &nbsp;
-          user-display-name(id='ownership.owner_id')
+          user-mention(id='ownership.owner_id')
 
 mixin cluster_list
   .panel.panel-default

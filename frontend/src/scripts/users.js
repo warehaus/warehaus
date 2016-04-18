@@ -117,6 +117,24 @@ angular.module('warehaus.users').directive('userEmail', function(simpleUserDirec
     });
 });
 
+angular.module('warehaus.users').directive('userMention', function(simpleUserDirective) {
+    return simpleUserDirective({
+        template: '<span ng-if="users.byUserId[id]">@{{ users.byUserId[id].username }}</span> ',
+        scope: {
+            'id': '='
+        }
+    });
+});
+
+angular.module('warehaus.users').directive('userLink', function(simpleUserDirective) {
+    return simpleUserDirective({
+        template: '<a class="link" ng-if="users.byUserId[id]">@{{ users.byUserId[id].username }}</a> ',
+        scope: {
+            'id': '='
+        }
+    });
+});
+
 angular.module('warehaus.users').run(function($rootScope, users) {
     $rootScope.users = users;
 });

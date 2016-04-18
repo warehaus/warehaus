@@ -28,9 +28,7 @@ mixin servers
 
 mixin owners
   span(ng-repeat='ownership in dbObjects.byId[obj_id].ownerships')
-    user-avatar(id='ownership.owner_id' size='1.5rem')
-    | &nbsp;
-    user-display-name(id='ownership.owner_id')
+    user-link(id='ownership.owner_id')
   span(ng-if='dbObjects.byId[obj_id].ownerships | isEmpty' style={'font-style': 'italic'})
     i.fa.fa-fw.fa-meh-o
     | Nobody
