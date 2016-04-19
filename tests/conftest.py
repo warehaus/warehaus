@@ -79,12 +79,19 @@ class Warehaus(object):
     def start(self):
         self._container = self._docker.create_container(
             image = 'warehaus/warehaus:dev',
+            volumes = ['/var/log/warehaus'],
             host_config = self._docker.create_host_config(
                 port_bindings = {
                     80: 80,
                 },
                 links = {
                     'rethinkdb': 'rethinkdb',
+                },
+                binds = {
+                    os.environ['TEST_LOGS']: {
+                        'bind': '/var/log/warehaus',
+                        'mode': 'rw',
+                    },
                 },
             ),
         )

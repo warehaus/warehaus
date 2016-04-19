@@ -3,7 +3,7 @@ DOCKER_IMAGE := warehaus/warehaus
 FRONTEND_BUILDER_IMAGE := warehaus/frontend-builder:v11
 TESTING_IMAGE := warehaus/testing:v1
 DOCKER_RUN_CMDLINE := docker run -ti --rm
-LOCAL_LOGS := ~/.warehaus/logs
+LOCAL_LOGS := $(shell echo ~/.warehaus/logs)
 
 #---------------------------------------------------------------------
 # Default target
@@ -96,5 +96,6 @@ test:
 	@$(DOCKER_RUN_CMDLINE) \
 		--volume $(SRC_DIR):/opt/warehaus \
 		--volume /var/run/docker.sock:/var/run/docker.sock \
+		--env TEST_LOGS=$(LOCAL_LOGS) \
 		$(TESTING_IMAGE) \
 		py.test /opt/warehaus/tests
