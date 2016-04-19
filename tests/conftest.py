@@ -64,8 +64,8 @@ class RestfulAPI(object):
         logger.info('PUT {!r} -> {}: {}'.format(repr(data), path, result))
         return result
 
-    def delete(self, path, expected_status=httplib.NO_CONTENT):
-        result = self._call(requests.delete, path, expected_status=expected_status)
+    def delete(self, path, data=None, expected_status=httplib.NO_CONTENT):
+        result = self._call(requests.delete, path, json=data, expected_status=expected_status)
         logger.info('DELETE {}'.format(path))
         return result
 

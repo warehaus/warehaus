@@ -160,22 +160,28 @@ class TypeClass(object):
         added, users can get/set this attribute from all objects of this type.
         '''
         require_admin()
-        new_attr = request.json['attr']
+        try:
+            new_attr = request.json['attr']
+        except LookupError as error:
+            flask_abort(httplib.BAD_REQUEST, 'Missing "{}" parameter'.format(error))
         if 'attrs' in typeobj:
             if any(attr['slug'] == new_attr['slug'] for attr in typeobj.attrs):
                 flask_abort(httplib.CONFLICT, "There's already an attribute with slug '{}'".format(new_attr['slug']))
-            typeobj.attrs.append(new_attr)
+            typeobj.attrs = typeobj.attrs + [new_attr]
         else:
             typeobj.attrs = [new_attr]
         typeobj.save()
-        return typeobj.as_dict()
+        return typeobj.as_dict(), httplib.CREATED
 
     @type_action('PUT', 'attrs')
     def update_attribute(self, typeobj):
         '''Update an attribute's definition.'''
         require_admin()
-        attr_slug = request.json['slug']
-        updated_attr = request.json['updated_attr']
+        try:
+            attr_slug = request.json['slug']
+            updated_attr = request.json['updated_attr']
+        except LookupError as error:
+            flask_abort(httplib.BAD_REQUEST, 'Missing "{}" parameter'.format(error))
         if 'slug' not in updated_attr:
             flask_abort(httplib.BAD_REQUEST, 'Updated attribute must have a "slug" property')
         if 'attrs' not in typeobj or not any(attr['slug'] == attr_slug for attr in typeobj.attrs):
@@ -190,11 +196,15 @@ class TypeClass(object):
     def delete_attribute(self, typeobj):
         '''Delete a user-defined attribute.'''
         require_admin()
-        attr_slug = request.json['slug']
-        if 'attrs' in typeobj:
-            typeobj.attrs = list(attr for attr in typeobj.attrs if attr['slug'] != attr_slug)
-            typeobj.save()
-        return typeobj.as_dict()
+        try:
+            attr_slug = request.json['slug']
+        except LookupError as error:
+            flask_abort(httplib.BAD_REQUEST, 'Missing "{}" parameter'.format(error))
+        if ('attrs' not in typeobj) or all(attr['slug'] != attr_slug for attr in typeobj.attrs):
+            flask_abort(httplib.NOT_FOUND, 'No such attribute {!r}'.format(attr_slug))
+        typeobj.attrs = list(attr for attr in typeobj.attrs if attr['slug'] != attr_slug)
+        typeobj.save()
+        return None, httplib.NO_CONTENT
 
     def _get_typeobj_attr(self, typeobj, attr_slug):
         if 'attrs' in typeobj:
