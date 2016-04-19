@@ -116,8 +116,8 @@ class Model(object):
     def _update(self):
         self._dirty_data['modified_at'] = now()
         result = r.table(self._table_name).get(self._data['id']).update(self._dirty_data).run(db.conn)
-        if (result['replaced'] + result['unchanged']) != 1:
-            raise RethinkDBError('Expected 1 replacement or unchanged, instead: {!r}'.format(result))
+        if result['replaced'] != 1:
+            raise RethinkDBError('Expected 1 replacement, instead: {!r}'.format(result))
         self._data.update(self._dirty_data)
         self._dirty_data = {}
 
@@ -153,7 +153,7 @@ class Model(object):
 
     def __setattr__(self, attr, value):
         if self._attr_allowed(attr):
-            if (attr in self._data) and (value == self._data[attr]):
+            if (attr in self._data) and not isinstance(value, r.ast.Literal) and (value == self._data[attr]):
                 return
             self._data[attr] = value
             self._dirty_data[attr] = value

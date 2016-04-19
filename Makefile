@@ -98,4 +98,4 @@ test:
 		--volume /var/run/docker.sock:/var/run/docker.sock \
 		--env TEST_LOGS=$(LOCAL_LOGS) \
 		$(TESTING_IMAGE) \
-		py.test /opt/warehaus/tests
+		py.test -v /opt/warehaus/tests

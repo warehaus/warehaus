@@ -1,5 +1,7 @@
 import re
+import copy
 import httplib
+import rethinkdb as r
 from logging import getLogger
 from flask import request
 from flask import abort as flask_abort
@@ -217,15 +219,17 @@ class TypeClass(object):
     def set_attr(self, obj):
         '''Sets a user-attribute for an object.'''
         require_user()
-        attr_slug = request.json['slug']
-        attr_value = request.json['value']
+        try:
+            attr_slug = request.json['slug']
+            attr_value = request.json['value']
+        except LookupError as error:
+            flask_abort(httplib.BAD_REQUEST, 'Missing "{}" parameter'.format(error))
         lab = obj.get_parent_object()
         typeobj = obj.get_type_object()
         attr_type = self._get_typeobj_attr(typeobj, attr_slug)
-        if 'attrs' in obj:
-            obj.attrs[attr_slug] = attr_value
-        else:
-            obj.attrs = {attr_slug: attr_value}
+        new_attrs = copy.copy(obj.attrs) if 'attrs' in obj else {}
+        new_attrs[attr_slug] = attr_value
+        obj.attrs = new_attrs
         obj.save()
         create_event(
             obj_id = obj.id,
@@ -242,10 +246,13 @@ class TypeClass(object):
         require_user()
         lab = obj.get_parent_object()
         typeobj = obj.get_type_object()
+        try:
+            attr_slug = request.json['slug']
+        except LookupError as error:
+            flask_abort(httplib.BAD_REQUEST, 'Missing "{}" parameter'.format(error))
         attr_type = self._get_typeobj_attr(typeobj, attr_slug)
-        attr_slug = request.json['slug']
         if 'attrs' in obj and attr_slug in obj.attrs:
-            del obj.attrs[attr_slug]
+            obj.attrs = r.literal({slug: value for slug, value in obj.attrs.iteritems() if slug != attr_slug})
             obj.save()
         create_event(
             obj_id = obj.id,
@@ -253,4 +260,4 @@ class TypeClass(object):
             interested_ids = [obj.id, lab.id],
             title = 'Removed the **{}** attribute from **{}**'.format(attr_type['display_name'], obj.display_name),
         )
-        return obj.as_dict()
+        return None, httplib.NO_CONTENT
