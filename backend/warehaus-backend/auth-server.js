@@ -553,6 +553,9 @@ app.put('/api/auth/users/:userId', passport.authenticate('jwt'), function(req, r
             return Promise.resolve(true);
         }
         if (req.inputUser.hashed_password) {
+            if (!req.body.password.current) {
+                throw { status: HttpStatus.BAD_REQUEST, message: 'You must provide your current password to set a new one' };
+            }
             return check_password(req.body.password.current, req.inputUser.hashed_password);
         }
         logger.debug('  user has no password set, not verifying current password');

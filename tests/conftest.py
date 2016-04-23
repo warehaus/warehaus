@@ -15,35 +15,68 @@ logger = getLogger(__name__)
 
 lab_num = itertools.count()
 
-ADMIN_CREDENTIALS = dict(username='admin', password='admin')
-USER_CREDENTIALS = dict(username='user', password='user')
+class CurrentUser(object):
+    def __init__(self, api):
+        super(CurrentUser, self).__init__()
+        self.api = api
+        self.identities = []
+
+    def get(self):
+        return self.identities[-1] if self.identities else None
+
+    def auth_headers(self):
+        if not self.identities or not self.identities[-1]['method']:
+            return {}
+        if self.identities[-1]['method'] == 'login':
+            return {'Authorization': 'JWT {}'.format(self.identities[-1]['jwt_token'])}
+        if self.identities[-1]['method'] == 'token':
+            return {'Authentication-Token': self.identities[-1]['auth_token']}
+        raise ValueError('Unknown method for current identity {!r}'.format(self.identities[-1]))
+
+    def push(self, method, credentials):
+        if method is None:
+            self.identities.append(dict(method=None))
+        elif method == 'login':
+            login_res = self.api.post('/api/auth/login/local', credentials, expected_status=httplib.OK)
+            self.identities.append(dict(method='login', jwt_token=login_res['access_token']))
+        elif method == 'token':
+            self.identities.append(dict(method='token', auth_token=credentials))
+        else:
+            raise ValueError('Unknown method {!r}'.format(method))
+
+    def pop(self):
+        self.identities.pop()
+
+    @contextmanager
+    def __call__(self, method, credentials):
+        self.push(method, credentials)
+        try:
+            yield
+        finally:
+            self.pop()
 
 class RestfulAPI(object):
     def __init__(self, url):
         super(RestfulAPI, self).__init__()
         self._url = url
-        self._jwt_token = None
+        self.current_user = CurrentUser(self)
 
     def app_url(self, path=None):
         if path is None:
             return self._url
         return urljoin(self._url, path)
 
-    def jwt_token(self, jwt_token):
-        self._jwt_token = jwt_token
-
-    def auth_headers(self):
-        return {'Authorization': 'JWT {}'.format(self._jwt_token)}
-
     def _call(self, method, path, expected_status=httplib.OK, *args, **kwargs):
         headers = kwargs.pop('headers', {})
-        if self._jwt_token:
-            headers.update(self.auth_headers())
+        headers.update(self.current_user.auth_headers())
         url = self.app_url(path)
         response = method(url, headers=headers, *args, **kwargs)
         assert response.status_code == expected_status, 'URL: {}, EXPECTED: {}, GOT: {}, DATA: {}'.format(
             url, expected_status, response.status_code, response.text)
-        return None if response.status_code == httplib.NO_CONTENT else response.json()
+        try:
+            return response.json()
+        except ValueError:
+            return None
 
     def get(self, path, expected_status=httplib.OK):
         result = self._call(requests.get, path, expected_status=expected_status)
@@ -70,6 +103,9 @@ class RestfulAPI(object):
         return result
 
 class Warehaus(object):
+    ADMIN = dict(username='admin', password='admin')
+    USER  = dict(username='user' , password='user')
+
     def __init__(self):
         super(Warehaus, self).__init__()
         self._docker = docker.Client(base_url='unix://var/run/docker.sock', version='auto')
@@ -132,18 +168,15 @@ class Warehaus(object):
         self.api = None
 
     def login(self):
-        login_res = self.api.post('/api/auth/login/local', ADMIN_CREDENTIALS, expected_status=httplib.OK)
-        jwt_token = login_res['access_token']
-        self.api.jwt_token(jwt_token)
-        self.api.jwt_token(jwt_token)
+        self.api.current_user.push('login', self.ADMIN)
 
     def ensure_user(self):
         users = self.api.get('/api/auth/users')['objects']
-        if not any(user['username'] == USER_CREDENTIALS['username'] for user in users):
+        if not any(user['username'] == self.USER['username'] for user in users):
             new_user = self.api.post('/api/auth/users', dict(
-                username=USER_CREDENTIALS['username'], display_name=USER_CREDENTIALS['username'], role='user'))
-            self.api.put('/api/auth/users/{}'.format(new_user['id']), dict(password=dict(new_password=USER_CREDENTIALS['password'])))
-            self.api.post('/api/auth/login/local', USER_CREDENTIALS, expected_status=httplib.OK)
+                username=self.USER['username'], display_name=self.USER['username'], role='user'))
+            self.api.put('/api/auth/users/{}'.format(new_user['id']), dict(password=dict(new_password=self.USER['password'])))
+            self.api.post('/api/auth/login/local', self.USER, expected_status=httplib.OK)
 
     def get_labs(self):
         return self.api.get('/api/v1/labs')['labs']

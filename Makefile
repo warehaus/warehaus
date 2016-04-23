@@ -93,7 +93,7 @@ src-test:
 		--env TEST_LOGS=$(LOCAL_LOGS) \
 		--env SRC_DIR=$(SRC_DIR) \
 		--env TEST_MODE=source \
-		$(TESTING_IMAGE) py.test -v /opt/warehaus/tests
+		$(TESTING_IMAGE) py.test -v -x /opt/warehaus/tests
 
 test:
 	@echo "Testing..."
