@@ -3,6 +3,7 @@
 import os
 import sys
 import commands
+from argparse import ArgumentParser
 
 # Made with http://patorjk.com/software/taag/#p=display&f=Doom&t=warehaus
 ASCII_LOGO = """\
@@ -17,14 +18,12 @@ ASCII_LOGO = """\
 +--------------------------------------------------+\
 """
 
-print ASCII_LOGO
-
 NO_DB_ERROR = '''
 error: Could not find database configuration.
 
 If you're running with Docker, please use --link to a RethinkDB container.
 
-To manually pass database configuration, you can use:
+To manually pass database configuration with environment variables:
 
    RETHINKDB_PORT_28015_TCP_ADDR -- RethinkDB hostname
    RETHINKDB_PORT_28015_TCP_PORT -- RethinkDB port
@@ -32,18 +31,43 @@ To manually pass database configuration, you can use:
    RETHINKDB_DB                  -- Database name (default: warehaus)
 '''
 
-if not os.environ.get('RETHINKDB_PORT_28015_TCP_ADDR', None) or not os.environ.get('RETHINKDB_PORT_28015_TCP_PORT'):
-    print >>sys.stderr, NO_DB_ERROR
-    raise SystemExit(1)
+def _run(cmdline, error):
+    if os.system(cmdline) != 0:
+        print >>sys.stderr, error
+        raise SystemExit(1)
 
-if os.system('/usr/local/bin/warehaus-init-db') != 0:
-    print >>sys.stderr, 'error: Could not initialize database'
-    raise SystemExit(1)
+def verify_db_env(args):
+    if not os.environ.get('RETHINKDB_PORT_28015_TCP_ADDR', None) or not os.environ.get('RETHINKDB_PORT_28015_TCP_PORT'):
+        print >>sys.stderr, NO_DB_ERROR
+        raise SystemExit(1)
 
-supervisor_cmdline = ['/usr/bin/supervisord', '-c', '/opt/warehaus/etc/supervisor-warehaus.conf']
-os.execve(supervisor_cmdline[0], supervisor_cmdline, os.environ)
+def install_packages(args):
+    if not args.dev:
+        return
+    _run('cd /opt/warehaus/backend/api-server && python setup.py develop', 'error: Could not install Python packages')
+    _run('cd /opt/warehaus/backend/warehaus-backend && npm link', 'error: Could not install Node packages')
 
-SUPERVISOR_EXEC_ERROR = 'error: Could not run ' + ' '.join(supervisor_cmdline)
+def init_db(args):
+    _run('/usr/local/bin/warehaus-init-db', 'error: Could not initialize database')
 
-print >>sys.stderr, SUPERVISOR_EXEC_ERROR
-raise SystemExit(2)
+def run_supervisor(args):
+    supervisor_cmdline = ['/usr/bin/supervisord', '-c', '/opt/warehaus/etc/supervisor-warehaus.conf']
+    os.execve(supervisor_cmdline[0], supervisor_cmdline, os.environ)
+    SUPERVISOR_EXEC_ERROR = 'error: Could not run ' + ' '.join(supervisor_cmdline)
+    print >>sys.stderr, SUPERVISOR_EXEC_ERROR
+    raise SystemExit(2)
+
+def main():
+    print ASCII_LOGO
+
+    parser = ArgumentParser()
+    parser.add_argument('-d', '--dev', action='store_true', default=False, help='Install from source right before running')
+    args = parser.parse_args()
+
+    verify_db_env(args)
+    install_packages(args)
+    init_db(args)
+    run_supervisor(args)
+
+if __name__ == '__main__':
+    main()

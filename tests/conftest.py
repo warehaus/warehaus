@@ -77,23 +77,31 @@ class Warehaus(object):
         self.api = None
 
     def start(self):
+        volumes = ['/var/log/warehaus']
+        host_config = {
+            'port_bindings': {
+                80: 80,
+            },
+            'links': {
+                'rethinkdb': 'rethinkdb',
+            },
+            'binds': {
+                os.environ['TEST_LOGS']: {
+                    'bind': '/var/log/warehaus',
+                    'mode': 'rw',
+                },
+            },
+        }
+        if os.environ.get('TEST_MODE', 'production') == 'source':
+            volumes.append('/opt/warehaus')
+            host_config['binds'][os.environ['SRC_DIR']] = {
+                'bind': '/opt/warehaus',
+                'mode': 'rw',
+            }
         self._container = self._docker.create_container(
-            image = 'warehaus/warehaus:dev',
-            volumes = ['/var/log/warehaus'],
-            host_config = self._docker.create_host_config(
-                port_bindings = {
-                    80: 80,
-                },
-                links = {
-                    'rethinkdb': 'rethinkdb',
-                },
-                binds = {
-                    os.environ['TEST_LOGS']: {
-                        'bind': '/var/log/warehaus',
-                        'mode': 'rw',
-                    },
-                },
-            ),
+            image = os.environ['TEST_IMAGE'],
+            volumes = volumes,
+            host_config = self._docker.create_host_config(**host_config),
         )
         if self._container['Warnings']:
             raise RuntimeError('Could not create container: {!r}'.format(self._container))
