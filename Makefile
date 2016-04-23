@@ -1,6 +1,6 @@
 SRC_DIR := $(shell pwd)
 DOCKER_IMAGE := warehaus/warehaus
-FRONTEND_BUILDER_IMAGE := warehaus/frontend-builder:v11
+FRONTEND_BUILDER_IMAGE := warehaus/frontend-builder:v13
 TESTING_IMAGE := warehaus/testing:v1
 DOCKER_RUN_CMDLINE := docker run -ti --rm
 LOCAL_LOGS := $(shell echo ~/.warehaus/logs)
