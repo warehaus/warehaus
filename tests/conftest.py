@@ -77,6 +77,7 @@ class Warehaus(object):
         self.api = None
 
     def start(self):
+        command = ''
         volumes = ['/var/log/warehaus']
         host_config = {
             'port_bindings': {
@@ -93,12 +94,14 @@ class Warehaus(object):
             },
         }
         if os.environ.get('TEST_MODE', 'production') == 'source':
+            command = 'warehaus --dev'
             volumes.append('/opt/warehaus')
             host_config['binds'][os.environ['SRC_DIR']] = {
                 'bind': '/opt/warehaus',
                 'mode': 'rw',
             }
         self._container = self._docker.create_container(
+            command = command,
             image = os.environ['TEST_IMAGE'],
             volumes = volumes,
             host_config = self._docker.create_host_config(**host_config),
