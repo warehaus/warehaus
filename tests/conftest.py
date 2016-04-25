@@ -113,9 +113,10 @@ class Warehaus(object):
         self.base_uri = 'http://{}'.format(inspection['NetworkSettings']['IPAddress'])
         self.api = RestfulAPI(self.base_uri)
 
-    def wait(self):
+    def wait(self, timeout=120):
         error = None
-        for i in range(100):
+        start_time = time.time()
+        while (start_time + timeout) > time.time():
             try:
                 response = requests.get(self.base_uri + '/api/auth/self')
                 if response.status_code in (httplib.OK, httplib.UNAUTHORIZED):
