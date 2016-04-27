@@ -2,19 +2,69 @@
 
 var logger = require('./logger');
 var db = require('./db');
-
 var r = require('rethinkdb');
-require('rethinkdb-init')(r);
 
 const globalIndexes = [
     'created_at',
     'modified_at'
 ];
 
+//--------------------------------------
+// Settings
+//--------------------------------------
+
 const settings_table = {
     name: 'settings',
     indexes: globalIndexes
 };
+
+const SETTINGS_ID = 1
+
+var make_key = function() {
+    var result = '';
+    const CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ ';
+    for (var i = 0; i < 48; ++i) {
+        result += CHARS.charAt(Math.floor(Math.random() * CHARS.length));
+    }
+    return result;
+};
+
+var create_settings = function(conn) {
+    var new_settings = {
+        id            : SETTINGS_ID,
+        created_at    : r.now(),
+        modified_at   : r.now(),
+        jwt_secret    : make_key(),
+        password_salt : make_key(),
+    };
+    return new Promise(function(resolve, reject) {
+        r.table('settings').insert(new_settings).run(conn, function(err, settings_doc) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(conn);
+            }
+        });
+    });
+};
+
+var ensure_settings = function(conn) {
+    return new Promise(function(resolve, reject) {
+        r.table('settings').get(SETTINGS_ID).run(conn, function(err, settings_doc) {
+            if (err) {
+                reject(err);
+            } else if (settings_doc) {
+                resolve(conn);
+            } else {
+                resolve(create_settings(conn));
+            }
+        });
+    });
+};
+
+//--------------------------------------
+// Users
+//--------------------------------------
 
 const users_table = {
     name: 'user',
@@ -31,6 +81,10 @@ const google_users_table = {
     name: 'user_google',
     indexes: globalIndexes
 };
+
+//--------------------------------------
+// Objects
+//--------------------------------------
 
 const objects_table = {
     name: 'object',
@@ -58,6 +112,10 @@ const objects_table = {
     ])
 };
 
+//--------------------------------------
+// Events
+//--------------------------------------
+
 const events_table = {
     name: 'event',
     indexes: globalIndexes.concat([
@@ -70,13 +128,15 @@ const events_table = {
     ])
 };
 
+require('rethinkdb-init')(r);
+
 r.init(db.config(), [
     settings_table,
     users_table,
     google_users_table,
     objects_table,
     events_table
-]).then(conn => {
+]).then(ensure_settings).then(conn => {
     conn.close();
 }).catch(err => {
     logger.error(err);
