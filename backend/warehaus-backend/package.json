@@ -5,7 +5,7 @@
   "bin": {
     "warehaus-init-db": "./init-db.js",
     "warehaus-notify-server": "./notify-server.js",
-    "warehaus-auth-server": "./auth-server.js",
+    "warehaus-auth-server": "./auth/server.js",
     "warehaus-monitor-servers": "./monitor-servers.js"
   },
   "dependencies": {
