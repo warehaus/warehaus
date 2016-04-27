@@ -14,7 +14,7 @@ class PasswordHandler {
 
     _dirtyPassword(password) {
         return this.salt + password;
-    };
+    }
 
     hashPassword(password) {
         var self = this;
@@ -49,8 +49,8 @@ class PasswordHandler {
                 }
             });
         });
-    };
-};
+    }
+}
 
 module.exports = {
     passwordHandler: new PasswordHandler()
