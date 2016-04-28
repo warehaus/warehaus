@@ -12,10 +12,20 @@ var logger             = require('../logger');
 var models             = require('../models');
 var User               = models.User;
 var isUsernameTaken    = models.isUsernameTaken;
+var UserApiToken       = models.UserApiToken;
 var _util              = require('./util');
 var roles              = require('./roles');
 
 var router = express.Router();
+
+var check_allowed = function(message) {
+    return function(req, res, next) {
+        if ((req.inputUser.id !== req.user.id) && (req.user.role !== roles.ALL.admin)) {
+            return res.status(HttpStatus.FORBIDDEN).json({ message: message });
+        }
+        next();
+    };
+};
 
 router.param('userId', function(req, res, next, userId) {
     User.find(userId).then(user => {
@@ -77,12 +87,7 @@ router.delete('/:userId', passport.authenticate('jwt'), roles.requireAdmin, func
     }
 });
 
-router.put('/:userId', passport.authenticate('jwt'), function(req, res) {
-    if ((req.inputUser.id !== req.user.id) && (req.user.role !== roles.ALL.admin)) {
-        res.status(HttpStatus.FORBIDDEN).json({ message: "You're not allowed to update this user" });
-        return;
-    }
-
+router.put('/:userId', passport.authenticate('jwt'), check_allowed("You're not allowed to update this user"), function(req, res) {
     var update_username = function(updated_fields) {
         if (!req.body.username) {
             logger.debug('  no need to update username');
@@ -192,35 +197,35 @@ router.put('/:userId', passport.authenticate('jwt'), function(req, res) {
         });
 });
 
-router.get('/:userId/api-tokens', passport.authenticate('jwt'), function(req, res) {
-    if ((req.user.id === req.inputUser.id) || (req.user.role === roles.ALL.admin)) {
-        res.json({ api_tokens: req.inputUser.api_tokens || [] });
-    } else {
-        res.status(HttpStatus.FORBIDDEN).json({ message: "You can't get API-tokens of other users" });
-    }
+router.get('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed("You can't get API-tokens of other users"), function(req, res) {
+    UserApiToken.findAll({ where: { user_id: { '===': req.inputUser.id } } }).then(token_docs => {
+        res.json({ api_tokens: token_docs });
+    }).catch(err => {
+        logger.error('Could not fetch tokens:', err);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching user API-tokens' });
+    });
 });
 
-router.post('/:userId/api-tokens', passport.authenticate('jwt'), function(req, res) {
-    if ((req.user.id === req.inputUser.id) || (req.user.role === roles.ALL.admin)) {
-        crypto.randomBytes(API_TOKEN_LENGTH, function(err, buffer) {
-            if (err) {
-                logger.error('Error generating new token:', err);
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating new token' });
-            } else {
-                var new_token = buffer.toString('hex');
-                var new_tokens_list = req.inputUser.api_tokens || [];
-                new_tokens_list.push(new_token);
-                User.update(req.inputUser.id, { api_tokens: new_tokens_list }).then(doc => {
-                    res.json({ api_token: new_token });
-                }).catch(err => {
-                    logger.error('Could not save user in database:', err);
-                    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating new token' });
-                });
-            }
+router.post('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed("You can't create API-tokens of other users"), function(req, res) {
+    crypto.randomBytes(API_TOKEN_LENGTH, function(err, buffer) {
+        if (err) {
+            logger.error('Error generating new token:', err);
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating new token' });
+        }
+        var now = new Date();
+        var token_doc = {
+            id          : buffer.toString('hex'),
+            created_at  : now,
+            modified_at : now,
+            user_id     : req.inputUser.id
+        };
+        UserApiToken.create(token_doc).then(doc => {
+            res.status(HttpStatus.CREATED).json({ api_token: doc.id });
+        }).catch(err => {
+            logger.error('Could not create new token:', err);
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating new token' });
         });
-    } else {
-        res.status(HttpStatus.FORBIDDEN).json({ message: "You can't create API-tokens of other users" });
-    }
+    });
 });
 
 module.exports = router;

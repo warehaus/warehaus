@@ -78,6 +78,13 @@ const users_table = {
     ])
 };
 
+const user_api_tokens_table = {
+    name: 'user_api_token',
+    indexes: globalIndexes.concat([
+        'user_id'
+    ])
+};
+
 const google_users_table = {
     name: 'user_google',
     indexes: globalIndexes
@@ -134,6 +141,7 @@ require('rethinkdb-init')(r);
 r.init(db.config(), [
     settings_table,
     users_table,
+    user_api_tokens_table,
     google_users_table,
     objects_table,
     events_table

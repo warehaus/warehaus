@@ -12,7 +12,8 @@ angular.module('warehaus.ui_helpers', [
     'ngOrderObjectBy',
     'slugifier',
     'ngNumeraljs',
-    'ngPassword'
+    'ngPassword',
+    'angularMoment'
 ]);
 
 angular.module('warehaus.ui_helpers').config(function($numeraljsConfigProvider) {

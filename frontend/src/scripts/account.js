@@ -116,43 +116,43 @@ angular.module('warehaus.account').controller('UpdateUserController', function($
     };
 });
 
-angular.module('warehaus.account').directive('userApiTokens', function($http, users, accountView) {
-    var link = function(scope, elem, attrs) {
-        var tokens_url = function() {
-            return '/api/auth/users/' + scope.userId + '/api-tokens';
-        };
-
-        var reload_tokens = function() {
-            $http.get(tokens_url()).then(function(res) {
-                scope.apiTokens = res.data.api_tokens;
-            });
-        };
-
-        users.whenReady.then(reload_tokens);
-
-        scope.create_new_token = function() {
-            return $http.post(tokens_url());
-        };
-
-        scope.$on('warehaus.users.user_changed', function(event, user_id) {
-            if (user_id === scope.userId) {
-                reload_tokens();
-            }
-        });
-
-        scope.$on('warehaus.users.user_deleted', function(event, user_id) {
-            if (user_id === scope.userId) {
-                scope.apiTokens = [];
-            }
-        });
-    };
-
+angular.module('warehaus.account').directive('userApiTokens', function($http, accountView) {
     return {
         restrict: 'E',
         templateUrl: accountView('api-tokens.html'),
-        link: link,
+        controller: 'UserApiTokensController',
         scope: {
             'userId': '='
         }
     };
+});
+
+angular.module('warehaus.account').controller('UserApiTokensController', function($scope, $http, users) {
+    var tokens_url = function() {
+        return '/api/auth/users/' + $scope.userId + '/api-tokens';
+    };
+
+    var reload_tokens = function() {
+        $http.get(tokens_url()).then(function(res) {
+            $scope.apiTokens = res.data.api_tokens;
+        });
+    };
+
+    users.whenReady.then(reload_tokens);
+
+    $scope.create_new_token = function() {
+        return $http.post(tokens_url()).then(reload_tokens);
+    };
+
+    $scope.$on('warehaus.users.user_changed', function(event, user_id) {
+        if (user_id === $scope.userId) {
+            reload_tokens();
+        }
+    });
+
+    $scope.$on('warehaus.users.user_deleted', function(event, user_id) {
+        if (user_id === $scope.userId) {
+            $scope.apiTokens = [];
+        }
+    });
 });

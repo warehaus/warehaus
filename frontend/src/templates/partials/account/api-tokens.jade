@@ -1,11 +1,18 @@
 mixin token_row
   .ellipsis
     code
-      | {{ api_token }}
+      | {{ api_token.id }}
+    div
+      small.gray
+        i.icon-clock
+        | &#32;
+        | Created
+        | &#32;
+        span(am-time-ago='api_token.created_at')
 
 mixin api_tokens
   ul.list-group
-    li.list-group-item(ng-repeat='api_token in apiTokens')
+    li.list-group-item(ng-repeat='api_token in apiTokens | orderBy:"created_at"')
       +token_row
     button.list-group-item(type='button' ng-click='create_new_token()' style={'color': '#888'})
       i.fa.fa-plus

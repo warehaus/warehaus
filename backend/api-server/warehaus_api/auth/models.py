@@ -1,12 +1,16 @@
 from .. import db
 
+class ApiToken(db.Model):
+    TABLE_NAME = 'user_api_token'
+    user_id = db.Field()
+
 class User(db.Model):
     username        = db.Field()
     role            = db.Field()
     display_name    = db.Field()
     email           = db.Field()
     hashed_password = db.Field()
-    api_tokens      = db.Field(default=lambda: [])
+    api_tokens      = db.Field()
 
     @classmethod
     def get_by_username(cls, username):
@@ -14,4 +18,7 @@ class User(db.Model):
 
     @classmethod
     def get_by_api_token(cls, api_token):
-        return cls.query.get_one_or_none(api_token, index='api_tokens', error='Found more than one user with api_token={!r}'.format(api_token))
+        token_doc = ApiToken.query.get(api_token)
+        if token_doc is None:
+            return None
+        return User.query.get(token_doc.user_id)

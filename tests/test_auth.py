@@ -1,6 +1,6 @@
 import time
-import uuid
 import httplib
+from uuid import uuid4
 
 def test_get_login_options(warehaus):
     warehaus.api.get('/api/auth/login')
@@ -26,11 +26,11 @@ def test_get_user(warehaus):
     cur_user = warehaus.api.get('/api/auth/self')
     warehaus.api.get('/api/auth/users/{}'.format(cur_user['id']))
     # XXX to be fixed
-    #warehaus.api.get('/api/auth/users/{}'.format(uuid.uuid4()), expected_status=httplib.NOT_FOUND)
+    #warehaus.api.get('/api/auth/users/{}'.format(str(uuid4())), expected_status=httplib.NOT_FOUND)
     with warehaus.api.current_user(None, None):
         warehaus.api.get('/api/auth/users/{}'.format(cur_user['id']), expected_status=httplib.UNAUTHORIZED)
         # XXX to be fixed
-        #warehaus.api.get('/api/auth/users/{}'.format(uuid.uuid4()), expected_status=httplib.UNAUTHORIZED)
+        #warehaus.api.get('/api/auth/users/{}'.format(str(uuid4())), expected_status=httplib.UNAUTHORIZED)
 
 def _random_username():
     return 'u' + str(time.time())
@@ -167,5 +167,36 @@ def test_update_role(warehaus):
     warehaus.api.put(_user_uri(regular_user['id']), dict(role='user'))
 
 def test_api_tokens(warehaus):
-    # XXX api tokens are not yet implemented in auth-server
-    "/api/auth/users/:userId/api-tokens"
+    # Try to get labs with a garbage token
+    with warehaus.api.current_user('token', 'lkaslkasd'):
+        warehaus.api.get('/api/v1/labs', expected_status=httplib.UNAUTHORIZED)
+    # Create a token for the admin and try again
+    admin_user = warehaus.api.get('/api/auth/self')
+    orig_admin_token_count = len(warehaus.api.get(_user_uri(admin_user['id']) + '/api-tokens')['api_tokens'])
+    admin_token = warehaus.api.post(_user_uri(admin_user['id']) + '/api-tokens', None)['api_token']
+    assert len(warehaus.api.get(_user_uri(admin_user['id']) + '/api-tokens')['api_tokens']) == orig_admin_token_count + 1
+    with warehaus.api.current_user('token', admin_token):
+        warehaus.api.get('/api/v1/labs')
+    # User creates a token for itself
+    with warehaus.api.current_user('login', warehaus.USER):
+        regular_user = warehaus.api.get('/api/auth/self')
+    orig_user_token_count = len(warehaus.api.get(_user_uri(regular_user['id']) + '/api-tokens')['api_tokens'])
+    with warehaus.api.current_user('login', warehaus.USER):
+        user_token = warehaus.api.post(_user_uri(regular_user['id']) + '/api-tokens', None)['api_token']
+    assert len(warehaus.api.get(_user_uri(regular_user['id']) + '/api-tokens')['api_tokens']) == orig_user_token_count + 1
+    # Use the user token, verify that it's really not an admin
+    with warehaus.api.current_user('token', user_token):
+        warehaus.api.get('/api/v1/labs')
+        warehaus.api.post('/api/v1/labs', dict(slug=str(uuid4()), display_name=str(uuid4())), expected_status=httplib.FORBIDDEN)
+    # Admin creates a token for a user
+    user_token2 = warehaus.api.post(_user_uri(regular_user['id']) + '/api-tokens', None)['api_token']
+    with warehaus.api.current_user('token', user_token2):
+        warehaus.api.get('/api/v1/labs')
+        warehaus.api.post('/api/v1/labs', dict(slug=str(uuid4()), display_name=str(uuid4())), expected_status=httplib.FORBIDDEN)
+    assert len(warehaus.api.get(_user_uri(regular_user['id']) + '/api-tokens')['api_tokens']) == orig_user_token_count + 2
+    # Make sure admin can read users' tokens but not the other way around
+    warehaus.api.get(_user_uri(admin_user['id']) + '/api-tokens')
+    warehaus.api.get(_user_uri(regular_user['id']) + '/api-tokens')
+    with warehaus.api.current_user('login', warehaus.USER):
+        warehaus.api.get(_user_uri(admin_user['id']) + '/api-tokens', expected_status=httplib.FORBIDDEN)
+        warehaus.api.get(_user_uri(regular_user['id']) + '/api-tokens')
