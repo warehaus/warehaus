@@ -1,12 +1,12 @@
 'use strict';
 
+var passport           = require('passport');
 var createNewUserEvent = require('./user-events').createNewUserEvent;
-var logger = require('../logger');
-var User = require('../models').User;
-var isUsernameTaken = require('../models').isUsernameTaken;
-var GoogleUser = require('../models').GoogleUser;
-var passport = require('passport');
-var GoogleStrategy = require('passport-google-oauth20').Strategy;
+var logger             = require('../logger');
+var User               = require('../models').User;
+var isUsernameTaken    = require('../models').isUsernameTaken;
+var GoogleUser         = require('../models').GoogleUser;
+var GoogleStrategy     = require('passport-google-oauth20').Strategy;
 
 class GoogleAuth {
     isConfigured(settings) {

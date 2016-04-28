@@ -1,13 +1,13 @@
 'use strict';
 
-var logger = require('../logger');
-var models = require('../models'),
-    User = models.User;
+var logger       = require('../logger');
+var models       = require('../models');
+var User         = models.User;
 var jsonwebtoken = require('jsonwebtoken');
-var HttpStatus = require('http-status-codes');
-var passport = require('passport');
-var JwtStrategy = require('passport-jwt').Strategy;
-var ExtractJwt = require('passport-jwt').ExtractJwt;
+var HttpStatus   = require('http-status-codes');
+var passport     = require('passport');
+var JwtStrategy  = require('passport-jwt').Strategy;
+var ExtractJwt   = require('passport-jwt').ExtractJwt;
 
 const JWT_EXPIRATION = '7d';
 

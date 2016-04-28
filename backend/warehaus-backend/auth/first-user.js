@@ -1,9 +1,9 @@
 'use strict';
 
-var logger = require('../logger');
-var models = require('../models'),
-    User = models.User;
-var roles = require('./roles');
+var logger          = require('../logger');
+var models          = require('../models');
+var User            = models.User;
+var roles           = require('./roles');
 var passwordHandler = require('./passwords').passwordHandler;
 
 const FIRST_USER_USERNAME = 'admin';

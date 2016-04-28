@@ -23,11 +23,18 @@ var isUsernameTaken = function(username) {
     });
 };
 
+const SETTINGS_ID = 1
+
+var getSettings = function() {
+    return Settings.find(SETTINGS_ID);
+};
+
 module.exports = {
     store: store,
     User: User,
     isUsernameTaken: isUsernameTaken,
     GoogleUser: GoogleUser,
     Settings: Settings,
+    getSettings: getSettings,
     Event: Event
 };

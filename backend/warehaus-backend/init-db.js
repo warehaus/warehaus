@@ -19,11 +19,12 @@ const settings_table = {
 };
 
 const SETTINGS_ID = 1
+const DEFAULT_KEY_LENGTH = 48;
 
-var make_key = function() {
+var make_key = function(len) {
     var result = '';
     const CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ ';
-    for (var i = 0; i < 48; ++i) {
+    for (var i = 0; i < len; ++i) {
         result += CHARS.charAt(Math.floor(Math.random() * CHARS.length));
     }
     return result;
@@ -34,8 +35,8 @@ var create_settings = function(conn) {
         id            : SETTINGS_ID,
         created_at    : r.now(),
         modified_at   : r.now(),
-        jwt_secret    : make_key(),
-        password_salt : make_key(),
+        jwt_secret    : make_key(DEFAULT_KEY_LENGTH),
+        password_salt : make_key(DEFAULT_KEY_LENGTH),
     };
     return new Promise(function(resolve, reject) {
         r.table('settings').insert(new_settings).run(conn, function(err, settings_doc) {
