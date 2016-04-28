@@ -228,4 +228,21 @@ router.post('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed("
     });
 });
 
+router.delete('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed("You can't delete API-tokens of other users"), function(req, res) {
+    if (!req.body.api_token) {
+        return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Please specify the token to delete' });
+    }
+    UserApiToken.find(req.body.api_token).then(doc => {
+        if (doc.user_id !== req.inputUser.id) {
+            return res.status(HttpStatus.NOT_FOUND).json({ message: 'No such token' });
+        }
+        UserApiToken.destroy(doc.id).then(() => {
+            res.status(HttpStatus.NO_CONTENT).json(null);
+        }).catch(_util.failureResponse);
+    }).catch(err => {
+        logger.error('Could not delete token:', err);
+        res.status(HttpStatus.NOT_FOUND).json({ message: 'No such token' });
+    });
+});
+
 module.exports = router;

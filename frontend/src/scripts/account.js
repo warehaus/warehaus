@@ -144,6 +144,14 @@ angular.module('warehaus.account').controller('UserApiTokensController', functio
         return $http.post(tokens_url()).then(reload_tokens);
     };
 
+    $scope.revoke_token = function(token) {
+        var config = {
+            headers: { 'Content-Type': 'application/json' },
+            data: { api_token: token }
+        };
+        return $http.delete(tokens_url(), config).then(reload_tokens);
+    };
+
     $scope.$on('warehaus.users.user_changed', function(event, user_id) {
         if (user_id === $scope.userId) {
             reload_tokens();

@@ -1,14 +1,24 @@
 mixin token_row
-  .ellipsis
-    code
-      | {{ api_token.id }}
-    div
-      small.gray
-        i.icon-clock
-        | &#32;
-        | Created
-        | &#32;
-        span(am-time-ago='api_token.created_at')
+  .main-with-extra
+    .main.ellipsis
+      code
+        | {{ api_token.id }}
+      div
+        small.gray
+          i.icon-clock
+          | &#32;
+          | Created
+          | &#32;
+          span(am-time-ago='api_token.created_at')
+    .extra(style={'padding-left': '1rem'})
+      .dropdown.pull-right
+        a.text-link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+          i.icon-options-vertical
+        ul.dropdown-menu
+          li
+            a.link(ng-click='revoke_token(api_token.id)')
+              i.fa.fa-fw.fa-trash-o
+              | Revoke API Token
 
 mixin api_tokens
   ul.list-group

@@ -200,3 +200,21 @@ def test_api_tokens(warehaus):
     with warehaus.api.current_user('login', warehaus.USER):
         warehaus.api.get(_user_uri(admin_user['id']) + '/api-tokens', expected_status=httplib.FORBIDDEN)
         warehaus.api.get(_user_uri(regular_user['id']) + '/api-tokens')
+    # Delete the tokens
+    warehaus.api.delete(_user_uri(admin_user['id']) + '/api-tokens', dict(api_token=admin_token))
+    assert len(warehaus.api.get(_user_uri(admin_user['id']) + '/api-tokens')['api_tokens']) == orig_admin_token_count
+    with warehaus.api.current_user('token', admin_token):
+        warehaus.api.get('/api/v1/labs', expected_status=httplib.UNAUTHORIZED)
+    with warehaus.api.current_user('login', warehaus.USER):
+        warehaus.api.delete(_user_uri(regular_user['id']) + '/api-tokens', dict(api_token=user_token))
+    assert len(warehaus.api.get(_user_uri(regular_user['id']) + '/api-tokens')['api_tokens']) == orig_user_token_count + 1
+    with warehaus.api.current_user('token', user_token):
+        warehaus.api.get('/api/v1/labs', expected_status=httplib.UNAUTHORIZED)
+    # Admin deletes the token for the user
+    warehaus.api.delete(_user_uri(regular_user['id']) + '/api-tokens', dict(api_token=user_token2))
+    assert len(warehaus.api.get(_user_uri(regular_user['id']) + '/api-tokens')['api_tokens']) == orig_user_token_count
+    with warehaus.api.current_user('token', user_token2):
+        warehaus.api.get('/api/v1/labs', expected_status=httplib.UNAUTHORIZED)
+    # Some bad deletes
+    warehaus.api.delete(_user_uri(admin_user['id']) + '/api-tokens', dict(), expected_status=httplib.BAD_REQUEST)
+    warehaus.api.delete(_user_uri(admin_user['id']) + '/api-tokens', dict(api_token='dsklmn3f'), expected_status=httplib.NOT_FOUND)
