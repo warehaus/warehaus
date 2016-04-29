@@ -33,14 +33,23 @@ mixin content
   .panel.panel-default
     .panel-heading
       | API Tokens
-    .panel-body
-      | API tokens allow for authentication without using a password. Put
-      | the token in an
-      | &#32;
-      code
-        | Authentication-Token
-      | &#32;
-      | HTTP header.
+    .panel-body(ng-if='helpText')
+      p
+        | API-tokens allow you to authenticate without a password. This is great for scripts or using
+        | &#32;
+        samp curl
+        | &#32;
+        | from the command-line.
+      p
+        | To use API-tokens, start by creating a token below. You can create multiple tokens if you
+        | need to authenticate from several places. This would allow you to revoke tokens in the future.
+      p
+        | Once you have a token, put the token in an
+        | &#32;
+        code
+          | Authentication-Token
+        | &#32;
+        | HTTP header of your API calls.
     +api_tokens
 
 +content

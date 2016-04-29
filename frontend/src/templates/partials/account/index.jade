@@ -15,9 +15,13 @@ mixin page_header
 
 +page_header
 .page-layout
-  .page-layout-content-no-nav
-    .row
-      .col-sm-6
-        user-profile(user-id='curUser.id')
-      .col-sm-6
-        user-api-tokens(user-id='curUser.id')
+  .page-layout-nav
+    ul.page-layout-menu
+      li(ui-sref-active='active')
+        a(ui-sref='.profile')
+          | Profile
+      li(ui-sref-active='active')
+        a(ui-sref='.api-tokens')
+          | API Tokens
+  .page-layout-content
+    ui-view

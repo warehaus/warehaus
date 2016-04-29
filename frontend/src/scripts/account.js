@@ -30,7 +30,30 @@ angular.module('warehaus.account').provider('accountUrlPaths', function(accountV
             $title: function() {
                 return 'Account';
             }
-        }
+        },
+        autoRedirectToChild: 'profile',
+        children: [
+            {
+                name: 'profile',
+                url: '/profile',
+                template: '<user-profile user-id="curUser.id"/>',
+                resolve: {
+                    $title: function() {
+                        return 'Profile';
+                    }
+                }
+            },
+            {
+                name: 'api-tokens',
+                url: '/api-tokens',
+                template: '<user-api-tokens user-id="curUser.id" help-text="true"/>',
+                resolve: {
+                    $title: function() {
+                        return 'API Tokens';
+                    }
+                }
+            }
+        ]
     };
 
     return {
@@ -122,7 +145,8 @@ angular.module('warehaus.account').directive('userApiTokens', function($http, ac
         templateUrl: accountView('api-tokens.html'),
         controller: 'UserApiTokensController',
         scope: {
-            'userId': '='
+            'userId': '=',
+            'helpText': '='
         }
     };
 });
