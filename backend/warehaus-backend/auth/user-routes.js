@@ -62,15 +62,18 @@ router.post('', passport.authenticate('jwt'), roles.requireAdmin, function(req, 
         res.status(HttpStatus.BAD_REQUEST).json({ message: 'The role you specified for the new user is invalid' });
         return;
     }
-    return isUsernameTaken(new_user.username).then(username_taken => {
-        if (username_taken) {
-            res.status(HttpStatus.CONFLICT).json({ message: 'Username already in use' });
-            return;
-        }
-        return User.create(new_user);
-    }).then(createNewUserEvent).then(function(new_user) {
-        res.status(HttpStatus.CREATED).json(_util.cleanedUser(new_user));
-    }).catch(_util.failureResponse);
+    return isUsernameTaken(new_user.username)
+        .then(username_taken => {
+            if (username_taken) {
+                return res.status(HttpStatus.CONFLICT).json({ message: 'Username already in use' });
+            }
+            return User.create(new_user)
+                .then(createNewUserEvent).then(function(new_user) {
+                    res.status(HttpStatus.CREATED).json(_util.cleanedUser(new_user));
+                })
+                .catch(_util.failureResponse);
+        })
+        .catch(_util.failureResponse);
 });
 
 router.get('/:userId', passport.authenticate('jwt'), function(req, res) {
