@@ -11,6 +11,7 @@ class User(db.Model):
     email           = db.Field()
     hashed_password = db.Field()
     api_tokens      = db.Field()
+    ssh_keys        = db.Field()
 
     @classmethod
     def get_by_username(cls, username):

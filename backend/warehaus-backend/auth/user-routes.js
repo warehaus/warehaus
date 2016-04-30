@@ -222,7 +222,7 @@ router.post('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed("
             modified_at : now,
             user_id     : req.inputUser.id
         };
-        UserApiToken.create(token_doc).then(doc => {
+        return UserApiToken.create(token_doc).then(doc => {
             res.status(HttpStatus.CREATED).json({ api_token: doc.id });
         }).catch(err => {
             logger.error('Could not create new token:', err);
@@ -235,16 +235,61 @@ router.delete('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed
     if (!req.body.api_token) {
         return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Please specify the token to delete' });
     }
-    UserApiToken.find(req.body.api_token).then(doc => {
+    return UserApiToken.find(req.body.api_token).then(doc => {
         if (doc.user_id !== req.inputUser.id) {
             return res.status(HttpStatus.NOT_FOUND).json({ message: 'No such token' });
         }
-        UserApiToken.destroy(doc.id).then(() => {
+        return UserApiToken.destroy(doc.id).then(() => {
             res.status(HttpStatus.NO_CONTENT).json(null);
         }).catch(_util.failureResponse);
     }).catch(err => {
         logger.error('Could not delete token:', err);
         res.status(HttpStatus.NOT_FOUND).json({ message: 'No such token' });
+    });
+});
+
+router.post('/:userId/ssh-keys', passport.authenticate('jwt'), check_allowed("You can't add SSH-keys for other users"), function(req, res) {
+    var key_to_add = req.body.ssh_key;
+    if (!key_to_add || !key_to_add.contents) {
+        return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Missing ssh_key argument' });
+    }
+    if (req.inputUser.ssh_keys) {
+        for (var i = 0; i < req.inputUser.ssh_keys.length; ++i) {
+            var existing_key = req.inputUser.ssh_keys[i];
+            if (existing_key.contents === key_to_add.contents) {
+                return res.status(HttpStatus.CONFLICT).json({ message: 'This key is already saved' });
+            }
+        }
+    }
+    var new_key = {
+        created_at: new Date(),
+        contents: key_to_add.contents,
+        comment: key_to_add.comment
+    };
+    var updated_ssh_keys = (req.inputUser.ssh_keys || []).concat(new_key);
+    return User.update(req.inputUser.id, { ssh_keys: updated_ssh_keys }).then(doc => {
+        res.status(HttpStatus.CREATED).json(doc);
+    }).catch(err => {
+        logger.error('Could not save user in database:', err);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error saving SSH-key' });
+    });
+});
+
+router.delete('/:userId/ssh-keys', passport.authenticate('jwt'), check_allowed("You can't delete SSH-keys for other users"), function(req, res) {
+    var key_to_delete = req.body.ssh_key;
+    if (!key_to_delete || !key_to_delete.contents) {
+        return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Missing ssh_key argument' });
+    }
+    var existing_keys = req.inputUser.ssh_keys || [];
+    var updated_ssh_keys = existing_keys.filter(existing_key => existing_key.contents !== key_to_delete.contents);
+    if (existing_keys.length === updated_ssh_keys.length) {
+        return res.status(HttpStatus.NOT_FOUND).json({ message: 'No such SSH key' });
+    }
+    return User.update(req.inputUser.id, { ssh_keys: updated_ssh_keys }).then(doc => {
+        res.status(HttpStatus.NO_CONTENT).json(null);
+    }).catch(err => {
+        logger.error('Could not save user in database:', err);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error deleting SSH-key' });
     });
 });
 

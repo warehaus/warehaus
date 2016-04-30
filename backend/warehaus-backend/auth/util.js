@@ -9,7 +9,8 @@ var cleanedUser = function(user) {
         username     : user.username,
         has_password : Boolean(user.hashed_password),
         display_name : user.display_name,
-        email        : user.email
+        email        : user.email,
+        ssh_keys     : user.ssh_keys || []
     };
 };
 
