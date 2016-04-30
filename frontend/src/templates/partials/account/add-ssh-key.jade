@@ -1,0 +1,28 @@
+mixin modal_header
+  button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+    span(aria-hidden="true") &times;
+  h4.modal-title
+    | Add SSH Key
+
+mixin modal_body
+  p
+    | Paste your public key in this box:
+  .form-group
+    textarea.form-control(rows='8' ng-model='ssh_key.contents' placeholder='SSH Public Key' required='' style={'resize': 'none', 'font-family': 'Menlo, Monaco, Consolas, monospace'})
+  .form-group
+    input.form-control(type='text' ng-model='ssh_key.comment' placeholder='Comment (optional')
+  wh-error-box(error='error')
+
+mixin modal_footer
+  button.btn.btn-link(type='button' ng-click='cancel()')
+    | Cancel
+  button.btn.btn-primary(type='submit' ng-click='save()' ng-disabled='addSshKey.$invalid || working')
+    | Save Changes
+
+form(name='addSshKey' role='form' ng-submit='save()')
+  .modal-header
+    +modal_header
+  .modal-body
+    +modal_body
+  .modal-footer
+    +modal_footer

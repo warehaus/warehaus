@@ -1,0 +1,47 @@
+mixin ssh_key_row
+  .main-with-extra
+    .main.ellipsis
+      code
+        | {{ ssh_key.contents }}
+      div(ng-if='ssh_key.comment')
+        small(style={color: '#666'})
+          i.fa.fa-align-left
+          | &#32;
+          | {{ ssh_key.comment }}
+      div
+        small.gray
+          i.icon-clock
+          | &#32;
+          | Created
+          | &#32;
+          span(am-time-ago='ssh_key.created_at')
+    .extra(style={'padding-left': '1rem'})
+      .dropdown.pull-right
+        a.text-link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true')
+          i.icon-options-vertical
+        ul.dropdown-menu
+          li
+            a.link(ng-click='delete_key(ssh_key.contents)')
+              i.fa.fa-fw.fa-trash-o
+              | Delete SSH Key
+
+mixin ssh_keys
+  ul.list-group
+    li.list-group-item(ng-repeat='ssh_key in sshKeys | orderBy:"created_at"')
+      +ssh_key_row
+    button.list-group-item(type='button' ng-click='add_key()' style={'color': '#888'})
+      i.fa.fa-plus
+      | &nbsp;
+      | Add SSH Key
+
+mixin content
+  .panel.panel-default
+    .panel-heading
+      | SSH Keys
+    .panel-body(ng-if='helpText')
+      p
+        | Warehaus stores SSH keys for external scripts and plugins that may want to provide users
+        | with access into servers or other systems managed by them.
+    +ssh_keys
+
++content

@@ -248,6 +248,14 @@ router.delete('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed
     });
 });
 
+var _get_key_comment = function(ssh_key) {
+    var parts = ssh_key.match(/^\s*(ssh-.+)\s+(.+)\s+(.+)\s*$/);
+    if (parts && (parts.length === 4)) {
+        return parts[3];
+    }
+    return null;
+};
+
 router.post('/:userId/ssh-keys', passport.authenticate('jwt'), check_allowed("You can't add SSH-keys for other users"), function(req, res) {
     var key_to_add = req.body.ssh_key;
     if (!key_to_add || !key_to_add.contents) {
@@ -266,6 +274,9 @@ router.post('/:userId/ssh-keys', passport.authenticate('jwt'), check_allowed("Yo
         contents: key_to_add.contents,
         comment: key_to_add.comment
     };
+    if (!new_key.comment) {
+        new_key.comment = _get_key_comment(key_to_add.contents);
+    }
     var updated_ssh_keys = (req.inputUser.ssh_keys || []).concat(new_key);
     return User.update(req.inputUser.id, { ssh_keys: updated_ssh_keys }).then(doc => {
         res.status(HttpStatus.CREATED).json(doc);

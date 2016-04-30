@@ -52,6 +52,16 @@ angular.module('warehaus.account').provider('accountUrlPaths', function(accountV
                         return 'API Tokens';
                     }
                 }
+            },
+            {
+                name: 'ssh-keys',
+                url: '/ssh-keys',
+                template: '<user-ssh-keys user-id="curUser.id" help-text="true"/>',
+                resolve: {
+                    $title: function() {
+                        return 'SSH Keys';
+                    }
+                }
             }
         ]
     };
@@ -187,4 +197,69 @@ angular.module('warehaus.account').controller('UserApiTokensController', functio
             $scope.apiTokens = [];
         }
     });
+});
+
+angular.module('warehaus.account').directive('userSshKeys', function($http, accountView) {
+    return {
+        restrict: 'E',
+        templateUrl: accountView('ssh-keys.html'),
+        controller: 'UserSshKeysController',
+        scope: {
+            'userId': '=',
+            'helpText': '='
+        }
+    };
+});
+
+angular.module('warehaus.account').controller('UserSshKeysController', function($scope, $http, $uibModal, accountView, users) {
+    $scope.sshKeys = [];
+
+    var reload_keys = function() {
+        $scope.sshKeys = angular.copy(users.byUserId[$scope.userId].ssh_keys);
+    };
+
+    users.whenReady.then(reload_keys);
+
+    $scope.add_key = function() {
+        $uibModal.open({
+            templateUrl: accountView('add-ssh-key.html'),
+            controller: 'AddSshKeyController',
+            resolve: {
+                userId: function() {
+                    return $scope.userId;
+                }
+            }
+        });
+    };
+
+    $scope.delete_key = function(key) {
+        var config = {
+            headers: { 'Content-Type': 'application/json' },
+            data: { ssh_key: { contents: key } }
+        };
+        return $http.delete('/api/auth/users/' + $scope.userId + '/ssh-keys', config);
+    };
+
+    $scope.$on('warehaus.users.user_changed', function(event, user_id) {
+        if (user_id === $scope.userId) {
+            reload_keys();
+        }
+    });
+
+    $scope.$on('warehaus.users.user_deleted', function(event, user_id) {
+        if (user_id === $scope.userId) {
+            $scope.sshKeys = [];
+        }
+    });
+});
+
+angular.module('warehaus.account').controller('AddSshKeyController', function($scope, $controller, $uibModalInstance, $http, userId) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
+
+    $scope.userId = userId;
+    $scope.ssh_key = {};
+
+    $scope.do_work = function() {
+        return $http.post('/api/auth/users/' + userId + '/ssh-keys', { ssh_key: $scope.ssh_key });
+    };
 });
