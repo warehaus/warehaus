@@ -47,7 +47,7 @@ class JwtAuth {
             if (!jwt_payload.sub) {
                 return done(null, false, { message: 'JWT token is invalid because it is missing the sub claim' });
             }
-            User.find(jwt_payload.sub).then(function(user) {
+            return User.find(jwt_payload.sub).then(function(user) {
                 done(null, user);
             }).catch(err => {
                 logger.error('Received a valid JWT but could not find the user in the database:');
