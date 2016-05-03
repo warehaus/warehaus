@@ -11,15 +11,14 @@ var bodyParser = require('body-parser');
 var morgan     = require('morgan');
 var passport   = require('passport');
 
-var passwordHandler    = require('./passwords').passwordHandler;
-var firstUser          = require('./first-user');
-var createNewUserEvent = require('./user-events').createNewUserEvent;
-var jwtAuth            = require('./jwt').jwtAuth;
-var localAuth          = require('./local').localAuth;
-var googleAuth         = require('./google').googleAuth;
-var loginRoutes        = require('./login-routes');
-var userRoutes         = require('./user-routes');
-var _util              = require('./util');
+var passwordHandler = require('./passwords').passwordHandler;
+var firstUser       = require('./first-user');
+var jwtAuth         = require('./jwt').jwtAuth;
+var localAuth       = require('./local').localAuth;
+var googleAuth      = require('./google').googleAuth;
+var loginRoutes     = require('./login-routes');
+var userRoutes      = require('./user-routes');
+var _util           = require('./util');
 
 var app = express();
 

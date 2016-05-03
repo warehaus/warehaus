@@ -2,11 +2,7 @@ import httplib
 import rethinkdb as r
 from copy import deepcopy
 from logging import getLogger
-from bunch import Bunch
-from flask import current_app
 from flask import abort as flask_abort
-from rethinkdb import ReqlRuntimeError
-from rethinkdb import ReqlOpFailedError
 from .db import db
 from .times import now
 from .exceptions import RethinkDBError

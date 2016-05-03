@@ -6,7 +6,6 @@ var db     = require('./db');
 var r        = require('rethinkdb');
 var schedule = require('node-schedule');
 
-const BUILTIN_SERVER_TYPE_KEY = 'builtin-server';
 const HEARTBEAT_INTERVAL = 30; // seconds
 
 var mark_offline_servers = function() {

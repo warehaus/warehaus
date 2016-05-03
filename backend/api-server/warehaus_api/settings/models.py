@@ -1,6 +1,3 @@
-import random
-from bunch import Bunch
-from contextlib import contextmanager
 from .. import db
 
 class Settings(db.Model):

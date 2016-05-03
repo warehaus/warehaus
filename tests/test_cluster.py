@@ -14,9 +14,9 @@ def test_cluster_operations(warehaus):
                                                          name_singular='Cluster', name_plural='Clusters')
         cluster2_type_path = warehaus.create_type_object(lab, type_key='builtin-cluster', slug='cluster2',
                                                          name_singular='Cluster', name_plural='Clusters')
-        cluster1_1 = warehaus.api.post(cluster1_type_path, dict(display_name='First of first'))
-        cluster1_2 = warehaus.api.post(cluster1_type_path, dict(display_name='Second of first'))
-        cluster2_1 = warehaus.api.post(cluster2_type_path, dict(display_name='First of second'))
+        warehaus.api.post(cluster1_type_path, dict(display_name='First of first'))
+        warehaus.api.post(cluster1_type_path, dict(display_name='Second of first'))
+        warehaus.api.post(cluster2_type_path, dict(display_name='First of second'))
         assert len(warehaus.api.get(urljoin(cluster1_type_path, 'objects'))['objects']) == 2
         assert len(warehaus.api.get(urljoin(cluster2_type_path, 'objects'))['objects']) == 1
         warehaus.api.post(cluster2_type_path, dict(display_name='First of first'), expected_status=httplib.CONFLICT)

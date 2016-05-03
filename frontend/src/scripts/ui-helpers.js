@@ -61,7 +61,7 @@ angular.module('warehaus.ui_helpers').provider('urlRegister', function($urlRoute
     };
 });
 
-angular.module('warehaus.ui_helpers').directive('focusMe', function($timeout) {
+angular.module('warehaus.ui_helpers').directive('focusMe', function() {
     var link = function(scope, element, attrs) {
         scope.$watch(attrs.focusMe, function(value) {
             if (value) { 

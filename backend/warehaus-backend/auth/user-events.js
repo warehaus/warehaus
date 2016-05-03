@@ -14,7 +14,7 @@ var createNewUserEvent = function(new_user) {
             interested_ids: [],
             title: `**${new_user.display_name}** joined warehaus`,
             content: ''
-        }).then(event => {
+        }).then(() => {
             return new_user;
         });
     }

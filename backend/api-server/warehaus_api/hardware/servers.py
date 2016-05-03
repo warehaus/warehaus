@@ -16,7 +16,6 @@ from ..events.models import create_event
 from .type_class import TypeClass
 from .type_class import type_action
 from .type_class import object_action
-from .models import Object
 from .models import create_object
 from .models import get_user_attributes
 from .models import get_object_by_id

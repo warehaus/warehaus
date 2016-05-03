@@ -1,10 +1,3 @@
-import rethinkdb as r
-from logging import getLogger
-from rethinkdb import ReqlOpFailedError
-from .db import db
-
-logger = getLogger(__name__)
-
 class _NO_DEFAULT(object):
     pass
 

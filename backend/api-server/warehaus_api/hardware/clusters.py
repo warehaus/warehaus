@@ -1,6 +1,5 @@
 import httplib
 from slugify import slugify
-from flask import request
 from flask import abort as flask_abort
 from flask_restful.reqparse import RequestParser
 from flask_jwt import current_identity

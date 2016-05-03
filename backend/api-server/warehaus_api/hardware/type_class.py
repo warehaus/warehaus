@@ -1,4 +1,3 @@
-import re
 import copy
 import httplib
 import rethinkdb as r
@@ -9,7 +8,6 @@ from flask_jwt import current_identity
 from ..auth.roles import require_user
 from ..auth.roles import require_admin
 from ..events.models import create_event
-from .models import Object
 from .models import create_object
 from .models import get_objects_of_type
 from .models import get_object_children

@@ -1,5 +1,4 @@
 import os
-import time
 import requests
 from urlparse import urljoin
 from subprocess import Popen, PIPE

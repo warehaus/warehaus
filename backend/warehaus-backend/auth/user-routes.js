@@ -44,7 +44,7 @@ router.get('', passport.authenticate('jwt'), function(req, res, next) {
     }).catch(next);
 });
 
-router.post('', passport.authenticate('jwt'), roles.requireAdmin, function(req, res, next) {
+router.post('', passport.authenticate('jwt'), roles.requireAdmin, function(req, res) {
     var now = new Date();
     var new_user = {
         created_at   : now,
@@ -296,7 +296,7 @@ router.delete('/:userId/ssh-keys', passport.authenticate('jwt'), check_allowed("
     if (existing_keys.length === updated_ssh_keys.length) {
         return res.status(HttpStatus.NOT_FOUND).json({ message: 'No such SSH key' });
     }
-    return User.update(req.inputUser.id, { ssh_keys: updated_ssh_keys }).then(doc => {
+    return User.update(req.inputUser.id, { ssh_keys: updated_ssh_keys }).then(() => {
         res.status(HttpStatus.NO_CONTENT).json(null);
     }).catch(err => {
         logger.error('Could not save user in database:', err);

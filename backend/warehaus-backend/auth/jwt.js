@@ -56,7 +56,7 @@ class JwtAuth {
             });
         }));
     }
-};
+}
 
 module.exports = {
     jwtAuth: new JwtAuth()

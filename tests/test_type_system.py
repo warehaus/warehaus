@@ -6,12 +6,12 @@ def test_type_classes_api(warehaus):
 
 def test_create_delete_lab(warehaus):
     '''Create and delete some labs.'''
-    with warehaus.temp_lab() as lab:
+    with warehaus.temp_lab():
         pass
-    with warehaus.temp_lab() as lab:
+    with warehaus.temp_lab():
         pass
-    with warehaus.temp_lab() as lab:
-        with warehaus.temp_lab() as lab:
+    with warehaus.temp_lab():
+        with warehaus.temp_lab():
             pass
 
 def test_type_objects(warehaus):

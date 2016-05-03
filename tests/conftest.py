@@ -1,8 +1,6 @@
 import os
 import time
 import httplib
-import unittest
-import httplib
 import itertools
 import requests
 import docker

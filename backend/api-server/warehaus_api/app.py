@@ -1,17 +1,12 @@
-import os
-import sys
 import json
-import httplib
 from datetime import datetime
 from flask import Flask
-from flask import jsonify
 from flask import make_response
 from flask_restful import Api
 from .logs import log_to_console
 from .db import init_db
 from .settings import database_config
 from .settings import full_config
-from .settings.models import get_settings
 from .auth import init_auth
 from .hardware.resources import RawObjects
 from .hardware.resources import RawObject

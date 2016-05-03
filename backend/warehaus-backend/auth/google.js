@@ -90,7 +90,7 @@ class GoogleAuth {
         logger.debug(`Looking for Google user with profile.id=${profile.id}`);
         return GoogleUser.find(profile.id).then(got_google_user).catch(create_google_user);
     }
-};
+}
 
 module.exports = {
     googleAuth: new GoogleAuth()
