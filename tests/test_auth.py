@@ -222,22 +222,23 @@ def test_api_tokens(warehaus):
 def test_user_ssh_keys(warehaus):
     # Tests for users managing their own keys
     for user in (warehaus.ADMIN, warehaus.USER):
-        user_data = warehaus.api.get('/api/auth/self')
-        user_uri = _user_uri(user_data['id'])
-        user_key = str(uuid4())
-        orig_key_count = len(warehaus.api.get(user_uri)['ssh_keys'])
-        warehaus.api.post(user_uri + '/ssh-keys', dict(), expected_status=httplib.BAD_REQUEST)
-        warehaus.api.post(user_uri + '/ssh-keys', dict(ssh_key=dict()), expected_status=httplib.BAD_REQUEST)
-        warehaus.api.post(user_uri + '/ssh-keys', dict(ssh_key=dict(contents=user_key)))
-        assert len(warehaus.api.get(user_uri)['ssh_keys']) == orig_key_count + 1
-        warehaus.api.post(user_uri + '/ssh-keys', dict(ssh_key=dict(contents=user_key)), expected_status=httplib.CONFLICT)
-        assert len(warehaus.api.get(user_uri)['ssh_keys']) == orig_key_count + 1
-        warehaus.api.delete(user_uri + '/ssh-keys', dict(ssh_key=dict(contents=str(uuid4()))), expected_status=httplib.NOT_FOUND)
-        warehaus.api.delete(user_uri + '/ssh-keys', dict(), expected_status=httplib.BAD_REQUEST)
-        warehaus.api.delete(user_uri + '/ssh-keys', dict(ssh_key=dict()), expected_status=httplib.BAD_REQUEST)
-        warehaus.api.delete(user_uri + '/ssh-keys', dict(ssh_key=dict(contents=user_key)))
-        assert len(warehaus.api.get(user_uri)['ssh_keys']) == orig_key_count
-        warehaus.api.delete(user_uri + '/ssh-keys', dict(ssh_key=dict(contents=user_key)), expected_status=httplib.NOT_FOUND)
+        with warehaus.api.current_user('login', user):
+            user_data = warehaus.api.get('/api/auth/self')
+            user_uri = _user_uri(user_data['id'])
+            user_key = str(uuid4())
+            orig_key_count = len(warehaus.api.get(user_uri)['ssh_keys'])
+            warehaus.api.post(user_uri + '/ssh-keys', dict(), expected_status=httplib.BAD_REQUEST)
+            warehaus.api.post(user_uri + '/ssh-keys', dict(ssh_key=dict()), expected_status=httplib.BAD_REQUEST)
+            warehaus.api.post(user_uri + '/ssh-keys', dict(ssh_key=dict(contents=user_key)))
+            assert len(warehaus.api.get(user_uri)['ssh_keys']) == orig_key_count + 1
+            warehaus.api.post(user_uri + '/ssh-keys', dict(ssh_key=dict(contents=user_key)), expected_status=httplib.CONFLICT)
+            assert len(warehaus.api.get(user_uri)['ssh_keys']) == orig_key_count + 1
+            warehaus.api.delete(user_uri + '/ssh-keys', dict(ssh_key=dict(contents=str(uuid4()))), expected_status=httplib.NOT_FOUND)
+            warehaus.api.delete(user_uri + '/ssh-keys', dict(), expected_status=httplib.BAD_REQUEST)
+            warehaus.api.delete(user_uri + '/ssh-keys', dict(ssh_key=dict()), expected_status=httplib.BAD_REQUEST)
+            warehaus.api.delete(user_uri + '/ssh-keys', dict(ssh_key=dict(contents=user_key)))
+            assert len(warehaus.api.get(user_uri)['ssh_keys']) == orig_key_count
+            warehaus.api.delete(user_uri + '/ssh-keys', dict(ssh_key=dict(contents=user_key)), expected_status=httplib.NOT_FOUND)
 
 def test_admin_modifies_user_ssh_keys(warehaus):
     with warehaus.api.current_user('login', warehaus.USER):
