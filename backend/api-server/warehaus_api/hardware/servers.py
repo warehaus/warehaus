@@ -124,11 +124,13 @@ class Server(TypeClass):
         exists, the current object is updated. If a subobject exists but
         not found in `last_update` it's removed from the `server`.
         '''
-        existing = {subobj.slug: subobj for subobj in server.get_children_with_subtype(subtype)}
+        remaining = {subobj.id: subobj for subobj in server.get_children_with_subtype(subtype)}
+        existing_slugs = {subobj.slug: subobj for subobj in remaining.itervalues()}
         for slug, expected_fields in last_update.iteritems():
-            if slug in existing:
-                subobj = existing[slug]
+            if slug in existing_slugs:
+                subobj = existing_slugs[slug]
                 subobj.update(**expected_fields)
+                remaining.pop(subobj.id)
             else:
                 subobj = create_object(parent=server, type=subtype, slug=slug)
                 subobj.update(**expected_fields)
@@ -138,8 +140,8 @@ class Server(TypeClass):
             else:
                 subobj.provider = provider_info
             subobj.save()
-        for slug_to_delete in (set(existing) - set(last_update)):
-            existing[slug_to_delete].delete()
+        for subobj in remaining.itervalues():
+            subobj.delete()
 
     def _update_sub_objects(self, server, typeobj, agent_info):
         self._sync_sub_objects(server, typeobj.get_object_child(PciDevice.SLUG),
