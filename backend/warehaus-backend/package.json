@@ -4,7 +4,7 @@
   "license": "AGPL-3.0",
   "bin": {
     "warehaus-init-db": "./init-db.js",
-    "warehaus-notify-server": "./notify-server.js",
+    "warehaus-socketio": "./socketio/server.js",
     "warehaus-auth-server": "./auth/server.js",
     "warehaus-monitor-servers": "./monitor-servers.js"
   },
