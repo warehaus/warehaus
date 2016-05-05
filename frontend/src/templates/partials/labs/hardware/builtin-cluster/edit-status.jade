@@ -1,0 +1,19 @@
+form(name='editClusterStatus' role='form' ng-submit='save()')
+  .modal-header
+    button.close(type="button" data-dismiss="modal" aria-label="Close" ng-click='cancel()')
+      span(aria-hidden="true") &times;
+    h4.modal-title
+      | Edit {{ dbObjects.byId[obj_id].display_name }} Status
+
+  .modal-body
+    .form-group
+      label.control-label
+        | New Status
+      input.form-control(type='text' ng-model='input.status.text' placeholder='Name' required='' focus-me='true')
+    wh-error-box(error='error')
+
+  .modal-footer
+    button.btn.btn-default(type='button' ng-click='cancel()')
+      | Cancel
+    button.btn.btn-success(type='submit' ng-click='save()' ng-disabled='editClusterStatus.$invalid || working')
+      | Save Changes

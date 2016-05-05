@@ -29,7 +29,7 @@ mixin servers
 mixin owners
   .main-with-extra(ng-if='dbObjects.byId[obj_id].ownerships | isEmpty')
     .main(style={'font-style': 'italic', 'font-size': '1rem'})
-      | (nobody)
+      | (no owner)
     .extra.text-right.dropdown
       a.text-link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' style={padding: '0 .25rem;'})
         i.icon-options-vertical
@@ -49,13 +49,34 @@ mixin owners
           a.link(ng-click='release_ownership()')
             | Release Ownership
 
+mixin status_line
+  .main-with-extra
+    .main.ellipsis(ng-if='dbObjects.byId[obj_id].status && dbObjects.byId[obj_id].status.text')
+      | {{ dbObjects.byId[obj_id].status.text }}
+    .main(ng-if='!(dbObjects.byId[obj_id].status && dbObjects.byId[obj_id].status.text)' style={'font-style': 'italic', 'font-size': '1rem'})
+      | (no status)
+    .extra.text-right.dropdown
+      a.text-link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' style={padding: '0 .25rem;'})
+        i.icon-options-vertical
+      ul.dropdown-menu.pull-right(style={'font-size': '1rem'})
+        li
+          a.link(ng-click='edit_status()')
+            | Edit Status
+        li.divider(ng-if='dbObjects.byId[obj_id].status && dbObjects.byId[obj_id].status.text')
+        li(ng-if='dbObjects.byId[obj_id].status && dbObjects.byId[obj_id].status.text')
+          a.link(ng-click='clear_status()')
+            | Clear Status
+
 mixin navigation
   ul.page-layout-menu
     li.heading
-      | Owners
+      | Status
     li
       span
         +owners
+    li
+      span
+        +status_line
     li.heading
       | Downloads
     li

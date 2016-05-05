@@ -32,11 +32,14 @@ mixin cluster_row
     tr
       td
       td.opacity075
-        span(ng-if='cluster.ownerships | isEmpty')
+        span(ng-if='(cluster.ownerships | isEmpty) && (cluster.status | isEmpty)')
           | &nbsp;
         span(ng-repeat='ownership in cluster.ownerships')
           user-mention(id='ownership.owner_id')
-          | &nbsp;
+        span.opacity05(ng-if='(cluster.ownerships | isNotEmpty) && cluster.status && cluster.status.text')
+          | /&#32;
+        span(ng-if='cluster.status && cluster.status.text')
+          | {{ cluster.status.text }}
 
 mixin cluster_list
   .panel.panel-default

@@ -158,6 +158,28 @@ angular.module('warehaus.hardware.cluster').controller('ClusterPageController', 
         $http.delete(cluster_uri() + 'owner');
     };
 
+    $scope.edit_status = function() {
+        $uibModal.open({
+            templateUrl: clusterView('edit-status.html'),
+            controller: 'EditClusterStatusController',
+            resolve: {
+                labId: function() {
+                    return $scope.lab_id;
+                },
+                typeObjId: function() {
+                    return $scope.type_obj_id;
+                },
+                objId: function() {
+                    return $scope.obj_id;
+                }
+            }
+        });
+    };
+
+    $scope.clear_status = function() {
+        $http.delete(cluster_uri() + 'status');
+    };
+
     $scope.delete_cluster = function() {
         $uibModal.open({
             templateUrl: clusterView('delete.html'),
@@ -176,6 +198,24 @@ angular.module('warehaus.hardware.cluster').controller('ClusterPageController', 
         }).result.then(function() {
             $state.go('^');
         });
+    };
+});
+
+angular.module('warehaus.hardware.cluster').controller('EditClusterStatusController', function($scope, $controller, $uibModalInstance, $http, dbObjects, labId, typeObjId, objId) {
+    $controller('ModalBase', {$scope: $scope, $uibModalInstance: $uibModalInstance});
+    $scope.lab_id = labId;
+    $scope.type_obj_id = typeObjId;
+    $scope.obj_id = objId;
+
+    $scope.input = { status: {} };
+    if (dbObjects.byId[objId] && dbObjects.byId[objId].status && dbObjects.byId[objId].status.text) {
+        $scope.input.status.text = dbObjects.byId[objId].status.text;
+    }
+
+    $scope.do_work = function() {
+        var cluster = dbObjects.byId[$scope.obj_id];
+        var lab = dbObjects.byId[$scope.lab_id];
+        return $http.put('/api/v1/labs/' + lab.slug + '/' + cluster.slug + '/status', $scope.input);
     };
 });
 
