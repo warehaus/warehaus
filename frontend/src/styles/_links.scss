@@ -1,3 +1,11 @@
+a, button {
+  &,
+  &:hover,
+  &:active {
+    outline: none !important;
+  }
+}
+
 .link {
   cursor: pointer;
 }
