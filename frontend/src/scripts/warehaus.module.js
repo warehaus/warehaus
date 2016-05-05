@@ -4,6 +4,7 @@ angular.module('warehaus', [
     'warehaus.ui_helpers',
     'warehaus.templates',
     'warehaus.state',
+    'warehaus.socketio',
     'warehaus.models',
     'warehaus.users',
     'warehaus.auth',

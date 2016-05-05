@@ -47,7 +47,17 @@ angular.module('warehaus.admin').config(function(urlRegisterProvider, authUrlRou
 
 angular.module('warehaus.auth').constant('authTokenVar', 'warehausAuthToken');
 
-angular.module('warehaus.auth').service('authToken', function($log, authTokenVar, warehausState) {
+angular.module('warehaus.auth').provider('getAuthToken', function(authTokenVar) {
+    return {
+        $get: function() {
+            return function() {
+                return localStorage.getItem(authTokenVar);
+            };
+        }
+    };
+});
+
+angular.module('warehaus.auth').service('authToken', function($log, authTokenVar, getAuthToken, warehausState) {
     var self = {};
 
     self.set = function(new_token) {
@@ -65,11 +75,10 @@ angular.module('warehaus.auth').service('authToken', function($log, authTokenVar
     return self;
 });
 
-angular.module('warehaus.auth').config(function($httpProvider, jwtInterceptorProvider, authTokenVar) {
+angular.module('warehaus.auth').config(function($httpProvider, jwtInterceptorProvider, getAuthTokenProvider) {
+    var getAuthToken = getAuthTokenProvider.$get();
     jwtInterceptorProvider.authPrefix = 'JWT ';
-    jwtInterceptorProvider.tokenGetter = function() {
-        return localStorage.getItem(authTokenVar);
-    };
+    jwtInterceptorProvider.tokenGetter = getAuthToken;
     $httpProvider.interceptors.push('jwtInterceptor');
 });
 

@@ -26,6 +26,7 @@
     "rethinkdb-init": "^0.1.1",
     "rethinkdbdash": "^2.3.2",
     "socket.io": "^1.4.3",
+    "socketio-jwt": "^4.3.4",
     "winston": "^2.1.1"
   }
 }

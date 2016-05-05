@@ -6,9 +6,11 @@ var logger = require('../logger');
 var models = require('../models');
 var getSettings = models.getSettings;
 var _changes = require('./changes');
+var USERS_ROOM = _changes.USERS_ROOM;
 var sendEntireObject = _changes.sendEntireObject;
 var sendObjectId = _changes.sendObjectId;
 var listenForChanges = _changes.listenForChanges;
+var socketioJwt = require('socketio-jwt');
 
 const HTTP_PORT = process.env.HTTP_PORT || 5001;
 
@@ -23,7 +25,21 @@ const startServer = (settings) => {
     var io = new socketio(http_server);
     http_server.listen(HTTP_PORT);
     logger.info(`Notification server listening on :${HTTP_PORT}`);
-    return io;
+    return { io, settings };
+};
+
+const setupAuth = (ctx) => {
+    var io = ctx.io;
+    var settings = ctx.settings;
+    io.sockets
+        .on('connection', socketioJwt.authorize({
+            secret: settings.jwt_secret,
+            timeout: 10000 // milliseconds
+        }))
+        .on('authenticated', (socket) => {
+            socket.join(USERS_ROOM);
+        });
+    return { io, settings };
 };
 
 var errorHandler = (err) => {
@@ -33,5 +49,6 @@ var errorHandler = (err) => {
 
 getSettings()
     .then(startServer)
+    .then(setupAuth)
     .then(listenForChanges(TABLE_NOTIFICATIONS))
     .catch(errorHandler);
