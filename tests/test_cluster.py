@@ -64,3 +64,25 @@ def test_server_cluster_assignment(warehaus):
         assert len(config['servers']) == 0
         random_server = 'srvr{}'.format(random.randrange(NUM_SERVERS))
         warehaus.api.put('/api/v1/labs/{}/{}/cluster'.format(lab['slug'], random_server), dict(cluster_id=cluster['id']))
+
+def test_cluster_status(warehaus):
+    with warehaus.temp_lab() as lab:
+        cluster_type = warehaus.create_type_object(lab, type_key='builtin-cluster', slug='cluster',
+                                                   name_singular='Cluster', name_plural='Clusters')
+        cluster = warehaus.api.post(cluster_type, dict(display_name='Some Cluster'))
+        cluster_uri = '/api/v1/labs/{}/some-cluster'.format(lab['slug'])
+        config = warehaus.api.get(cluster_uri + '/config.json')
+        assert config['status'] is None
+        warehaus.api.put(cluster_uri + '/status', dict(), expected_status=httplib.BAD_REQUEST)
+        warehaus.api.put(cluster_uri + '/status', dict(blah='1'), expected_status=httplib.BAD_REQUEST)
+        warehaus.api.put(cluster_uri + '/status', dict(text='1', in_progress=True, extra=3), expected_status=httplib.BAD_REQUEST)
+        new_status = dict(text='Testing status')
+        warehaus.api.put(cluster_uri + '/status', dict(status=new_status))
+        config = warehaus.api.get(cluster_uri + '/config.json')
+        assert config['status']['text'] == new_status['text']
+        assert config['status']['in_progress'] == False
+        assert 'modified_at' in config['status']
+        assert 'modified_by' in config['status']
+        warehaus.api.delete(cluster_uri + '/status')
+        config = warehaus.api.get(cluster_uri + '/config.json')
+        assert config['status'] is None

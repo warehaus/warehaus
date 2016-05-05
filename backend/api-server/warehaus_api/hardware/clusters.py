@@ -1,6 +1,7 @@
 import httplib
 from slugify import slugify
 from flask import abort as flask_abort
+from flask import request
 from flask_restful.reqparse import RequestParser
 from flask_jwt import current_identity
 from ..auth.roles import require_user
@@ -116,6 +117,30 @@ class Cluster(TypeClass):
         )
         return None, httplib.NO_CONTENT
 
+    @object_action('PUT', 'status')
+    def update_status(self, cluster):
+        require_user()
+        if 'status' not in request.json:
+            flask_abort(httplib.BAD_REQUEST, 'Missing status argument')
+        status = request.json['status']
+        if not isinstance(status, dict) or not (set(status.keys()) <= set(['text', 'progress'])):
+            flask_abort(httplib.BAD_REQUEST, '"status" needs to be an object with "text" and "in_progress" attributes')
+        cluster.status = dict(
+            text        = status['text'],
+            in_progress = status.get('in_progress', False),
+            modified_at = now(),
+            modified_by = current_identity.id,
+        )
+        cluster.save()
+        return cluster.status
+
+    @object_action('DELETE', 'status')
+    def clear_status(self, cluster):
+        require_user()
+        cluster.status = None
+        cluster.save()
+        return None, httplib.NO_CONTENT
+
     @object_action('GET', 'config.json')
     def cluster_config(self, cluster):
         require_user()
@@ -132,6 +157,7 @@ class Cluster(TypeClass):
             display_name = cluster['display_name'],
             user_attrs   = get_user_attributes(cluster),
             servers      = servers,
+            status       = cluster['status'] if 'status' in cluster else None,
             ownerships   = ownerships,
             lab = dict(
                 id           = lab['id'],
