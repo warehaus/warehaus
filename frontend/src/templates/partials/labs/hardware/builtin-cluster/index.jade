@@ -29,9 +29,14 @@ mixin cluster_row
           span.small.badge
             object-count-with-type(type-id='dbObjects.byId[clustersToServers.servers_of_cluster[cluster.id][0]].type_id'
                                    count='{{ clustersToServers.servers_of_cluster[cluster.id].length }}')
-        span.small.opacity075(ng-repeat='ownership in cluster.ownerships')
+    tr
+      td
+      td.opacity075
+        span(ng-if='cluster.ownerships | isEmpty')
           | &nbsp;
+        span(ng-repeat='ownership in cluster.ownerships')
           user-mention(id='ownership.owner_id')
+          | &nbsp;
 
 mixin cluster_list
   .panel.panel-default

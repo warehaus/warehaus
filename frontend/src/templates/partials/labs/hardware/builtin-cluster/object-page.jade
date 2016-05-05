@@ -27,24 +27,35 @@ mixin servers
           | if you don't need it anymore.
 
 mixin owners
-  span(ng-repeat='ownership in dbObjects.byId[obj_id].ownerships')
-    user-link(id='ownership.owner_id')
-  span(ng-if='dbObjects.byId[obj_id].ownerships | isEmpty' style={'font-style': 'italic'})
-    i.fa.fa-fw.fa-meh-o
-    | Nobody
+  .main-with-extra(ng-if='dbObjects.byId[obj_id].ownerships | isEmpty')
+    .main(style={'font-style': 'italic', 'font-size': '1rem'})
+      | (nobody)
+    .extra.text-right.dropdown
+      a.text-link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' style={padding: '0 .25rem;'})
+        i.icon-options-vertical
+      ul.dropdown-menu.pull-right(style={'font-size': '1rem'})
+        li
+          a.link(ng-click='take_ownership()')
+            | Take Ownership
+  .main-with-extra(ng-if='dbObjects.byId[obj_id].ownerships | isNotEmpty')
+    .main(style={'font-size': '1rem'})
+      span(ng-repeat='ownership in dbObjects.byId[obj_id].ownerships')
+        user-link(id='ownership.owner_id')
+    .extra.text-right.dropdown(ng-if='(dbObjects.byId[obj_id].ownerships | isNotEmpty) && ((dbObjects.byId[obj_id].ownerships[0].owner_id == curUser.id) || curUser.is_admin)')
+      a.text-link.dropdown-toggle(data-toggle='dropdown' aria-haspopup='true' aria-expanded='true' style={padding: '0 .25rem;'})
+        i.icon-options-vertical
+      ul.dropdown-menu.pull-right(style={'font-size': '1rem'})
+        li.text-left
+          a.link(ng-click='release_ownership()')
+            | Release Ownership
 
 mixin navigation
   ul.page-layout-menu
     li.heading
       | Owners
     li
-      +owners
-    li(ng-if='dbObjects.byId[obj_id].ownerships | isEmpty')
-      a.link(ng-click='take_ownership()')
-        | Take Ownership
-    li.text-left(ng-if='(dbObjects.byId[obj_id].ownerships | isNotEmpty) && ((dbObjects.byId[obj_id].ownerships[0].owner_id == curUser.id) || curUser.is_admin)')
-      a.link(ng-click='release_ownership()')
-        | Release Ownership
+      span
+        +owners
     li.heading
       | Downloads
     li
