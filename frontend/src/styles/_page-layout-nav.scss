@@ -33,7 +33,7 @@
         }
       }
 
-      a, span {
+      > a, > span {
         margin: 0;
         color: lighten($text-color, 20%);
 
