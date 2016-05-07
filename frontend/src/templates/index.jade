@@ -56,8 +56,8 @@ mixin head
   meta(charset='utf-8')
   meta(name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1')
   base(href='/ui/')
-  title
-    | {{ $breadcrumbs | map:'title' | reverse | join:' - ' }} - Warehaus
+  title(ng-bind="($breadcrumbs | map:'title' | reverse | join:' - ') + (($breadcrumbs | isEmpty) ? '' : ' - ') + 'Warehaus'")
+    | Warehaus
   +styles
   +favicon
 
