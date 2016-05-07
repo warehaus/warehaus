@@ -43,14 +43,12 @@ angular.module('warehaus.users').factory('users', function($rootScope, $http, $q
     };
 
     var user_changed = function(notification) {
-        $log.debug('Fetching changed user:', notification.id);
-        return $http.get('/api/auth/users/' + notification.id).then(function(res) {
-            var user = res.data;
-            annotate_user(user);
-            self.byUserId[user.id] = user;
-            update_user_count();
-            $rootScope.$broadcast('warehaus.users.user_changed', notification.id);
-        });
+        var user = notification.object;
+        $log.debug('Updating user:', user);
+        annotate_user(user);
+        self.byUserId[user.id] = user;
+        update_user_count();
+        $rootScope.$broadcast('warehaus.users.user_changed', user.id);
     };
 
     var user_deleted = function(notification) {

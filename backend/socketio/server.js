@@ -10,13 +10,14 @@ var sendEntireObject = _changes.sendEntireObject;
 var sendObjectId = _changes.sendObjectId;
 var listenForChanges = _changes.listenForChanges;
 var socketioJwt = require('socketio-jwt');
+var cleanedUser = require('../auth/util').cleanedUser;
 
 const HTTP_PORT = process.env.HTTP_PORT || 5001;
 
 const TABLE_NOTIFICATIONS = [
-    { dbTable: 'object', onUpdate: sendEntireObject, onDelete: sendObjectId },
-    { dbTable: 'user',   onUpdate: sendObjectId,     onDelete: sendObjectId },
-    { dbTable: 'event',  onUpdate: sendEntireObject, onDelete: sendObjectId }
+    { dbTable: 'object' },
+    { dbTable: 'user', objectFilter: cleanedUser },
+    { dbTable: 'event' }
 ];
 
 const startServer = (settings) => {
