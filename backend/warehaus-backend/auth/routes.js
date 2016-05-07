@@ -1,8 +1,6 @@
 'use strict';
 
 var express      = require('express');
-var passport     = require('passport');
-var logger       = require('../logger');
 var loginRoutes  = require('./login-routes');
 var userRoutes   = require('./user-routes');
 var roles        = require('./roles');
