@@ -522,11 +522,13 @@ angular.module('warehaus.labs').controller('RenameLabController', function($scop
         display_name: allLabs.byId[$scope.lab_id].display_name
     };
 
-    $scope.ok = function() {
+    $scope.save = function() {
         $scope.error = undefined;
+        $scope.working = true;
         allLabs.rename($scope.lab_id, $scope.result).then(function() {
             $state.go('labs');
         }, function(res) {
+            $scope.working = false;
             $scope.error = res.data.message || res.data;
         });
     };
