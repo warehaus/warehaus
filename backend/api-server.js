@@ -5,13 +5,14 @@
 var logger = require('./logger');
 var getSettings = require('./models/settings').getSettings;
 
-var express    = require('express');
-var bodyParser = require('body-parser');
-var morgan     = require('morgan');
-var passport   = require('passport');
-var authInit   = require('./auth/init');
-var firstUser  = require('./auth/first-user');
-var authRoutes = require('./auth/routes');
+var express           = require('express');
+var bodyParser        = require('body-parser');
+var morgan            = require('morgan');
+var passport          = require('passport');
+var authInit          = require('./auth/init');
+var firstUser         = require('./auth/first-user');
+var authRoutes        = require('./auth/routes');
+var rawHardwareRoutes = require('./hardware/raw-routes');
 
 var app = express();
 
@@ -22,8 +23,9 @@ app.disable('etag');
 app.use(passport.initialize());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/v1/hardware', rawHardwareRoutes);
 
-const HTTP_PORT = process.env.HTTP_PORT || 5002;
+const HTTP_PORT = process.env.HTTP_PORT || 5000;
 
 const startServer = () => {
     app.listen(HTTP_PORT);

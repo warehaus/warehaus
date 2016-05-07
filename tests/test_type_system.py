@@ -1,8 +1,15 @@
+import random
 import httplib
 
 def test_type_classes_api(warehaus):
     '''Gets the supported type classes.'''
     warehaus.api.get('/api/v1/hardware/types')
+
+def test_raw_objects_api(warehaus):
+    all_objects = warehaus.api.get('/api/v1/hardware/objects')['objects']
+    random_obj = random.choice(all_objects)
+    random_obj_test = warehaus.api.get('/api/v1/hardware/objects/' + random_obj['id'])
+    assert random_obj == random_obj_test
 
 def test_create_delete_lab(warehaus):
     '''Create and delete some labs.'''

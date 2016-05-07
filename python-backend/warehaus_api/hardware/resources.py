@@ -95,28 +95,6 @@ def serialize_object(obj):
 # Resources                                                #
 #----------------------------------------------------------#
 
-class TypeClasses(Resource):
-    def get(self):
-        require_user()
-        return dict(types=[dict(
-            type_key          = type_class.type_key(),
-            display_name      = type_class.display_name(),
-            description       = type_class.description(),
-            user_controllable = type_class.USER_CONTROLLABLE,
-        ) for type_class in all_type_classes])
-
-class RawObjects(Resource):
-    '''The collection of all objects by their ID.'''
-    def get(self):
-        require_user()
-        return dict(objects=tuple(serialize_object(obj) for obj in Object.query.all()))
-
-class RawObject(Resource):
-    '''Object resource by ID.'''
-    def get(self, obj_id):
-        require_user()
-        return serialize_object(get_object_by_id(obj_id))
-
 class ObjectTreeRoot(Resource):
     '''A resource for the root of the object hierarchy tree. Although
     all nodes in the object tree have the same behaviour, we give the

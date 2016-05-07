@@ -8,9 +8,6 @@ from .db import init_db
 from .settings import database_config
 from .settings import full_config
 from .auth import init_auth
-from .hardware.resources import RawObjects
-from .hardware.resources import RawObject
-from .hardware.resources import TypeClasses
 from .hardware.resources import ObjectTreeRoot
 from .hardware.resources import ObjectTreeNode
 
@@ -32,11 +29,6 @@ def init_api(app):
 def app_routes(app):
     api = init_api(app)
     app.config['BUNDLE_ERRORS'] = True
-    # Hardware resources
-    api.add_resource(RawObjects,  '/api/v1/hardware/objects',          methods=['GET'])
-    api.add_resource(RawObject,   '/api/v1/hardware/objects/<obj_id>', methods=['GET'])
-    api.add_resource(TypeClasses, '/api/v1/hardware/types',            methods=['GET'])
-    # Labs resources
     api.add_resource(ObjectTreeRoot, '/api/v1/labs',             methods=['GET', 'POST'])
     api.add_resource(ObjectTreeNode, '/api/v1/labs/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 

@@ -29,10 +29,4 @@ setup(
         'rethinkdb',
         'setuptools',
     ],
-
-    entry_points = {
-        'console_scripts': [
-            'warehaus-api-server=warehaus_api.api_server:main',
-        ],
-    },
 )
