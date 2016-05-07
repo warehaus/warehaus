@@ -44,8 +44,8 @@ def verify_db_env(args):
 def install_packages(args):
     if not args.dev:
         return
-    _run('cd /opt/warehaus/backend/api-server && python setup.py develop', 'error: Could not install Python packages')
-    _run('cd /opt/warehaus/backend/warehaus-backend && npm link', 'error: Could not install Node packages')
+    _run('cd /opt/warehaus/python-backend && python setup.py develop', 'error: Could not install Python packages')
+    _run('cd /opt/warehaus/backend && npm link', 'error: Could not install Node packages')
 
 def init_db(args):
     _run('/usr/local/bin/warehaus-init-db', 'error: Could not initialize database')

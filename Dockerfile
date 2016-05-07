@@ -5,8 +5,8 @@ VOLUME /var/log/warehaus
 
 COPY . /opt/warehaus
 
-RUN cd /opt/warehaus/backend/api-server && python setup.py develop
-RUN cd /opt/warehaus/backend/warehaus-backend && npm link
+RUN cd /opt/warehaus/python-backend && python setup.py develop
+RUN cd /opt/warehaus/backend && npm link
 RUN ln -s /opt/warehaus/bin/warehaus /usr/local/bin/warehaus
 
 EXPOSE 80
