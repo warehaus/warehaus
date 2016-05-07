@@ -1,8 +1,6 @@
 'use strict';
 
 var express      = require('express');
-var passport     = require('passport');
-var logger       = require('../logger');
 var Obj          = require('../models/object').Obj;
 var roles        = require('../auth/roles');
 var userRequired = roles.userRequired;
