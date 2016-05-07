@@ -48,7 +48,7 @@ class GoogleAuth {
             return User.create({
                 created_at: now,
                 modified_at: now,
-                username: username,
+                username,
                 display_name: profile.displayName,
                 email: profile.emails[0].value,
                 role: roles.ALL.user
@@ -68,7 +68,7 @@ class GoogleAuth {
                 local_user_id: local_user.id
             }).then(google_user => {
                 logger.debug(`Created Google user ${google_user.id} for local user ${local_user.id}`);
-                return local_user
+                return local_user;
             }, done);
         };
 

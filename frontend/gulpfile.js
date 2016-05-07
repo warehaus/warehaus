@@ -56,6 +56,7 @@ gulp.task('partials', function() {
 gulp.task('resources', function() {
     gulp.src([dirs.resources + '/**'])
         .pipe(gulp.dest(dirs.dest))
+    ;
 });
 
 gulp.task('default', ['scripts', 'styles', 'index', 'partials', 'resources'], function() {

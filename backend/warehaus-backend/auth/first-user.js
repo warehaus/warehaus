@@ -15,7 +15,7 @@ const firstUser = () => {
             created_at: now,
             modified_at: now,
             username: FIRST_USER_USERNAME,
-            hashed_password: hashed_password,
+            hashed_password,
             role: roles.ALL.admin,
             display_name: 'Admin'
         };

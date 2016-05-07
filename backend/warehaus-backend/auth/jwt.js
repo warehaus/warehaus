@@ -12,7 +12,7 @@ const JWT_EXPIRATION = '7d';
 
 class JwtAuth {
     constructor() {
-        this.jwt_secret = undefined;
+        this.jwt_secret = null;
     }
 
     setJwtSecret(new_jwt_secret) {

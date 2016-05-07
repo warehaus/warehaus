@@ -19,7 +19,7 @@ var connect_to_db = function() {
 };
 
 module.exports = {
-    conn: undefined,
+    conn: null,
     config: db_config,
     connect: connect_to_db
 };

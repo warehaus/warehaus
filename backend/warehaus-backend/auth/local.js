@@ -38,9 +38,8 @@ class LocalAuth {
                         }
                         return done(null, false, { message: 'Incorrect username or password' });
                     }, done);
-            } else {
-                return done(null, false, { message: "You can't login because your account doesn't have a password, please ask your admin to create a password for you" });
             }
+            return done(null, false, { message: "You can't login because your account doesn't have a password, please ask your admin to create a password for you" });
         };
         return User.findAll({
             where: { username: { '===': username } }

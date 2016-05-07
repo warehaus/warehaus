@@ -24,7 +24,7 @@ var check_allowed = function(message) {
         if ((req.inputUser.id !== req.user.id) && (req.user.role !== roles.ALL.admin)) {
             return res.status(HttpStatus.FORBIDDEN).json({ message: message });
         }
-        next();
+        return next();
     };
 };
 
@@ -196,7 +196,7 @@ router.put('/:userId', userRequired, check_allowed("You're not allowed to update
             res.json(updated_user);
         })
         .catch(err => {
-            console.log(err.stack);
+            logger.error(err);
             res.status(err.status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: err.message || err });
         });
 });

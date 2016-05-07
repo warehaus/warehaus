@@ -29,9 +29,8 @@ angular.module('warehaus.hardware.cluster').factory('clustersToServers', functio
         if (angular.isDefined(self.cluster_of_server[server_id])) {
             if (self.cluster_of_server[server_id] === cluster_id) {
                 return;
-            } else {
-                remove_server_from_cluster(server_id);
             }
+            remove_server_from_cluster(server_id);
         }
         $log.debug('Adding server', server_id, 'to cluster', cluster_id);
         self.cluster_of_server[server_id] = cluster_id;
