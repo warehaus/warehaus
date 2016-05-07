@@ -9,11 +9,11 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
     };
 
     self.hasType = function(obj) {
-        return obj.type_id != 'NO_TYPE';
+        return obj.type_id !== 'NO_TYPE';
     };
 
     self.hasParent = function(obj) {
-        return obj.parent_id != 'ROOT';
+        return obj.parent_id !== 'ROOT';
     };
 
     var reset_self = function() {
