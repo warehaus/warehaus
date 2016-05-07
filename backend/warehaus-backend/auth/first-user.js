@@ -1,15 +1,14 @@
 'use strict';
 
 var logger          = require('../logger');
-var models          = require('../models');
-var User            = models.User;
+var User            = require('../models/user').User;
 var roles           = require('./roles');
 var passwordHandler = require('./passwords').passwordHandler;
 
 const FIRST_USER_USERNAME = 'admin';
 const FIRST_USER_PASSWORD = 'admin';
 
-var firstUser = function() {
+const firstUser = () => {
     return passwordHandler.hashPassword(FIRST_USER_PASSWORD).then(hashed_password => {
         var now = new Date();
         return {
@@ -23,7 +22,7 @@ var firstUser = function() {
     });
 };
 
-var ensureAdminUser = function() {
+const ensureAdminUser = () => {
     return User.findAll().then(all_users => {
         var user_count = all_users.length;
         if (user_count === 0) {
@@ -33,6 +32,7 @@ var ensureAdminUser = function() {
             });
         }
         logger.debug(`There are ${user_count} users in the database`);
+        return Promise.resolve();
     }).catch(err => {
         logger.error('Could not read users from database');
         throw err;
@@ -40,5 +40,5 @@ var ensureAdminUser = function() {
 };
 
 module.exports = {
-    ensureAdminUser: ensureAdminUser
+    ensureAdminUser
 };

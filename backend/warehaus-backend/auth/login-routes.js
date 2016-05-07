@@ -2,13 +2,15 @@
 
 var express = require('express');
 var passport = require('passport');
-var models = require('../models');
-var User = models.User;
-var getSettings = models.getSettings;
+var User = require('../models/user').User;
+var getSettings = require('../models/settings').getSettings;
+var Settings = require('../models/settings').Settings;
+var SETTINGS_ID = require('../models/settings').SETTINGS_ID;
 var _util = require('./util');
 var jwtAuth = require('./jwt').jwtAuth;
 var googleAuth = require('./google').googleAuth;
 var roles = require('./roles');
+var adminRequired = roles.adminRequired;
 
 passport.serializeUser(function(user, done) {
     done(null, user.id);
@@ -35,7 +37,7 @@ router.post('/local', function(req, res, next) {
     passport.authenticate('local', jwtAuth.makeJwtForAuthenticatedUser(req, res, next))(req, res, next);
 });
 
-router.get('/google/settings', passport.authenticate('jwt'), roles.requireAdmin, function(req, res) {
+router.get('/google/settings', adminRequired, function(req, res) {
     return getSettings().then(settings => {
         if (!settings.auth || !settings.auth.google) {
             return res.json({});
@@ -44,7 +46,7 @@ router.get('/google/settings', passport.authenticate('jwt'), roles.requireAdmin,
     }, _util.failureResponse).catch(_util.failureResponse);
 });
 
-router.post('/google/settings', passport.authenticate('jwt'), roles.requireAdmin, function(req, res) {
+router.post('/google/settings', adminRequired, function(req, res) {
     var google_settings = {
         is_enabled    : req.body.google_settings.is_enabled,
         client_id     : req.body.google_settings.client_id,

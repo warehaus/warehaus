@@ -1,8 +1,7 @@
 'use strict';
 
 var logger       = require('../logger');
-var models       = require('../models');
-var User         = models.User;
+var User         = require('../models/user').User;
 var jsonwebtoken = require('jsonwebtoken');
 var HttpStatus   = require('http-status-codes');
 var passport     = require('passport');

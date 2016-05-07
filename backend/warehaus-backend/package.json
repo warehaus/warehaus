@@ -5,7 +5,7 @@
   "bin": {
     "warehaus-init-db": "./init-db.js",
     "warehaus-socketio": "./socketio/server.js",
-    "warehaus-auth-server": "./auth/server.js",
+    "warehaus-auth-server": "./api-server.js",
     "warehaus-monitor-servers": "./monitor-servers.js"
   },
   "dependencies": {
@@ -19,6 +19,7 @@
     "morgan": "^1.7.0",
     "node-schedule": "^1.1.0",
     "passport": "^0.3.2",
+    "passport-accesstoken": "^0.1.0",
     "passport-google-oauth20": "^1.0.0",
     "passport-jwt": "^2.0.0",
     "passport-local": "^1.0.0",

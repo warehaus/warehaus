@@ -18,7 +18,7 @@ const settings_table = {
     indexes: globalIndexes
 };
 
-const SETTINGS_ID = 1
+const SETTINGS_ID = 1;
 const DEFAULT_KEY_LENGTH = 48;
 
 var make_key = function(len) {
@@ -36,7 +36,7 @@ var create_settings = function(conn) {
         created_at    : r.now(),
         modified_at   : r.now(),
         jwt_secret    : make_key(DEFAULT_KEY_LENGTH),
-        password_salt : make_key(DEFAULT_KEY_LENGTH),
+        password_salt : make_key(DEFAULT_KEY_LENGTH)
     };
     return new Promise(function(resolve, reject) {
         r.table('settings').insert(new_settings).run(conn, function(err, settings_doc) {

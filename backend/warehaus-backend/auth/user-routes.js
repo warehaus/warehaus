@@ -6,15 +6,16 @@ var express            = require('express');
 var passport           = require('passport');
 var crypto             = require('crypto');
 var HttpStatus         = require('http-status-codes');
-var createNewUserEvent = require('./user-events').createNewUserEvent;
+var createNewUserEvent = require('./events').createNewUserEvent;
 var passwordHandler    = require('./passwords').passwordHandler;
 var logger             = require('../logger');
-var models             = require('../models');
-var User               = models.User;
-var isUsernameTaken    = models.isUsernameTaken;
-var UserApiToken       = models.UserApiToken;
+var User               = require('../models/user').User;
+var isUsernameTaken    = require('../models/user').isUsernameTaken;
+var UserApiToken       = require('../models/user').UserApiToken;
 var _util              = require('./util');
 var roles              = require('./roles');
+var adminRequired      = roles.adminRequired;
+var userRequired       = roles.userRequired;
 
 var router = express.Router();
 
@@ -34,7 +35,7 @@ router.param('userId', function(req, res, next, userId) {
     }).catch(next);
 });
 
-router.get('', passport.authenticate('jwt'), function(req, res, next) {
+router.get('', userRequired, function(req, res, next) {
     User.findAll().then(all_users => {
         var cleaned_users = [];
         for (var i = 0; i < all_users.length; ++i) {
@@ -44,7 +45,7 @@ router.get('', passport.authenticate('jwt'), function(req, res, next) {
     }).catch(next);
 });
 
-router.post('', passport.authenticate('jwt'), roles.requireAdmin, function(req, res) {
+router.post('', adminRequired, function(req, res) {
     var now = new Date();
     var new_user = {
         created_at   : now,
@@ -62,7 +63,7 @@ router.post('', passport.authenticate('jwt'), roles.requireAdmin, function(req, 
         res.status(HttpStatus.BAD_REQUEST).json({ message: 'The role you specified for the new user is invalid' });
         return;
     }
-    return isUsernameTaken(new_user.username)
+    isUsernameTaken(new_user.username)
         .then(username_taken => {
             if (username_taken) {
                 return res.status(HttpStatus.CONFLICT).json({ message: 'Username already in use' });
@@ -76,11 +77,11 @@ router.post('', passport.authenticate('jwt'), roles.requireAdmin, function(req, 
         .catch(_util.failureResponse);
 });
 
-router.get('/:userId', passport.authenticate('jwt'), function(req, res) {
+router.get('/:userId', userRequired, function(req, res) {
     res.json(_util.cleanedUser(req.inputUser));
 });
 
-router.delete('/:userId', passport.authenticate('jwt'), roles.requireAdmin, function(req, res) {
+router.delete('/:userId', adminRequired, function(req, res) {
     if (req.inputUser.id === req.user.id) {
         res.status(HttpStatus.CONFLICT).json({ message: "You can't delete your own user" });
     } else {
@@ -90,7 +91,7 @@ router.delete('/:userId', passport.authenticate('jwt'), roles.requireAdmin, func
     }
 });
 
-router.put('/:userId', passport.authenticate('jwt'), check_allowed("You're not allowed to update this user"), function(req, res) {
+router.put('/:userId', userRequired, check_allowed("You're not allowed to update this user"), function(req, res) {
     var update_username = function(updated_fields) {
         if (!req.body.username) {
             logger.debug('  no need to update username');
@@ -200,7 +201,7 @@ router.put('/:userId', passport.authenticate('jwt'), check_allowed("You're not a
         });
 });
 
-router.get('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed("You can't get API-tokens of other users"), function(req, res) {
+router.get('/:userId/api-tokens', userRequired, check_allowed("You can't get API-tokens of other users"), function(req, res) {
     UserApiToken.findAll({ where: { user_id: { '===': req.inputUser.id } } }).then(token_docs => {
         res.json({ api_tokens: token_docs });
     }).catch(err => {
@@ -209,7 +210,7 @@ router.get('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed("Y
     });
 });
 
-router.post('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed("You can't create API-tokens of other users"), function(req, res) {
+router.post('/:userId/api-tokens', userRequired, check_allowed("You can't create API-tokens of other users"), function(req, res) {
     crypto.randomBytes(API_TOKEN_LENGTH, function(err, buffer) {
         if (err) {
             logger.error('Error generating new token:', err);
@@ -231,7 +232,7 @@ router.post('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed("
     });
 });
 
-router.delete('/:userId/api-tokens', passport.authenticate('jwt'), check_allowed("You can't delete API-tokens of other users"), function(req, res) {
+router.delete('/:userId/api-tokens', userRequired, check_allowed("You can't delete API-tokens of other users"), function(req, res) {
     if (!req.body.api_token) {
         return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Please specify the token to delete' });
     }
@@ -256,7 +257,7 @@ var _get_key_comment = function(ssh_key) {
     return null;
 };
 
-router.post('/:userId/ssh-keys', passport.authenticate('jwt'), check_allowed("You can't add SSH-keys for other users"), function(req, res) {
+router.post('/:userId/ssh-keys', userRequired, check_allowed("You can't add SSH-keys for other users"), function(req, res) {
     var key_to_add = req.body.ssh_key;
     if (!key_to_add || !key_to_add.contents) {
         return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Missing ssh_key argument' });
@@ -286,7 +287,7 @@ router.post('/:userId/ssh-keys', passport.authenticate('jwt'), check_allowed("Yo
     });
 });
 
-router.delete('/:userId/ssh-keys', passport.authenticate('jwt'), check_allowed("You can't delete SSH-keys for other users"), function(req, res) {
+router.delete('/:userId/ssh-keys', userRequired, check_allowed("You can't delete SSH-keys for other users"), function(req, res) {
     var key_to_delete = req.body.ssh_key;
     if (!key_to_delete || !key_to_delete.contents) {
         return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Missing ssh_key argument' });

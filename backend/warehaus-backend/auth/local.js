@@ -3,7 +3,7 @@
 var roles = require('./roles');
 var passwordHandler = require('./passwords').passwordHandler;
 var logger = require('../logger');
-var User = require('../models').User;
+var User = require('../models/user').User;
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
 
