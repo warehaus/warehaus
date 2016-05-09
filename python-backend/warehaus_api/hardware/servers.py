@@ -208,7 +208,7 @@ class Server(TypeClass):
                          if previous_cluster_id is None else
                          'Removed **{}** from **{}**'.format(server.display_name, cluster.display_name)
                          if server.cluster_id is None else
-                         'Moved **{}** from **{}** to **{}**'.format(server.display_name, previous_cluster.display_name)),
+                         'Moved **{}** from **{}** to **{}**'.format(server.display_name, previous_cluster.display_name, cluster.display_name)),
             )
         return server.as_dict(), httplib.OK
 
