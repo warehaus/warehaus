@@ -3,7 +3,6 @@
 const API_TOKEN_LENGTH = 20;
 
 var express            = require('express');
-var passport           = require('passport');
 var crypto             = require('crypto');
 var HttpStatus         = require('http-status-codes');
 var createNewUserEvent = require('./events').createNewUserEvent;
