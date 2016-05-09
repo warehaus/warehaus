@@ -22,6 +22,17 @@ angular.module('warehaus.hardware.cluster').factory('clustersToServers', functio
         servers_of_cluster: {} // {cluster_id: [server_id, server_id, ...]}
     };
 
+    var remove_server_from_cluster = function(server_id) {
+        if (self.cluster_of_server[server_id]) {
+            var cluster_id = self.cluster_of_server[server_id];
+            var index = self.servers_of_cluster[cluster_id].indexOf(server_id);
+            if (index !== -1) {
+                self.servers_of_cluster[cluster_id].splice(index, 1);
+            }
+        }
+        delete self.cluster_of_server[server_id];
+    };
+
     var add_server_to_cluster = function(server_id, cluster_id) {
         if (angular.isUndefined(self.servers_of_cluster[cluster_id])) {
             self.servers_of_cluster[cluster_id] = [];
@@ -35,17 +46,6 @@ angular.module('warehaus.hardware.cluster').factory('clustersToServers', functio
         //$log.debug('Adding server', server_id, 'to cluster', cluster_id);
         self.cluster_of_server[server_id] = cluster_id;
         self.servers_of_cluster[cluster_id].push(server_id);
-    };
-
-    var remove_server_from_cluster = function(server_id) {
-        if (self.cluster_of_server[server_id]) {
-            var cluster_id = self.cluster_of_server[server_id];
-            var index = self.servers_of_cluster[cluster_id].indexOf(server_id);
-            if (index !== -1) {
-                self.servers_of_cluster[cluster_id].splice(index, 1);
-            }
-        }
-        delete self.cluster_of_server[server_id];
     };
 
     var remove_cluster_from_servers = function(cluster_id) {
