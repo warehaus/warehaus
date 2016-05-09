@@ -313,16 +313,16 @@ angular.module('warehaus.labs').controller('AllLabsController', function($scope,
     });
 });
 
-angular.module('warehaus.labs').service('createLab', function($uibModal, viewPath, selectedLab) {
+angular.module('warehaus.labs').service('createLab', function($uibModal, $state, viewPath, dbObjects, selectedLab) {
     return function() {
         $uibModal.open({
             templateUrl: viewPath('labs/create-lab.html'),
             controller: 'CreateLabController'
         }).result.then(function(new_lab) {
-            // Set selectedLab and wait for the new lab to be refreshed from
-            // the database. When that happens the user will be redirected
-            // to the new lab page.
             selectedLab.set(new_lab.id);
+            if (dbObjects.byId[new_lab.id]) {
+                $state.go('labs.lab-page', {labSlug: new_lab.slug});
+            }
         });
     };
 });

@@ -50,7 +50,7 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
     };
 
     var object_changed = function(notification) {
-        //$log.debug('Fetching changed object:', notification.id);
+        //$log.debug('Fetching changed object:', notification.object.id);
         insert_one(notification.object);
         $rootScope.$broadcast('warehaus.models.object_changed', notification.object.id);
     };
@@ -78,7 +78,11 @@ angular.module('warehaus.models').factory('dbObjects', function($rootScope, $htt
 
     reset_self();
 
-    getObjectNotifications('object', load_all_objects, object_changed, object_deleted);
+    getObjectNotifications('object', {
+        on_new_socket: load_all_objects,
+        on_changed: object_changed,
+        on_deleted: object_deleted
+    });
 
     return self;
 });

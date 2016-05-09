@@ -32,7 +32,7 @@ angular.module('warehaus.hardware.cluster').factory('clustersToServers', functio
             }
             remove_server_from_cluster(server_id);
         }
-        $log.debug('Adding server', server_id, 'to cluster', cluster_id);
+        //$log.debug('Adding server', server_id, 'to cluster', cluster_id);
         self.cluster_of_server[server_id] = cluster_id;
         self.servers_of_cluster[cluster_id].push(server_id);
     };
@@ -73,6 +73,7 @@ angular.module('warehaus.hardware.cluster').factory('clustersToServers', functio
         if (!dbObjects.isReady) {
             return;
         }
+        $log.debug('Refreshing cluster/server association');
         angular.forEach(dbObjects.byTypeId, function(objects, type_id) {
             var type = dbObjects.byId[type_id];
             if (angular.isDefined(type) && (type.type_key === hwServerTypeKey)) {

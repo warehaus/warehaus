@@ -1,14 +1,14 @@
 'use strict';
 
-const notifyObjectChanged = (socket, tableName, obj) => {
+const msgObjectChanged = (socket, tableName, obj) => {
     socket.emit(`object_changed:${tableName}`, { object: obj });
 };
 
-const notifyObjectDeleted = (socket, tableName, obj) => {
+const msgObjectDeleted = (socket, tableName, obj) => {
     socket.emit(`object_deleted:${tableName}`, { id: obj.id });
 };
 
 module.exports = {
-    notifyObjectChanged,
-    notifyObjectDeleted
+    msgObjectChanged,
+    msgObjectDeleted
 };

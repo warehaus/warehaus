@@ -2,8 +2,7 @@
 var logger = require('../logger');
 var db = require('../db');
 var r = require('rethinkdbdash')(db.config());
-var notifyObjectChanged = require('./messages').notifyObjectChanged;
-var notifyObjectDeleted = require('./messages').notifyObjectDeleted;
+var msg = require('./messages');
 
 const USERS_ROOM = 'users';
 
@@ -18,9 +17,9 @@ const sendNotification = (tableConfig, io, err, change) => {
     }
     const objectFilter = tableConfig.objectFilter || noFilter;
     if (change.new_val === null) {
-        notifyObjectDeleted(io.to(USERS_ROOM), tableConfig.dbTable, objectFilter(change.old_val));
+        msg.msgObjectDeleted(io.to(USERS_ROOM), tableConfig.dbTable, objectFilter(change.old_val));
     } else {
-        notifyObjectChanged(io.to(USERS_ROOM), tableConfig.dbTable, objectFilter(change.new_val));
+        msg.msgObjectChanged(io.to(USERS_ROOM), tableConfig.dbTable, objectFilter(change.new_val));
     }
 };
 
@@ -29,7 +28,7 @@ const listenForChanges = (tablesConfig) => {
         tablesConfig.forEach(tableConfig => {
             r.table(tableConfig.dbTable).changes().run(function(err, cursor) {
                 if (err) {
-                    console.log(`error: While waiting for changes on ${tableConfig.dbTable}: ${err}`);
+                    logger.error(`error: While waiting for changes on ${tableConfig.dbTable}: ${err}`);
                     process.exit(1);
                 }
                 cursor.each((err, change) => {

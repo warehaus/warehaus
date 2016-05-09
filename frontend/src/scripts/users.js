@@ -58,7 +58,11 @@ angular.module('warehaus.users').factory('users', function($rootScope, $http, $q
         $rootScope.$broadcast('warehaus.users.user_deleted', notification.id);
     };
 
-    getObjectNotifications('user', load_all_users, user_changed, user_deleted);
+    getObjectNotifications('user', {
+        on_new_socket: load_all_users,
+        on_changed: user_changed,
+        on_deleted: user_deleted
+    });
 
     return self;
 });

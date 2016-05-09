@@ -35,7 +35,7 @@ angular.module('warehaus.hardware.server').controller('ServerPageController', fu
 
             $scope.pci_devices = [];
             $scope.network_interfaces = [];
-            $scope.disks = []
+            $scope.disks = [];
 
             angular.forEach(dbObjects.byParentId[$scope.obj_id], function(subobj) {
                 if (angular.isUndefined(subobj)) {

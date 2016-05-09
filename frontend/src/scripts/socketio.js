@@ -40,11 +40,17 @@ angular.module('warehaus.socketio').service('socketIoManager', function($rootSco
 });
 
 angular.module('warehaus.socketio').service('getObjectNotifications', function($rootScope) {
-    return function(table_name, on_new_socket, on_changed, on_deleted) {
+    return function(table_name, options) {
         $rootScope.$on('warehaus.socketio.new_socket_available', function(event, socket) {
-            socket.on('object_changed:' + table_name, on_changed);
-            socket.on('object_deleted:' + table_name, on_deleted);
-            on_new_socket();
+            if (options.on_changed) {
+                socket.on('object_changed:' + table_name, options.on_changed);
+            }
+            if (options.on_deleted) {
+                socket.on('object_deleted:' + table_name, options.on_deleted);
+            }
+            if (options.on_new_socket) {
+                options.on_new_socket();
+            }
         });
     };
 });

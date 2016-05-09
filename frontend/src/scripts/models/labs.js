@@ -26,6 +26,9 @@ angular.module('warehaus.models').factory('allLabs', function($http, $rootScope,
     };
 
     var refresh = function() {
+        if (!dbObjects.isReady) {
+            return;
+        }
         $log.info('Refreshing labs');
         reset_self();
         angular.forEach(dbObjects.byId, function(obj) {
