@@ -19,6 +19,6 @@ var failureResponse = function(err) {
 };
 
 module.exports = {
-    cleanedUser: cleanedUser,
-    failureResponse: failureResponse
+    cleanedUser,
+    failureResponse
 };

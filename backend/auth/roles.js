@@ -20,16 +20,16 @@ const isRoleAllowedToLogin = (role) => {
 
 const roleRequired = (allowed_roles) => {
     return (req, res, next) => {
-        passport.authenticate(['jwt', 'token'], (err, user, info) => {
-            if (err) {
-                return next(err);
+        passport.authenticate(['jwt', 'token'], (auth_err, user, info) => {
+            if (auth_err) {
+                return next(auth_err);
             }
             if (!user) {
                 return res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Unauthorized' });
             }
-            return req.logIn(user, function(err) {
-                if (err) {
-                    return next(err);
+            return req.logIn(user, function(login_err) {
+                if (login_err) {
+                    return next(login_err);
                 }
                 if (allowed_roles.indexOf(user.role) === -1) {
                     return res.status(HttpStatus.FORBIDDEN).json({ message: `This API is for ${allowed_roles.join(', ')} only` });

@@ -26,13 +26,13 @@ const sendNotification = (tableConfig, io, err, change) => {
 const listenForChanges = (tablesConfig) => {
     return (ctx) => {
         tablesConfig.forEach(tableConfig => {
-            r.table(tableConfig.dbTable).changes().run(function(err, cursor) {
-                if (err) {
-                    logger.error(`error: While waiting for changes on ${tableConfig.dbTable}: ${err}`);
+            r.table(tableConfig.dbTable).changes().run(function(changes_err, cursor) {
+                if (changes_err) {
+                    logger.error(`error: While waiting for changes on ${tableConfig.dbTable}: ${changes_err}`);
                     process.exit(1);
                 }
-                cursor.each((err, change) => {
-                    sendNotification(tableConfig, ctx.io, err, change);
+                cursor.each((cursor_err, change) => {
+                    sendNotification(tableConfig, ctx.io, cursor_err, change);
                 });
             });
         });

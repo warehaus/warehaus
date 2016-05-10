@@ -5,7 +5,7 @@ var bcrypt = require('bcryptjs');
 
 class PasswordHandler {
     constructor() {
-        this.salt = undefined;
+        this.salt = null;
     }
 
     setSalt(new_salt) {
@@ -19,15 +19,15 @@ class PasswordHandler {
     hashPassword(password) {
         var self = this;
         return new Promise(function(resolve, reject) {
-            bcrypt.genSalt(10, function(err, salt) {
-                if (err) {
-                    logger.error('Error in bcrypt.genSalt:', err);
-                    reject(err);
+            bcrypt.genSalt(10, function(gensalt_err, salt) {
+                if (gensalt_err) {
+                    logger.error('Error in bcrypt.genSalt:', gensalt_err);
+                    reject(gensalt_err);
                 } else {
-                    bcrypt.hash(self._dirtyPassword(password), salt, function(err, hash) {
-                        if (err) {
-                            logger.error('Error in bcrypt.hash:', err);
-                            reject(err);
+                    bcrypt.hash(self._dirtyPassword(password), salt, function(hash_err, hash) {
+                        if (hash_err) {
+                            logger.error('Error in bcrypt.hash:', hash_err);
+                            reject(hash_err);
                         } else {
                             resolve(hash);
                         }

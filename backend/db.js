@@ -1,3 +1,4 @@
+var logger = require('./logger');
 var r = require('rethinkdb');
 
 var db_config = function() {
@@ -13,7 +14,7 @@ var connect_to_db = function() {
     return r.connect(db_config()).then(db_conn => {
         module.exports.conn = db_conn;
     }).error(err => {
-        console.log('error: Could not connect to database: ' + err);
+        logger.error('error: Could not connect to database: ' + err);
         process.exit(1);
     });
 };

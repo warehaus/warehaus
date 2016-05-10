@@ -21,7 +21,7 @@ var router = express.Router();
 var check_allowed = function(message) {
     return function(req, res, next) {
         if ((req.inputUser.id !== req.user.id) && (req.user.role !== roles.ALL.admin)) {
-            return res.status(HttpStatus.FORBIDDEN).json({ message: message });
+            return res.status(HttpStatus.FORBIDDEN).json({ message });
         }
         return next();
     };
@@ -68,8 +68,8 @@ router.post('', adminRequired, function(req, res) {
                 return res.status(HttpStatus.CONFLICT).json({ message: 'Username already in use' });
             }
             return User.create(new_user)
-                .then(createNewUserEvent).then(function(new_user) {
-                    res.status(HttpStatus.CREATED).json(_util.cleanedUser(new_user));
+                .then(createNewUserEvent).then(function(new_user_doc) {
+                    res.status(HttpStatus.CREATED).json(_util.cleanedUser(new_user_doc));
                 })
                 .catch(_util.failureResponse);
         })
@@ -210,9 +210,9 @@ router.get('/:userId/api-tokens', userRequired, check_allowed("You can't get API
 });
 
 router.post('/:userId/api-tokens', userRequired, check_allowed("You can't create API-tokens of other users"), function(req, res) {
-    crypto.randomBytes(API_TOKEN_LENGTH, function(err, buffer) {
-        if (err) {
-            logger.error('Error generating new token:', err);
+    crypto.randomBytes(API_TOKEN_LENGTH, function(bytes_err, buffer) {
+        if (bytes_err) {
+            logger.error('Error generating new token:', bytes_err);
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating new token' });
         }
         var now = new Date();
@@ -224,8 +224,8 @@ router.post('/:userId/api-tokens', userRequired, check_allowed("You can't create
         };
         return UserApiToken.create(token_doc).then(doc => {
             res.status(HttpStatus.CREATED).json({ api_token: doc.id });
-        }).catch(err => {
-            logger.error('Could not create new token:', err);
+        }).catch(create_err => {
+            logger.error('Could not create new token:', create_err);
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating new token' });
         });
     });

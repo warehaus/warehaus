@@ -302,7 +302,7 @@ angular.module('warehaus.labs').controller('AllLabsController', function($scope,
         } else if (allLabs.all.length > 0) {
             _goto_lab(allLabs.all[0].id);
         }
-    }
+    };
 
     $scope.$on('warehaus.labs_inventory_changed', refresh);
 

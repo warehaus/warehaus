@@ -64,7 +64,7 @@ class GoogleAuth {
                 modified_at: now,
                 access_token: accessToken,
                 refresh_token: refreshToken,
-                profile: profile,
+                profile,
                 local_user_id: local_user.id
             }).then(google_user => {
                 logger.debug(`Created Google user ${google_user.id} for local user ${local_user.id}`);
