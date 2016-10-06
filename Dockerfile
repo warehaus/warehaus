@@ -1,14 +1,19 @@
-FROM warehaus/base-image:v14
+FROM node:6
 
-RUN mkdir -p /var/log/warehaus
-VOLUME /var/log/warehaus
+ENV NODE_ENV production
+ENV WAREHAUS_LOGS_DIR /logs
+ENV WAREHAUS_INSTALL_DIR /opt/warehaus
+ENV WAREHAUS_HTTP_PORT 80
 
-COPY . /opt/warehaus
+RUN mkdir -p ${WAREHAUS_LOGS_DIR}
+VOLUME ${WAREHAUS_LOGS_DIR}
 
-RUN cd /opt/warehaus/python-backend && python setup.py develop
-RUN cd /opt/warehaus/backend && npm link
-RUN ln -s /opt/warehaus/bin/warehaus /usr/local/bin/warehaus
+WORKDIR ${WAREHAUS_INSTALL_DIR}
 
-EXPOSE 80
+COPY . ${WAREHAUS_INSTALL_DIR}
 
-CMD ["warehaus"]
+RUN cd ${WAREHAUS_INSTALL_DIR} && npm link --production && rm -rf /root/.npm
+
+EXPOSE ${WAREHAUS_HTTP_PORT}
+
+CMD ["node", "dist/backend.js"]

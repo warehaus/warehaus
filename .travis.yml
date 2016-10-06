@@ -8,8 +8,5 @@ branches:
 services:
   - docker
 
-before_script:
-  - docker run -d --name rethinkdb rethinkdb
-
 script:
-  - make docker-image test push-docker-image
+  - make push-docker-image

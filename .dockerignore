@@ -1,6 +1,5 @@
-backend/*.egg-info
-backend/build
+backend
 frontend
-dist/.gitignore
+node_modules
 .DS_Store
 .git
